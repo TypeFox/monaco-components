@@ -1,0 +1,29 @@
+{
+  "name": "moned-base",
+  "version": "0.1.0",
+  "private": true,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/moned-base.umd.js",
+  "module": "./dist/moned-base.es.js",
+  "exports": {
+    ".": {
+      "require": "./dist/moned-base.umd.js",
+      "import": "./dist/moned-base.es.js"
+    }
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "dev": "vite",
+    "build": "npm run clean && tsc && vite build ",
+    "serve": "tsc && vite preview"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "rimraf": "^3.0.2",
+    "vite": "^2.7.12",
+    "typescript": "^4.5.4"
+  }
+}
