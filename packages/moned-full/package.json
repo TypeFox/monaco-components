@@ -1,17 +1,19 @@
 {
   "name": "moned-full",
   "version": "0.1.0",
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/moned-full.umd.js",
-  "module": "./dist/moned-full.es.js",
+  "private": true,
+  "type": "module",
+  "main": "./dist/main.es.js",
+  "module": "./dist/main.es.js",
+  "types": "./dist/main.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/moned-full.umd.js",
-      "import": "./dist/moned-full.es.js"
+      "import": "./dist/main.es.js",
+      "require": "./dist/main.umd.js",
+      "types": "./dist/main.d.ts"
     }
   },
+  "files": [ "dist" ],
   "scripts": {
     "clean": "rimraf ./dist",
     "dev": "vite",
@@ -24,9 +26,6 @@
     "moned-base": "../moned-base"
   },
   "devDependencies": {
-    "tslib": "^2.3.1",
-    "rimraf": "^3.0.2",
-    "vite": "^2.7.12",
-    "typescript": "^4.5.4"
+    "tslib": "^2.3.1"
   }
 }

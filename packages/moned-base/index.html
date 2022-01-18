@@ -15,11 +15,13 @@
 </head>
 
 <body>
-    <script type="module" lang="ts">
+    <script type="module">
         import { DefaultCodeEditorConfig } from "/src/main.ts";
 
         const codeEditorConfig = new DefaultCodeEditorConfig();
-        console.log(codeEditorConfig.buildConf());
+        const config = codeEditorConfig.buildConf();
+        config.theme = 'vs-dark';
+        alert(config.theme);
     </script>
 </body>
 

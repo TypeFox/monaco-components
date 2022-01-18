@@ -42,10 +42,10 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
     editor?: monaco.editor.IStandaloneCodeEditor;
 
-    @property() language?: CodeEditorConfig["language"];
-    @property() code?: CodeEditorConfig["code"];
-    @property() theme?: CodeEditorConfig["theme"];
-    @property({ type: Boolean, attribute: "readOnly" }) readOnly?: CodeEditorConfig["readOnly"];
+    @property({ type: String }) language?: string;
+    @property() code?: string;
+    @property() theme?: string;
+    @property({ type: Boolean, attribute: "readOnly" }) readOnly?: boolean;
 
     static override styles = css`
         :host {

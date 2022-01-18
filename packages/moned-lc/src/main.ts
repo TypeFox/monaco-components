@@ -4,32 +4,13 @@ import { createRef, Ref, ref } from "lit/directives/ref.js";
 
 // -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor-core';
-
 import styles from "monaco-editor-core/min/vs/editor/editor.main.css";
 import editorWorker from "monaco-editor-core/esm/vs/editor/editor.worker?worker";
-//import jsonWorker from "monaco-editor-core/esm / vs / language / json / json.worker ? worker";
-//import cssWorker from "monaco-editor-core/esm/vs/language/css/css.worker?worker";
-//import htmlWorker from "monaco-editor-core/esm/vs/language/html/html.worker?worker";
-//import tsWorker from "monaco-editor-core/esm/vs/language/typescript/ts.worker?worker";
 
 // @ts-ignore
 self.MonacoEnvironment = {
     // @ts-ignore
     getWorker(_: any, label: string) {
-        /*
-            if (label === "json") {
-              return new jsonWorker();
-            }
-            if (label === "css" || label === "scss" || label === "less") {
-              return new cssWorker();
-            }
-            if (label === "html" || label === "handlebars" || label === "razor") {
-              return new htmlWorker();
-            }
-            if (label === "typescript" || label === "javascript") {
-              return new tsWorker();
-            }
-        */
         return new editorWorker();
     },
 };
@@ -37,15 +18,11 @@ self.MonacoEnvironment = {
 // @ts-ignore
 import * as vscode from "vscode";
 
-import {
-    MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction,
-    MonacoServices, createConnection
-} from '@codingame/monaco-languageclient';
+import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
 // @ts-ignore
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-
 
 class MonacoLanguageClientBinding {
 
@@ -71,20 +48,27 @@ class MonacoLanguageClientBinding {
     create() {
         // create the web socket
         const url = this.createUrl('/sampleServer')
-        // @ts-ignore
-        const webSocket = this.createWebSocket(url);
+        const webSocket = new WebSocket(url);
+        new ReconnectingWebSocket(url, [], {
+            WebSocket: webSocket,
+            maxReconnectionDelay: 10000,
+            minReconnectionDelay: 1000,
+            reconnectionDelayGrowFactor: 1.3,
+            connectionTimeout: 10000,
+            maxRetries: Infinity,
+            debug: false
+        });
+
         // listen when the web socket is opened
-        /*
-          listen({
+        listen({
             webSocket,
             onConnection: connection => {
-              // create and start the language client
-              const languageClient = this.createLanguageClient(connection);
-              const disposable = languageClient.start();
-              connection.onClose(() => disposable.dispose());
+                // create and start the language client
+                const languageClient = this.createLanguageClient(connection);
+                const disposable = languageClient.start();
+                connection.onClose(() => disposable.dispose());
             }
-          });
-        */
+        });
     }
 
     createLanguageClient(connection: MessageConnection): MonacoLanguageClient {
@@ -111,18 +95,6 @@ class MonacoLanguageClientBinding {
     createUrl(path: string): string {
         const protocol = location.protocol === 'https:' ? 'wss' : 'ws';
         return normalizeUrl(`${protocol}://${location.host}${location.pathname}${path}`);
-    }
-
-    createWebSocket(url: string): ReconnectingWebSocket {
-        const socketOptions = {
-            maxReconnectionDelay: 10000,
-            minReconnectionDelay: 1000,
-            reconnectionDelayGrowFactor: 1.3,
-            connectionTimeout: 10000,
-            maxRetries: Infinity,
-            debug: false
-        };
-        return new ReconnectingWebSocket(url, [], socketOptions);
     }
 
 }
@@ -197,6 +169,10 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         this.editor.getModel()!.onDidChangeContent(() => {
             this.dispatchEvent(new CustomEvent("change", { detail: {} }));
         });
+        this.registerListeners();
+    }
+
+    registerListeners() {
         window
             .matchMedia("(prefers-color-scheme: dark)")
             .addEventListener("change", () => {

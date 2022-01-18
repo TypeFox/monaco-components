@@ -1,34 +1,49 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import typescript from '@rollup/plugin-typescript';
+
+const resolvePath = (str: string) => path.resolve(__dirname, str);
 
 export default defineConfig({
     resolve: {
         alias: [
             {
                 find: 'vscode',
-                replacement: path.resolve(__dirname, 'node_modules/@codingame/monaco-languageclient/lib/vscode-compatibility')
+                replacement: path.resolve(__dirname, '../../node_modules/@codingame/monaco-languageclient/lib/vscode-compatibility')
             }
         ]
     },
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
-            name: 'MonacoEditorLanguageClient',
-            fileName: (format) => `moned-lc.${format}.js`,
+            name: 'moned-lc',
+            fileName: (format) => `main.${format}.js`,
         },
         rollupOptions: {
             external: ['vscode'],
             output: {
                 inlineDynamicImports: true,
-                name: 'MonacoEditorLanguageClient',
+                name: 'moned-lc',
                 exports: 'named',
+                sourcemap: true,
                 globals: {
                     vscode: 'vscode'
                 }
-            }
+            },
+            plugins: [
+                typescript({
+                    'target': 'esnext',
+                    'rootDir': resolvePath('./src'),
+                    'declaration': true,
+                    'declarationDir': resolvePath('./dist'),
+                    'sourceMap': true,
+                    exclude: resolvePath('./node_modules'),
+                    allowSyntheticDefaultImports: true
+                })
+            ]
         },
     },
     server: {
-        port: 30000
+        port: 20003
     }
 });
