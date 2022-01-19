@@ -154,18 +154,18 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     }
 
     registerMonarchTokensProvider(languageId: string, languageDef: monaco.languages.IMonarchLanguage) {
-        monaco.languages.register({ id: this.editorConfig.languageId });
-        monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
-
         this.languageId = languageId;
         this.syncPropertiesAndEditorConfig();
+
+        monaco.languages.register({ id: this.editorConfig.languageId });
+        monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
     }
 
     registerEditorTheme(themeName: string, themeData: monaco.editor.IStandaloneThemeData) {
-        monaco.editor.defineTheme(themeName, themeData);
-
         this.theme = themeName;
         this.syncPropertiesAndEditorConfig();
+
+        monaco.editor.defineTheme(this.editorConfig.theme, themeData);
     }
 
     startEditor() {
