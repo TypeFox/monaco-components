@@ -1,25 +1,18 @@
-import { css, html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { createRef, Ref, ref } from "lit/directives/ref.js";
+import { css, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 // -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor-core';
-import styles from "monaco-editor-core/min/vs/editor/editor.main.css";
-import editorWorker from "monaco-editor-core/esm/vs/editor/editor.worker?worker";
+import styles from 'monaco-editor-core/min/vs/editor/editor.main.css';
+import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker';
 
-// @ts-ignore
-self.MonacoEnvironment = {
-    // @ts-ignore
-    getWorker(_: any, label: string) {
-        return new editorWorker();
-    },
+(self as monaco.Window).MonacoEnvironment = {
+    getWorker: () => new editorWorker()
 };
 
-// @ts-ignore
-import * as vscode from "vscode";
-
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
-// @ts-ignore
+
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 import ReconnectingWebSocket from 'reconnecting-websocket';
@@ -47,7 +40,7 @@ class MonacoLanguageClientBinding {
 
     create() {
         // create the web socket
-        const url = this.createUrl('/sampleServer')
+        const url = this.createUrl('/sampleServer');
         const webSocket = new WebSocket(url);
         new ReconnectingWebSocket(url, [], {
             WebSocket: webSocket,
@@ -73,7 +66,7 @@ class MonacoLanguageClientBinding {
 
     createLanguageClient(connection: MessageConnection): MonacoLanguageClient {
         return new MonacoLanguageClient({
-            name: "Sample Language Client",
+            name: 'Sample Language Client',
             clientOptions: {
                 // use a language id as a document selector
                 documentSelector: ['json'],
@@ -86,7 +79,7 @@ class MonacoLanguageClientBinding {
             // create a language client connection from the JSON RPC connection on demand
             connectionProvider: {
                 get: (errorHandler, closeHandler) => {
-                    return Promise.resolve(createConnection(connection, errorHandler, closeHandler))
+                    return Promise.resolve(createConnection(connection, errorHandler, closeHandler));
                 }
             }
         });
@@ -110,10 +103,10 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     editor?: monaco.editor.IStandaloneCodeEditor;
     private monacoLanguageClientBinding: MonacoLanguageClientBinding = new MonacoLanguageClientBinding();
 
-    @property() language?: CodeEditorConfig["language"];
-    @property() code?: CodeEditorConfig["code"];
-    @property() theme?: CodeEditorConfig["theme"];
-    @property({ type: Boolean, attribute: "readOnly" }) readOnly?: CodeEditorConfig["readOnly"];
+    @property() language?: CodeEditorConfig['language'];
+    @property() code?: CodeEditorConfig['code'];
+    @property() theme?: CodeEditorConfig['theme'];
+    @property({ type: Boolean, attribute: 'readOnly' }) readOnly?: CodeEditorConfig['readOnly'];
 
     static override styles = css`
         :host {
@@ -140,7 +133,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     }
 
     getFixedLanguageName() {
-        return 'MyLanguage'
+        return 'MyLanguage';
     }
 
     updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null) {
@@ -167,15 +160,15 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         this.monacoLanguageClientBinding.registerLanguages();
 
         this.editor.getModel()!.onDidChangeContent(() => {
-            this.dispatchEvent(new CustomEvent("change", { detail: {} }));
+            this.dispatchEvent(new CustomEvent('change', { detail: {} }));
         });
         this.registerListeners();
     }
 
     registerListeners() {
         window
-            .matchMedia("(prefers-color-scheme: dark)")
-            .addEventListener("change", () => {
+            .matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', () => {
                 monaco.editor.setTheme(this.editorConfig.theme);
             });
     }
@@ -183,6 +176,6 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
 
 declare global {
     interface HTMLElementTagNameMap {
-        "moned-lc": CodeEditorLC;
+        'moned-lc': CodeEditorLC;
     }
 }

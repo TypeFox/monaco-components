@@ -6,12 +6,20 @@
   ],
   "type": "module",
   "scripts": {
-    "clean": "rimraf ./lib"
+    "clean": "npm run clean --workspaces",
+    "dev-base": "npm run dev --workspace packages/moned-base",
+    "dev-full": "npm run dev --workspace packages/moned-full",
+    "dev-lc": "npm run dev --workspace packages/moned-lc",
+    "lint": "npm run lint --workspaces",
+    "build-base": "npm run build --workspace packages/moned-base",
+    "build-full": "npm run build --workspace packages/moned-full",
+    "build-lc": "npm run build --workspace packages/moned-lc",
+    "build-all": "npm run build --workspaces"
   },
   "dependencies": {
   },
   "devDependencies": {
-    "vite": "^2.7.12",
+    "vite": "^2.7.13",
     "typescript": "^4.5.4",
     "rimraf": "3.0.2",
     "eslint": "^8.7.0",

@@ -1,31 +1,30 @@
-import { css, html, LitElement } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { createRef, Ref, ref } from "lit/directives/ref.js";
+import { css, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 // -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor';
 
-import styles from "monaco-editor/min/vs/editor/editor.main.css";
-import editorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
-import jsonWorker from "monaco-editor/esm/vs/language/json/json.worker?worker";
-import cssWorker from "monaco-editor/esm/vs/language/css/css.worker?worker";
-import htmlWorker from "monaco-editor/esm/vs/language/html/html.worker?worker";
-import tsWorker from "monaco-editor/esm/vs/language/typescript/ts.worker?worker";
+import styles from 'monaco-editor/min/vs/editor/editor.main.css';
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
+import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
+import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
+import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-// @ts-ignore
-self.MonacoEnvironment = {
-    // @ts-ignore
-    getWorker(_: any, label: string) {
-        if (label === "json") {
+(self as monaco.Window).MonacoEnvironment = {
+
+    getWorker: (label: string) => {
+        if (label === 'json') {
             return new jsonWorker();
         }
-        if (label === "css" || label === "scss" || label === "less") {
+        if (label === 'css' || label === 'scss' || label === 'less') {
             return new cssWorker();
         }
-        if (label === "html" || label === "handlebars" || label === "razor") {
+        if (label === 'html' || label === 'handlebars' || label === 'razor') {
             return new htmlWorker();
         }
-        if (label === "typescript" || label === "javascript") {
+        if (label === 'typescript' || label === 'javascript') {
             return new tsWorker();
         }
         return new editorWorker();
@@ -45,7 +44,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     @property({ type: String }) language?: string;
     @property() code?: string;
     @property() theme?: string;
-    @property({ type: Boolean, attribute: "readOnly" }) readOnly?: boolean;
+    @property({ type: Boolean, attribute: 'readOnly' }) readOnly?: boolean;
 
     static override styles = css`
         :host {
@@ -93,15 +92,15 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
         this.editor = monaco.editor.create(this.container.value!, this.editorConfig.buildConf() as monaco.editor.IStandaloneEditorConstructionOptions);
         this.editor.getModel()!.onDidChangeContent(() => {
-            this.dispatchEvent(new CustomEvent("change", { detail: {} }));
+            this.dispatchEvent(new CustomEvent('change', { detail: {} }));
         });
         this.registerListeners();
     }
 
     registerListeners() {
         window
-            .matchMedia("(prefers-color-scheme: dark)")
-            .addEventListener("change", () => {
+            .matchMedia('(prefers-color-scheme: dark)')
+            .addEventListener('change', () => {
                 monaco.editor.setTheme(this.editorConfig.theme);
             });
     }
@@ -109,6 +108,6 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
 declare global {
     interface HTMLElementTagNameMap {
-        "moned-full": CodeEditorFullImpl;
+        'moned-full': CodeEditorFullImpl;
     }
 }

@@ -9,10 +9,10 @@ export type CodeEditorConfig = {
 
 export class DefaultCodeEditorConfig implements CodeEditorConfig {
 
-    language: string = 'javascript';
-    code?: string | undefined;
-    theme: string = 'vs-light';
-    readOnly: boolean = false;
+    code = '';
+    language = 'javascript';
+    theme = 'vs-light';
+    readOnly = false;
 
     buildConf() {
         return {
@@ -21,13 +21,13 @@ export class DefaultCodeEditorConfig implements CodeEditorConfig {
             theme: this.theme,
             automaticLayout: true,
             readOnly: this.readOnly,
-        }
+        };
     }
 
     isDark() {
         return (
             window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
+            window.matchMedia('(prefers-color-scheme: dark)').matches
         );
     }
 }
