@@ -1,6 +1,6 @@
 export type CodeEditorConfig = {
-    language: string;
-    code?: string;
+    languageId: string;
+    code: string;
     theme: string
     readOnly: boolean;
     buildConf(): unknown;
@@ -10,17 +10,17 @@ export type CodeEditorConfig = {
 export class DefaultCodeEditorConfig implements CodeEditorConfig {
 
     code = '';
-    language = 'javascript';
+    languageId = 'javascript';
     theme = 'vs-light';
     readOnly = false;
 
     buildConf() {
         return {
             value: this.code,
-            language: this.language,
+            languageId: this.languageId,
             theme: this.theme,
             automaticLayout: true,
-            readOnly: this.readOnly,
+            readOnly: this.readOnly
         };
     }
 
@@ -34,30 +34,20 @@ export class DefaultCodeEditorConfig implements CodeEditorConfig {
 
 export interface CodeEditor {
 
-    getCodeEditorConfig(): CodeEditorConfig;
-
-    loadComponentProperties(): void;
-
-    updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null): void;
+    getCodeEditorType(): string;
 
     registerListeners(): void;
 
-}
+    setCode(code: string): void;
 
-export type CodeEditorFullType = 'CodeEditorFull';
+    setTheme(theme: string): void;
 
-export interface CodeEditorFull extends CodeEditor {
+    setLanguageId(languageId: string): void;
 
-    getCodeEditorType(): CodeEditorFullType;
+    syncPropertiesAndEditorConfig(): void;
 
-}
+    startEditor(): void;
 
-export type CodeEditorLCType = 'CodeEditorLanguageClient';
-
-export interface CodeEditorLanguageClient extends CodeEditor {
-
-    getCodeEditorType(): CodeEditorLCType;
-
-    getFixedLanguageName(): string;
+    updateEditor(): void;
 
 }

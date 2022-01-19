@@ -31,20 +31,37 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
     },
 };
 
-import { CodeEditorFull, CodeEditorFullType, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
+import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
+
+export interface CodeEditorFull extends CodeEditor {
+
+    updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null): void;
+
+}
 
 @customElement('moned-full')
 export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
     private container: Ref<HTMLElement> = createRef();
-    private editorConfig: CodeEditorConfig = new DefaultCodeEditorConfig();
+    private editorConfig: CodeEditorConfig;
 
-    editor?: monaco.editor.IStandaloneCodeEditor;
+    private editor?: monaco.editor.IStandaloneCodeEditor;
 
-    @property({ type: String }) language?: string;
-    @property() code?: string;
-    @property() theme?: string;
-    @property({ type: Boolean, attribute: 'readOnly' }) readOnly?: boolean;
+    @property() languageId?;
+    @property() code?;
+    @property() theme?;
+    @property({ type: Boolean }) readOnly?;
+
+    constructor() {
+        super();
+        this.editorConfig = new DefaultCodeEditorConfig();
+
+        // set proper defaults based on the default editor config
+        this.languageId = this.editorConfig.languageId;
+        this.code = this.editorConfig.code;
+        this.theme = this.editorConfig.theme;
+        this.readOnly = this.editorConfig.readOnly;
+    }
 
     static override styles = css`
         :host {
@@ -66,13 +83,17 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         `;
     }
 
-    getCodeEditorType(): CodeEditorFullType {
+    getCodeEditorType(): string {
         return 'CodeEditorFull';
     }
 
     updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null) {
         if (codeEditorConfig) {
             this.editorConfig = codeEditorConfig;
+            this.languageId = this.editorConfig.languageId;
+            this.code = this.editorConfig.code;
+            this.theme = this.editorConfig.theme;
+            this.readOnly = this.editorConfig.readOnly;
         }
     }
 
@@ -80,21 +101,56 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         return this.editorConfig;
     }
 
-    loadComponentProperties() {
-        if (this.language) this.editorConfig.language = this.language;
+    setCode(code: string): void {
+        this.code = code;
+        this.syncPropertiesAndEditorConfig();
+    }
+
+    setTheme(theme: string): void {
+        this.theme = theme;
+        this.syncPropertiesAndEditorConfig();
+    }
+
+    setLanguageId(languageId: string): void {
+        this.languageId = languageId;
+        this.syncPropertiesAndEditorConfig();
+    }
+
+    syncPropertiesAndEditorConfig() {
+        if (this.languageId) this.editorConfig.languageId = this.languageId;
         if (this.code) this.editorConfig.code = this.code;
         if (this.theme) this.editorConfig.theme = this.theme;
-        if (this.readOnly) this.editorConfig.readOnly = this.readOnly;
+        if (this.readOnly === true) this.editorConfig.readOnly = this.readOnly;
+    }
+
+    startEditor() {
+        this.editor = monaco.editor.create(this.container.value!);
+        this.updateEditor();
+
+        this.editor.getModel()!.onDidChangeContent(() => {
+            this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+        });
+
+        this.registerListeners();
+    }
+
+    updateEditor() {
+        const options = this.editorConfig.buildConf() as monaco.editor.IStandaloneEditorConstructionOptions;
+        console.log(this.editorConfig);
+        console.log(options);
+        this.editor?.updateOptions(options);
+
+        const currentModel = this.editor?.getModel();
+        if (currentModel) {
+            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
+            this.editor?.setValue(this.editorConfig.code);
+        }
     }
 
     firstUpdated() {
-        this.loadComponentProperties();
+        this.syncPropertiesAndEditorConfig();
 
-        this.editor = monaco.editor.create(this.container.value!, this.editorConfig.buildConf() as monaco.editor.IStandaloneEditorConstructionOptions);
-        this.editor.getModel()!.onDidChangeContent(() => {
-            this.dispatchEvent(new CustomEvent('change', { detail: {} }));
-        });
-        this.registerListeners();
+        this.startEditor();
     }
 
     registerListeners() {

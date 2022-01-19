@@ -16,8 +16,15 @@
 </head>
 
 <body>
-    <moned-lc language="javascript" theme="vs-dark" code="console.log('Hello world!)');">
-    </moned-lc>
+    <moned-lc language="javascript" theme="vs-dark" delayedStart="true"
+        code="console.log('Hello world!)');"
+        secure="true" wsPort="3000" wsPath="lsp" />
+    <script type="module">
+        let monedLC = document.querySelector('moned-lc');
+
+        monedLC.code = 'Tester';
+        monedLC.startEditor();
+    </script>
 </body>
 
 </html>
