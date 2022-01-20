@@ -3,7 +3,6 @@ import path from 'path';
 import typescript from '@rollup/plugin-typescript';
 
 const resolvePath = (str: string) => path.resolve(__dirname, str);
-const vsPrefix = 'monaco-editor/esm/vs';
 
 export default defineConfig({
     build: {
@@ -14,11 +13,12 @@ export default defineConfig({
             formats: ['es']
         },
         rollupOptions: {
+            external: ['vscode', 'monaco', 'monaco-editor'],
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-full',
                 exports: 'named',
-                sourcemap: true,
+                sourcemap: true
             },
             plugins: [
                 typescript({

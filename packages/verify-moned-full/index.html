@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monaco Editor Full</title>
-    <script type="module" src="/src/main.ts"></script>
+    <title>Monaco Editor Base</title>
     <style>
         body {
             padding: 5px;
@@ -16,7 +15,11 @@
 </head>
 
 <body>
-    <moned-full languageId="javascript" theme="vs-dark" code="console.log('Hello world!');" />
+    <script type="module">
+        import { CodeEditorFullImpl } from "moned-full";
+    </script>
+    <moned-full language="javascript" theme="vs-dark" code="console.log('Hello world!');">
+    </moned-full>
 </body>
 
 </html>

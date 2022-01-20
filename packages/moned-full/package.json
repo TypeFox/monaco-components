@@ -9,7 +9,6 @@
   "exports": {
     ".": {
       "import": "./dist/main.es.js",
-      "require": "./dist/main.umd.js",
       "types": "./dist/main.d.ts"
     }
   },
@@ -24,7 +23,8 @@
   "dependencies": {
     "lit": "^2.1.1",
     "monaco-editor": "^0.31.1",
-    "moned-base": "../moned-base"
+    "moned-base": "../moned-base",
+    "@monaco-editor/loader": "^1.2.0"
   },
   "devDependencies": {
     "tslib": "^2.3.1"

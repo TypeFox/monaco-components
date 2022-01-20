@@ -3,32 +3,9 @@ import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 import * as monaco from 'monaco-editor';
-
 import styles from 'monaco-editor/min/vs/editor/editor.main.css';
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
-import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
-import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
-import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
-import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-(self as monaco.Window).MonacoEnvironment = {
-
-    getWorker: (_: string, label: string) => {
-        if (label === 'json') {
-            return new jsonWorker();
-        }
-        if (label === 'css' || label === 'scss' || label === 'less') {
-            return new cssWorker();
-        }
-        if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return new htmlWorker();
-        }
-        if (label === 'typescript' || label === 'javascript') {
-            return new tsWorker();
-        }
-        return new editorWorker();
-    },
-};
+import loader from '@monaco-editor/loader';
 
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 
@@ -51,8 +28,12 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     @property() theme?;
     @property({ type: Boolean }) readOnly?;
 
+    private globalMonaco = monaco;
+
     constructor() {
         super();
+        //new MonacoWorker();
+
         this.editorConfig = new DefaultCodeEditorConfig();
 
         // set proper defaults based on the default editor config
@@ -63,23 +44,23 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     }
 
     static override styles = css`
-        :host {
-        --editor-width: 100%;
-        --editor-height: 100vh;
-        }
-        main {
-        width: var(--editor-width);
-        height: var(--editor-height);
-        }
-    `;
+:host {
+--editor-width: 100%;
+--editor-height: 100vh;
+}
+main {
+width: var(--editor-width);
+height: var(--editor-height);
+}
+`;
 
     override render() {
         return html`
-          <style>
-            ${styles}
-          </style>
-          <main ${ref(this.container)}></main>
-        `;
+<style>
+${styles}
+</style>
+<main ${ref(this.container)}></main>
+`;
     }
 
     getCodeEditorType(): string {
@@ -123,23 +104,28 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     }
 
     startEditor() {
-        this.editor = monaco.editor.create(this.container.value!);
-        this.updateEditor();
+        // this allows "hack" allows to use node_modules monaco
+        // @ts-ignore
+        loader.init({ monaco }).then(result => {
+            this.globalMonaco = result;
+            this.editor = result.editor.create(this.container.value!);
+            this.updateEditor();
 
-        this.editor.getModel()!.onDidChangeContent(() => {
-            this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+            this.editor.getModel()!.onDidChangeContent(() => {
+                this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+            });
+
+            this.registerListeners();
         });
-
-        this.registerListeners();
     }
 
-    updateEditor() {
+    private updateEditor() {
         const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
         this.editor?.updateOptions(options);
 
         const currentModel = this.editor?.getModel();
         if (currentModel) {
-            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
+            this.globalMonaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
             this.editor?.setValue(this.editorConfig.code);
         }
     }
@@ -154,7 +140,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         window
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', () => {
-                monaco.editor.setTheme(this.editorConfig.theme);
+                this.globalMonaco.editor.setTheme(this.editorConfig.theme);
             });
     }
 }

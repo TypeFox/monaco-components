@@ -1,0 +1,16 @@
+{
+  "name": "verify-moned-full",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "index.html",
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "dev": "vite",
+    "lint": "eslint src",
+    "build": "npm run clean && vite build "
+  },
+  "dependencies": {
+    "moned-full": "../moned-full"
+  }
+}

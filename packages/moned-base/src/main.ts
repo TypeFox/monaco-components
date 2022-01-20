@@ -49,6 +49,4 @@ export interface CodeEditor {
 
     startEditor(): void;
 
-    updateEditor(): void;
-
 }

@@ -11,6 +11,7 @@ export default defineConfig({
             entry: resolvePath('src/main.ts'),
             name: 'moned-base',
             fileName: (format) => `main.${format}.js`,
+            formats: ['es']
         },
         rollupOptions: {
             output: {

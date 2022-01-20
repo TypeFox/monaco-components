@@ -64,6 +64,8 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     @property({ type: Number }) wsPort;
     @property() wsPath;
 
+    private globalMonaco = monaco;
+
     constructor() {
         super();
         this.editorConfig = new DefaultMonedLCCodeEditorConfig();
@@ -157,19 +159,19 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         this.languageId = languageId;
         this.syncPropertiesAndEditorConfig();
 
-        monaco.languages.register({ id: this.editorConfig.languageId });
-        monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
+        this.globalMonaco.languages.register({ id: this.editorConfig.languageId });
+        this.globalMonaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
     }
 
     registerEditorTheme(themeName: string, themeData: monaco.editor.IStandaloneThemeData) {
         this.theme = themeName;
         this.syncPropertiesAndEditorConfig();
 
-        monaco.editor.defineTheme(this.editorConfig.theme, themeData);
+        this.globalMonaco.editor.defineTheme(this.editorConfig.theme, themeData);
     }
 
     startEditor() {
-        this.editor = monaco.editor.create(this.container.value!);
+        this.editor = this.globalMonaco.editor.create(this.container.value!);
         this.updateEditor();
 
         this.monacoLanguageClientWrapper.installMonaco()
@@ -182,7 +184,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         this.registerListeners();
     }
 
-    updateEditor() {
+    private updateEditor() {
         const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
         console.log(this.editorConfig);
         console.log(options);
@@ -190,7 +192,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
 
         const currentModel = this.editor?.getModel();
         if (currentModel) {
-            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
+            this.globalMonaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
             this.editor?.setValue(this.editorConfig.code);
         }
     }
@@ -207,7 +209,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         window
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', () => {
-                monaco.editor.setTheme(this.editorConfig.theme);
+                this.globalMonaco.editor.setTheme(this.editorConfig.theme);
             });
     }
 }
