@@ -2,7 +2,6 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-// -- Monaco Editor Imports --
 import * as monaco from 'monaco-editor';
 
 import styles from 'monaco-editor/min/vs/editor/editor.main.css';
@@ -14,7 +13,7 @@ import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker'
 
 (self as monaco.Window).MonacoEnvironment = {
 
-    getWorker: (label: string) => {
+    getWorker: (_: string, label: string) => {
         if (label === 'json') {
             return new jsonWorker();
         }
@@ -135,9 +134,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     }
 
     updateEditor() {
-        const options = this.editorConfig.buildConf() as monaco.editor.IStandaloneEditorConstructionOptions;
-        console.log(this.editorConfig);
-        console.log(options);
+        const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
         this.editor?.updateOptions(options);
 
         const currentModel = this.editor?.getModel();

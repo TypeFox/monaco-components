@@ -183,7 +183,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     }
 
     updateEditor() {
-        const options = this.editorConfig.buildConf() as monaco.editor.IStandaloneEditorConstructionOptions;
+        const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
         console.log(this.editorConfig);
         console.log(options);
         this.editor?.updateOptions(options);

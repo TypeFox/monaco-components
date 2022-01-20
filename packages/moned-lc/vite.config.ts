@@ -18,6 +18,7 @@ export default defineConfig({
             entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'moned-lc',
             fileName: (format) => `main.${format}.js`,
+            formats: ['es']
         },
         rollupOptions: {
             external: ['vscode'],

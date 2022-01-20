@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+      {
+          "type": "pwa-chrome",
+          "request": "launch",
+          "name": "Launch Chrome (moned-base)",
+          "url": "http://localhost:20001",
+          "webRoot": "${workspaceFolder}/packages/moned-base"
+      },
+      {
+        "type": "pwa-chrome",
+        "request": "launch",
+        "name": "Launch Chrome (moned-full)",
+        "url": "http://localhost:20002",
+        "webRoot": "${workspaceFolder}/packages/moned-full"
+      },
+      {
+        "type": "pwa-chrome",
+        "request": "launch",
+        "name": "Launch Chrome (moned-lc)",
+        "url": "http://localhost:20003",
+        "webRoot": "${workspaceFolder}/packages/moned-lc"
+      }
+    ]
+}

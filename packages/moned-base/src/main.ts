@@ -3,7 +3,8 @@ export type CodeEditorConfig = {
     code: string;
     theme: string
     readOnly: boolean;
-    buildConf(): unknown;
+
+    buildEditorConf(): unknown;
     isDark(): boolean;
 }
 
@@ -14,10 +15,10 @@ export class DefaultCodeEditorConfig implements CodeEditorConfig {
     theme = 'vs-light';
     readOnly = false;
 
-    buildConf() {
+    buildEditorConf() {
         return {
+            language: this.languageId,
             value: this.code,
-            languageId: this.languageId,
             theme: this.theme,
             automaticLayout: true,
             readOnly: this.readOnly
