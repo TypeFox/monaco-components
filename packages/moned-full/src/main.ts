@@ -2,11 +2,10 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import * as monaco from 'monaco-editor';
-import styles from 'monaco-editor/min/vs/editor/editor.main.css';
+//import styles from 'monaco-editor/min/vs/editor/editor.main.css';
+//import * as monaco from 'monaco-editor';
 
-import loader from '@monaco-editor/loader';
-
+import { styles, MonacoWrapper } from 'moned-wrapper';
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 
 export interface CodeEditorFull extends CodeEditor {
@@ -21,19 +20,15 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     private container: Ref<HTMLElement> = createRef();
     private editorConfig: CodeEditorConfig;
 
-    private editor?: monaco.editor.IStandaloneCodeEditor;
+    private monacoWrapper;
 
     @property() languageId?;
     @property() code?;
     @property() theme?;
     @property({ type: Boolean }) readOnly?;
 
-    private globalMonaco = monaco;
-
     constructor() {
         super();
-        //new MonacoWorker();
-
         this.editorConfig = new DefaultCodeEditorConfig();
 
         // set proper defaults based on the default editor config
@@ -41,6 +36,8 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         this.code = this.editorConfig.code;
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
+
+        this.monacoWrapper = new MonacoWrapper();
     }
 
     static override styles = css`
@@ -104,44 +101,33 @@ ${styles}
     }
 
     startEditor() {
-        // this allows "hack" allows to use node_modules monaco
-        // @ts-ignore
-        loader.init({ monaco }).then(result => {
-            this.globalMonaco = result;
-            this.editor = result.editor.create(this.container.value!);
-            this.updateEditor();
+        this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
-            this.editor.getModel()!.onDidChangeContent(() => {
-                this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
-            });
-
-            this.registerListeners();
-        });
+        this.registerListeners();
+        //});
     }
 
-    private updateEditor() {
-        const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
-        this.editor?.updateOptions(options);
-
-        const currentModel = this.editor?.getModel();
-        if (currentModel) {
-            this.globalMonaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
-            this.editor?.setValue(this.editorConfig.code);
-        }
+    updateEditor() {
+        const options = this.editorConfig.buildEditorConf();
+        this.monacoWrapper.updateEditor(options, this.editorConfig.languageId, this.editorConfig.code);
     }
 
     firstUpdated() {
         this.syncPropertiesAndEditorConfig();
 
-        this.startEditor();
+        //this.startEditor();
     }
 
     registerListeners() {
         window
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', () => {
-                this.globalMonaco.editor.setTheme(this.editorConfig.theme);
+                this.monacoWrapper.setTheme(this.editorConfig.theme);
             });
+    }
+
+    redefineWorkers(workerDefinitionFunc: (monWin: unknown) => void) {
+        this.monacoWrapper.redefineWorkers(workerDefinitionFunc);
     }
 }
 

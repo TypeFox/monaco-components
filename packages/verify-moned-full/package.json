@@ -8,7 +8,7 @@
     "clean": "rimraf ./dist",
     "dev": "vite",
     "lint": "eslint src",
-    "build": "npm run clean && vite build "
+    "build": "npm run clean && vite build"
   },
   "dependencies": {
     "moned-full": "../moned-full"
