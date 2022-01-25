@@ -50,3 +50,17 @@ export interface CodeEditor {
     startEditor(): void;
 
 }
+
+export interface MonacoWrapperDef {
+
+    redefineWorkers(basePath: string, workerDefinitionFunc: (basePath: string, monacoWindow: unknown) => void): void;
+
+    updateEditorConfig(editorConfig: CodeEditorConfig): void;
+
+    startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void;
+
+    updateEditor(): void;
+
+    setTheme(theme: string): void;
+
+}

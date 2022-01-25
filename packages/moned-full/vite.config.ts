@@ -13,12 +13,11 @@ export default defineConfig({
             formats: ['es']
         },
         rollupOptions: {
-            external: ['vscode', 'monaco', 'monaco-editor'],
+            //external: ['vscode', 'monaco', 'monaco-editor'],
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-full',
-                exports: 'named',
-                sourcemap: true
+                exports: 'named'
             },
             plugins: [
                 typescript({

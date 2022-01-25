@@ -1,10 +1,10 @@
-import editorWorker from '/src/moned-wrapper/assets/editor.worker.43309ac9.js?worker';
-import jsonWorker from '/src/moned-wrapper/assets/json.worker.66c12891.js?worker';
-import cssWorker from '/src/moned-wrapper/assets/css.worker.5157db2f.js?worker';
-import htmlWorker from '/src/moned-wrapper/assets/html.worker.3f2697f1.js?worker';
-import tsWorker from '/src/moned-wrapper/assets/ts.worker.d75e32f4.js?worker';
+import editorWorker from './assets/editor.worker.43309ac9.js?worker';
+import jsonWorker from './assets/json.worker.66c12891.js?worker';
+import cssWorker from './assets/css.worker.5157db2f.js?worker';
+import htmlWorker from './assets/html.worker.3f2697f1.js?worker';
+import tsWorker from './assets/ts.worker.d75e32f4.js?worker';
 
-export default function defineWorkers(monWin) {
+export default function defineWorkers(_basePath, monWin) {
     if (!monWin) return;
 
     monWin.MonacoEnvironment = {

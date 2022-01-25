@@ -23,7 +23,7 @@
   "dependencies": {
     "lit": "^2.1.1",
     "moned-base": "../moned-base",
-    "moned-wrapper": "../moned-wrapper"
+    "monaco-editor": "^0.31.1"
   },
   "devDependencies": {
     "tslib": "^2.3.1"

@@ -17,8 +17,7 @@ export default defineConfig({
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-base',
-                exports: 'named',
-                sourcemap: true
+                exports: 'named'
             },
             plugins: [
                 typescript({

@@ -8,8 +8,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-function baseWorkerDefinition(monWin: monaco.Window) {
-    console.log(monWin);
+function baseWorkerDefinition(_basePath: string, monWin: monaco.Window) {
     if (!monWin) return;
 
     monWin.MonacoEnvironment = {
@@ -29,23 +28,30 @@ function baseWorkerDefinition(monWin: monaco.Window) {
             return new editorWorker();
         },
     };
-
-    console.log(monWin.MonacoEnvironment);
 }
 
-export class MonacoWrapper {
+import { CodeEditorConfig, MonacoWrapperDef } from 'moned-base';
+
+export class MonacoWrapper implements MonacoWrapperDef {
 
     private monWin: monaco.Window;
 
     private editor?: monaco.editor.IStandaloneCodeEditor;
 
-    constructor() {
+    private editorConfig: CodeEditorConfig;
+
+    constructor(editorConfig: CodeEditorConfig) {
         this.monWin = self as monaco.Window;
-        this.redefineWorkers(baseWorkerDefinition);
+        this.editorConfig = editorConfig;
+        this.redefineWorkers('', baseWorkerDefinition);
     }
 
-    redefineWorkers(workerDefinitionFunc: (monWin: monaco.Window) => void) {
-        workerDefinitionFunc(this.monWin);
+    redefineWorkers(basePath: string, workerDefinitionFunc: (basePath: string, monWin: monaco.Window) => void) {
+        workerDefinitionFunc(basePath, this.monWin);
+    }
+
+    updateEditorConfig(editorConfig: CodeEditorConfig) {
+        this.editorConfig = editorConfig;
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
@@ -57,18 +63,17 @@ export class MonacoWrapper {
                 dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
             }
         });
-        //this.registerListeners();
     }
 
-    updateEditor(options: unknown, languageId: string, code: string) {
-        //const options = this.editorConfig.buildEditorConf();
+    updateEditor() {
+        const options = this.editorConfig.buildEditorConf();
         this.editor?.updateOptions(options as monaco.editor.IStandaloneEditorConstructionOptions);
 
         const currentModel = this.editor?.getModel();
-        if (currentModel && currentModel.getLanguageId() !== languageId) {
-            monaco.editor.setModelLanguage(currentModel, languageId);
-            this.editor?.setValue(code);
+        if (currentModel && currentModel.getLanguageId() !== this.editorConfig.languageId) {
+            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
         }
+        this.editor?.setValue(this.editorConfig.code);
     }
 
     setTheme(theme: string) {

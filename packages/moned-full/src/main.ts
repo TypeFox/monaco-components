@@ -5,7 +5,7 @@ import { createRef, Ref, ref } from 'lit/directives/ref.js';
 //import styles from 'monaco-editor/min/vs/editor/editor.main.css';
 //import * as monaco from 'monaco-editor';
 
-import { styles, MonacoWrapper } from 'moned-wrapper';
+import { styles, MonacoWrapper } from './wrapper';
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 
 export interface CodeEditorFull extends CodeEditor {
@@ -37,7 +37,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
 
-        this.monacoWrapper = new MonacoWrapper();
+        this.monacoWrapper = new MonacoWrapper(this.editorConfig);
     }
 
     static override styles = css`
@@ -101,15 +101,14 @@ ${styles}
     }
 
     startEditor() {
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
         this.registerListeners();
-        //});
     }
 
     updateEditor() {
-        const options = this.editorConfig.buildEditorConf();
-        this.monacoWrapper.updateEditor(options, this.editorConfig.languageId, this.editorConfig.code);
+        this.monacoWrapper.updateEditor();
     }
 
     firstUpdated() {
@@ -126,8 +125,8 @@ ${styles}
             });
     }
 
-    redefineWorkers(workerDefinitionFunc: (monWin: unknown) => void) {
-        this.monacoWrapper.redefineWorkers(workerDefinitionFunc);
+    redefineWorkers(basePath: string, workerDefinitionFunc: (monWin: unknown) => void) {
+        this.monacoWrapper.redefineWorkers(basePath, workerDefinitionFunc);
     }
 }
 

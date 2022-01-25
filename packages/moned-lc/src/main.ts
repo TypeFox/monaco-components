@@ -2,17 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-// Monaco Editor Imports
-import * as monaco from 'monaco-editor-core';
-import styles from 'monaco-editor-core/min/vs/editor/editor.main.css';
-import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker';
-
-(self as monaco.Window).MonacoEnvironment = {
-    getWorker: () => new editorWorker()
-};
-
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
-import { MonacoLanguageClientWrapper } from './lcwrapper';
+import { monaco, styles, MonacoLanguageClientWrapper } from './wrapper';
 
 export type WebSocketConf = {
     secured: boolean;
@@ -51,8 +42,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     private container: Ref<HTMLElement> = createRef();
     private editorConfig: MonedLCCodeEditorConfig;
 
-    private editor?: monaco.editor.IStandaloneCodeEditor;
-    private monacoLanguageClientWrapper: MonacoLanguageClientWrapper;
+    private monacoWrapper;
 
     @property() languageId?;
     @property() code?;
@@ -64,12 +54,9 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     @property({ type: Number }) wsPort;
     @property() wsPath;
 
-    private globalMonaco = monaco;
-
     constructor() {
         super();
         this.editorConfig = new DefaultMonedLCCodeEditorConfig();
-        this.monacoLanguageClientWrapper = new MonacoLanguageClientWrapper();
 
         // set proper defaults based on the default editor config
         this.languageId = this.editorConfig.languageId;
@@ -82,6 +69,8 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         this.wsHost = this.editorConfig.webSocket.host;
         this.wsPort = this.editorConfig.webSocket.port;
         this.wsPath = this.editorConfig.webSocket.path;
+
+        this.monacoWrapper = new MonacoLanguageClientWrapper(this.editorConfig);
     }
 
     static override styles = css`
@@ -158,43 +147,27 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
     registerMonarchTokensProvider(languageId: string, languageDef: monaco.languages.IMonarchLanguage) {
         this.languageId = languageId;
         this.syncPropertiesAndEditorConfig();
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
 
-        this.globalMonaco.languages.register({ id: this.editorConfig.languageId });
-        this.globalMonaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
+        this.monacoWrapper.registerMonarchTokensProvider(languageDef);
     }
 
     registerEditorTheme(themeName: string, themeData: monaco.editor.IStandaloneThemeData) {
         this.theme = themeName;
         this.syncPropertiesAndEditorConfig();
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
 
-        this.globalMonaco.editor.defineTheme(this.editorConfig.theme, themeData);
+        this.monacoWrapper.registerEditorTheme(themeData);
     }
 
     startEditor() {
-        this.editor = this.globalMonaco.editor.create(this.container.value!);
-        this.updateEditor();
-
-        this.monacoLanguageClientWrapper.installMonaco()
-            .establishWebSocket(this.editorConfig.webSocket);
-
-        this.editor.getModel()!.onDidChangeContent(() => {
-            this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
-        });
+        this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
         this.registerListeners();
     }
 
-    private updateEditor() {
-        const options = this.editorConfig.buildEditorConf() as monaco.editor.IStandaloneEditorConstructionOptions;
-        console.log(this.editorConfig);
-        console.log(options);
-        this.editor?.updateOptions(options);
-
-        const currentModel = this.editor?.getModel();
-        if (currentModel) {
-            this.globalMonaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
-            this.editor?.setValue(this.editorConfig.code);
-        }
+    updateEditor() {
+        this.monacoWrapper.updateEditor();
     }
 
     firstUpdated() {
@@ -209,7 +182,7 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
         window
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', () => {
-                this.globalMonaco.editor.setTheme(this.editorConfig.theme);
+                this.monacoWrapper.setTheme(this.editorConfig.theme);
             });
     }
 }
