@@ -1,5 +1,5 @@
 {
-  "name": "verify-moned-full",
+  "name": "verify-moned-lc",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,12 +9,12 @@
     "dev": "vite",
     "lint": "eslint src",
     "build": "npm run clean && echo 'Nothing to build!'",
-    "update-verify": "cp-cli ../moned-full/dist ./verify-direct/moned-full",
-    "clean-verify": "rimraf ./verify-direct/moned-full",
+    "update-verify": "cp-cli ../moned-lc/dist ./verify-direct/moned-lc",
+    "clean-verify": "rimraf ./verify-direct/moned-lc",
     "verify": "npm run clean-verify && npm run update-verify && http-server ./verify-direct"
   },
   "dependencies": {
-    "moned-full": "../moned-full"
+    "moned-lc": "../moned-lc"
   },
   "devDependencies": {
     "http-server": "14.1.0",

@@ -37,7 +37,7 @@ export interface CodeEditorLanguageClient extends CodeEditor {
 }
 
 @customElement('moned-lc')
-export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient {
+export class CodeEditorLanguageClientImpl extends LitElement implements CodeEditorLanguageClient {
 
     private container: Ref<HTMLElement> = createRef();
     private editorConfig: MonedLCCodeEditorConfig;
@@ -185,10 +185,14 @@ export class CodeEditorLC extends LitElement implements CodeEditorLanguageClient
                 this.monacoWrapper.setTheme(this.editorConfig.theme);
             });
     }
+
+    redefineWorkers(basePath: string, workerDefinitionFunc: (monWin: unknown) => void) {
+        this.monacoWrapper.redefineWorkers(basePath, workerDefinitionFunc);
+    }
 }
 
 declare global {
     interface HTMLElementTagNameMap {
-        'moned-lc': CodeEditorLC;
+        'moned-lc': CodeEditorLanguageClientImpl;
     }
 }

@@ -21,7 +21,6 @@ export default defineConfig({
             formats: ['es']
         },
         rollupOptions: {
-            external: ['vscode'],
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-lc',
@@ -33,11 +32,11 @@ export default defineConfig({
             },
             plugins: [
                 typescript({
-                    'target': 'esnext',
-                    'rootDir': resolvePath('./src'),
-                    'declaration': true,
-                    'declarationDir': resolvePath('./dist'),
-                    'sourceMap': true,
+                    target: 'esnext',
+                    rootDir: resolvePath('./src'),
+                    declaration: true,
+                    declarationDir: resolvePath('./dist'),
+                    sourceMap: true,
                     exclude: resolvePath('./node_modules'),
                     allowSyntheticDefaultImports: true
                 })

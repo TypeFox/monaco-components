@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor Base</title>
+    <style>
+        body {
+            padding: 5px;
+            width: 100%;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="module">
+        import { CodeEditorLanguageClientImpl } from "moned-lc";
+    </script>
+    <moned-lc language="javascript" theme="vs-dark" delayedStart="true"
+        code="console.log('Hello world!)');"
+        secure="true" wsPort="3000" wsPath="lsp" />
+    <script type="module">
+        let monedLC = document.querySelector('moned-lc');
+
+        import defineWorkers from '../moned-lc/dist/worker-vite.js';
+        monedLC.redefineWorkers('', defineWorkers);
+
+        monedLC.startEditor();
+        monedLC.setCode('console.log("Hello World LC!");');
+        monedLC.updateEditor();
+    </script>
+</body>
+
+</html>
