@@ -8,7 +8,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-function baseWorkerDefinition(_basePath: string, monWin: monaco.Window) {
+function baseWorkerDefinition(monWin: monaco.Window) {
     if (!monWin) return;
 
     monWin.MonacoEnvironment = {
@@ -43,11 +43,17 @@ export class MonacoWrapper implements MonacoWrapperDef {
     constructor(editorConfig: CodeEditorConfig) {
         this.monWin = self as monaco.Window;
         this.editorConfig = editorConfig;
-        this.redefineWorkers('', baseWorkerDefinition);
+        baseWorkerDefinition(this.monWin);
     }
 
-    redefineWorkers(basePath: string, workerDefinitionFunc: (basePath: string, monWin: monaco.Window) => void) {
-        workerDefinitionFunc(basePath, this.monWin);
+    redefineWorkersWithFunctionName(workerDefinitionFuncName: string, basePath?: string) {
+        const workerDefinitionFunc = new Function(workerDefinitionFuncName);
+        console.log(basePath + ' ' + workerDefinitionFunc);
+        //this.monWin.MonacoEnvironment.defineWorker(basePath ? basePath : '', this.monWin);
+    }
+
+    redefineWorkersWithFunction(workerDefinitionFunc: (basePath: string, monWin: monaco.Window) => void, basePath?: string) {
+        workerDefinitionFunc(basePath ? basePath : '', this.monWin);
     }
 
     updateEditorConfig(editorConfig: CodeEditorConfig) {
@@ -56,7 +62,7 @@ export class MonacoWrapper implements MonacoWrapperDef {
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         this.editor = monaco.editor.create(container!);
-        //this.updateEditor();
+        this.updateEditor();
 
         this.editor.getModel()!.onDidChangeContent(() => {
             if (dispatchEvent) {

@@ -5,7 +5,7 @@ import styles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker';
 
-function baseWorkerDefinition(_basePath: string, monWin: monaco.Window) {
+function baseWorkerDefinition(monWin: monaco.Window) {
     if (!monWin) return;
 
     monWin.MonacoEnvironment = {
@@ -33,12 +33,8 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
 
     constructor(editorConfig: MonedLCCodeEditorConfig) {
         this.monWin = self as monaco.Window;
-        this.redefineWorkers('', baseWorkerDefinition);
         this.editorConfig = editorConfig;
-    }
-
-    redefineWorkers(basePath: string, workerDefinitionFunc: (basePath: string, monWin: monaco.Window) => void) {
-        workerDefinitionFunc(basePath, this.monWin);
+        baseWorkerDefinition(this.monWin);
     }
 
     updateEditorConfig(editorConfig: MonedLCCodeEditorConfig) {
@@ -47,10 +43,10 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         this.editor = monaco.editor.create(container!);
-        //this.updateEditor();
+        this.updateEditor();
 
-        this.installMonaco()
-            .establishWebSocket(this.editorConfig.webSocket);
+        this.installMonaco();
+        this.establishWebSocket(this.editorConfig.webSocket);
 
         this.editor.getModel()!.onDidChangeContent(() => {
             if (dispatchEvent) {
@@ -86,7 +82,6 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
     installMonaco() {
         // install Monaco language client services
         if (monaco) MonacoServices.install(monaco);
-        return this;
     }
 
     establishWebSocket(websocketConfig: WebSocketConf) {
@@ -115,8 +110,6 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
                 connection.onClose(() => disposable.dispose());
             }
         });
-
-        return this;
     }
 
     private createLanguageClient(connection: MessageConnection): MonacoLanguageClient {

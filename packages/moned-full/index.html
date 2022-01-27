@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Monaco Editor Full</title>
     <script type="module" src="/src/main.ts"></script>
-<!--
-    <link type="text/css" rel="stylesheet" href="/src/moned-wrapper/style.css">
--->
     <style>
         body {
             padding: 5px;
@@ -17,31 +14,6 @@
     </style>
 </head>
 <body>
-<!--
-    <div id="monacoContainer" style="min-height: 600px;"></div>
--->
-    <script type="module">
-        // used faked local copy for verification
-/*
-        import { MonacoWrapper } from '/src/moned-wrapper/main.es.js';
-        const monacoWrapper = new MonacoWrapper();
-
-        import defineWorkers from '/src/moned-wrapper/config.js';
-        monacoWrapper.redefineWorkers(defineWorkers);
-
-        monacoWrapper.startEditor(document.getElementById('monacoContainer'));
-        monacoWrapper.updateEditor({}, 'typescript', 'console.log("Hello World!");');
-*/
-    </script>
     <moned-full languageId="javascript" theme="vs-dark" code="console.log('Hello world!');" />
-    <script type="module">
-        let monedFull = document.querySelector('moned-full');
-
-        //import defineWorkers from '../moned-wrapper/dist/config.js';
-        //monedFull.redefineWorkers(defineWorkers);
-
-        monedFull.startEditor(document.getElementById('monacoContainer'));
-        monedFull.updateEditor({}, 'typescript', 'console.log("Hello World!");');
-    </script>
 </body>
 </html>

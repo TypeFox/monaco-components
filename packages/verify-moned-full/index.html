@@ -17,19 +17,12 @@
 <body>
     <script type="module">
         import { CodeEditorFullImpl } from "moned-full";
-    </script>
-    <moned-full language="javascript" theme="vs-dark" code="console.log('Hello world!');">
-    </moned-full>
-    <script type="module">
-        let monedFull = document.querySelector('moned-full');
-
         import defineWorkers from '../moned-full/dist/worker-vite.js';
-        monedFull.redefineWorkers('', defineWorkers);
-
-        monedFull.startEditor(document.getElementById('monacoContainer'));
-        monedFull.updateEditor({}, 'typescript', 'console.log("Hello World 2!");');
+        defineWorkers(MonacoEnvironment);
     </script>
-
+    <moned-full language="javascript" theme="vs-dark"
+        code="console.log('Hello world!');">
+    </moned-full>
 </body>
 
 </html>

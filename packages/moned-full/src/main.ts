@@ -2,9 +2,6 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-//import styles from 'monaco-editor/min/vs/editor/editor.main.css';
-//import * as monaco from 'monaco-editor';
-
 import { styles, MonacoWrapper } from './wrapper';
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 
@@ -26,6 +23,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     @property() code?;
     @property() theme?;
     @property({ type: Boolean }) readOnly?;
+    @property({ type: Boolean }) delayedStart?;
 
     constructor() {
         super();
@@ -36,6 +34,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         this.code = this.editorConfig.code;
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
+        this.delayedStart = this.editorConfig.delayedStart;
 
         this.monacoWrapper = new MonacoWrapper(this.editorConfig);
     }
@@ -71,6 +70,7 @@ ${styles}
             this.code = this.editorConfig.code;
             this.theme = this.editorConfig.theme;
             this.readOnly = this.editorConfig.readOnly;
+            this.delayedStart = this.editorConfig.delayedStart;
         }
     }
 
@@ -93,11 +93,17 @@ ${styles}
         this.syncPropertiesAndEditorConfig();
     }
 
+    setDelayedStart(delayedStart: boolean) {
+        this.delayedStart = delayedStart;
+        this.syncPropertiesAndEditorConfig();
+    }
+
     syncPropertiesAndEditorConfig() {
         if (this.languageId) this.editorConfig.languageId = this.languageId;
         if (this.code) this.editorConfig.code = this.code;
         if (this.theme) this.editorConfig.theme = this.theme;
-        if (this.readOnly === true) this.editorConfig.readOnly = this.readOnly;
+        this.editorConfig.readOnly = this.readOnly === true;
+        this.editorConfig.delayedStart = this.delayedStart === true;
     }
 
     startEditor() {
@@ -114,7 +120,9 @@ ${styles}
     firstUpdated() {
         this.syncPropertiesAndEditorConfig();
 
-        //this.startEditor();
+        if (!this.editorConfig.delayedStart) {
+            this.startEditor();
+        }
     }
 
     registerListeners() {
@@ -125,9 +133,6 @@ ${styles}
             });
     }
 
-    redefineWorkers(basePath: string, workerDefinitionFunc: (monWin: unknown) => void) {
-        this.monacoWrapper.redefineWorkers(basePath, workerDefinitionFunc);
-    }
 }
 
 declare global {

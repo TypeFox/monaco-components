@@ -14,18 +14,15 @@ export type WebSocketConf = {
 
 export type MonedLCCodeEditorConfig = CodeEditorConfig & {
     webSocket: WebSocketConf
-    delayedStart: boolean
 }
 
 export class DefaultMonedLCCodeEditorConfig extends DefaultCodeEditorConfig implements MonedLCCodeEditorConfig {
-
     webSocket = {
         secured: false,
         host: 'localhost',
         port: 8080,
         path: ''
     };
-    delayedStart = false;
 }
 
 export interface CodeEditorLanguageClient extends CodeEditor {
@@ -132,12 +129,17 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         this.syncPropertiesAndEditorConfig();
     }
 
+    setDelayedStart(delayedStart: boolean) {
+        this.delayedStart = delayedStart;
+        this.syncPropertiesAndEditorConfig();
+    }
+
     syncPropertiesAndEditorConfig() {
         if (this.languageId) this.editorConfig.languageId = this.languageId;
         if (this.code) this.editorConfig.code = this.code;
         if (this.theme) this.editorConfig.theme = this.theme;
         if (this.readOnly === true) this.editorConfig.readOnly = this.readOnly;
-        if (this.delayedStart === true) this.editorConfig.delayedStart = this.delayedStart;
+        this.editorConfig.delayedStart = this.delayedStart === true;
         if (this.wsSecured === true) this.editorConfig.webSocket.secured = this.wsSecured;
         this.editorConfig.webSocket.host = this.wsHost;
         this.editorConfig.webSocket.port = this.wsPort;
@@ -186,9 +188,6 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
             });
     }
 
-    redefineWorkers(basePath: string, workerDefinitionFunc: (monWin: unknown) => void) {
-        this.monacoWrapper.redefineWorkers(basePath, workerDefinitionFunc);
-    }
 }
 
 declare global {
