@@ -19,11 +19,10 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
     private monacoWrapper;
 
-    @property() languageId?;
-    @property() code?;
-    @property() theme?;
-    @property({ type: Boolean }) readOnly?;
-    @property({ type: Boolean }) delayedStart?;
+    @property({ reflect: true }) languageId?;
+    @property({ reflect: true }) code?;
+    @property({ reflect: true }) theme?;
+    @property({ type: Boolean, reflect: true }) readOnly?;
 
     constructor() {
         super();
@@ -34,7 +33,6 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
         this.code = this.editorConfig.code;
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
-        this.delayedStart = this.editorConfig.delayedStart;
 
         this.monacoWrapper = new MonacoWrapper(this.editorConfig);
     }
@@ -70,7 +68,6 @@ ${styles}
             this.code = this.editorConfig.code;
             this.theme = this.editorConfig.theme;
             this.readOnly = this.editorConfig.readOnly;
-            this.delayedStart = this.editorConfig.delayedStart;
         }
     }
 
@@ -80,33 +77,25 @@ ${styles}
 
     setCode(code: string): void {
         this.code = code;
-        this.syncPropertiesAndEditorConfig();
     }
 
     setTheme(theme: string): void {
         this.theme = theme;
-        this.syncPropertiesAndEditorConfig();
     }
 
     setLanguageId(languageId: string): void {
         this.languageId = languageId;
-        this.syncPropertiesAndEditorConfig();
     }
 
-    setDelayedStart(delayedStart: boolean) {
-        this.delayedStart = delayedStart;
-        this.syncPropertiesAndEditorConfig();
-    }
-
-    syncPropertiesAndEditorConfig() {
+    private syncPropertiesAndEditorConfig() {
         if (this.languageId) this.editorConfig.languageId = this.languageId;
         if (this.code) this.editorConfig.code = this.code;
         if (this.theme) this.editorConfig.theme = this.theme;
         this.editorConfig.readOnly = this.readOnly === true;
-        this.editorConfig.delayedStart = this.delayedStart === true;
     }
 
-    startEditor() {
+    private startEditor() {
+        this.syncPropertiesAndEditorConfig();
         this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
@@ -114,15 +103,13 @@ ${styles}
     }
 
     updateEditor() {
+        this.syncPropertiesAndEditorConfig();
+        this.updateCodeEditorConfig(this.editorConfig);
         this.monacoWrapper.updateEditor();
     }
 
     firstUpdated() {
-        this.syncPropertiesAndEditorConfig();
-
-        if (!this.editorConfig.delayedStart) {
-            this.startEditor();
-        }
+        this.startEditor();
     }
 
     registerListeners() {

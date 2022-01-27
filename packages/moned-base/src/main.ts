@@ -3,7 +3,6 @@ export type CodeEditorConfig = {
     code: string;
     theme: string
     readOnly: boolean;
-    delayedStart: boolean;
 
     buildEditorConf(): unknown;
     isDark(): boolean;
@@ -15,7 +14,6 @@ export class DefaultCodeEditorConfig implements CodeEditorConfig {
     languageId = 'javascript';
     theme = 'vs-light';
     readOnly = false;
-    delayedStart = false;
 
     buildEditorConf() {
         return {
@@ -47,10 +45,7 @@ export interface CodeEditor {
 
     setLanguageId(languageId: string): void;
 
-    syncPropertiesAndEditorConfig(): void;
-
-    startEditor(): void;
-
+    updateEditor(): void;
 }
 
 export interface MonacoWrapperDef {

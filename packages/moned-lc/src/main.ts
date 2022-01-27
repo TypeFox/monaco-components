@@ -41,15 +41,15 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     private monacoWrapper;
 
-    @property() languageId?;
-    @property() code?;
-    @property() theme?;
-    @property({ type: Boolean }) readOnly?;
-    @property({ type: Boolean }) delayedStart?;
-    @property({ type: Boolean }) wsSecured?;
-    @property() wsHost;
-    @property({ type: Number }) wsPort;
-    @property() wsPath;
+    @property({ reflect: true }) languageId?;
+    @property({ reflect: true }) code?;
+    @property({ reflect: true }) theme?;
+    @property({ type: Boolean, reflect: true }) readOnly?;
+
+    @property({ type: Boolean, reflect: true }) wsSecured?;
+    @property({ reflect: true }) wsHost;
+    @property({ type: Number, reflect: true }) wsPort;
+    @property({ reflect: true }) wsPath;
 
     constructor() {
         super();
@@ -60,7 +60,6 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         this.code = this.editorConfig.code;
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
-        this.delayedStart = this.editorConfig.delayedStart;
 
         this.wsSecured = this.editorConfig.webSocket.secured;
         this.wsHost = this.editorConfig.webSocket.host;
@@ -102,7 +101,6 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         this.code = this.editorConfig.code;
         this.theme = this.editorConfig.theme;
         this.readOnly = this.editorConfig.readOnly;
-        this.delayedStart = this.editorConfig.delayedStart;
 
         this.wsSecured = this.editorConfig.webSocket.secured;
         this.wsHost = this.editorConfig.webSocket.host;
@@ -116,34 +114,38 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     setCode(code: string): void {
         this.code = code;
-        this.syncPropertiesAndEditorConfig();
     }
 
     setTheme(theme: string): void {
         this.theme = theme;
-        this.syncPropertiesAndEditorConfig();
     }
 
     setLanguageId(languageId: string): void {
         this.languageId = languageId;
-        this.syncPropertiesAndEditorConfig();
     }
 
-    setDelayedStart(delayedStart: boolean) {
-        this.delayedStart = delayedStart;
-        this.syncPropertiesAndEditorConfig();
-    }
-
-    syncPropertiesAndEditorConfig() {
+    private syncPropertiesAndEditorConfig() {
         if (this.languageId) this.editorConfig.languageId = this.languageId;
         if (this.code) this.editorConfig.code = this.code;
         if (this.theme) this.editorConfig.theme = this.theme;
         if (this.readOnly === true) this.editorConfig.readOnly = this.readOnly;
-        this.editorConfig.delayedStart = this.delayedStart === true;
         if (this.wsSecured === true) this.editorConfig.webSocket.secured = this.wsSecured;
         this.editorConfig.webSocket.host = this.wsHost;
         this.editorConfig.webSocket.port = this.wsPort;
         this.editorConfig.webSocket.path = this.wsPath;
+    }
+
+    private startEditor() {
+        this.syncPropertiesAndEditorConfig();
+        this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
+
+        this.registerListeners();
+    }
+
+    updateEditor() {
+        this.syncPropertiesAndEditorConfig();
+        this.updateCodeEditorConfig(this.editorConfig);
+        this.monacoWrapper.updateEditor();
     }
 
     registerMonarchTokensProvider(languageId: string, languageDef: monaco.languages.IMonarchLanguage) {
@@ -162,22 +164,8 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         this.monacoWrapper.registerEditorTheme(themeData);
     }
 
-    startEditor() {
-        this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
-
-        this.registerListeners();
-    }
-
-    updateEditor() {
-        this.monacoWrapper.updateEditor();
-    }
-
     firstUpdated() {
-        this.syncPropertiesAndEditorConfig();
-
-        if (!this.editorConfig.delayedStart) {
-            this.startEditor();
-        }
+        this.startEditor();
     }
 
     registerListeners() {

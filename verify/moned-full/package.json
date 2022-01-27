@@ -8,15 +8,15 @@
     "clean": "rimraf ./dist",
     "dev": "vite",
     "lint": "eslint src",
-    "build": "npm run clean && echo 'Nothing to build!'",
-    "update-verify": "cp-cli ../moned-full/dist ./verify-direct/moned-full",
+    "update-verify": "cp-cli ../../packages/moned-full/dist ./verify-direct/moned-full",
     "clean-verify": "rimraf ./verify-direct/moned-full",
     "verify": "npm run clean-verify && npm run update-verify && http-server ./verify-direct"
   },
   "dependencies": {
-    "moned-full": "../moned-full"
+    "moned-full": "../../packages/moned-full"
   },
   "devDependencies": {
+    "vite": "^2.7.13",
     "http-server": "14.1.0",
     "cp-cli": "^2.0.0",
     "rimraf":  "^3.0.2"

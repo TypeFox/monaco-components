@@ -21,7 +21,7 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "lit": "^2.1.1",
+    "lit": "^2.1.2",
     "moned-base": "../moned-base",
     "monaco-editor": "^0.31.1"
   },

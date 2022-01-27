@@ -9,14 +9,15 @@
     "dev": "vite",
     "lint": "eslint src",
     "build": "npm run clean && echo 'Nothing to build!'",
-    "update-verify": "cp-cli ../moned-lc/dist ./verify-direct/moned-lc",
+    "update-verify": "cp-cli ../../packages/moned-lc/dist ./verify-direct/moned-lc",
     "clean-verify": "rimraf ./verify-direct/moned-lc",
     "verify": "npm run clean-verify && npm run update-verify && http-server ./verify-direct"
   },
   "dependencies": {
-    "moned-lc": "../moned-lc"
+    "moned-lc": "../../packages/moned-lc"
   },
   "devDependencies": {
+    "vite": "^2.7.13",
     "http-server": "14.1.0",
     "cp-cli": "^2.0.0",
     "rimraf":  "^3.0.2"

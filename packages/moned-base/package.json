@@ -19,9 +19,5 @@
     "lint": "eslint src",
     "build": "npm run clean && tsc && vite build ",
     "serve": "tsc && vite preview"
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
   }
 }

@@ -49,7 +49,6 @@ export class MonacoWrapper implements MonacoWrapperDef {
     redefineWorkersWithFunctionName(workerDefinitionFuncName: string, basePath?: string) {
         const workerDefinitionFunc = new Function(workerDefinitionFuncName);
         console.log(basePath + ' ' + workerDefinitionFunc);
-        //this.monWin.MonacoEnvironment.defineWorker(basePath ? basePath : '', this.monWin);
     }
 
     redefineWorkersWithFunction(workerDefinitionFunc: (basePath: string, monWin: monaco.Window) => void, basePath?: string) {
