@@ -12,6 +12,7 @@ export default defineConfig({
             fileName: (format) => `main.${format}.js`,
             formats: ['es']
         },
+        cssCodeSplit: false,
         rollupOptions: {
             external: ['vscode'],
             output: {

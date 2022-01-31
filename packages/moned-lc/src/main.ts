@@ -31,6 +31,10 @@ export interface CodeEditorLanguageClient extends CodeEditor {
 
     updateCodeEditorConfig(codeEditorConfig: MonedLCCodeEditorConfig | undefined | null): void;
 
+    registerMonarchTokensProvider(languageId: string, languageDef: unknown): void;
+
+    registerEditorTheme(themeName: string, themeData: unknown): void;
+
 }
 
 @customElement('moned-lc')
@@ -148,20 +152,22 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         this.monacoWrapper.updateEditor();
     }
 
-    registerMonarchTokensProvider(languageId: string, languageDef: monaco.languages.IMonarchLanguage) {
+    registerMonarchTokensProvider(languageId: string, languageDef: unknown) {
         this.languageId = languageId;
         this.syncPropertiesAndEditorConfig();
         this.monacoWrapper.updateEditorConfig(this.editorConfig);
 
-        this.monacoWrapper.registerMonarchTokensProvider(languageDef);
+        // this is a hack and can lead to exceptions
+        this.monacoWrapper.registerMonarchTokensProvider(languageDef as monaco.languages.IMonarchLanguage);
     }
 
-    registerEditorTheme(themeName: string, themeData: monaco.editor.IStandaloneThemeData) {
+    registerEditorTheme(themeName: string, themeData: unknown) {
         this.theme = themeName;
         this.syncPropertiesAndEditorConfig();
         this.monacoWrapper.updateEditorConfig(this.editorConfig);
 
-        this.monacoWrapper.registerEditorTheme(themeData);
+        // this is a hack and can lead to exceptions
+        this.monacoWrapper.registerEditorTheme(themeData as monaco.editor.IStandaloneThemeData);
     }
 
     firstUpdated() {
