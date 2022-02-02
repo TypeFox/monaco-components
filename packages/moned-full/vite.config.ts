@@ -18,7 +18,8 @@ export default defineConfig({
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-full',
-                exports: 'named'
+                exports: 'named',
+                sourcemap: false,
             },
             plugins: [
                 typescript({
@@ -26,7 +27,7 @@ export default defineConfig({
                     rootDir: resolvePath('./src'),
                     declaration: true,
                     declarationDir: resolvePath('./dist'),
-                    sourceMap: true,
+                    sourceMap: false,
                     exclude: resolvePath('./node_modules'),
                     allowSyntheticDefaultImports: true
                 })

@@ -12,9 +12,10 @@
     <script type="module">
         import { CodeEditorFullImpl } from "./moned-full/main.es.js";
         import defineWorkers from './moned-full/worker-direct.js';
-        defineWorkers(MonacoEnvironment, './moned-full');
+        defineWorkers('./moned-full');
     </script>
-    <moned-full language="javascript" theme="vs-dark" code="console.log('Hello world!');">
+    <moned-full language="javascript" theme="vs-dark"
+        code="console.log('Hello world moned-full (HTML)!)');">
     </moned-full>
 </body>
 

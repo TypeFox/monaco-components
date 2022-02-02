@@ -1,9 +1,9 @@
 // Monaco Editor Imports
 import * as monaco from 'monaco-editor-core';
 
-import styles from 'monaco-editor-core/min/vs/editor/editor.main.css';
+import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
-import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker';
+import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
 function baseWorkerDefinition(monWin: monaco.Window) {
     if (!monWin) return;
@@ -140,4 +140,4 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
 
 }
 
-export { monaco, styles, baseWorkerDefinition };
+export { monaco, monacoStyles, baseWorkerDefinition };

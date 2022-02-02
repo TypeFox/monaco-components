@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
-import { monaco, styles, MonacoLanguageClientWrapper } from './wrapper';
+import { monaco, monacoStyles, MonacoLanguageClientWrapper } from './wrapper';
 
 export type WebSocketConf = {
     secured: boolean;
@@ -87,7 +87,10 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
     override render() {
         return html`
           <style>
-            ${styles}
+            ${monacoStyles}
+          </style>
+          <style>
+            ${CodeEditorLanguageClientImpl.styles}
           </style>
           <main ${ref(this.container)}></main>
         `;

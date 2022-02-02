@@ -26,10 +26,10 @@ export default defineConfig({
                 inlineDynamicImports: true,
                 name: 'moned-lc',
                 exports: 'named',
-                sourcemap: true,
+                sourcemap: false,
                 globals: {
                     vscode: 'vscode'
-                }
+                },
             },
             plugins: [
                 typescript({
@@ -37,7 +37,7 @@ export default defineConfig({
                     rootDir: resolvePath('./src'),
                     declaration: true,
                     declarationDir: resolvePath('./dist'),
-                    sourceMap: true,
+                    sourceMap: false,
                     exclude: resolvePath('./node_modules'),
                     allowSyntheticDefaultImports: true
                 })

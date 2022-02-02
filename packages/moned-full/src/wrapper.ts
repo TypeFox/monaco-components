@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor';
 
 import styles from 'monaco-editor/min/vs/editor/editor.main.css';
 
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';
+import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
 import jsonWorker from 'monaco-editor/esm/vs/language/json/json.worker?worker';
 import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';

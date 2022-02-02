@@ -1,7 +1,9 @@
-export default function defineWorkers(monWin, _basePath) {
-    if (!monWin) return;
+export default function defineWorkers(_basePath) {
+    if (!MonacoEnvironment) return;
 
-    monWin.getWorker = function (_, label) {
+    const exisingFunc = MonacoEnvironment.getWorker;
+
+    MonacoEnvironment.getWorker = function (_, label) {
         if (label === 'typescript' || label === 'javascript') {
             return new Worker(_basePath + '/assets/ts.worker.d75e32f4.js');
         }
@@ -14,6 +16,8 @@ export default function defineWorkers(monWin, _basePath) {
         if (label === 'json') {
             return new Worker(_basePath + '/assets/json.worker.66c12891.js');
         }
-        return new Worker(_basePath + '/assets/editor.worker.43309ac9.js');
+        if (exisingFunc) {
+            return exisingFunc(_, label);
+        }
     };
 }
