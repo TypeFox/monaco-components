@@ -5,14 +5,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moned-Full Verify HTML</title>
-    <style>body { padding: 5px; }</style>
 </head>
 
 <body>
+    <div id="container"></div>
     <script type="module">
-        import { CodeEditorFullImpl } from "./moned-full/main.es.js";
+        import "./moned-full/main.es.js";
+        import { WorkerOverride } from "./moned-full/main.es.js";
         import defineWorkers from './moned-full/worker-direct.js';
-        defineWorkers('./moned-full');
+        defineWorkers('./moned-full', WorkerOverride);
     </script>
     <moned-full language="javascript" theme="vs-dark"
         code="console.log('Hello world moned-full (HTML)!)');">

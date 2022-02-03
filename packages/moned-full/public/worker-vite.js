@@ -1,28 +1,24 @@
-import jsonWorker from './assets/json.worker.66c12891.js?worker';
-import cssWorker from './assets/css.worker.5157db2f.js?worker';
-import htmlWorker from './assets/html.worker.3f2697f1.js?worker';
-import tsWorker from './assets/ts.worker.d75e32f4.js?worker';
+import tsWorker from './assets/ts.worker.975a9a7e.js?worker';
+import htmlWorker from './assets/html.worker.9f1e82de.js?worker';
+import cssWorker from './assets/css.worker.143db743.js?worker';
+import jsonWorker from './assets/json.worker.26a385fa.js?worker';
 
-export default function defineWorkers() {
-    if (!MonacoEnvironment) return;
+export default function defineWorkers(wrapper) {
 
-    const exisingFunc = MonacoEnvironment.getWorker;
-
-    MonacoEnvironment.getWorker = function (_, label) {
-        if (label === 'json') {
-            return new jsonWorker();
-        }
-        if (label === 'css' || label === 'scss' || label === 'less') {
-            return new cssWorker();
-        }
-        if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return new htmlWorker();
-        }
-        if (label === 'typescript' || label === 'javascript') {
-            return new tsWorker();
-        }
-        if (exisingFunc) {
-            return exisingFunc(_, label);
-        }
+    wrapper.getTsWorker = function () {
+        return new tsWorker();
     };
+
+    wrapper.getHtmlWorker = function () {
+        return new htmlWorker();
+    };
+
+    wrapper.getCssWorker = function () {
+        return new cssWorker();
+    };
+
+    wrapper.getJsonWorker = function () {
+        return new jsonWorker();
+    };
+
 }

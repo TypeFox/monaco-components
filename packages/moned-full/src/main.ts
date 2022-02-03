@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { styles, MonacoWrapper } from './wrapper';
+import { monacoStyles, MonacoWrapper, WorkerOverride } from './wrapper';
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 
 export interface CodeEditorFull extends CodeEditor {
@@ -38,23 +38,21 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
     }
 
     static override styles = css`
-:host {
---editor-width: 100%;
---editor-height: 100vh;
-}
-main {
-width: var(--editor-width);
-height: var(--editor-height);
-}
-`;
+        :host {
+            --editor-width: 100%;
+            --editor-height: 100vh;
+        }
+        main {
+            width: var(--editor-width);
+            height: var(--editor-height);
+        }
+    `;
 
     override render() {
         return html`
-<style>
-${styles}
-</style>
-<main ${ref(this.container)}></main>
-`;
+        <style>${monacoStyles}</style>
+        <main ${ref(this.container)}></main>
+        `;
     }
 
     getCodeEditorType(): string {
@@ -104,7 +102,7 @@ ${styles}
 
     updateEditor() {
         this.syncPropertiesAndEditorConfig();
-        this.updateCodeEditorConfig(this.editorConfig);
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.updateEditor();
     }
 
@@ -127,3 +125,5 @@ declare global {
         'moned-full': CodeEditorFullImpl;
     }
 }
+
+export { WorkerOverride };

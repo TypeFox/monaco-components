@@ -5,14 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moned-Full Verify Vite</title>
-    <style>body { padding: 5px; }</style>
 </head>
 
 <body>
     <script type="module">
-        import { CodeEditorFullImpl } from "moned-full";
+        import 'moned-full'
+        import { WorkerOverride } from "moned-full";
         import defineWorkers from '../../packages/moned-full/dist/worker-vite.js';
-        defineWorkers();
+        defineWorkers(WorkerOverride);
     </script>
     <moned-full language="javascript" theme="vs-dark"
         code="console.log('Hello verify moned-full!');">

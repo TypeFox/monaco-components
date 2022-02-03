@@ -3,7 +3,7 @@ import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
-import { monaco, monacoStyles, MonacoLanguageClientWrapper } from './wrapper';
+import { monaco, monacoStyles, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
 
 export type WebSocketConf = {
     secured: boolean;
@@ -14,6 +14,8 @@ export type WebSocketConf = {
 
 export type MonedLCCodeEditorConfig = CodeEditorConfig & {
     webSocket: WebSocketConf
+    languageDef: monaco.languages.IMonarchLanguage | undefined;
+    themeData: monaco.editor.IStandaloneThemeData | undefined;
 }
 
 export class DefaultMonedLCCodeEditorConfig extends DefaultCodeEditorConfig implements MonedLCCodeEditorConfig {
@@ -23,6 +25,8 @@ export class DefaultMonedLCCodeEditorConfig extends DefaultCodeEditorConfig impl
         port: 8080,
         path: ''
     };
+    languageDef = undefined;
+    themeData = undefined;
 }
 
 export interface CodeEditorLanguageClient extends CodeEditor {
@@ -86,13 +90,9 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     override render() {
         return html`
-          <style>
-            ${monacoStyles}
-          </style>
-          <style>
-            ${CodeEditorLanguageClientImpl.styles}
-          </style>
-          <main ${ref(this.container)}></main>
+        <style>${monacoStyles}</style>
+        <style>${CodeEditorLanguageClientImpl.styles}</style>
+        <main ${ref(this.container)}></main>
         `;
     }
 
@@ -100,7 +100,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         return 'CodeEditorLanguageClient';
     }
 
-    updateCodeEditorConfig(codeEditorConfig: MonedLCCodeEditorConfig | undefined | null) {
+    updateCodeEditorConfig(codeEditorConfig: MonedLCCodeEditorConfig) {
         if (codeEditorConfig) {
             this.editorConfig = codeEditorConfig;
         }
@@ -144,6 +144,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     private startEditor() {
         this.syncPropertiesAndEditorConfig();
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
         this.registerListeners();
@@ -151,26 +152,18 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     updateEditor() {
         this.syncPropertiesAndEditorConfig();
-        this.updateCodeEditorConfig(this.editorConfig);
+        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.updateEditor();
     }
 
     registerMonarchTokensProvider(languageId: string, languageDef: unknown) {
         this.languageId = languageId;
-        this.syncPropertiesAndEditorConfig();
-        this.monacoWrapper.updateEditorConfig(this.editorConfig);
-
-        // this is a hack and can lead to exceptions
-        this.monacoWrapper.registerMonarchTokensProvider(languageDef as monaco.languages.IMonarchLanguage);
+        this.editorConfig.languageDef = languageDef as monaco.languages.IMonarchLanguage;
     }
 
     registerEditorTheme(themeName: string, themeData: unknown) {
         this.theme = themeName;
-        this.syncPropertiesAndEditorConfig();
-        this.monacoWrapper.updateEditorConfig(this.editorConfig);
-
-        // this is a hack and can lead to exceptions
-        this.monacoWrapper.registerEditorTheme(themeData as monaco.editor.IStandaloneThemeData);
+        this.editorConfig.themeData = themeData as monaco.editor.IStandaloneThemeData;
     }
 
     firstUpdated() {
@@ -192,3 +185,5 @@ declare global {
         'moned-lc': CodeEditorLanguageClientImpl;
     }
 }
+
+export { WorkerOverride };

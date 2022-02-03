@@ -4,7 +4,6 @@ export type CodeEditorConfig = {
     theme: string
     readOnly: boolean;
 
-    buildEditorConf(): unknown;
     isDark(): boolean;
 }
 
@@ -14,16 +13,6 @@ export class DefaultCodeEditorConfig implements CodeEditorConfig {
     languageId = 'javascript';
     theme = 'vs-light';
     readOnly = false;
-
-    buildEditorConf() {
-        return {
-            language: this.languageId,
-            value: this.code,
-            theme: this.theme,
-            automaticLayout: true,
-            readOnly: this.readOnly
-        };
-    }
 
     isDark() {
         return (
@@ -56,6 +45,7 @@ export interface MonacoWrapperDef {
 
     updateEditor(): void;
 
+    // need for direct or event based theme switching
     setTheme(theme: string): void;
 
 }

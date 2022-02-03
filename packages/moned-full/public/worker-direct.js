@@ -1,23 +1,19 @@
-export default function defineWorkers(_basePath) {
-    if (!MonacoEnvironment) return;
+export default function defineWorkers(_basePath, wrapper) {
 
-    const exisingFunc = MonacoEnvironment.getWorker;
-
-    MonacoEnvironment.getWorker = function (_, label) {
-        if (label === 'typescript' || label === 'javascript') {
-            return new Worker(_basePath + '/assets/ts.worker.d75e32f4.js');
-        }
-        if (label === 'html' || label === 'handlebars' || label === 'razor') {
-            return new Worker(_basePath + '/assets/html.worker.3f2697f1.js');
-        }
-        if (label === 'css' || label === 'scss' || label === 'less') {
-            return new Worker(_basePath + '/assets/css.worker.5157db2f.js');
-        }
-        if (label === 'json') {
-            return new Worker(_basePath + '/assets/json.worker.66c12891.js');
-        }
-        if (exisingFunc) {
-            return exisingFunc(_, label);
-        }
+    wrapper.getTsWorker = function () {
+        return new Worker(_basePath + '/assets/ts.worker.975a9a7e.js');
     };
+
+    wrapper.getHtmlWorker = function () {
+        return new Worker(_basePath + '/assets/html.worker.9f1e82de.js');
+    };
+
+    wrapper.getCssWorker = function () {
+        return new Worker(_basePath + '/assets/css.worker.143db743.js');
+    };
+
+    wrapper.getJsonWorker = function () {
+        return new Worker(_basePath + '/assets/json.worker.26a385fa.js');
+    };
+
 }

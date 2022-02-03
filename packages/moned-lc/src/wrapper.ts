@@ -5,16 +5,6 @@ import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
-function baseWorkerDefinition(monWin: monaco.Window) {
-    if (!monWin) return;
-
-    monWin.MonacoEnvironment = {
-        getWorker: (_: string, _label: string) => {
-            return new editorWorker();
-        },
-    };
-}
-
 import { MonacoWrapperDef } from 'moned-base';
 
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
@@ -23,18 +13,22 @@ import normalizeUrl from 'normalize-url';
 
 import { MonedLCCodeEditorConfig, WebSocketConf } from './main';
 
+export class WorkerOverride {
+
+    // static worker load override functions
+    static getEditorWorker() {
+        return new editorWorker();
+    }
+
+}
+
 export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
 
-    private monWin: monaco.Window;
-
     private editor?: monaco.editor.IStandaloneCodeEditor;
-
     private editorConfig: MonedLCCodeEditorConfig;
 
     constructor(editorConfig: MonedLCCodeEditorConfig) {
-        this.monWin = self as monaco.Window;
         this.editorConfig = editorConfig;
-        baseWorkerDefinition(this.monWin);
     }
 
     updateEditorConfig(editorConfig: MonedLCCodeEditorConfig) {
@@ -42,6 +36,7 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+        this.defineMonacoEnvironment();
         this.editor = monaco.editor.create(container!);
         this.updateEditor();
 
@@ -56,27 +51,49 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
     }
 
     updateEditor() {
-        const options = this.editorConfig.buildEditorConf();
-        this.editor?.updateOptions(options as monaco.editor.IStandaloneEditorConstructionOptions);
+        // apply monarch definitions
+        if (this.editorConfig.languageDef) {
+            monaco.languages.register({ id: this.editorConfig.languageId });
+            monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, this.editorConfig.languageDef);
+        }
+        if (this.editorConfig.themeData) {
+            monaco.editor.defineTheme(this.editorConfig.theme, this.editorConfig.themeData);
+        }
+
+        // configure options
+        this.editor?.updateOptions({
+            readOnly: this.editorConfig.readOnly,
+        });
+        this.editor?.setValue(this.editorConfig.code);
+        this.setTheme(this.editorConfig.theme);
 
         const currentModel = this.editor?.getModel();
         if (currentModel && currentModel.getLanguageId() !== this.editorConfig.languageId) {
             monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
         }
-        this.editor?.setValue(this.editorConfig.code);
-    }
-
-    registerMonarchTokensProvider(languageDef: monaco.languages.IMonarchLanguage) {
-        monaco.languages.register({ id: this.editorConfig.languageId });
-        monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, languageDef);
-    }
-
-    registerEditorTheme(themeData: monaco.editor.IStandaloneThemeData) {
-        monaco.editor.defineTheme(this.editorConfig.theme, themeData);
     }
 
     setTheme(theme: string) {
         monaco.editor.setTheme(theme);
+    }
+
+    defineMonacoEnvironment() {
+        const getWorker = (_: string, label: string) => {
+            console.log('getWorker: workerId: ' + _ + ' label: ' + label);
+            return WorkerOverride.getEditorWorker();
+        };
+
+        const monWin = (self as monaco.Window);
+        if (monWin) {
+            if (!monWin.MonacoEnvironment) {
+                monWin.MonacoEnvironment = {
+                    getWorker: getWorker
+                };
+            }
+            else {
+                monWin.MonacoEnvironment.getWorker = getWorker;
+            }
+        }
     }
 
     installMonaco() {
@@ -140,4 +157,4 @@ export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
 
 }
 
-export { monaco, monacoStyles, baseWorkerDefinition };
+export { monaco, monacoStyles };

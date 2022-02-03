@@ -14,7 +14,7 @@ export default defineConfig({
         },
         cssCodeSplit: false,
         rollupOptions: {
-            external: ['vscode'],
+            external: [],
             output: {
                 inlineDynamicImports: true,
                 name: 'moned-full',
@@ -28,8 +28,7 @@ export default defineConfig({
                     declaration: true,
                     declarationDir: resolvePath('./dist'),
                     sourceMap: false,
-                    exclude: resolvePath('./node_modules'),
-                    allowSyntheticDefaultImports: true
+                    exclude: resolvePath('./node_modules')
                 })
             ]
         },
