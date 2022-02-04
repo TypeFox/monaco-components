@@ -8,7 +8,7 @@ import cssWorker from 'monaco-editor/esm/vs/language/css/css.worker?worker';
 import htmlWorker from 'monaco-editor/esm/vs/language/html/html.worker?worker';
 import tsWorker from 'monaco-editor/esm/vs/language/typescript/ts.worker?worker';
 
-import { CodeEditorConfig, MonacoWrapperDef } from 'moned-base';
+import { CodeEditorConfig, MonacoWrapperDef } from '../../moned-base/src/base';
 
 export class WorkerOverride {
 

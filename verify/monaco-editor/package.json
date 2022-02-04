@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --force --debug",
-    "prepare": "npm run dev"
+    "verify-vite": "vite --force --debug",
+    "prepare": "npm run verify-vite"
   },
   "dependencies": {
     "monaco-editor": "0.30.1"

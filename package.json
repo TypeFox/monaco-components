@@ -7,14 +7,17 @@
   "type": "module",
   "scripts": {
     "clean": "npm run clean --workspaces",
-    "dev-base": "npm run dev --workspace packages/moned-base",
     "dev-full": "npm run dev --workspace packages/moned-full",
     "dev-lc": "npm run dev --workspace packages/moned-lc",
     "lint": "npm run lint --workspaces",
-    "build-base": "npm run build --workspace packages/moned-base",
     "build-full": "npm run build --workspace packages/moned-full",
     "build-lc": "npm run build --workspace packages/moned-lc",
-    "build-all": "npm run build --workspaces"
+    "build-all": "npm run build --workspaces",
+    "verify-full-direct": "cd verify/moned-full/ && npm run verify-direct",
+    "verify-full-vite": "cd verify/moned-full/ && npm run verify-vite",
+    "verify-lc-direct": "cd verify/moned-lc/ && npm run verify-direct",
+    "verify-lc-vite": "cd verify/moned-lc/ && npm run verify-vite",
+    "verify-monaco-vite": "cd verify/monaco-editor/ && npm run verify-vite"
   },
   "dependencies": {
   },
