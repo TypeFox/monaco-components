@@ -1,0 +1,16 @@
+{
+  "name": "monaco-wrapper",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --force --debug",
+    "prepare": "npm run dev"
+  },
+  "dependencies": {
+    "monaco-editor": "0.30.1"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.0"
+  }
+}

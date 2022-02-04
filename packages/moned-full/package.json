@@ -23,6 +23,6 @@
   "dependencies": {
     "lit": "^2.1.2",
     "moned-base": "../moned-base",
-    "monaco-editor": "0.30.1"
+    "monaco-editor": "^0.30.1"
   }
 }

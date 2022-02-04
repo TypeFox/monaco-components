@@ -6,12 +6,10 @@
   "main": "index.html",
   "scripts": {
     "clean": "rimraf ./dist",
-    "dev": "vite",
-    "lint": "eslint src",
-    "build": "npm run clean && echo 'Nothing to build!'",
     "update-verify": "cp-cli ../../packages/moned-lc/dist ./verify-direct/moned-lc",
     "clean-verify": "rimraf ./verify-direct/moned-lc",
-    "verify": "npm run clean-verify && npm run update-verify && http-server ./verify-direct"
+    "verify-direct": "npm run clean-verify && npm run update-verify && http-server --port 22003 ./verify-direct",
+    "verify-vite": "vite --force --debug"
   },
   "dependencies": {
     "moned-lc": "../../packages/moned-lc"
