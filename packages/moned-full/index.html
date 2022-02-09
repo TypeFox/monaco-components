@@ -4,11 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Moned-Full</title>
-    <script type="module" src="/src/main.ts"></script>
 </head>
 <body>
     <script type="module">
-        import 'moned-full';
+        import { WorkerOverride } from "/src/main.ts";
+        import defineWorkersVite from './dist/moned-workers-vite.es.js';
+        defineWorkersVite(WorkerOverride);
     </script>
     <moned-full languageId="javascript" theme="vs-dark" code="console.log('Hello moned-full!');" />
 </body>

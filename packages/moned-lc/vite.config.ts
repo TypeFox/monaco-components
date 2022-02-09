@@ -17,7 +17,7 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'moned-lc',
-            fileName: (format) => `main.${format}.js`,
+            fileName: (format) => `moned-lc.${format}.js`,
             formats: ['es']
         },
         cssCodeSplit: false,

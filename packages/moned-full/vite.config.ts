@@ -9,7 +9,7 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'moned-full',
-            fileName: (format) => `main.${format}.js`,
+            fileName: (format) => `moned-full.${format}.js`,
             formats: ['es']
         },
         cssCodeSplit: false,

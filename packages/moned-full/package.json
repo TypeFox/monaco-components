@@ -3,25 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/main.es.js",
-  "module": "./dist/main.es.js",
-  "types": "./dist/main.d.ts",
+  "main": "./dist/moned-full.es.js",
+  "module": "./dist/moned-full.es.js",
+  "types": "./dist/moned-full.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/main.es.js",
-      "types": "./dist/main.d.ts"
+      "import": "./dist/moned-full.es.js",
+      "types": "./dist/moned-full.d.ts"
     }
   },
   "files": [ "dist" ],
   "scripts": {
+    "prepare": "npm run clean && npm run _build-workers",
     "clean": "rimraf ./dist",
     "dev": "vite",
     "lint": "eslint src",
-    "build": "npm run clean && tsc && vite build ",
+    "_build-workers": "vite -c vite.config.worker.ts build",
+    "_build-main": "vite build",
+    "build": "npm run clean && tsc && npm run _build-main && npm run _build-workers",
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "lit": "^2.1.2",
-    "monaco-editor": "^0.30.1"
+    "monaco-editor": "^0.32.1"
   }
 }

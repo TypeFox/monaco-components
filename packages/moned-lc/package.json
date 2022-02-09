@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/main.es.js",
-  "module": "./dist/main.es.js",
-  "types": "./dist/main.d.ts",
+  "main": "./dist/moned-lc.es.js",
+  "module": "./dist/moned-lc.es.js",
+  "types": "./dist/moned-lc.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/main.es.js",
-      "require": "./dist/main.umd.js",
-      "types": "./dist/main.d.ts"
+      "import": "./dist/moned-lc.es.js",
+      "require": "./dist/moned-lc.umd.js",
+      "types": "./dist/moned-lc.d.ts"
     }
   },
   "files": [ "dist" ],
@@ -22,14 +22,13 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "lit": "^2.1.2",
-    "monaco-editor-core": "^0.31.1",
+    "monaco-editor-core": "0.32.1",
     "@codingame/monaco-languageclient": "^0.17.3",
     "@codingame/monaco-jsonrpc": "^0.3.1",
     "normalize-url": "^7.0.3"
   },
   "devDependencies": {
-    "@types/node": "^17.0.14",
+    "@types/node": "^17.0.16",
     "@types/vscode": "^1.64.0",
     "@types/glob-to-regexp": "^0.4.1"
   }
