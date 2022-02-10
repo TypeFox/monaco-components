@@ -12,6 +12,8 @@ export default defineConfig({
             fileName: (format) => `moned-full.${format}.js`,
             formats: ['es']
         },
+        outDir: 'dist',
+        emptyOutDir: false,
         cssCodeSplit: false,
         rollupOptions: {
             external: [],
@@ -24,7 +26,7 @@ export default defineConfig({
             plugins: [
                 typescript({
                     target: 'esnext',
-                    rootDir: resolvePath('./src'),
+                    rootDir: resolvePath('..'),
                     declaration: true,
                     declarationDir: resolvePath('./dist'),
                     sourceMap: false,

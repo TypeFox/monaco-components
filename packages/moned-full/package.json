@@ -5,11 +5,15 @@
   "type": "module",
   "main": "./dist/moned-full.es.js",
   "module": "./dist/moned-full.es.js",
-  "types": "./dist/moned-full.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/moned-full.es.js",
-      "types": "./dist/moned-full.d.ts"
+      "import": "./dist/moned-full.es.js"
+    },
+    "./moned-workers": {
+      "import": "./dist/moned-workers.es.js"
+    },
+    "./moned-workers-vite": {
+      "import": "./dist/moned-workers-vite.es.js"
     }
   },
   "files": [ "dist" ],
