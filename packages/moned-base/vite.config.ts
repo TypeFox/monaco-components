@@ -4,9 +4,9 @@ import path from 'path';
 export default defineConfig({
     build: {
         lib: {
-            entry: path.resolve(__dirname, 'src/main.ts'),
-            name: 'moned-full',
-            fileName: () => 'moned-full.js',
+            entry: path.resolve(__dirname, 'src/index.ts'),
+            name: 'moned-base',
+            fileName: () => 'moned-base.js',
             formats: ['es']
         },
         outDir: 'dist',
@@ -16,7 +16,7 @@ export default defineConfig({
             external: [],
             output: {
                 inlineDynamicImports: true,
-                name: 'moned-full',
+                name: 'moned-base',
                 exports: 'named',
                 sourcemap: false,
             }

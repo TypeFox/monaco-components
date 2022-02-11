@@ -1,15 +1,19 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "..",
-    "outDir": "dist"
+    "rootDir": ".",
+    "outDir": "dist",
+    "composite": true,
+    "emitDeclarationOnly": true
   },
   "include": [
     "src/**/*.ts",
-    "../moned-base/src/**/*.ts"
   ],
   "exclude": [
     "dist",
     "node_modules"
+  ],
+  "references": [
+    { "path": "../moned-base/tsconfig.json" }
   ]
 }

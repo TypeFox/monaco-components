@@ -2,15 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from '../../moned-base/src/base';
-import { monaco, monacoStyles, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
-
-export type WebSocketConf = {
-    secured: boolean;
-    host: string;
-    port: number;
-    path: string;
-}
+import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
+import { monaco, monacoStyles, WebSocketConf, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
 
 export type MonedLCCodeEditorConfig = CodeEditorConfig & {
     webSocket: WebSocketConf

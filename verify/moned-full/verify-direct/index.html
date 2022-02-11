@@ -10,8 +10,8 @@
 <body>
     <div id="container"></div>
     <script type="module">
-        import { WorkerOverride } from "./moned-full/moned-full.es.js";
-        import { defineWorkers } from './moned-full/moned-workers.es.js';
+        import { WorkerOverride } from "./moned-full/moned-full.js";
+        import { defineWorkers } from './moned-full/moned-workers.js';
         defineWorkers('./moned-full', WorkerOverride);
     </script>
     <moned-full language="javascript" theme="vs-dark"

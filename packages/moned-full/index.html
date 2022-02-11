@@ -8,7 +8,7 @@
 <body>
     <script type="module">
         import { WorkerOverride } from "/src/main.ts";
-        import defineWorkersVite from './dist/moned-workers-vite.es.js';
+        import defineWorkersVite from './dist/moned-workers-vite.js';
         defineWorkersVite(WorkerOverride);
     </script>
     <moned-full languageId="javascript" theme="vs-dark" code="console.log('Hello moned-full!');" />

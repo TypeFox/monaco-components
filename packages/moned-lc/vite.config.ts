@@ -1,8 +1,5 @@
 import { defineConfig } from 'vite';
 import path from 'path';
-import typescript from '@rollup/plugin-typescript';
-
-const resolvePath = (str: string) => path.resolve(__dirname, str);
 
 export default defineConfig({
     resolve: {
@@ -17,9 +14,10 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'moned-lc',
-            fileName: (format) => `moned-lc.${format}.js`,
+            fileName: () => `moned-lc.js`,
             formats: ['es']
         },
+        emptyOutDir: false,
         cssCodeSplit: false,
         rollupOptions: {
             output: {
@@ -29,20 +27,9 @@ export default defineConfig({
                 sourcemap: false,
                 globals: {
                     vscode: 'vscode'
-                },
-            },
-            plugins: [
-                typescript({
-                    target: 'esnext',
-                    rootDir: resolvePath('./src'),
-                    declaration: true,
-                    declarationDir: resolvePath('./dist'),
-                    sourceMap: false,
-                    exclude: resolvePath('./node_modules'),
-                    allowSyntheticDefaultImports: true
-                })
-            ]
-        },
+                }
+            }
+        }
     },
     server: {
         port: 20003

@@ -3,17 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/moned-lc.es.js",
-  "module": "./dist/moned-lc.es.js",
-  "types": "./dist/moned-lc.d.ts",
+  "main": "./dist/moned-lc.js",
+  "module": "./dist/moned-lc.js",
+  "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/moned-lc.es.js",
-      "require": "./dist/moned-lc.umd.js",
-      "types": "./dist/moned-lc.d.ts"
+      "import": "./dist/moned-lc.js",
+      "types": "./dist/src/index.d.ts"
     }
   },
-  "files": [ "dist" ],
+  "files": [
+    "dist/src",
+    "dist/moned*.js",
+    "dist/style.css",
+    "src"
+  ],
   "scripts": {
     "clean": "rimraf ./dist",
     "dev": "vite",
@@ -25,7 +29,8 @@
     "monaco-editor-core": "0.32.1",
     "@codingame/monaco-languageclient": "^0.17.3",
     "@codingame/monaco-jsonrpc": "^0.3.1",
-    "normalize-url": "^7.0.3"
+    "normalize-url": "^7.0.3",
+    "moned-base": "../moned-base"
   },
   "devDependencies": {
     "@types/node": "^17.0.16",

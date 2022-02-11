@@ -1,5 +1,6 @@
 import 'monaco-editor/esm/vs/editor/editor.all.js';
 
+//@ts-ignore
 import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
 
 // select features
@@ -28,7 +29,7 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 //@ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
 
-import { CodeEditorConfig, MonacoWrapperDef } from '../../moned-base/src/base';
+import { CodeEditorConfig, MonacoWrapperDef } from 'moned-base';
 
 /*
 type MonacoEvent = {

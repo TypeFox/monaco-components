@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from '../../moned-base/src/base';
+import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 import { monacoStyles, MonacoWrapper, WorkerOverride } from './wrapper';
 
 export interface CodeEditorFull extends CodeEditor {

@@ -5,13 +5,20 @@ import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
-import { MonacoWrapperDef } from '../../moned-base/src/base';
+import { MonacoWrapperDef } from 'moned-base';
 
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
-import { MonedLCCodeEditorConfig, WebSocketConf } from './main';
+import { MonedLCCodeEditorConfig } from './main';
+
+export type WebSocketConf = {
+    secured: boolean;
+    host: string;
+    port: number;
+    path: string;
+}
 
 export class WorkerOverride {
 

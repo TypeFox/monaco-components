@@ -6,7 +6,7 @@ const config = defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/workerBuilder.js'),
             name: 'moned-workers',
-            fileName: (format) => `moned-workers.${format}.js`,
+            fileName: () => 'moned-workers.js',
             formats: ['es']
         },
         outDir: 'dist',

@@ -3,15 +3,10 @@
     "target": "esnext",
     "module": "esnext",
     "strict": true,
-    "jsx": "preserve",
-    "rootDir": "src",
-    "outDir": "dist",
     "declaration": true,
-    "declarationDir": "dist",
     "importHelpers": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "sourceMap": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
@@ -21,10 +16,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": [ "src/*" ]
-    },
     "lib": ["esnext", "dom"]
-  }
+  },
+  "files": []
 }
