@@ -29,21 +29,7 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 //@ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
 
-import { CodeEditorConfig, MonacoWrapperDef } from 'moned-base';
-
-/*
-type MonacoEvent = {
-    event: monaco.editor.IEditorMouseEvent;
-}
-
-type KeyOfType<T, V> = keyof {
-    [P in keyof T as T[P] extends V ? P : never]: any
-}
-
-function test<K>(key: KeyOfType<Test, (e: K) => void>, value: K) {
-
-}
-*/
+import { CodeEditorConfig } from './main';
 
 export class WorkerOverride {
 
@@ -52,29 +38,28 @@ export class WorkerOverride {
         return new editorWorker();
     }
 
+    // generate empty instructions as default
+
     static getTsWorker() {
-        // Vite will not transform this instruction, so defineWorkers can override in production
+        // use this in vite 2.8.x: new URL('../../../node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js', import.meta.url)
         return new Worker('ts.worker.js', { type: 'module' });
     }
 
     static getHtmlWorker() {
-        // Vite will not transform this instruction, so defineWorkers can override in production
         return new Worker('html.worker.js', { type: 'module' });
     }
 
     static getCssWorker() {
-        // Vite will not transform this instruction, so defineWorkers can override in production
         return new Worker('css.worker.js', { type: 'module' });
     }
 
     static getJsonWorker() {
-        // Vite will not transform this instruction, so defineWorkers can override in production
         return new Worker('json.worker.js', { type: 'module' });
     }
 
 }
 
-export class MonacoWrapper implements MonacoWrapperDef {
+export class MonacoWrapper {
 
     private editor?: monaco.editor.IStandaloneCodeEditor;
     private editorConfig: CodeEditorConfig;

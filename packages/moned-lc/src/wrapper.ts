@@ -5,13 +5,11 @@ import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
-import { MonacoWrapperDef } from 'moned-base';
-
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
-import { MonedLCCodeEditorConfig } from './main';
+import { CodeEditorConfig } from './main';
 
 export type WebSocketConf = {
     secured: boolean;
@@ -29,16 +27,16 @@ export class WorkerOverride {
 
 }
 
-export class MonacoLanguageClientWrapper implements MonacoWrapperDef {
+export class MonacoLanguageClientWrapper {
 
     private editor?: monaco.editor.IStandaloneCodeEditor;
-    private editorConfig: MonedLCCodeEditorConfig;
+    private editorConfig: CodeEditorConfig;
 
-    constructor(editorConfig: MonedLCCodeEditorConfig) {
+    constructor(editorConfig: CodeEditorConfig) {
         this.editorConfig = editorConfig;
     }
 
-    updateEditorConfig(editorConfig: MonedLCCodeEditorConfig) {
+    updateEditorConfig(editorConfig: CodeEditorConfig) {
         this.editorConfig = editorConfig;
     }
 

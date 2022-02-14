@@ -1,8 +1,6 @@
 import {
-    MonedLCCodeEditorConfig,
-    DefaultMonedLCCodeEditorConfig,
+    CodeEditorConfig,
     CodeEditorLanguageClient,
-    CodeEditorLanguageClientImpl
 } from './main';
 
 import {
@@ -12,10 +10,8 @@ import {
 } from './wrapper';
 
 export {
-    MonedLCCodeEditorConfig,
-    DefaultMonedLCCodeEditorConfig,
+    CodeEditorConfig,
     CodeEditorLanguageClient,
-    CodeEditorLanguageClientImpl,
     WebSocketConf,
     WorkerOverride,
     MonacoLanguageClientWrapper

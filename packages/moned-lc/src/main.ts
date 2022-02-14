@@ -2,43 +2,36 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 import { monaco, monacoStyles, WebSocketConf, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
 
-export type MonedLCCodeEditorConfig = CodeEditorConfig & {
-    webSocket: WebSocketConf
-    languageDef: monaco.languages.IMonarchLanguage | undefined;
-    themeData: monaco.editor.IStandaloneThemeData | undefined;
-}
+export class CodeEditorConfig {
+    code = '';
+    languageId = 'javascript';
+    theme = 'vs-light';
+    readOnly = false;
 
-export class DefaultMonedLCCodeEditorConfig extends DefaultCodeEditorConfig implements MonedLCCodeEditorConfig {
-    webSocket = {
+    webSocket: WebSocketConf = {
         secured: false,
         host: 'localhost',
         port: 8080,
         path: ''
     };
-    languageDef = undefined;
-    themeData = undefined;
-}
+    languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
+    themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 
-export interface CodeEditorLanguageClient extends CodeEditor {
-
-    getCodeEditorConfig(): MonedLCCodeEditorConfig;
-
-    updateCodeEditorConfig(codeEditorConfig: MonedLCCodeEditorConfig | undefined | null): void;
-
-    registerMonarchTokensProvider(languageId: string, languageDef: unknown): void;
-
-    registerEditorTheme(themeName: string, themeData: unknown): void;
-
+    isDark() {
+        return (
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+        );
+    }
 }
 
 @customElement('moned-lc')
-export class CodeEditorLanguageClientImpl extends LitElement implements CodeEditorLanguageClient {
+export class CodeEditorLanguageClient extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
-    private editorConfig: MonedLCCodeEditorConfig;
+    private editorConfig: CodeEditorConfig;
 
     private monacoWrapper;
 
@@ -54,7 +47,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
     constructor() {
         super();
-        this.editorConfig = new DefaultMonedLCCodeEditorConfig();
+        this.editorConfig = new CodeEditorConfig();
 
         // set proper defaults based on the default editor config
         this.languageId = this.editorConfig.languageId;
@@ -84,7 +77,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
     override render() {
         return html`
         <style>${monacoStyles}</style>
-        <style>${CodeEditorLanguageClientImpl.styles}</style>
+        <style>${CodeEditorLanguageClient.styles}</style>
         <main ${ref(this.container)}></main>
         `;
     }
@@ -93,7 +86,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
         return 'CodeEditorLanguageClient';
     }
 
-    updateCodeEditorConfig(codeEditorConfig: MonedLCCodeEditorConfig) {
+    updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig) {
         if (codeEditorConfig) {
             this.editorConfig = codeEditorConfig;
         }
@@ -175,7 +168,7 @@ export class CodeEditorLanguageClientImpl extends LitElement implements CodeEdit
 
 declare global {
     interface HTMLElementTagNameMap {
-        'moned-lc': CodeEditorLanguageClientImpl;
+        'moned-lc': CodeEditorLanguageClient;
     }
 }
 

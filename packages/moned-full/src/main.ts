@@ -2,17 +2,25 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { CodeEditor, CodeEditorConfig, DefaultCodeEditorConfig } from 'moned-base';
 import { monacoStyles, MonacoWrapper, WorkerOverride } from './wrapper';
 
-export interface CodeEditorFull extends CodeEditor {
+export class CodeEditorConfig {
 
-    updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null): void;
+    code = '';
+    languageId = 'javascript';
+    theme = 'vs-light';
+    readOnly = false;
 
+    isDark() {
+        return (
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches
+        );
+    }
 }
 
 @customElement('moned-full')
-export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
+export class CodeEditorFull extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
     private editorConfig: CodeEditorConfig;
@@ -26,7 +34,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
     constructor() {
         super();
-        this.editorConfig = new DefaultCodeEditorConfig();
+        this.editorConfig = new CodeEditorConfig();
 
         // set proper defaults based on the default editor config
         this.languageId = this.editorConfig.languageId;
@@ -122,7 +130,7 @@ export class CodeEditorFullImpl extends LitElement implements CodeEditorFull {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'moned-full': CodeEditorFullImpl;
+        'moned-full': CodeEditorFull;
     }
 }
 

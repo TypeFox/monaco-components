@@ -10,7 +10,6 @@
     "dev-full": "npm run dev --workspace packages/moned-full",
     "dev-lc": "npm run dev --workspace packages/moned-lc",
     "lint": "npm run lint --workspaces",
-    "build-base": "npm run build --workspace packages/moned-base",
     "build-full": "npm run build --workspace packages/moned-full",
     "build-lc": "npm run build --workspace packages/moned-lc",
     "build-all": "npm run build --workspaces",
@@ -32,7 +31,6 @@
     "editorconfig": "^0.15.3"
   },
   "workspaces": [
-    "packages/moned-base",
     "packages/moned-full",
     "packages/moned-lc"
   ]

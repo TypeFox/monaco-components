@@ -36,8 +36,7 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor": "^0.32.1",
-    "moned-base": "../moned-base"
+    "monaco-editor": "^0.32.1"
   },
   "devDependencies": {
     "tslib": "2.3.1"
