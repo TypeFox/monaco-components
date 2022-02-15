@@ -110,16 +110,7 @@ export class MonacoLanguageClientWrapper {
         // create the web socket
         const url = this.createUrl(websocketConfig);
         const webSocket = new WebSocket(url);
-        /*
-                new ReconnectingWebSocket(url, [], {
-                    maxReconnectionDelay: 10000,
-                    minReconnectionDelay: 1000,
-                    reconnectionDelayGrowFactor: 1.3,
-                    connectionTimeout: 10000,
-                    maxRetries: Infinity,
-                    debug: false
-                });
-        */
+
         // listen when the web socket is opened
         listen({
             webSocket,
@@ -139,7 +130,7 @@ export class MonacoLanguageClientWrapper {
             name: 'Sample Language Client',
             clientOptions: {
                 // use a language id as a document selector
-                documentSelector: ['json'],
+                documentSelector: [this.editorConfig.languageId],
                 // disable the default error handler
                 errorHandler: {
                     error: () => ErrorAction.Continue,
