@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor Component Verify HTML</title>
+</head>
+
+<body>
+    <div id="container"></div>
+    <script type="module">
+        import { WorkerOverride } from "./monaco-editor-comp/monaco-editor-comp.js";
+        import { defineWorkers } from './monaco-editor-comp/monaco-editor-comp-workers.js';
+        defineWorkers('./monaco-editor-comp', WorkerOverride);
+    </script>
+    <monaco-editor-comp language="javascript" theme="vs-dark"
+        code="console.log('Hello world monaco-editor-comp (HTML)!)');">
+    </monaco-editor-comp>
+</body>
+
+</html>

@@ -7,16 +7,16 @@
       {
         "type": "pwa-chrome",
         "request": "launch",
-        "name": "Launch Chrome (moned-full)",
+        "name": "Launch Chrome (monaco-editor-comp)",
         "url": "http://localhost:20002",
-        "webRoot": "${workspaceFolder}/packages/moned-full"
+        "webRoot": "${workspaceFolder}/packages/monaco-editor-comp"
       },
       {
         "type": "pwa-chrome",
         "request": "launch",
-        "name": "Launch Chrome (moned-lc)",
+        "name": "Launch Chrome (monaco-editor-lc-comp)",
         "url": "http://localhost:20003",
-        "webRoot": "${workspaceFolder}/packages/moned-lc"
+        "webRoot": "${workspaceFolder}/packages/monaco-editor-lc-comp"
       }
     ]
 }

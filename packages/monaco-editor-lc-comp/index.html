@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Moned-Full</title>
+    <title>Monaco Editor Languageclient Component</title>
 </head>
+
 <body>
     <script type="module">
         import { WorkerOverride } from "/src/main.ts";
-        import defineWorkersVite from './dist/moned-workers-vite.js';
-        defineWorkersVite(WorkerOverride);
     </script>
-    <moned-full languageId="javascript" theme="vs-dark" code="console.log('Hello moned-full!');" />
+    <monaco-editor-lc-comp language="javascript" theme="vs-dark"
+        code="console.log('Hello monaco-editor-lc-comp!)');"
+        secure="false" wsPort="3000" wsPath="sampleServer" />
 </body>
+
 </html>

@@ -5,8 +5,8 @@ const config = defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/workerBuilder.js'),
-            name: 'moned-workers',
-            fileName: () => 'moned-workers.js',
+            name: 'monaco-editor-comp-workers',
+            fileName: () => 'monaco-editor-comp-workers.js',
             formats: ['es']
         },
         outDir: 'dist',

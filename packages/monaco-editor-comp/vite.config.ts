@@ -2,36 +2,27 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-    resolve: {
-        alias: [
-            {
-                find: 'vscode',
-                replacement: path.resolve(__dirname, '../../node_modules/@codingame/monaco-languageclient/lib/vscode-compatibility')
-            }
-        ]
-    },
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
-            name: 'moned-lc',
-            fileName: () => `moned-lc.js`,
+            name: 'monaco-editor-comp',
+            fileName: () => 'monaco-editor-comp.js',
             formats: ['es']
         },
+        outDir: 'dist',
         emptyOutDir: false,
         cssCodeSplit: false,
         rollupOptions: {
+            external: [],
             output: {
                 inlineDynamicImports: true,
-                name: 'moned-lc',
+                name: 'monaco-editor-comp',
                 exports: 'named',
                 sourcemap: false,
-                globals: {
-                    vscode: 'vscode'
-                }
             }
         }
     },
     server: {
-        port: 20003
+        port: 20002
     }
 });

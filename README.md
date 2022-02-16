@@ -14,8 +14,8 @@ Currently both packages repackage `monaco-editor` and supply worker assets where
 You find different verification examples (manual human testing) in the `verify` sub-folders:
 
 - `monaco-editor`: Test the latest `monaco-editor` version without any wrapper
-- `moned-full`: Test if `moned-full` works with both a vite dev environment or in a statically served HMTL context
-- `moned-lc`: Test if `moned-full` works with both a vite dev environment or in a statically served HMTL context
+- `monaco-editor-comp`: Test if `monaco-editor-comp` works with both a vite dev environment or in a statically served HMTL context
+- `monaco-editor-lc-comp`: Test if `monaco-editor-comp` works with both a vite dev environment or in a statically served HMTL context
 
 ## Inspiration
 

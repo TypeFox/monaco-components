@@ -1,27 +1,27 @@
 {
-  "name": "moned-full",
+  "name": "monaco-editor-comp",
   "version": "0.2.0-dev",
   "private": true,
   "type": "module",
-  "main": "./dist/moned-full.js",
-  "module": "./dist/moned-full.js",
+  "main": "./dist/monaco-editor-comp.js",
+  "module": "./dist/monaco-editor-comp.js",
   "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/moned-full.js",
+      "import": "./dist/monaco-editor-comp.js",
       "types": "./dist/src/index.d.ts"
     },
-    "./moned-workers": {
-      "import": "./dist/moned-workers.js"
+    "./monaco-editor-comp-workers": {
+      "import": "./dist/monaco-editor-comp-workers.js"
     },
-    "./moned-workers-vite": {
-      "import": "./dist/moned-workers-vite.js"
+    "./monaco-editor-comp-workers-vite": {
+      "import": "./dist/monaco-editor-comp-workers-vite.js"
     }
   },
   "files": [
     "dist/assets",
     "dist/src",
-    "dist/moned*.js",
+    "dist/monaco-editor-comp*.js",
     "dist/style.css",
     "src"
   ],
@@ -36,9 +36,9 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor": "^0.32.1"
+    "monaco-editor": "0.32.1"
   },
   "devDependencies": {
-    "tslib": "2.3.1"
+    "tslib": "^2.3.1"
   }
 }

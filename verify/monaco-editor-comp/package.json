@@ -1,18 +1,18 @@
 {
-  "name": "verify-moned-full",
+  "name": "verify-monaco-editor-comp",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "index.html",
   "scripts": {
     "clean": "rimraf ./dist",
-    "update-verify": "cp-cli ../../packages/moned-full/dist ./verify-direct/moned-full",
-    "clean-verify": "rimraf ./verify-direct/moned-full",
+    "update-verify": "cp-cli ../../packages/monaco-editor-comp/dist ./verify-direct/monaco-editor-comp",
+    "clean-verify": "rimraf ./verify-direct/monaco-editor-comp",
     "verify-direct": "npm run clean-verify && npm run update-verify && http-server --port 22002 ./verify-direct",
     "verify-vite": "vite --force --debug"
   },
   "dependencies": {
-    "moned-full": "../../packages/moned-full"
+    "monaco-editor-comp": "../../packages/monaco-editor-comp"
   },
   "devDependencies": {
     "vite": "^2.8.1",

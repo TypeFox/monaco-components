@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor Languageclient Component Verify Vite</title>
+</head>
+
+<body>
+    <script type="module">
+        import { CodeEditorLanguageClient } from "monaco-editor-lc-comp";
+    </script>
+    <monaco-editor-lc-comp language="javascript" theme="vs-dark"
+        code="console.log('Hello verify monaco-editor-lc-comp!)');"
+        secure="false" wsPort="3000" wsPath="lsp" />
+</body>
+
+</html>

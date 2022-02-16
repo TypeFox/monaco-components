@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor Component</title>
+</head>
+<body>
+    <script type="module">
+        import { WorkerOverride } from "/src/main.ts";
+        import defineWorkersVite from './dist/monaco-editor-comp-workers-vite.js';
+        defineWorkersVite(WorkerOverride);
+    </script>
+    <monaco-editor-comp languageId="javascript" theme="vs-dark" code="console.log('Hello monaco-editor-comp!');" />
+</body>
+</html>

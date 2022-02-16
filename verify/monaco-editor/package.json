@@ -12,6 +12,6 @@
   },
   "devDependencies": {
     "http-server": "^14.1.0",
-    "vite": "^2.8.1"
+    "vite": "^2.8.3"
   }
 }

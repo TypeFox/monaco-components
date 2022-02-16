@@ -1,20 +1,20 @@
 {
-  "name": "moned-lc",
+  "name": "monaco-editor-lc-comp",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "main": "./dist/moned-lc.js",
-  "module": "./dist/moned-lc.js",
+  "main": "./dist/monaco-editor-lc-comp.js",
+  "module": "./dist/monaco-editor-lc-comp.js",
   "types": "./dist/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/moned-lc.js",
+      "import": "./dist/monaco-editor-lc-comp.js",
       "types": "./dist/src/index.d.ts"
     }
   },
   "files": [
     "dist/src",
-    "dist/moned*.js",
+    "dist/monaco-editor-comp*.js",
     "dist/style.css",
     "src"
   ],
@@ -32,7 +32,7 @@
     "normalize-url": "^7.0.3"
   },
   "devDependencies": {
-    "@types/node": "^17.0.16",
+    "@types/node": "^17.0.18",
     "@types/vscode": "^1.64.0",
     "@types/glob-to-regexp": "^0.4.1"
   }
