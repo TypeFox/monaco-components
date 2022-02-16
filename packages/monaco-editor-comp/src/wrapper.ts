@@ -1,6 +1,5 @@
 import 'monaco-editor/esm/vs/editor/editor.all.js';
 
-//@ts-ignore
 import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
 
 // select features
@@ -26,7 +25,6 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-//@ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
 
 import { CodeEditorConfig } from './main';

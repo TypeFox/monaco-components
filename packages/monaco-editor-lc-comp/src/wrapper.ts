@@ -1,8 +1,6 @@
 // Monaco Editor Imports
 import * as monaco from 'monaco-editor-core';
 
-import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
-
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
@@ -153,4 +151,4 @@ export class MonacoLanguageClientWrapper {
 
 }
 
-export { monaco, monacoStyles };
+export { monaco };

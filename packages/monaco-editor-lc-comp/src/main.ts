@@ -2,7 +2,9 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { monaco, monacoStyles, WebSocketConf, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
+import { monaco, WebSocketConf, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
+
+import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
 
 export class CodeEditorConfig {
     code = '';
