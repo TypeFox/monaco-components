@@ -7,13 +7,36 @@ import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, Mona
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
-import { CodeEditorConfig } from './main';
-
-export type WebSocketConf = {
+export type WebSocketConfigOptions = {
     secured: boolean;
     host: string;
     port: number;
     path: string;
+}
+
+export class CodeEditorConfig {
+
+    useDiffEditor = false;
+
+    monacoEditorOptions: Record<string, unknown> | undefined = {
+        code: '',
+        languageId: 'javascript',
+        theme: 'vs-light',
+        readOnly: false
+    };
+    webSocketOptions: WebSocketConfigOptions = {
+        secured: false,
+        host: 'localhost',
+        port: 8080,
+        path: ''
+    };
+    monacoDiffEditorOptions: Record<string, unknown> | undefined = {
+        diffEditorOriginal: ['default', 'text/plain'],
+        diffEditorModified: ['default', 'text/plain']
+    };
+
+    languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
+    themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 }
 
 export class WorkerOverride {
@@ -22,31 +45,63 @@ export class WorkerOverride {
     static getEditorWorker() {
         return new editorWorker();
     }
-
 }
 
 export class MonacoLanguageClientWrapper {
 
-    private editor?: monaco.editor.IStandaloneCodeEditor;
-    private editorConfig: CodeEditorConfig;
+    private editor: monaco.editor.IStandaloneCodeEditor | undefined;
+    private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
 
-    constructor(editorConfig: CodeEditorConfig) {
-        this.editorConfig = editorConfig;
+    private editorConfig: CodeEditorConfig = new CodeEditorConfig();
+
+    getEditorConfig() {
+        return this.editorConfig;
     }
 
-    updateEditorConfig(editorConfig: CodeEditorConfig) {
-        this.editorConfig = editorConfig;
+    setTheme(theme: string) {
+        monaco.editor.setTheme(theme);
+    }
+
+    setUseDiffEditor(useDiffEditor: boolean) {
+        this.editorConfig.useDiffEditor = useDiffEditor;
+    }
+
+    updateBasicConfigItems(languageId: string | undefined, code: string | undefined, theme: string | undefined) {
+        if (this.editorConfig.monacoEditorOptions) {
+            if (languageId) this.editorConfig.monacoEditorOptions.languageId = languageId;
+            if (code) this.editorConfig.monacoEditorOptions.value = code;
+            if (theme) this.editorConfig.monacoEditorOptions.theme = theme;
+        }
+    }
+
+    updateWebSocketOptions(secured: boolean, host: string, port: number, path: string) {
+        if (secured) this.editorConfig.webSocketOptions.secured = secured;
+        if (host) this.editorConfig.webSocketOptions.host = host;
+        if (port) this.editorConfig.webSocketOptions.port = port;
+        if (path) this.editorConfig.webSocketOptions.path = path;
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+        // register Worker function
         this.defineMonacoEnvironment();
-        this.editor = monaco.editor.create(container!);
+
+        if (this.editorConfig.useDiffEditor) {
+            this.diffEditor = monaco.editor.createDiffEditor(container!);
+        }
+        else {
+            this.editor = monaco.editor.create(container!);
+            this.editor.getModel()!.onDidChangeContent(() => {
+                if (dispatchEvent) {
+                    dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+                }
+            });
+        }
         this.updateEditor();
 
         this.installMonaco();
-        this.establishWebSocket(this.editorConfig.webSocket);
+        this.establishWebSocket(this.editorConfig.webSocketOptions);
 
-        this.editor.getModel()!.onDidChangeContent(() => {
+        this.editor?.getModel()!.onDidChangeContent(() => {
             if (dispatchEvent) {
                 dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
             }
@@ -54,33 +109,61 @@ export class MonacoLanguageClientWrapper {
     }
 
     updateEditor() {
-        // apply monarch definitions
-        if (this.editorConfig.languageDef) {
-            monaco.languages.register({ id: this.editorConfig.languageId });
-            monaco.languages.setMonarchTokensProvider(this.editorConfig.languageId, this.editorConfig.languageDef);
+        if (this.editorConfig.useDiffEditor) {
+            this.updateDiffEditor();
         }
-        if (this.editorConfig.themeData) {
-            monaco.editor.defineTheme(this.editorConfig.theme, this.editorConfig.themeData);
+        else {
+            this.updateMainEditor();
+        }
+    }
+
+    private updateMainEditor() {
+        const languageId = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.languageId as string : undefined;
+        const theme = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.theme as string : undefined;
+
+        // apply monarch definitions
+        if (this.editorConfig.languageDef && languageId) {
+            monaco.languages.register({ id: languageId });
+            monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
+        }
+        if (this.editorConfig.themeData && theme) {
+            monaco.editor.defineTheme(theme, this.editorConfig.themeData);
         }
 
-        // configure options
-        this.editor?.updateOptions({
-            readOnly: this.editorConfig.readOnly,
-        });
-        this.editor?.setValue(this.editorConfig.code);
-        this.setTheme(this.editorConfig.theme);
+        const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
+        this.editor?.updateOptions(options);
 
         const currentModel = this.editor?.getModel();
-        if (currentModel && currentModel.getLanguageId() !== this.editorConfig.languageId) {
-            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
+        if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
+            monaco.editor.setModelLanguage(currentModel, languageId);
+        }
+
+        const code = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.code as string: undefined;
+        if (code) this.editor?.setValue(code);
+    }
+
+    private updateDiffEditor() {
+        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions;
+        this.diffEditor?.updateOptions(options);
+        this.updateDiffModels();
+    }
+
+    private updateDiffModels() {
+        if (this.editorConfig.monacoDiffEditorOptions) {
+            const diffEditorOriginal = this.editorConfig.monacoDiffEditorOptions.diffEditorOriginal as [string, string];
+            const diffEditorModified = this.editorConfig.monacoDiffEditorOptions.diffEditorModified as [string, string];
+
+            const originalModel = monaco.editor.createModel(diffEditorOriginal[0], diffEditorOriginal[1]);
+            const modifiedModel = monaco.editor.createModel(diffEditorModified[0], diffEditorModified[1]);
+
+            this.diffEditor?.setModel({
+                original: originalModel,
+                modified: modifiedModel
+            });
         }
     }
 
-    setTheme(theme: string) {
-        monaco.editor.setTheme(theme);
-    }
-
-    defineMonacoEnvironment() {
+    private defineMonacoEnvironment() {
         const getWorker = (_: string, label: string) => {
             console.log('getWorker: workerId: ' + _ + ' label: ' + label);
             return WorkerOverride.getEditorWorker();
@@ -99,12 +182,12 @@ export class MonacoLanguageClientWrapper {
         }
     }
 
-    installMonaco() {
+    private installMonaco() {
         // install Monaco language client services
         if (monaco) MonacoServices.install(monaco);
     }
 
-    establishWebSocket(websocketConfig: WebSocketConf) {
+    private establishWebSocket(websocketConfig: WebSocketConfigOptions) {
         // create the web socket
         const url = this.createUrl(websocketConfig);
         const webSocket = new WebSocket(url);
@@ -124,11 +207,12 @@ export class MonacoLanguageClientWrapper {
     }
 
     private createLanguageClient(connection: MessageConnection): MonacoLanguageClient {
+        const languageId = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.languageId as string : '';
         return new MonacoLanguageClient({
             name: 'Sample Language Client',
             clientOptions: {
                 // use a language id as a document selector
-                documentSelector: [this.editorConfig.languageId],
+                documentSelector: [languageId],
                 // disable the default error handler
                 errorHandler: {
                     error: () => ErrorAction.Continue,
@@ -144,7 +228,7 @@ export class MonacoLanguageClientWrapper {
         });
     }
 
-    private createUrl(websocketConfig: WebSocketConf) {
+    private createUrl(websocketConfig: WebSocketConfigOptions) {
         const protocol = websocketConfig.secured ? 'wss' : 'ws';
         return normalizeUrl(`${protocol}://${websocketConfig.host}:${websocketConfig.port}/${websocketConfig.path}`);
     }

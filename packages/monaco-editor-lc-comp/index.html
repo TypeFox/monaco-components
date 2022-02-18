@@ -11,9 +11,27 @@
     <script type="module">
         import { WorkerOverride } from "/src/main.ts";
     </script>
-    <monaco-editor-lc-comp language="javascript" theme="vs-dark"
-        code="console.log('Hello monaco-editor-lc-comp!)');"
-        secure="false" wsPort="3000" wsPath="sampleServer" />
+    <monaco-editor-lc-comp useInlineConfig useDiffEditor id="42"
+        secure="false" wsPort="3000" wsPath="sampleServer">
+        <script type="text/javascript">
+            function getMonacoEditorOptions() {
+                return {
+                    code: `function logMe() {
+        console.log('Hello monaco-editor-lc-comp!');
+};`,
+                    languageId: 'javascript',
+                    theme: 'vs-dark'
+                }
+            }
+            function getMonacoDiffEditorOptions() {
+                return {
+                    diffEditorOriginal: ['model 1\ndifferent number 42', 'text/plain'],
+                    diffEditorModified: ['model 2\ndifferent number 43', 'text/plain'],
+                    theme: 'vs-dark'
+                }
+            }
+            </script>
+    </monaco-editor-lc-comp>
 </body>
 
 </html>

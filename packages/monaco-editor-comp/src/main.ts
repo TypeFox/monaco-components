@@ -4,45 +4,25 @@ import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 import { monacoStyles, MonacoWrapper, WorkerOverride } from './wrapper';
 
-export class CodeEditorConfig {
-
-    code = '';
-    languageId = 'javascript';
-    theme = 'vs-light';
-    readOnly = false;
-
-    isDark() {
-        return (
-            window.matchMedia &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches
-        );
-    }
-}
-
 @customElement('monaco-editor-comp')
-export class CodeEditorFull extends LitElement {
+export class CodeEditor extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
-    private editorConfig: CodeEditorConfig;
 
     private monacoWrapper;
 
-    @property({ reflect: true }) languageId?;
-    @property({ reflect: true }) code?;
-    @property({ reflect: true }) theme?;
-    @property({ type: Boolean, reflect: true }) readOnly?;
+    @property({ reflect: true }) languageId? = 'javascript';
+    @property({ reflect: true }) code? = '';
+    @property({ reflect: true }) theme? = 'vs-light';
+    @property({ type: Boolean, reflect: true }) useInlineConfig? = false;
+    @property({ type: Boolean, reflect: true }) useDiffEditor? = false;
 
     constructor() {
         super();
-        this.editorConfig = new CodeEditorConfig();
+        this.monacoWrapper = new MonacoWrapper();
 
         // set proper defaults based on the default editor config
-        this.languageId = this.editorConfig.languageId;
-        this.code = this.editorConfig.code;
-        this.theme = this.editorConfig.theme;
-        this.readOnly = this.editorConfig.readOnly;
-
-        this.monacoWrapper = new MonacoWrapper(this.editorConfig);
+        this.updateCodeEditorConfig();
     }
 
     static override styles = css`
@@ -50,7 +30,7 @@ export class CodeEditorFull extends LitElement {
             --editor-width: 100%;
             --editor-height: 100vh;
         }
-        main {
+        .main {
             width: var(--editor-width);
             height: var(--editor-height);
         }
@@ -59,26 +39,15 @@ export class CodeEditorFull extends LitElement {
     override render() {
         return html`
         <style>${monacoStyles}</style>
-        <main ${ref(this.container)}></main>
+        <div ${ref(this.container)} id="monacoContainer${this.id}" class="main"></div>
         `;
     }
 
-    getCodeEditorType(): string {
-        return 'CodeEditorFull';
-    }
-
-    updateCodeEditorConfig(codeEditorConfig: CodeEditorConfig | undefined | null) {
-        if (codeEditorConfig) {
-            this.editorConfig = codeEditorConfig;
-            this.languageId = this.editorConfig.languageId;
-            this.code = this.editorConfig.code;
-            this.theme = this.editorConfig.theme;
-            this.readOnly = this.editorConfig.readOnly;
-        }
-    }
-
-    getCodeEditorConfig() {
-        return this.editorConfig;
+    updateCodeEditorConfig() {
+        const config = this.monacoWrapper.getEditorConfig();
+        this.languageId = config.monacoEditorOptions?.languageId as string;
+        this.code = config.monacoEditorOptions?.code as string;
+        this.theme = config.monacoEditorOptions?.theme as string;
     }
 
     setCode(code: string): void {
@@ -93,16 +62,12 @@ export class CodeEditorFull extends LitElement {
         this.languageId = languageId;
     }
 
-    private syncPropertiesAndEditorConfig() {
-        if (this.languageId) this.editorConfig.languageId = this.languageId;
-        if (this.code) this.editorConfig.code = this.code;
-        if (this.theme) this.editorConfig.theme = this.theme;
-        this.editorConfig.readOnly = this.readOnly === true;
+    firstUpdated() {
+        this.startEditor();
     }
 
     private startEditor() {
         this.syncPropertiesAndEditorConfig();
-        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
 
         this.registerListeners();
@@ -110,19 +75,48 @@ export class CodeEditorFull extends LitElement {
 
     updateEditor() {
         this.syncPropertiesAndEditorConfig();
-        this.monacoWrapper.updateEditorConfig(this.editorConfig);
         this.monacoWrapper.updateEditor();
     }
 
-    firstUpdated() {
-        this.startEditor();
+    private syncPropertiesAndEditorConfig() {
+        this.monacoWrapper.updateBasicConfigItems(this.languageId, this.code, this.theme);
+        if (this.useInlineConfig) {
+            this.retrieveMoncaoEditorOptions();
+            this.retrieveMoncaoDiffEditorOptions();
+            this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
+        }
+    }
+
+    private retrieveMoncaoEditorOptions() {
+        if (!this.isUseInlineConfig()) return;
+
+        const winRec = window as unknown as Record<string, unknown>;
+        if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoEditorOptions') && typeof winRec.getMonacoEditorOptions === 'function') {
+            this.monacoWrapper.getEditorConfig().monacoEditorOptions = winRec.getMonacoEditorOptions();
+            console.log('Using config supplied by getMonacoEditorOptions for editor.');
+        }
+    }
+
+    private retrieveMoncaoDiffEditorOptions() {
+        if (!this.isUseInlineConfig()) return;
+
+        const winRec = window as unknown as Record<string, unknown>;
+        if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoDiffEditorOptions') && typeof winRec.getMonacoDiffEditorOptions === 'function') {
+            this.monacoWrapper.getEditorConfig().monacoDiffEditorOptions = winRec.getMonacoDiffEditorOptions();
+            console.log('Using config supplied by getMonacoDiffEditorOptions for diff editor.');
+        }
+    }
+
+    private isUseInlineConfig() {
+        const content = this.children.length === 1 ? this.children[0] : undefined;
+        return content instanceof HTMLScriptElement && this.useInlineConfig;
     }
 
     registerListeners() {
         window
             .matchMedia('(prefers-color-scheme: dark)')
-            .addEventListener('change', () => {
-                this.monacoWrapper.setTheme(this.editorConfig.theme);
+            .addEventListener('change', (e) => {
+                this.monacoWrapper.setTheme(e.matches ? 'vs-dark' : 'vs-light');
             });
     }
 
@@ -130,7 +124,7 @@ export class CodeEditorFull extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'monaco-editor-comp': CodeEditorFull;
+        'monaco-editor-comp': CodeEditor;
     }
 }
 

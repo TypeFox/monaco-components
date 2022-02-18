@@ -1,16 +1,16 @@
 import {
-    CodeEditorConfig,
-    CodeEditorFull
+    CodeEditor
 } from './main';
 
 import {
+    CodeEditorConfig,
     WorkerOverride,
     MonacoWrapper
 } from './wrapper';
 
 export {
     CodeEditorConfig,
-    CodeEditorFull,
+    CodeEditor,
     WorkerOverride,
     MonacoWrapper
 };

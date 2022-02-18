@@ -27,8 +27,6 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
 
-import { CodeEditorConfig } from './main';
-
 export class WorkerOverride {
 
     // static worker load override functions
@@ -57,52 +55,113 @@ export class WorkerOverride {
 
 }
 
+export class CodeEditorConfig {
+
+    useDiffEditor = false;
+
+    monacoEditorOptions: Record<string, unknown> | undefined = {
+        code: '',
+        languageId: 'javascript',
+        theme: 'vs-light',
+        readOnly: false
+    };
+    monacoDiffEditorOptions: Record<string, unknown> | undefined = {
+        diffEditorOriginal: ['default', 'text/plain'],
+        diffEditorModified: ['default', 'text/plain']
+    };
+
+}
+
 export class MonacoWrapper {
 
-    private editor?: monaco.editor.IStandaloneCodeEditor;
-    private editorConfig: CodeEditorConfig;
+    private editor: monaco.editor.IStandaloneCodeEditor | undefined;
+    private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
 
-    constructor(editorConfig: CodeEditorConfig) {
-        this.editorConfig = editorConfig;
-    }
+    private editorConfig: CodeEditorConfig = new CodeEditorConfig();
 
-    updateEditorConfig(editorConfig: CodeEditorConfig) {
-        this.editorConfig = editorConfig;
-    }
-
-    startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
-        // register Worker function
-        this.defineMonacoEnvironment();
-
-        this.editor = monaco.editor.create(container!, { language: this.editorConfig.languageId });
-        this.updateEditor();
-
-        this.editor.getModel()!.onDidChangeContent(() => {
-            if (dispatchEvent) {
-                dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
-            }
-        });
-    }
-
-    updateEditor() {
-        // configure options
-        this.editor?.updateOptions({
-            readOnly: this.editorConfig.readOnly,
-        });
-        this.editor?.setValue(this.editorConfig.code);
-        this.setTheme(this.editorConfig.theme);
-
-        const currentModel = this.editor?.getModel();
-        if (currentModel && currentModel.getLanguageId() !== this.editorConfig.languageId) {
-            monaco.editor.setModelLanguage(currentModel, this.editorConfig.languageId);
-        }
+    getEditorConfig() {
+        return this.editorConfig;
     }
 
     setTheme(theme: string) {
         monaco.editor.setTheme(theme);
     }
 
-    defineMonacoEnvironment() {
+    setUseDiffEditor(useDiffEditor: boolean) {
+        this.editorConfig.useDiffEditor = useDiffEditor;
+    }
+
+    updateBasicConfigItems(languageId: string | undefined, code: string | undefined, theme: string | undefined) {
+        if (this.editorConfig.monacoEditorOptions) {
+            if (languageId) this.editorConfig.monacoEditorOptions.languageId = languageId;
+            if (code) this.editorConfig.monacoEditorOptions.value = code;
+            if (theme) this.editorConfig.monacoEditorOptions.theme = theme;
+        }
+    }
+
+    startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+        // register Worker function
+        this.defineMonacoEnvironment();
+
+        if (this.editorConfig.useDiffEditor) {
+            this.diffEditor = monaco.editor.createDiffEditor(container!);
+        }
+        else {
+            this.editor = monaco.editor.create(container!);
+            this.editor.getModel()!.onDidChangeContent(() => {
+                if (dispatchEvent) {
+                    dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+                }
+            });
+        }
+        this.updateEditor();
+    }
+
+    updateEditor() {
+        if (this.editorConfig.useDiffEditor) {
+            this.updateDiffEditor();
+        }
+        else {
+            this.updateMainEditor();
+        }
+    }
+
+    private updateMainEditor() {
+        const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
+        this.editor?.updateOptions(options);
+
+        const languageId = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.languageId as string : undefined;
+        const currentModel = this.editor?.getModel();
+        if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
+            monaco.editor.setModelLanguage(currentModel, languageId);
+        }
+
+        const code = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.code as string: undefined;
+        if (code) this.editor?.setValue(code);
+    }
+
+    private updateDiffEditor() {
+        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions;
+        this.diffEditor?.updateOptions(options);
+        this.updateDiffModels();
+    }
+
+    private updateDiffModels() {
+        if (this.editorConfig.monacoDiffEditorOptions) {
+            const diffEditorOriginal = this.editorConfig.monacoDiffEditorOptions.diffEditorOriginal as [string, string];
+            const diffEditorModified = this.editorConfig.monacoDiffEditorOptions.diffEditorModified as [string, string];
+
+            const originalModel = monaco.editor.createModel(diffEditorOriginal[0], diffEditorOriginal[1]);
+            const modifiedModel = monaco.editor.createModel(diffEditorModified[0], diffEditorModified[1]);
+
+            this.diffEditor?.setModel({
+                original: originalModel,
+                modified: modifiedModel
+            });
+        }
+    }
+
+    private defineMonacoEnvironment() {
         const getWorker = (_: string, label: string) => {
             console.log('getWorker: workerId: ' + _ + ' label: ' + label);
 
