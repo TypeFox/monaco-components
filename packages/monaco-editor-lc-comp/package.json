@@ -1,6 +1,15 @@
 {
   "name": "monaco-editor-lc-comp",
-  "version": "0.2.0",
+  "version": "0.2.0-preview.1",
+  "license": "MIT",
+  "description": "Lit Component for Monaco Languageclient",
+  "keywords": [
+    "monaco-editor",
+    "monaco-languageclient",
+    "lit",
+    "web-component",
+    "typescript"
+  ],
   "type": "module",
   "main": "./dist/monaco-editor-lc-comp.js",
   "module": "./dist/monaco-editor-lc-comp.js",
@@ -30,11 +39,22 @@
     "monaco-editor-core": "0.32.1",
     "@codingame/monaco-languageclient": "^0.17.3",
     "@codingame/monaco-jsonrpc": "^0.3.1",
+    "lit": "^2.2.0",
     "normalize-url": "^7.0.3"
   },
   "devDependencies": {
     "@types/node": "^17.0.18",
     "@types/vscode": "^1.64.0",
     "@types/glob-to-regexp": "^0.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-lc-comp"
+  },
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
   }
 }

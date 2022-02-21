@@ -1,6 +1,14 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.2.0",
+  "version": "0.2.0-preview.1",
+  "license": "MIT",
+  "description": "Lit Component for Monaco Editor",
+  "keywords": [
+    "monaco-editor",
+    "lit",
+    "web-component",
+    "typescript"
+  ],
   "type": "module",
   "main": "./dist/monaco-editor-comp.js",
   "module": "./dist/monaco-editor-comp.js",
@@ -37,9 +45,20 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor": "0.32.1"
+    "monaco-editor": "0.32.1",
+    "lit": "^2.2.0"
   },
   "devDependencies": {
     "tslib": "^2.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-comp"
+  },
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
   }
 }
