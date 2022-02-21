@@ -1,7 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.2.0-dev",
-  "private": true,
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/monaco-editor-comp.js",
   "module": "./dist/monaco-editor-comp.js",
@@ -23,7 +22,9 @@
     "dist/src",
     "dist/monaco-editor-comp*.js",
     "dist/style.css",
-    "src"
+    "src",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "prepare": "npm run _build-workers",
