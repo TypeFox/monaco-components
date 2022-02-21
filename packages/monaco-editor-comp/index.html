@@ -13,22 +13,23 @@
     </script>
     <monaco-editor-comp useInlineConfig id="42">
         <script type="text/javascript">
-        function getMonacoEditorOptions() {
-            return {
-                code: `function logMe() {
-    console.log('Hello monaco-editor-comp!');
+            function getWebSocketOptions() {
+                return {
+                    wsSecured: false,
+                    wsHost: 'localhost',
+                    wsPort: 3000,
+                    wsPath: 'sampleServer'
+                }
+            }
+            function getMonacoEditorOptions() {
+                return {
+                    code: `function logMe() {
+    console.log('Hello monaco-editor-lc-comp!');
 };`,
-                languageId: 'javascript',
-                theme: 'vs-dark'
+                    languageId: 'javascript',
+                    theme: 'vs-dark'
+                }
             }
-        }
-        function getMonacoDiffEditorOptions() {
-            return {
-                diffEditorOriginal: ['model 1\ndifferent number 42', 'text/plain'],
-                diffEditorModified: ['model 2\ndifferent number 43', 'text/plain'],
-                theme: 'vs-dark'
-            }
-        }
         </script>
     </monaco-editor-comp>
 </body>

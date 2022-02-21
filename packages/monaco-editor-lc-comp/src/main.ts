@@ -57,10 +57,10 @@ export class CodeEditorLanguageClient extends LitElement {
         this.code = config.monacoEditorOptions?.code as string;
         this.theme = config.monacoEditorOptions?.theme as string;
 
-        this.wsSecured = config.webSocketOptions.secured;
-        this.wsHost = config.webSocketOptions.host;
-        this.wsPort = config.webSocketOptions.port;
-        this.wsPath = config.webSocketOptions.path;
+        this.wsSecured = config.webSocketOptions.wsSecured;
+        this.wsHost = config.webSocketOptions.wsHost;
+        this.wsPort = config.webSocketOptions.wsPort;
+        this.wsPath = config.webSocketOptions.wsPath;
     }
 
     setCode(code: string): void {

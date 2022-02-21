@@ -8,10 +8,10 @@ import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
 export type WebSocketConfigOptions = {
-    secured: boolean;
-    host: string;
-    port: number;
-    path: string;
+    wsSecured: boolean;
+    wsHost: string;
+    wsPort: number;
+    wsPath: string;
 }
 
 export class CodeEditorConfig {
@@ -25,10 +25,10 @@ export class CodeEditorConfig {
         readOnly: false
     };
     webSocketOptions: WebSocketConfigOptions = {
-        secured: false,
-        host: 'localhost',
-        port: 8080,
-        path: ''
+        wsSecured: false,
+        wsHost: 'localhost',
+        wsPort: 8080,
+        wsPath: ''
     };
     monacoDiffEditorOptions: Record<string, unknown> | undefined = {
         diffEditorOriginal: ['default', 'text/plain'],
@@ -69,16 +69,16 @@ export class MonacoLanguageClientWrapper {
     updateBasicConfigItems(languageId: string | undefined, code: string | undefined, theme: string | undefined) {
         if (this.editorConfig.monacoEditorOptions) {
             if (languageId) this.editorConfig.monacoEditorOptions.languageId = languageId;
-            if (code) this.editorConfig.monacoEditorOptions.value = code;
+            if (code) this.editorConfig.monacoEditorOptions.code = code;
             if (theme) this.editorConfig.monacoEditorOptions.theme = theme;
         }
     }
 
-    updateWebSocketOptions(secured: boolean, host: string, port: number, path: string) {
-        if (secured) this.editorConfig.webSocketOptions.secured = secured;
-        if (host) this.editorConfig.webSocketOptions.host = host;
-        if (port) this.editorConfig.webSocketOptions.port = port;
-        if (path) this.editorConfig.webSocketOptions.path = path;
+    updateWebSocketOptions(wsSecured: boolean, wsHost: string, wsPort: number, wsPath: string) {
+        if (wsSecured) this.editorConfig.webSocketOptions.wsSecured = wsSecured;
+        if (wsHost) this.editorConfig.webSocketOptions.wsHost = wsHost;
+        if (wsPort) this.editorConfig.webSocketOptions.wsPort = wsPort;
+        if (wsPath) this.editorConfig.webSocketOptions.wsPath = wsPath;
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
@@ -229,8 +229,8 @@ export class MonacoLanguageClientWrapper {
     }
 
     private createUrl(websocketConfig: WebSocketConfigOptions) {
-        const protocol = websocketConfig.secured ? 'wss' : 'ws';
-        return normalizeUrl(`${protocol}://${websocketConfig.host}:${websocketConfig.port}/${websocketConfig.path}`);
+        const protocol = websocketConfig.wsSecured ? 'wss' : 'ws';
+        return normalizeUrl(`${protocol}://${websocketConfig.wsHost}:${websocketConfig.wsPort}/${websocketConfig.wsPath}`);
     }
 
 }

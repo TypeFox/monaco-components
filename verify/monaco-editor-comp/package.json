@@ -15,7 +15,7 @@
     "monaco-editor-comp": "../../packages/monaco-editor-comp"
   },
   "devDependencies": {
-    "vite": "^2.8.3",
+    "vite": "^2.8.4",
     "http-server": "14.1.0",
     "cp-cli": "^2.0.0",
     "rimraf":  "^3.0.2"

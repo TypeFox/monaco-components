@@ -94,7 +94,7 @@ export class MonacoWrapper {
     updateBasicConfigItems(languageId: string | undefined, code: string | undefined, theme: string | undefined) {
         if (this.editorConfig.monacoEditorOptions) {
             if (languageId) this.editorConfig.monacoEditorOptions.languageId = languageId;
-            if (code) this.editorConfig.monacoEditorOptions.value = code;
+            if (code) this.editorConfig.monacoEditorOptions.code = code;
             if (theme) this.editorConfig.monacoEditorOptions.theme = theme;
         }
     }

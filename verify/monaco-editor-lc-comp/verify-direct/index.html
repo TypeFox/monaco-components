@@ -11,9 +11,31 @@
     <script type="module">
         import { CodeEditorLanguageClient } from "./monaco-editor-lc-comp/monaco-editor-lc-comp.js";
     </script>
-    <monaco-editor-lc-comp language="javascript" theme="vs-dark"
-        code="console.log('Hello world monaco-editor-lc-comp (HTML)!)');"
-        secure="false" wsPort="3000" wsPath="lsp" />
+    <monaco-editor-lc-comp useInlineConfig useDiffEditor id="42">
+        <script type="text/javascript">
+            function getWebSocketOptions() {
+                return {
+                    wsSecured: false,
+                    wsHost: 'localhost',
+                    wsPort: 3000,
+                    wsPath: 'sampleServer'
+                }
+            }
+            function getMonacoDiffEditorOptions() {
+                return {
+                    diffEditorOriginal: [`This line is equal.
+This number is different 2022
+Misspelled!
+Same again.`, 'text/plain'],
+                    diffEditorModified: [`This line is equal.
+This number is different 2002
+Misspeelled!
+Same again.`, 'text/plain']
+                }
+            }
+            </script>
+    </monaco-editor-lc-comp>
+
 </body>
 
 </html>

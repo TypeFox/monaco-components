@@ -13,8 +13,18 @@
         import defineWorkersVite from "monaco-editor-comp/monaco-editor-comp-workers-vite";
         defineWorkersVite(WorkerOverride);
     </script>
-    <monaco-editor-comp language="javascript" theme="vs-dark"
-        code="console.log('Hello verify monaco-editor-comp!');">
+    <monaco-editor-comp useInlineConfig>
+        <script type="text/javascript">
+            function getMonacoEditorOptions() {
+                return {
+                    code: `function logMe() {
+    console.log('Hello verify monaco-editor-comp!');
+};`,
+                    languageId: 'javascript',
+                    theme: 'vs-dark'
+                }
+            }
+        </script>
     </monaco-editor-comp>
 </body>
 
