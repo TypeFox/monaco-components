@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-lc-comp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "main": "./dist/monaco-editor-lc-comp.js",
   "module": "./dist/monaco-editor-lc-comp.js",
