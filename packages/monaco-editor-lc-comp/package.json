@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-lc-comp",
-  "version": "0.2.0-preview.2",
+  "version": "0.2.0-preview.3",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -52,6 +52,7 @@
     "url": "https://github.com/TypeFox/monaco-components",
     "directory": "packages/monaco-editor-lc-comp"
   },
+  "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-lc-comp/README.md",
   "bugs": "https://github.com/TypeFox/monaco-components/issues",
   "author": {
     "name": "TypeFox",

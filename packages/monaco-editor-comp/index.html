@@ -11,16 +11,8 @@
         import defineWorkersVite from './dist/monaco-editor-comp-workers-vite.js';
         defineWorkersVite(WorkerOverride);
     </script>
-    <monaco-editor-comp useInlineConfig id="42">
+    <monaco-editor-comp enableInlineConfig id="42">
         <script type="text/javascript">
-            function getWebSocketOptions() {
-                return {
-                    wsSecured: false,
-                    wsHost: 'localhost',
-                    wsPort: 3000,
-                    wsPath: 'sampleServer'
-                }
-            }
             function getMonacoEditorOptions() {
                 return {
                     code: `function logMe() {

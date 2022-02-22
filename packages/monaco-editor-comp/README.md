@@ -1,23 +1,23 @@
-# Monaco Editor Components
+# Lit Component for Monaco Editor
 
-Lit components for Monaco Editor
+This packages provide a wrapped `monaco-editor` with full basic language support and enhanced support via workers for special languages (e.g. TS, HTML).
 
-## Packages
+The component can be fully configured with inlined JavaScript. It can be configured as regular or diff editor.
 
-- Monaco Editor Full: Wrapped `monaco-editor` with full basic language support and enhanced support via workers for special languages (e.g. TS, HTML)
-- Monaco Editor Language Client: Wrapped `monaco-editor-core` with inlined editor worker that can connect to a configurable languages server.
+## Web Component properties / configuration options
 
-Currently both packages repackage `monaco-editor` and supply worker assets where needed.
+* **languageId**: Specify the editor language (default: `javascript`)
+* **code**: Code or text that is shown in the editor (default: `''`);
+* **theme**: Theme of the editor that is used (default: `vs-light`)
+* **enableInlineConfig**: Enable the inline editor configuration by specifying function `getMonacoEditorOptions` in inner script tag. You can directly pass monaco-editor options. See examples below. (default: `false`)
+* **useDiffEditor**: Use the diff editor instead of the regular editor by specifying function `getMonacoDiffEditorOptions`. It can only be used if `enableInlineConfig` is passed. See examples below. (default: `false`)
 
-## Verification
+## Usage Examples
 
-You find different verification examples (manual human testing) in the `verify` sub-folders:
+You need to run `npm i` from the root of the project and `npm run build` here in this directory after cloning otherwise the examples below won't work properly.
 
-- `monaco-editor`: Test the latest `monaco-editor` version without any wrapper
-- `monaco-editor-comp`: Test if `monaco-editor-comp` works with both a vite dev environment or in a statically served HMTL context
-- `monaco-editor-lc-comp`: Test if `monaco-editor-comp` works with both a vite dev environment or in a statically served HMTL context
+You find a usage examples here:
 
-## Inspiration
-
-- https://github.com/rodydavis/lit-code-editor
-- https://github.com/vanillawc/wc-monaco-editor
+* [Vite local dev with inline editor config](./index.html): Run `npm run dev` to start here in this directory.
+* [Vite bundle test with inline editor config](../../verify/monaco-editor-comp/index.html): Run `npm run verify-vite` here: `../../verify/monaco-editor-comp`.
+* [Direct bundle test with inline diff editor config](../../verify/monaco-editor-comp/index.html): Run `npm run verify-direct` here: `../../verify/monaco-editor-comp`.

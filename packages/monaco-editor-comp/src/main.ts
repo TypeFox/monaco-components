@@ -14,7 +14,7 @@ export class CodeEditor extends LitElement {
     @property({ reflect: true }) languageId? = 'javascript';
     @property({ reflect: true }) code? = '';
     @property({ reflect: true }) theme? = 'vs-light';
-    @property({ type: Boolean, reflect: true }) useInlineConfig? = false;
+    @property({ type: Boolean, reflect: true }) enableInlineConfig? = false;
     @property({ type: Boolean, reflect: true }) useDiffEditor? = false;
 
     constructor() {
@@ -80,7 +80,7 @@ export class CodeEditor extends LitElement {
 
     private syncPropertiesAndEditorConfig() {
         this.monacoWrapper.updateBasicConfigItems(this.languageId, this.code, this.theme);
-        if (this.useInlineConfig) {
+        if (this.enableInlineConfig) {
             this.retrieveMoncaoEditorOptions();
             this.retrieveMoncaoDiffEditorOptions();
             this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
@@ -88,7 +88,7 @@ export class CodeEditor extends LitElement {
     }
 
     private retrieveMoncaoEditorOptions() {
-        if (!this.isUseInlineConfig()) return;
+        if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;
         if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoEditorOptions') && typeof winRec.getMonacoEditorOptions === 'function') {
@@ -98,7 +98,7 @@ export class CodeEditor extends LitElement {
     }
 
     private retrieveMoncaoDiffEditorOptions() {
-        if (!this.isUseInlineConfig()) return;
+        if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;
         if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoDiffEditorOptions') && typeof winRec.getMonacoDiffEditorOptions === 'function') {
@@ -107,9 +107,9 @@ export class CodeEditor extends LitElement {
         }
     }
 
-    private isUseInlineConfig() {
+    private isEnableInlineConfig() {
         const content = this.children.length === 1 ? this.children[0] : undefined;
-        return content instanceof HTMLScriptElement && this.useInlineConfig;
+        return content instanceof HTMLScriptElement && this.enableInlineConfig;
     }
 
     registerListeners() {
