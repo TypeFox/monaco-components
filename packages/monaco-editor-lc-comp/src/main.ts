@@ -90,14 +90,14 @@ export class CodeEditorLanguageClient extends LitElement {
         this.monacoWrapper.updateBasicConfigItems(this.languageId, this.code, this.theme);
         this.monacoWrapper.updateWebSocketOptions(this.wsSecured || false, this.wsHost, this.wsPort, this.wsPath);
         if (this.enableInlineConfig) {
-            this.retrieveMoncaoEditorOptions();
-            this.retrieveMoncaoDiffEditorOptions();
+            this.retrieveMonacoEditorOptions();
+            this.retrieveMonacoDiffEditorOptions();
             this.retrieveWebSocketOptions();
             this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
         }
     }
 
-    private retrieveMoncaoEditorOptions() {
+    private retrieveMonacoEditorOptions() {
         if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;
@@ -107,7 +107,7 @@ export class CodeEditorLanguageClient extends LitElement {
         }
     }
 
-    private retrieveMoncaoDiffEditorOptions() {
+    private retrieveMonacoDiffEditorOptions() {
         if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;

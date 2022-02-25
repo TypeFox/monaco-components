@@ -11,11 +11,11 @@ export class CodeEditor extends LitElement {
 
     private monacoWrapper;
 
-    @property({ reflect: true }) languageId? = 'javascript';
-    @property({ reflect: true }) code? = '';
-    @property({ reflect: true }) theme? = 'vs-light';
-    @property({ type: Boolean, reflect: true }) enableInlineConfig? = false;
-    @property({ type: Boolean, reflect: true }) useDiffEditor? = false;
+    @property({ reflect: true }) languageId?= 'javascript';
+    @property({ reflect: true }) code?= '';
+    @property({ reflect: true }) theme?= 'vs-light';
+    @property({ type: Boolean, reflect: true }) enableInlineConfig?= false;
+    @property({ type: Boolean, reflect: true }) useDiffEditor?= false;
 
     constructor() {
         super();
@@ -81,13 +81,13 @@ export class CodeEditor extends LitElement {
     private syncPropertiesAndEditorConfig() {
         this.monacoWrapper.updateBasicConfigItems(this.languageId, this.code, this.theme);
         if (this.enableInlineConfig) {
-            this.retrieveMoncaoEditorOptions();
-            this.retrieveMoncaoDiffEditorOptions();
+            this.retrieveMonacoEditorOptions();
+            this.retrieveMonacoDiffEditorOptions();
             this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
         }
     }
 
-    private retrieveMoncaoEditorOptions() {
+    private retrieveMonacoEditorOptions() {
         if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;
@@ -97,7 +97,7 @@ export class CodeEditor extends LitElement {
         }
     }
 
-    private retrieveMoncaoDiffEditorOptions() {
+    private retrieveMonacoDiffEditorOptions() {
         if (!this.isEnableInlineConfig()) return;
 
         const winRec = window as unknown as Record<string, unknown>;

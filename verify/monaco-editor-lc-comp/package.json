@@ -6,7 +6,7 @@
   "main": "index.html",
   "scripts": {
     "clean": "rimraf ./dist",
-    "update-verify": "cp-cli ../../packages/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
+    "update-verify": "shx cp -r ../../packages/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
     "clean-verify": "rimraf ./verify-direct/monaco-editor-lc-comp",
     "verify-direct": "npm run clean-verify && npm run update-verify && http-server --port 22003 ./verify-direct",
     "verify-vite": "vite --force --debug"
@@ -17,7 +17,7 @@
   "devDependencies": {
     "vite": "^2.8.4",
     "http-server": "^14.1.0",
-    "cp-cli": "^2.0.0",
+    "shx": "^0.3.4",
     "rimraf":  "^3.0.2"
   }
 }

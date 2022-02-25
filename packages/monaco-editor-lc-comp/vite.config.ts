@@ -6,7 +6,7 @@ export default defineConfig({
         alias: [
             {
                 find: 'vscode',
-                replacement: path.resolve(__dirname, '../../node_modules/@codingame/monaco-languageclient/lib/vscode-compatibility')
+                replacement: path.resolve(__dirname, '../../node_modules/monaco-languageclient/lib/vscode-compatibility')
             }
         ]
     },

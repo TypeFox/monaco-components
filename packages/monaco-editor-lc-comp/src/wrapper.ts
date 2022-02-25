@@ -3,7 +3,7 @@ import * as monaco from 'monaco-editor-core';
 
 import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
 
-import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from '@codingame/monaco-languageclient';
+import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 

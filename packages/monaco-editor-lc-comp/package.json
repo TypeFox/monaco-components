@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "monaco-editor-core": "0.32.1",
-    "@codingame/monaco-languageclient": "^0.17.3",
+    "monaco-languageclient": "^0.17.3",
     "@codingame/monaco-jsonrpc": "^0.3.1",
     "lit": "^2.2.0",
     "normalize-url": "^7.0.3"
