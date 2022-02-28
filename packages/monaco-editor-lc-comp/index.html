@@ -11,8 +11,8 @@
     <script type="module">
         import { WorkerOverride } from "/src/main.ts";
     </script>
-    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42"
-        wsSecured wsPort="3000" wsPath="sampleServer">
+    <div style="height: 33vh;">
+    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer">
         <script type="text/javascript">
             function getMonacoDiffEditorOptions() {
                 return {
@@ -24,10 +24,80 @@ Same again.`, 'text/plain'],
 This number is different 2002
 Misspeelled!
 Same again.`, 'text/plain']
-                }
+                };
+
             }
             </script>
     </monaco-editor-lc-comp>
+    </div>
+    <div style="height: 33vh;">
+        <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="43" wsSecured wsPort="3000" wsPath="sampleServer">
+            <script type="text/javascript">
+                function getMonacoDiffEditorOptions() {
+                    return {
+                        diffEditorOriginal: [`This line is equal.
+This number is different 3022
+Misspelled!
+Same again.`, 'text/plain'],
+                    diffEditorModified: [`This line is equal.
+This number is different 3002
+Misspeelled!
+Same again.`, 'text/plain'],
+                        lineNumbers: 'off',
+                        minimap: {
+                            enabled: false
+                        }
+                    };
+
+                }
+                </script>
+        </monaco-editor-lc-comp>
+        </div>
+    <div style="height: 33vh;">
+    <monaco-editor-lc-comp enableInlineConfig id="44" wsSecured wsPort="3000" wsPath="sampleServer">
+        <script type="text/javascript">
+            function getMonacoEditorOptions() {
+                    return {
+                        code: `function logMe() {
+    console.log('Hello monaco-editor-comp!');
+};`,
+                        languageId: 'javascript',
+                        theme: 'vs-dark',
+                        minimap: {
+                            enabled: false
+                        }
+                    }
+                }
+        </script>
+    </monaco-editor-lc-comp>
+    </div>
+    <script type="module">
+        let monComps = document.querySelectorAll('monaco-editor-lc-comp');
+        async function sleep(milliseconds) {
+            setTimeout(() => {
+                alert(`Updating editors after ${milliseconds}ms`);
+
+                monComps[0].setCode(`function logMe() {
+    console.log('Hello swap editors!');
+};`);
+                monComps[0].swapEditors(false);
+
+                monComps[1].updateDiffEditorContent(
+                    ['text 1234', 'javascript'],
+                    ['text 5678', 'javascript']
+                );
+                monComps[1].updateEditor();
+
+                monComps[2].setCode('oh la la la!');
+                monComps[2].setLanguageId('text/plain');
+                monComps[2].setModifiedCode('oh lo lo lo!');
+                monComps[2].setModifiedLanguageId('text/plain');
+                monComps[2].swapEditors(true);
+
+            }, milliseconds);
+        }
+        await sleep(5000);
+    </script>
 </body>
 
 </html>

@@ -11,18 +11,56 @@
         import defineWorkersVite from './dist/monaco-editor-comp-workers-vite.js';
         defineWorkersVite(WorkerOverride);
     </script>
-    <monaco-editor-comp enableInlineConfig id="42">
-        <script type="text/javascript">
-            function getMonacoEditorOptions() {
-                return {
-                    code: `function logMe() {
-    console.log('Hello monaco-editor-lc-comp!');
+    <div style="height: 50vh;">
+        <monaco-editor-comp enableInlineConfig id="42">
+            <script type="text/javascript">
+                function getMonacoEditorOptions() {
+                    return {
+                        code: `function logMe() {
+    console.log('Hello monaco-editor-comp!');
 };`,
-                    languageId: 'javascript',
-                    theme: 'vs-dark'
+                        languageId: 'javascript'
+                    }
                 }
-            }
-        </script>
-    </monaco-editor-comp>
+            </script>
+        </monaco-editor-comp>
+    </div>
+    <div style="height: 50vh;">
+        <monaco-editor-comp enableInlineConfig useDiffEditor id="43">
+            <script type="text/javascript">
+                function getMonacoDiffEditorOptions() {
+                    return {
+                        diffEditorOriginal: [`This line is equal.
+This number is different 3022
+Misspelled!
+Same again.`, 'text/plain'],
+                    diffEditorModified: [`This line is equal.
+This number is different 3002
+Misspeelled!
+Same again.`, 'text/plain'],
+                        lineNumbers: 'off',
+                        minimap: {
+                            enabled: false
+                        },
+                        theme: 'vs-dark'
+                    };
+                }
+            </script>
+        </monaco-editor-comp>
+    </div>
+    <script type="module">
+        let monComps = document.querySelectorAll('monaco-editor-comp');
+        async function sleep(milliseconds) {
+            setTimeout(() => {
+                alert(`Updating editors after ${milliseconds}ms`);
+
+                monComps[1].setCode(`function logMe() {
+    console.log('Hello swap editors!');
+};`);
+                monComps[1].swapEditors(false);
+            }, milliseconds);
+        }
+        await sleep(5000);
+    </script>
 </body>
 </html>

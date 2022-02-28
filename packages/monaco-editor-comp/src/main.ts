@@ -11,9 +11,11 @@ export class CodeEditor extends LitElement {
 
     private monacoWrapper;
 
-    @property({ reflect: true }) languageId?= 'javascript';
-    @property({ reflect: true }) code?= '';
-    @property({ reflect: true }) theme?= 'vs-light';
+    @property({ reflect: true }) code? = '';
+    @property({ reflect: true }) languageId? = 'javascript';
+    @property({ reflect: true }) modifiedCode? = '';
+    @property({ reflect: true }) modifiedLanguageId? = 'javascript';
+    @property({ reflect: true }) theme? = 'vs-light';
     @property({ type: Boolean, reflect: true }) enableInlineConfig?= false;
     @property({ type: Boolean, reflect: true }) useDiffEditor?= false;
 
@@ -43,23 +45,38 @@ export class CodeEditor extends LitElement {
         `;
     }
 
-    updateCodeEditorConfig() {
+    private updateCodeEditorConfig() {
         const config = this.monacoWrapper.getEditorConfig();
-        this.languageId = config.monacoEditorOptions?.languageId as string;
-        this.code = config.monacoEditorOptions?.code as string;
+        this.code = config.codeOriginal[0];
+        this.languageId = config.codeOriginal[1];
+        this.modifiedCode = config.codeModified[0];
+        this.modifiedLanguageId = config.codeModified[1];
         this.theme = config.monacoEditorOptions?.theme as string;
     }
 
     setCode(code: string): void {
         this.code = code;
-    }
-
-    setTheme(theme: string): void {
-        this.theme = theme;
+        this.monacoWrapper.getEditorConfig().codeOriginal[0] = code;
     }
 
     setLanguageId(languageId: string): void {
         this.languageId = languageId;
+        this.monacoWrapper.getEditorConfig().codeOriginal[1] = languageId;
+    }
+
+    setModifiedCode(modifiedCode: string): void {
+        this.modifiedCode = modifiedCode;
+        this.monacoWrapper.getEditorConfig().codeModified[0] = modifiedCode;
+    }
+
+    setModifiedLanguageId(modifiedLanguageId: string): void {
+        this.modifiedLanguageId = modifiedLanguageId;
+        this.monacoWrapper.getEditorConfig().codeModified[1] = modifiedLanguageId;
+    }
+
+    setTheme(theme: string): void {
+        this.theme = theme;
+        this.monacoWrapper.getEditorConfig().monacoEditorOptions.theme = theme;
     }
 
     firstUpdated() {
@@ -67,24 +84,35 @@ export class CodeEditor extends LitElement {
     }
 
     private startEditor() {
-        this.syncPropertiesAndEditorConfig();
+        this.syncPropertiesAndEditorConfig(true);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
-
         this.registerListeners();
     }
 
     updateEditor() {
-        this.syncPropertiesAndEditorConfig();
+        this.syncPropertiesAndEditorConfig(false);
         this.monacoWrapper.updateEditor();
     }
 
-    private syncPropertiesAndEditorConfig() {
-        this.monacoWrapper.updateBasicConfigItems(this.languageId, this.code, this.theme);
-        if (this.enableInlineConfig) {
+    swapEditors(useDiffEditor: boolean): void {
+        this.useDiffEditor = useDiffEditor;
+        this.syncPropertiesAndEditorConfig(false);
+        this.monacoWrapper.swapEditors(this.container.value!, this.dispatchEvent);
+    }
+
+    updateDiffEditorContent(diffEditorOriginal: [string, string], diffEditorModified: [string, string]) {
+        this.setCode(diffEditorOriginal[0]);
+        this.setLanguageId(diffEditorOriginal[1]);
+        this.setModifiedCode(diffEditorModified[0]);
+        this.setModifiedLanguageId(diffEditorModified[1]);
+    }
+
+    private syncPropertiesAndEditorConfig(initial: boolean) {
+        if (this.isEnableInlineConfig() && initial) {
             this.retrieveMonacoEditorOptions();
             this.retrieveMonacoDiffEditorOptions();
-            this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
         }
+        this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
     }
 
     private retrieveMonacoEditorOptions() {
@@ -92,9 +120,16 @@ export class CodeEditor extends LitElement {
 
         const winRec = window as unknown as Record<string, unknown>;
         if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoEditorOptions') && typeof winRec.getMonacoEditorOptions === 'function') {
-            this.monacoWrapper.getEditorConfig().monacoEditorOptions = winRec.getMonacoEditorOptions();
+            const options = winRec.getMonacoEditorOptions();
+            this.setMonacoEditorOptions(options);
             console.log('Using config supplied by getMonacoEditorOptions for editor.');
         }
+    }
+
+    public setMonacoEditorOptions(options: Record<string, unknown>) {
+        this.setCode(options.code as string);
+        this.setLanguageId(options.languageId as string);
+        this.monacoWrapper.getEditorConfig().monacoEditorOptions = options;
     }
 
     private retrieveMonacoDiffEditorOptions() {
@@ -102,9 +137,18 @@ export class CodeEditor extends LitElement {
 
         const winRec = window as unknown as Record<string, unknown>;
         if (Object.prototype.hasOwnProperty.call(winRec, 'getMonacoDiffEditorOptions') && typeof winRec.getMonacoDiffEditorOptions === 'function') {
-            this.monacoWrapper.getEditorConfig().monacoDiffEditorOptions = winRec.getMonacoDiffEditorOptions();
+            const options = winRec.getMonacoDiffEditorOptions();
+            this.setMonacoDiffEditorOptions(options);
             console.log('Using config supplied by getMonacoDiffEditorOptions for diff editor.');
         }
+    }
+
+    public setMonacoDiffEditorOptions(options: Record<string, unknown>) {
+        this.setCode((options.diffEditorOriginal as [string, string])[0]);
+        this.setLanguageId((options.diffEditorOriginal as [string, string])[1]);
+        this.setModifiedCode((options.diffEditorModified as [string, string])[0]);
+        this.setModifiedLanguageId((options.diffEditorModified as [string, string])[1]);
+        this.monacoWrapper.getEditorConfig().monacoDiffEditorOptions = options;
     }
 
     private isEnableInlineConfig() {

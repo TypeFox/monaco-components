@@ -58,25 +58,19 @@ export class WorkerOverride {
 export class CodeEditorConfig {
 
     useDiffEditor = false;
-
-    monacoEditorOptions: Record<string, unknown> | undefined = {
-        code: '',
-        languageId: 'javascript',
+    codeOriginal: [string, string] = ['', 'javascript'];
+    codeModified: [string, string] = ['default', 'text/plain'];
+    monacoEditorOptions: Record<string, unknown> = {
         theme: 'vs-light',
         readOnly: false
     };
-    monacoDiffEditorOptions: Record<string, unknown> | undefined = {
-        diffEditorOriginal: ['default', 'text/plain'],
-        diffEditorModified: ['default', 'text/plain']
-    };
-
+    monacoDiffEditorOptions: Record<string, unknown> = {};
 }
 
 export class MonacoWrapper {
 
     private editor: monaco.editor.IStandaloneCodeEditor | undefined;
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
-
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
 
     getEditorConfig() {
@@ -89,14 +83,6 @@ export class MonacoWrapper {
 
     setUseDiffEditor(useDiffEditor: boolean) {
         this.editorConfig.useDiffEditor = useDiffEditor;
-    }
-
-    updateBasicConfigItems(languageId: string | undefined, code: string | undefined, theme: string | undefined) {
-        if (this.editorConfig.monacoEditorOptions) {
-            if (languageId) this.editorConfig.monacoEditorOptions.languageId = languageId;
-            if (code) this.editorConfig.monacoEditorOptions.code = code;
-            if (theme) this.editorConfig.monacoEditorOptions.theme = theme;
-        }
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
@@ -117,6 +103,25 @@ export class MonacoWrapper {
         this.updateEditor();
     }
 
+    swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
+        if (this.editorConfig.useDiffEditor) {
+            if (this.editor) {
+                this.editor?.dispose();
+            }
+            if (!this.diffEditor) {
+                this.startEditor(container, dispatchEvent);
+            }
+        }
+        else {
+            if (this.diffEditor) {
+                this.diffEditor?.dispose();
+            }
+            if (!this.editor) {
+                this.startEditor(container, dispatchEvent);
+            }
+        }
+    }
+
     updateEditor() {
         if (this.editorConfig.useDiffEditor) {
             this.updateDiffEditor();
@@ -126,18 +131,23 @@ export class MonacoWrapper {
         }
     }
 
+    updateDiffEditorContent(diffEditorOriginal: [string, string], diffEditorModified: [string, string]) {
+        this.editorConfig.codeOriginal = diffEditorOriginal;
+        this.editorConfig.codeModified = diffEditorModified;
+        this.updateDiffEditor();
+    }
+
     private updateMainEditor() {
         const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.editor?.updateOptions(options);
 
-        const languageId = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.languageId as string : undefined;
+        const languageId = this.editorConfig.codeOriginal[1];
         const currentModel = this.editor?.getModel();
         if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
             monaco.editor.setModelLanguage(currentModel, languageId);
         }
 
-        const code = this.editorConfig.monacoEditorOptions ? this.editorConfig.monacoEditorOptions.code as string: undefined;
-        if (code) this.editor?.setValue(code);
+        if (this.editorConfig.codeOriginal[0]) this.editor?.setValue(this.editorConfig.codeOriginal[0]);
     }
 
     private updateDiffEditor() {
@@ -147,14 +157,11 @@ export class MonacoWrapper {
     }
 
     private updateDiffModels() {
-        if (this.editorConfig.monacoDiffEditorOptions) {
-            const diffEditorOriginal = this.editorConfig.monacoDiffEditorOptions.diffEditorOriginal as [string, string];
-            const diffEditorModified = this.editorConfig.monacoDiffEditorOptions.diffEditorModified as [string, string];
+        if (this.diffEditor) {
+            const originalModel = monaco.editor.createModel(this.editorConfig.codeOriginal[0], this.editorConfig.codeOriginal[1]);
+            const modifiedModel = monaco.editor.createModel(this.editorConfig.codeModified[0], this.editorConfig.codeModified[1]);
 
-            const originalModel = monaco.editor.createModel(diffEditorOriginal[0], diffEditorOriginal[1]);
-            const modifiedModel = monaco.editor.createModel(diffEditorModified[0], diffEditorModified[1]);
-
-            this.diffEditor?.setModel({
+            this.diffEditor.setModel({
                 original: originalModel,
                 modified: modifiedModel
             });
