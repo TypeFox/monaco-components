@@ -18,9 +18,9 @@ export class CodeEditorConfig {
 
     useDiffEditor = false;
     codeOriginal: [string, string] = ['', 'javascript'];
-    codeModified: [string, string] = ['default', 'text/plain'];
+    codeModified: [string, string] = ['', 'javascript'];
+    theme = 'vs-light';
     monacoEditorOptions: Record<string, unknown> = {
-        theme: 'vs-light',
         readOnly: false
     };
     webSocketOptions: WebSocketConfigOptions = {
@@ -29,7 +29,9 @@ export class CodeEditorConfig {
         wsPort: 8080,
         wsPath: ''
     };
-    monacoDiffEditorOptions: Record<string, unknown> = {};
+    monacoDiffEditorOptions: Record<string, unknown> = {
+        readOnly: false
+    };
     languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
     themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 }
@@ -52,8 +54,8 @@ export class MonacoLanguageClientWrapper {
         return this.editorConfig;
     }
 
-    setTheme(theme: string) {
-        monaco.editor.setTheme(theme);
+    updateTheme() {
+        monaco.editor.setTheme(this.editorConfig.theme);
     }
 
     setUseDiffEditor(useDiffEditor: boolean) {
@@ -109,24 +111,9 @@ export class MonacoLanguageClientWrapper {
         }
     }
 
-    updateDiffEditorContent(diffEditorOriginal: [string, string], diffEditorModified: [string, string]) {
-        this.editorConfig.codeOriginal = diffEditorOriginal;
-        this.editorConfig.codeModified = diffEditorModified;
-        this.updateDiffEditor();
-    }
-
     private updateMainEditor() {
         const languageId = this.editorConfig.codeOriginal[1];
-        const theme = this.editorConfig.monacoEditorOptions.theme as string;
-
-        // apply monarch definitions
-        if (this.editorConfig.languageDef && languageId) {
-            monaco.languages.register({ id: languageId });
-            monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
-        }
-        if (this.editorConfig.themeData && theme) {
-            monaco.editor.defineTheme(theme, this.editorConfig.themeData);
-        }
+        this.updateCommonEditorConfig();
 
         const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.editor?.updateOptions(options);
@@ -140,9 +127,26 @@ export class MonacoLanguageClientWrapper {
     }
 
     private updateDiffEditor() {
-        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions;
+        this.updateCommonEditorConfig();
+
+        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.diffEditor?.updateOptions(options);
+
         this.updateDiffModels();
+    }
+
+    private updateCommonEditorConfig() {
+        const languageId = this.editorConfig.codeOriginal[1];
+
+        // apply monarch definitions
+        if (this.editorConfig.languageDef && languageId) {
+            monaco.languages.register({ id: languageId });
+            monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
+        }
+        if (this.editorConfig.themeData) {
+            monaco.editor.defineTheme(this.editorConfig.theme as string, this.editorConfig.themeData);
+        }
+        this.updateTheme();
     }
 
     private updateDiffModels() {

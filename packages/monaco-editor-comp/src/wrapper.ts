@@ -59,12 +59,14 @@ export class CodeEditorConfig {
 
     useDiffEditor = false;
     codeOriginal: [string, string] = ['', 'javascript'];
-    codeModified: [string, string] = ['default', 'text/plain'];
+    codeModified: [string, string] = ['', 'javascript'];
+    theme = 'vs-light';
     monacoEditorOptions: Record<string, unknown> = {
-        theme: 'vs-light',
         readOnly: false
     };
-    monacoDiffEditorOptions: Record<string, unknown> = {};
+    monacoDiffEditorOptions: Record<string, unknown> = {
+        readOnly: false
+    };
 }
 
 export class MonacoWrapper {
@@ -77,8 +79,8 @@ export class MonacoWrapper {
         return this.editorConfig;
     }
 
-    setTheme(theme: string) {
-        monaco.editor.setTheme(theme);
+    updateTheme() {
+        monaco.editor.setTheme(this.editorConfig.theme);
     }
 
     setUseDiffEditor(useDiffEditor: boolean) {
@@ -131,15 +133,10 @@ export class MonacoWrapper {
         }
     }
 
-    updateDiffEditorContent(diffEditorOriginal: [string, string], diffEditorModified: [string, string]) {
-        this.editorConfig.codeOriginal = diffEditorOriginal;
-        this.editorConfig.codeModified = diffEditorModified;
-        this.updateDiffEditor();
-    }
-
     private updateMainEditor() {
         const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.editor?.updateOptions(options);
+        this.updateTheme();
 
         const languageId = this.editorConfig.codeOriginal[1];
         const currentModel = this.editor?.getModel();
@@ -151,8 +148,10 @@ export class MonacoWrapper {
     }
 
     private updateDiffEditor() {
-        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions;
+        const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.diffEditor?.updateOptions(options);
+        this.updateTheme();
+
         this.updateDiffModels();
     }
 
@@ -206,4 +205,4 @@ export class MonacoWrapper {
 
 }
 
-export { monacoStyles };
+export { monaco, monacoStyles };

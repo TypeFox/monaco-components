@@ -14,49 +14,48 @@
     <div style="height: 33vh;">
     <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer">
         <script type="text/javascript">
-            function getMonacoDiffEditorOptions() {
+            function getMonacoDiffEditorOptions42() {
                 return {
-                    diffEditorOriginal: [`This line is equal.
+                    code: `This line is equal.
 This number is different 2022
 Misspelled!
-Same again.`, 'text/plain'],
-                    diffEditorModified: [`This line is equal.
+Same again.`,
+                    languageId: 'text/plain',
+                    modifiedCode: `This line is equal.
 This number is different 2002
 Misspeelled!
-Same again.`, 'text/plain']
+Same again.`,
+                    modifiedLanguageId: 'text/plain'
                 };
-
             }
             </script>
     </monaco-editor-lc-comp>
     </div>
     <div style="height: 33vh;">
-        <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="43" wsSecured wsPort="3000" wsPath="sampleServer">
+        <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="43"
+        code="This line is equal.This number is different 3022.Misspelled!Same again."
+        languageId="text/plain"
+        modifiedCode="This line is equal.This number is different 3002.Misspelled!Same again."
+        modifiedLanguageId="text/plain"
+        theme="vs-dark"
+        wsSecured wsHost="localhost" wsPort="3000" wsPath="sampleServer">
             <script type="text/javascript">
-                function getMonacoDiffEditorOptions() {
+                function getMonacoDiffEditorOptions43() {
                     return {
-                        diffEditorOriginal: [`This line is equal.
-This number is different 3022
-Misspelled!
-Same again.`, 'text/plain'],
-                    diffEditorModified: [`This line is equal.
-This number is different 3002
-Misspeelled!
-Same again.`, 'text/plain'],
                         lineNumbers: 'off',
                         minimap: {
-                            enabled: false
+                            enabled: true
                         }
                     };
 
                 }
                 </script>
         </monaco-editor-lc-comp>
-        </div>
+    </div>
     <div style="height: 33vh;">
     <monaco-editor-lc-comp enableInlineConfig id="44" wsSecured wsPort="3000" wsPath="sampleServer">
         <script type="text/javascript">
-            function getMonacoEditorOptions() {
+            function getMonacoEditorOptions44() {
                     return {
                         code: `function logMe() {
     console.log('Hello monaco-editor-comp!');
@@ -77,25 +76,39 @@ Same again.`, 'text/plain'],
             setTimeout(() => {
                 alert(`Updating editors after ${milliseconds}ms`);
 
-                monComps[0].setCode(`function logMe() {
+                const comp42 = monComps[0];
+                // ensure base configuration is reloaded
+                comp42.loadInlineConfig();
+                comp42.setCode(`function logMe() {
     console.log('Hello swap editors!');
 };`);
-                monComps[0].swapEditors(false);
+                comp42.swapEditors(false, false);
 
-                monComps[1].updateDiffEditorContent(
-                    ['text 1234', 'javascript'],
-                    ['text 5678', 'javascript']
+                const comp43 = monComps[1];
+                // ensure base configuration is reloaded
+                comp43.loadInlineConfig();
+                comp43.updateDiffEditorContent(
+                    'text 1234', 'javascript',
+                    'text 5678', 'javascript'
                 );
-                monComps[1].updateEditor();
 
-                monComps[2].setCode('oh la la la!');
-                monComps[2].setLanguageId('text/plain');
-                monComps[2].setModifiedCode('oh lo lo lo!');
-                monComps[2].setModifiedLanguageId('text/plain');
-                monComps[2].swapEditors(true);
+                comp43.updateEditor(false);
 
+                const comp44 = monComps[2];
+                // ensure base configuration is reloaded
+                comp44.loadInlineConfig();
+                comp44.setCode('oh la la la!');
+                comp44.setLanguageId('text/plain');
+                comp44.setModifiedCode('oh lo lo lo!');
+                comp44.setModifiedLanguageId('text/plain');
+                // This affects all editors globally and is only effective
+                // if it is not in contrast to one configured later
+                comp44.setTheme('vs-light');
+                comp44.swapEditors(true, false);
             }, milliseconds);
         }
+
+        // change the editors config, content or swap normal and diff editors after five seconds
         await sleep(5000);
     </script>
 </body>

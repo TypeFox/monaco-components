@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.2.0-preview.4",
+  "version": "0.2.0",
   "license": "MIT",
   "description": "Lit Component for Monaco Editor",
   "keywords": [

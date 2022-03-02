@@ -23,14 +23,16 @@
             }
             function getMonacoDiffEditorOptions() {
                 return {
-                    diffEditorOriginal: [`This line is equal.
+                    code: `This line is equal.
 This number is different 2022
 Misspelled!
-Same again.`, 'text/plain'],
-                    diffEditorModified: [`This line is equal.
+Same again.`,
+                    languageId: 'text/plain',
+                    modifiedCode: `This line is equal.
 This number is different 2002
 Misspeelled!
-Same again.`, 'text/plain']
+Same again.`,
+                    modifiedLanguageId: 'text/plain'
                 }
             }
             </script>
