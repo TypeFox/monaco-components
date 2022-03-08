@@ -50,6 +50,12 @@ export class MonacoLanguageClientWrapper {
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
 
+    private id: string;
+
+    constructor(id: string) {
+        this.id = id;
+    }
+
     getEditorConfig() {
         return this.editorConfig;
     }
@@ -63,6 +69,8 @@ export class MonacoLanguageClientWrapper {
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+        console.log(`Starting monaco-editor (${this.id})`);
+
         // register Worker function
         this.defineMonacoEnvironment();
 
@@ -182,7 +190,16 @@ export class MonacoLanguageClientWrapper {
 
     private installMonaco() {
         // install Monaco language client services
-        if (monaco) MonacoServices.install(monaco);
+        if (monaco) {
+            try {
+                MonacoServices.get();
+            }
+            catch (e: unknown) {
+                // install only if services are not yet available (exception will happen only then)
+                MonacoServices.install(monaco);
+                console.log(`Component (${this.id}): Installed MonacoServices`);
+            }
+        }
     }
 
     private establishWebSocket(websocketConfig: WebSocketConfigOptions) {

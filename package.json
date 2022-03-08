@@ -1,6 +1,6 @@
 {
   "name": "monaco-components",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "files": [
     "lib"
   ],
@@ -17,7 +17,9 @@
     "verify-comp-vite": "cd verify/monaco-editor-comp/ && npm run verify-vite",
     "verify-lc-comp-direct": "cd verify/monaco-editor-lc-comp/ && npm run verify-direct",
     "verify-lc-comp-vite": "cd verify/monaco-editor-lc-comp/ && npm run verify-vite",
-    "verify-monaco-vite": "cd verify/monaco-editor/ && npm run verify-vite"
+    "verify-monaco-vite": "cd verify/monaco-editor/ && npm run verify-vite",
+    "install-verify": "cd verify/monaco-editor-comp && npm i && cd ../monaco-editor-lc-comp && npm i",
+    "prepare-release": "npm run clean && npm run build-all && npm run install-verify"
   },
   "dependencies": {
   },

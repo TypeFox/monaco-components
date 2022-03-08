@@ -66,7 +66,7 @@ modifiedLanguageId: 'text/plain',
                 // This affects all editors globally and is only effective
                 // if it is not in contrast to one configured later
                 comp43.setTheme('vs-light');
-                comp43.swapEditors(false, false);
+                comp43.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
             }, milliseconds);
         }
 

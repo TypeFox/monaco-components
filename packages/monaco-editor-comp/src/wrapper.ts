@@ -75,6 +75,12 @@ export class MonacoWrapper {
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
 
+    private id: string;
+
+    constructor(id: string) {
+        this.id = id;
+    }
+
     getEditorConfig() {
         return this.editorConfig;
     }
@@ -88,6 +94,8 @@ export class MonacoWrapper {
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+        console.log(`Starting monaco-editor (${this.id})`);
+
         // register Worker function
         this.defineMonacoEnvironment();
 

@@ -12,7 +12,7 @@ export class CodeEditorLanguageClient extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
 
-    private monacoWrapper = new MonacoLanguageClientWrapper();
+    private monacoWrapper = new MonacoLanguageClientWrapper(this.id);
 
     @property({ reflect: true }) code = '';
     @property({ reflect: true }) languageId = 'javascript';
@@ -102,9 +102,9 @@ export class CodeEditorLanguageClient extends LitElement {
         this.monacoWrapper.updateEditor();
     }
 
-    swapEditors(useDiffEditor: boolean, reloadInlineConfig: boolean): void {
-        this.useDiffEditor = useDiffEditor;
-        this.syncPropertiesAndEditorConfig(reloadInlineConfig);
+    swapEditors(options: { useDiffEditor: boolean, reloadInlineConfig: boolean }): void {
+        this.useDiffEditor = options.useDiffEditor;
+        this.syncPropertiesAndEditorConfig(options.reloadInlineConfig);
         this.monacoWrapper.swapEditors(this.container.value!, this.dispatchEvent);
     }
 

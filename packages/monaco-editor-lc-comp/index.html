@@ -82,7 +82,7 @@ Same again.`,
                 comp42.setCode(`function logMe() {
     console.log('Hello swap editors!');
 };`);
-                comp42.swapEditors(false, false);
+                comp42.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
 
                 const comp43 = monComps[1];
                 // ensure base configuration is reloaded
@@ -104,7 +104,7 @@ Same again.`,
                 // This affects all editors globally and is only effective
                 // if it is not in contrast to one configured later
                 comp44.setTheme('vs-light');
-                comp44.swapEditors(true, false);
+                comp44.swapEditors({ useDiffEditor: true, reloadInlineConfig: false });
             }, milliseconds);
         }
 
