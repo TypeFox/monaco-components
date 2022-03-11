@@ -13,19 +13,21 @@
         import defineWorkersVite from "monaco-editor-comp/monaco-editor-comp-workers-vite";
         defineWorkersVite(WorkerOverride);
     </script>
-    <monaco-editor-comp enableInlineConfig>
-        <script type="text/javascript">
-            function getMonacoEditorOptions() {
-                return {
-                    code: `function logMe() {
+    <div style="height: 50vh;">
+        <monaco-editor-comp enableInlineConfig>
+            <script type="text/javascript">
+                function getMonacoEditorOptions() {
+                    return {
+                        code: `function logMe() {
     console.log('Hello verify monaco-editor-comp!');
 };`,
-                    languageId: 'javascript',
-                    theme: 'vs-dark'
+                        languageId: 'javascript',
+                        theme: 'vs-dark'
+                    }
                 }
-            }
-        </script>
-    </monaco-editor-comp>
+            </script>
+        </monaco-editor-comp>
+    </div>
 </body>
 
 </html>

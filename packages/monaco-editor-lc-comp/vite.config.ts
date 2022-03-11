@@ -14,7 +14,7 @@ export default defineConfig({
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'monaco-editor-lc-comp',
-            fileName: () => `monaco-editor-lc-comp.js`,
+            fileName: () => 'monaco-editor-lc-comp.js',
             formats: ['es']
         },
         emptyOutDir: false,

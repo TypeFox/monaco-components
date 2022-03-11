@@ -1,7 +1,5 @@
 import 'monaco-editor/esm/vs/editor/editor.all.js';
 
-import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
-
 // select features
 import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js';
@@ -117,6 +115,7 @@ export class MonacoWrapper {
         if (this.editorConfig.useDiffEditor) {
             if (this.editor) {
                 this.editor?.dispose();
+                this.editor = undefined;
             }
             if (!this.diffEditor) {
                 this.startEditor(container, dispatchEvent);
@@ -125,6 +124,7 @@ export class MonacoWrapper {
         else {
             if (this.diffEditor) {
                 this.diffEditor?.dispose();
+                this.diffEditor = undefined;
             }
             if (!this.editor) {
                 this.startEditor(container, dispatchEvent);
@@ -213,4 +213,4 @@ export class MonacoWrapper {
 
 }
 
-export { monaco, monacoStyles };
+export { monaco };

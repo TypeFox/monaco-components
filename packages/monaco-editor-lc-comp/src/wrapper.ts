@@ -95,6 +95,7 @@ export class MonacoLanguageClientWrapper {
         if (this.editorConfig.useDiffEditor) {
             if (this.editor) {
                 this.editor?.dispose();
+                this.editor = undefined;
             }
             if (!this.diffEditor) {
                 this.startEditor(container, dispatchEvent);
@@ -103,6 +104,7 @@ export class MonacoLanguageClientWrapper {
         else {
             if (this.diffEditor) {
                 this.diffEditor?.dispose();
+                this.diffEditor = undefined;
             }
             if (!this.editor) {
                 this.startEditor(container, dispatchEvent);

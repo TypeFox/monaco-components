@@ -1,9 +1,14 @@
-# GLobal Monaco Editor Components CHANGELOG
+# Global CHANGELOG for Monaco Editor Components
+
+## [0.2.2]
+
+* Fix editor and diffEditor not properly disposed [**monaco-editor-comp**][**monaco-editor-lc-comp**]
+* Adjusted editor-height to 100% instead of 100vh [**monaco-editor-comp**][**monaco-editor-lc-comp**]
 
 ## [0.2.1]
 
-* **monaco-editor-lc-comp**: Fixed issue `installMonaco` if service registration was already performed by other component instance
-* **all**: Changed arguments of `swapEditors` to one typed configuration object
+* Fixed issue `installMonaco` if service registration was already performed by other component instance [**monaco-editor-lc-comp**]
+* Changed arguments of `swapEditors` to one typed configuration object [**monaco-editor-comp**][**monaco-editor-lc-comp**]
 
 ## [0.2.0]
 

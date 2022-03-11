@@ -5,6 +5,7 @@ import { createRef, Ref, ref } from 'lit/directives/ref.js';
 import { monaco, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
 
 import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
+
 import { WebSocketConfigOptions } from '.';
 
 @customElement('monaco-editor-lc-comp')
@@ -30,7 +31,7 @@ export class CodeEditorLanguageClient extends LitElement {
     static override styles = css`
         :host {
             --editor-width: 100%;
-            --editor-height: 100vh;
+            --editor-height: 100%;
         }
         main {
             width: var(--editor-width);
@@ -182,6 +183,8 @@ export class CodeEditorLanguageClient extends LitElement {
         }
         if (options.theme) {
             this.setTheme(options.theme as string);
+            // ensure theme is removed from global config object and kept separate
+            options.theme = undefined;
         }
         this.monacoWrapper.getEditorConfig().monacoEditorOptions = options;
     }

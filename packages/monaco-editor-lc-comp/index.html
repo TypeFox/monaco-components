@@ -72,7 +72,7 @@ Same again.`,
     </div>
     <script type="module">
         let monComps = document.querySelectorAll('monaco-editor-lc-comp');
-        async function sleep(milliseconds) {
+        async function sleepOne(milliseconds) {
             setTimeout(() => {
                 alert(`Updating editors after ${milliseconds}ms`);
 
@@ -105,11 +105,23 @@ Same again.`,
                 // if it is not in contrast to one configured later
                 comp44.setTheme('vs-light');
                 comp44.swapEditors({ useDiffEditor: true, reloadInlineConfig: false });
+
             }, milliseconds);
         }
-
         // change the editors config, content or swap normal and diff editors after five seconds
-        await sleep(5000);
+        await sleepOne(5000);
+
+        async function sleepTwo(milliseconds) {
+            setTimeout(() => {
+                alert(`Updating last editor after ${milliseconds}ms`);
+
+                const comp44 = monComps[2];
+                // ensure base configuration is reloaded
+                comp44.setTheme('vs-light');
+                comp44.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
+            }, milliseconds);
+        };
+        await sleepTwo(10000);
     </script>
 </body>
 
