@@ -124,6 +124,10 @@ export class CodeEditorLanguageClient extends LitElement {
         }
     }
 
+    updateLayout() {
+        this.monacoWrapper.updateLayout();
+    }
+
     private syncPropertiesAndEditorConfig(reloadInlineConfig: boolean) {
         if (reloadInlineConfig) {
             this.loadInlineConfig();
@@ -172,7 +176,7 @@ export class CodeEditorLanguageClient extends LitElement {
         this.setMonacoEditorOptions(options);
     }
 
-    public setMonacoEditorOptions(options: Record<string, unknown> | undefined) {
+    setMonacoEditorOptions(options: Record<string, unknown> | undefined) {
         if (!options) return;
 
         if (options.code) {
@@ -196,7 +200,7 @@ export class CodeEditorLanguageClient extends LitElement {
         this.setMonacoDiffEditorOptions(options);
     }
 
-    public setMonacoDiffEditorOptions(options: Record<string, unknown> | undefined) {
+    setMonacoDiffEditorOptions(options: Record<string, unknown> | undefined) {
         if (!options) return;
 
         if (options.code) {
@@ -224,7 +228,7 @@ export class CodeEditorLanguageClient extends LitElement {
         this.setMonacoEditorOptions(options);
     }
 
-    public setWebSocketOptions(options: Record<string, unknown>) {
+    setWebSocketOptions(options: Record<string, unknown>) {
         this.monacoWrapper.getEditorConfig().webSocketOptions = options as WebSocketConfigOptions;
     }
 

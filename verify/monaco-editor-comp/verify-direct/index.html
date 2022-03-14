@@ -8,7 +8,12 @@
 </head>
 
 <body>
-    <div id="container"></div>
+    <style>
+        @font-face {
+            font-family: 'codicon';
+            src: url('./monaco-editor-comp/codicon.ttf') format('truetype');
+        }
+    </style>
     <script type="module">
         import { WorkerOverride } from "./monaco-editor-comp/monaco-editor-comp.js";
         import { defineWorkers } from './monaco-editor-comp/monaco-editor-comp-workers.js';

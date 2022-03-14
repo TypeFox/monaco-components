@@ -1,13 +1,13 @@
 {
   "name": "verify-monaco-editor-lc-comp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "clean": "rimraf ./dist",
+    "clean": "shx rm -rf ./dist",
     "update-verify": "shx cp -r ../../packages/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
-    "clean-verify": "rimraf ./verify-direct/monaco-editor-lc-comp",
+    "clean-verify": "shx rm -rf ./verify-direct/monaco-editor-lc-comp",
     "verify-direct": "npm run clean-verify && npm run update-verify && http-server --port 22003 ./verify-direct",
     "verify-vite": "vite --force --debug"
   },
@@ -17,7 +17,6 @@
   "devDependencies": {
     "vite": "^2.8.6",
     "http-server": "^14.1.0",
-    "shx": "^0.3.4",
-    "rimraf":  "^3.0.2"
+    "shx": "^0.3.4"
   }
 }

@@ -95,6 +95,10 @@ export class CodeEditor extends LitElement {
         }
     }
 
+    updateLayout() {
+        this.monacoWrapper.updateLayout();
+    }
+
     private syncPropertiesAndEditorConfig(reloadInlineConfig: boolean) {
         if (reloadInlineConfig) {
             this.loadInlineConfig();
@@ -137,7 +141,7 @@ export class CodeEditor extends LitElement {
         this.setMonacoEditorOptions(options);
     }
 
-    public setMonacoEditorOptions(options: Record<string, unknown> | undefined) {
+    setMonacoEditorOptions(options: Record<string, unknown> | undefined) {
         if (!options) return;
 
         if (options.code) {
@@ -161,7 +165,7 @@ export class CodeEditor extends LitElement {
         this.setMonacoDiffEditorOptions(options);
     }
 
-    public setMonacoDiffEditorOptions(options: Record<string, unknown> | undefined) {
+    setMonacoDiffEditorOptions(options: Record<string, unknown> | undefined) {
         if (!options) return;
 
         if (options.code) {

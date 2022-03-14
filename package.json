@@ -26,7 +26,7 @@
   "devDependencies": {
     "vite": "^2.8.6",
     "typescript": "^4.6.2",
-    "rimraf": "^3.0.2",
+    "shx": "^0.3.4",
     "eslint": "^8.10.0",
     "@typescript-eslint/eslint-plugin": "5.13.0",
     "editorconfig": "^0.15.3"

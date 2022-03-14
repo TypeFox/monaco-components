@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-lc-comp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -29,10 +29,11 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "rimraf ./dist",
+    "clean": "shx rm -rf ./dist",
     "dev": "vite",
     "lint": "eslint src",
-    "build": "npm run clean && tsc && vite build ",
+    "copy-ttf": "shx cp ../../node_modules/monaco-editor-core/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist",
+    "build": "npm run clean && tsc && vite build && npm run copy-ttf",
     "serve": "tsc && vite preview"
   },
   "dependencies": {

@@ -122,27 +122,28 @@ export class MonacoLanguageClientWrapper {
     }
 
     private updateMainEditor() {
-        const languageId = this.editorConfig.codeOriginal[1];
         this.updateCommonEditorConfig();
-
         const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.editor?.updateOptions(options);
 
         const currentModel = this.editor?.getModel();
+        const languageId = this.editorConfig.codeOriginal[1];
         if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
             monaco.editor.setModelLanguage(currentModel, languageId);
         }
 
-        if (this.editorConfig.codeOriginal[0]) this.editor?.setValue(this.editorConfig.codeOriginal[0]);
+        if (this.editorConfig.codeOriginal[0]) {
+            this.editor?.setValue(this.editorConfig.codeOriginal[0]);
+        }
+        this.updateLayout();
     }
 
     private updateDiffEditor() {
         this.updateCommonEditorConfig();
-
         const options = this.editorConfig.monacoDiffEditorOptions as monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.diffEditor?.updateOptions(options);
-
         this.updateDiffModels();
+        this.updateLayout();
     }
 
     private updateCommonEditorConfig() {
@@ -168,6 +169,15 @@ export class MonacoLanguageClientWrapper {
                 original: originalModel,
                 modified: modifiedModel
             });
+        }
+    }
+
+    updateLayout() {
+        if (this.editorConfig.useDiffEditor) {
+            this.diffEditor?.layout();
+        }
+        else {
+            this.editor?.layout();
         }
     }
 

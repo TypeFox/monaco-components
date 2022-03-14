@@ -6,13 +6,17 @@ The component can be fully configured with inlined JavaScript. It can be configu
 
 ## Web Component properties / configuration options
 
-* **languageId**: Specify the editor language (default: `javascript`)
 * **code**: Code or text that is shown in the editor (default: `''`);
+* **languageId**: Specify the editor language (default: `javascript`)
 * **modifiedCode**: Only Diff Editor: Specify the modified language (default: `javascript`)
 * **modifiedLanguageId**: Only Diff Editor: Code or text that is shown in the modified editor. (default: `''`)
 * **theme**: Theme of the editor that is used (default: `vs-light`)
 * **enableInlineConfig**: Enable the inline editor configuration by specifying function `getMonacoEditorOptions` in inner script tag. You can directly pass monaco-editor options. See examples below. Attach the id directly to the name if you use more than one editor (e.g. `getMonacoEditorOptions42`).
 * **useDiffEditor**: Use the diff editor instead of the regular editor by specifying function `getMonacoDiffEditorOptions`. It can only be used if `enableInlineConfig` is passed. See examples below.  Attach the id directly to the name if you use more than one editor (e.g. `getMonacoDiffEditorOptions42`).
+
+## Help / Hints
+
+Proper styling of at least the Diff Editor require that the codicon font is loaded outside the web component. Due to limitations of the Shadow DOM this can unfortunately not be transparently handled by the web component and requires user code adjustments shown [here](../../verify/monaco-editor-comp/verify-direct/index.html#L11-16) and [monaco-editor sample]( https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-shadow-dom/index.html)).
 
 ## Usage Examples
 
