@@ -1,5 +1,13 @@
 # Global CHANGELOG for Monaco Editor Components
 
+## [0.2.4]
+
+* Update dependencies:
+  * `monaco-editor` and `monaco-editor-core` to `0.33.0`
+  * `monaco-languageclient` to `0.18.1`
+  * `lit` to `2.2.1`
+  * `eslint` to `8.10.0` and `@typescript-eslint/eslint-plugin` to `5.13.0`
+
 ## [0.2.3]
 
 * Fix editor not alwaysed sized correctly. `updateEditor` now calls `layout()` for regular and diff editors. [**monaco-editor-comp**][**monaco-editor-lc-comp**]

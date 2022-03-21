@@ -37,15 +37,15 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor-core": "0.32.1",
-    "monaco-languageclient": "^0.17.3",
+    "monaco-editor-core": "^0.33.0",
+    "monaco-languageclient": "^0.18.1",
     "@codingame/monaco-jsonrpc": "^0.3.1",
-    "lit": "^2.2.0",
+    "lit": "^2.2.1",
     "normalize-url": "^7.0.3"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
-    "@types/vscode": "^1.64.0",
+    "@types/vscode": "^1.65.0",
     "@types/glob-to-regexp": "^0.4.1"
   },
   "repository": {

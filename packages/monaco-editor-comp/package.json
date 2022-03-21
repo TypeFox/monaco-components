@@ -46,8 +46,8 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor": "0.32.1",
-    "lit": "^2.2.0"
+    "monaco-editor": "^0.33.0",
+    "lit": "^2.2.1"
   },
   "devDependencies": {
     "tslib": "^2.3.1"

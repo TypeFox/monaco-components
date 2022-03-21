@@ -19,7 +19,7 @@
     "verify-lc-comp-vite": "cd verify/monaco-editor-lc-comp/ && npm run verify-vite",
     "verify-monaco-vite": "cd verify/monaco-editor/ && npm run verify-vite",
     "install-verify": "cd verify/monaco-editor-comp && npm i && cd ../monaco-editor-lc-comp && npm i",
-    "prepare-release": "npm run clean && npm run build-all && npm run install-verify"
+    "prepare-release": "npm i && npm run clean && npm run build-all && npm run install-verify"
   },
   "dependencies": {
   },
@@ -27,8 +27,8 @@
     "vite": "^2.8.6",
     "typescript": "^4.6.2",
     "shx": "^0.3.4",
-    "eslint": "^8.10.0",
-    "@typescript-eslint/eslint-plugin": "5.13.0",
+    "eslint": "^8.11.0",
+    "@typescript-eslint/eslint-plugin": "^5.15.0",
     "editorconfig": "^0.15.3"
   },
   "workspaces": [

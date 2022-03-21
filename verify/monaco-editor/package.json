@@ -8,7 +8,7 @@
     "prepare": "npm run verify-vite"
   },
   "dependencies": {
-    "monaco-editor": "0.32.1"
+    "monaco-editor": "^0.33.0"
   },
   "devDependencies": {
     "http-server": "^14.1.0",
