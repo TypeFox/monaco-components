@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "license": "MIT",
   "description": "Lit Component for Monaco Editor",
   "keywords": [
@@ -46,8 +46,8 @@
     "serve": "tsc && vite preview"
   },
   "dependencies": {
-    "monaco-editor": "^0.33.0",
-    "lit": "^2.2.1"
+    "lit": "^2.2.1",
+    "monaco-editor": "^0.33.0"
   },
   "devDependencies": {
     "tslib": "^2.3.1"
