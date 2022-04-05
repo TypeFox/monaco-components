@@ -12,6 +12,7 @@
     "verify-vite": "vite --force --debug"
   },
   "dependencies": {
+    "monaco-editor": "^0.33.0",
     "monaco-editor-lc-comp": "../../packages/monaco-editor-lc-comp"
   },
   "devDependencies": {

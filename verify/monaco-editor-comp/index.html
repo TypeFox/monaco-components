@@ -16,8 +16,7 @@
     </style>
     <script type="module">
         import { WorkerOverride } from "monaco-editor-comp";
-        import defineWorkersVite from "monaco-editor-comp/monaco-editor-comp-workers-vite";
-        defineWorkersVite(WorkerOverride);
+        WorkerOverride.buildWorkerDefinition('');
     </script>
     <div style="height: 50vh;">
         <monaco-editor-comp enableInlineConfig>

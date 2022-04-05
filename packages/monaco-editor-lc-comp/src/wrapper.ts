@@ -1,11 +1,11 @@
 // Monaco Editor Imports
-import * as monaco from 'monaco-editor-core';
-
-import editorWorker from 'monaco-editor-core/esm/vs/editor/editor.worker?worker&inline';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
+
+import { WorkerOverride } from 'monaco-editor-workers';
 
 export type WebSocketConfigOptions = {
     wsSecured: boolean;
@@ -36,14 +36,6 @@ export class CodeEditorConfig {
     themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 }
 
-export class WorkerOverride {
-
-    // static worker load override functions
-    static getEditorWorker() {
-        return new editorWorker();
-    }
-}
-
 export class MonacoLanguageClientWrapper {
 
     private editor: monaco.editor.IStandaloneCodeEditor | undefined;
@@ -71,8 +63,8 @@ export class MonacoLanguageClientWrapper {
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
 
-        // register Worker function
-        this.defineMonacoEnvironment();
+        // register Worker function if not done before
+        WorkerOverride.buildWorkerDefinition('../dist/', false);
 
         if (this.editorConfig.useDiffEditor) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
@@ -181,25 +173,6 @@ export class MonacoLanguageClientWrapper {
         }
     }
 
-    private defineMonacoEnvironment() {
-        const getWorker = (_: string, label: string) => {
-            console.log('getWorker: workerId: ' + _ + ' label: ' + label);
-            return WorkerOverride.getEditorWorker();
-        };
-
-        const monWin = (self as monaco.Window);
-        if (monWin) {
-            if (!monWin.MonacoEnvironment) {
-                monWin.MonacoEnvironment = {
-                    getWorker: getWorker
-                };
-            }
-            else {
-                monWin.MonacoEnvironment.getWorker = getWorker;
-            }
-        }
-    }
-
     private installMonaco() {
         // install Monaco language client services
         if (monaco) {
@@ -260,5 +233,3 @@ export class MonacoLanguageClientWrapper {
     }
 
 }
-
-export { monaco };

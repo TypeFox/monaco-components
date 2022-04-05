@@ -9,7 +9,9 @@
 
 <body>
     <script type="module">
-        import { WorkerOverride } from "/src/main.ts";
+        import { buildWorkerDefinition } from "monaco-editor-workers";
+        buildWorkerDefinition('../monaco-editor-workers/dist/workers', import.meta.url, false);
+        import "/src/main.ts";
     </script>
     <div style="height: 33vh;">
     <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer">

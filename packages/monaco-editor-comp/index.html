@@ -7,9 +7,9 @@
 </head>
 <body>
     <script type="module">
-        import { WorkerOverride } from "/src/main.ts";
-        import defineWorkersVite from './dist/monaco-editor-comp-workers-vite.js';
-        defineWorkersVite(WorkerOverride);
+        import "/src/main.ts";
+        import { WorkerOverride } from "/src/wrapper.ts";
+        WorkerOverride.buildWorkerDefinition('../dist/', false);
     </script>
     <div style="height: 50vh;">
         <monaco-editor-comp enableInlineConfig id="42">

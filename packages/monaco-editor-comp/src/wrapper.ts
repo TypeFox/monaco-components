@@ -23,35 +23,6 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
-
-export class WorkerOverride {
-
-    // static worker load override functions
-    static getEditorWorker() {
-        return new editorWorker();
-    }
-
-    // generate empty instructions as default
-
-    static getTsWorker() {
-        // use this in vite 2.8.x: new URL('../../../node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js', import.meta.url)
-        return new Worker('ts.worker.js', { type: 'module' });
-    }
-
-    static getHtmlWorker() {
-        return new Worker('html.worker.js', { type: 'module' });
-    }
-
-    static getCssWorker() {
-        return new Worker('css.worker.js', { type: 'module' });
-    }
-
-    static getJsonWorker() {
-        return new Worker('json.worker.js', { type: 'module' });
-    }
-
-}
 
 export class CodeEditorConfig {
 
@@ -94,8 +65,8 @@ export class MonacoWrapper {
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
 
-        // register Worker function
-        this.defineMonacoEnvironment();
+        // register Worker function if not done before
+        WorkerOverride.buildWorkerDefinition('../dist/', false);
 
         if (this.editorConfig.useDiffEditor) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
@@ -188,42 +159,6 @@ export class MonacoWrapper {
         }
         else {
             this.editor?.layout();
-        }
-    }
-
-    private defineMonacoEnvironment() {
-        const getWorker = (_: string, label: string) => {
-            console.log('getWorker: workerId: ' + _ + ' label: ' + label);
-
-            switch (label) {
-                case 'typescript':
-                case 'javascript':
-                    return WorkerOverride.getTsWorker();
-                case 'html':
-                case 'handlebars':
-                case 'razor':
-                    return WorkerOverride.getHtmlWorker();
-                case 'css':
-                case 'scss':
-                case 'less':
-                    return WorkerOverride.getCssWorker();
-                case 'json':
-                    return WorkerOverride.getJsonWorker();
-                default:
-                    return WorkerOverride.getEditorWorker();
-            }
-        };
-
-        const monWin = (self as monaco.Window);
-        if (monWin) {
-            if (!monWin.MonacoEnvironment) {
-                monWin.MonacoEnvironment = {
-                    getWorker: getWorker
-                };
-            }
-            else {
-                monWin.MonacoEnvironment.getWorker = getWorker;
-            }
         }
     }
 

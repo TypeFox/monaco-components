@@ -2,9 +2,10 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { monaco, MonacoLanguageClientWrapper, WorkerOverride } from './wrapper';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { MonacoLanguageClientWrapper } from './wrapper';
 
-import monacoStyles from 'monaco-editor-core/min/vs/editor/editor.main.css';
+import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
 
 import { WebSocketConfigOptions } from '.';
 
@@ -266,5 +267,3 @@ declare global {
         'monaco-editor-lc-comp': CodeEditorLanguageClient;
     }
 }
-
-export { WorkerOverride };
