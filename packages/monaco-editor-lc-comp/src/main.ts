@@ -23,6 +23,7 @@ export class CodeEditorLanguageClient extends LitElement {
     @property({ reflect: true }) theme = 'vs-light';
     @property({ type: Boolean, reflect: true }) enableInlineConfig? = false;
     @property({ type: Boolean, reflect: true }) useDiffEditor? = false;
+    @property({ type: Boolean, reflect: true }) useLanguageClient? = false;
 
     @property({ type: Boolean, reflect: true }) wsSecured? = false;
     @property({ reflect: true }) wsHost = 'localhost';
@@ -93,6 +94,11 @@ export class CodeEditorLanguageClient extends LitElement {
         this.monacoWrapper.getEditorConfig().webSocketOptions.wsPath = wsPath;
     }
 
+    setUseLanguageClient(useLanguageClient: boolean) {
+        this.useLanguageClient = useLanguageClient;
+        this.monacoWrapper.getEditorConfig().useLanguageClient = useLanguageClient;
+    }
+
     private startEditor(reloadInlineConfig: boolean) {
         this.syncPropertiesAndEditorConfig(reloadInlineConfig);
         this.monacoWrapper.startEditor(this.container.value!, this.dispatchEvent);
@@ -150,6 +156,7 @@ export class CodeEditorLanguageClient extends LitElement {
         wrapperConfig.webSocketOptions.wsHost = this.wsHost;
         wrapperConfig.webSocketOptions.wsPort = this.wsPort;
         wrapperConfig.webSocketOptions.wsPath = this.wsPath;
+        wrapperConfig.useLanguageClient = this.useLanguageClient;
 
         this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
     }
@@ -197,7 +204,7 @@ export class CodeEditorLanguageClient extends LitElement {
     private retrieveMonacoDiffEditorOptions() {
         if (!this.isEnableInlineConfig()) return;
 
-        const options = this.buildAndCallConfigFunction('getMonacoDiffEditorOptions', 'editor');
+        const options = this.buildAndCallConfigFunction('getMonacoDiffEditorOptions', 'diff editor');
         this.setMonacoDiffEditorOptions(options);
     }
 

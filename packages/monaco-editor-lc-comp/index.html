@@ -10,11 +10,11 @@
 <body>
     <script type="module">
         import { buildWorkerDefinition } from "monaco-editor-workers";
-        buildWorkerDefinition('../monaco-editor-workers/dist/workers', import.meta.url, false);
-        import "/src/main.ts";
+        buildWorkerDefinition('../../monaco-editor-workers/dist/workers', import.meta.url, false);
+        import "./src/main.ts";
     </script>
     <div style="height: 33vh;">
-    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer">
+    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer" useLanguageClient>
         <script type="text/javascript">
             function getMonacoDiffEditorOptions42() {
                 return {

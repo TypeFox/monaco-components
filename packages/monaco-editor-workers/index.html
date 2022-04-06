@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Monaco Editor Workers</title>
+</head>
+<body>
+    <div id="container" style="min-height: 600px; max-width: 1024px; text-align: left;"></div>
+    <script type="module" language="typescript">
+        import { buildWorkerDefinition } from "./src/index.ts";
+        buildWorkerDefinition('./dist/workers', import.meta.url, false);
+
+        import * as monaco from 'monaco-editor';
+
+        monaco.editor.create(document.getElementById('container'), {
+            value: "function hello() {\n\talert('Hello world!');\n}",
+            language: 'javascript'
+        });
+    </script>
+</body>
+</html>

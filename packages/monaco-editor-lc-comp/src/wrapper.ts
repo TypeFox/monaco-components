@@ -1,11 +1,33 @@
-// Monaco Editor Imports
+import 'monaco-editor/esm/vs/editor/editor.all.js';
+
+// select features
+import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneHelpQuickAccess.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGotoLineQuickAccess.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGotoSymbolQuickAccess.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/quickInput/standaloneQuickInputService.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
+
+// add workers
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
+import 'monaco-editor/esm/vs/language/html/monaco.contribution';
+import 'monaco-editor/esm/vs/language/css/monaco.contribution';
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
+
+// support all basic-languages
+import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
+
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
 import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
-import { WorkerOverride } from 'monaco-editor-workers';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
 
 export type WebSocketConfigOptions = {
     wsSecured: boolean;
@@ -17,6 +39,7 @@ export type WebSocketConfigOptions = {
 export class CodeEditorConfig {
 
     useDiffEditor = false;
+    useLanguageClient = false;
     codeOriginal: [string, string] = ['', 'javascript'];
     codeModified: [string, string] = ['', 'javascript'];
     theme = 'vs-light';
@@ -64,7 +87,7 @@ export class MonacoLanguageClientWrapper {
         console.log(`Starting monaco-editor (${this.id})`);
 
         // register Worker function if not done before
-        WorkerOverride.buildWorkerDefinition('../dist/', false);
+        buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
         if (this.editorConfig.useDiffEditor) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
@@ -79,8 +102,11 @@ export class MonacoLanguageClientWrapper {
         }
         this.updateEditor();
 
-        this.installMonaco();
-        this.establishWebSocket(this.editorConfig.webSocketOptions);
+        if (this.editorConfig.useLanguageClient) {
+            console.log('Enabling monaco-languageclient');
+            this.installMonaco();
+            this.establishWebSocket(this.editorConfig.webSocketOptions);
+        }
     }
 
     swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
@@ -139,15 +165,17 @@ export class MonacoLanguageClientWrapper {
     }
 
     private updateCommonEditorConfig() {
-        const languageId = this.editorConfig.codeOriginal[1];
+        if (this.editorConfig.useLanguageClient) {
+            const languageId = this.editorConfig.codeOriginal[1];
 
-        // apply monarch definitions
-        if (this.editorConfig.languageDef && languageId) {
-            monaco.languages.register({ id: languageId });
-            monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
-        }
-        if (this.editorConfig.themeData) {
-            monaco.editor.defineTheme(this.editorConfig.theme as string, this.editorConfig.themeData);
+            // apply monarch definitions
+            if (this.editorConfig.languageDef && languageId) {
+                monaco.languages.register({ id: languageId });
+                monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
+            }
+            if (this.editorConfig.themeData) {
+                monaco.editor.defineTheme(this.editorConfig.theme as string, this.editorConfig.themeData);
+            }
         }
         this.updateTheme();
     }
