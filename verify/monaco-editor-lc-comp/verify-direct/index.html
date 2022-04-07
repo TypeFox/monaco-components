@@ -11,11 +11,20 @@
     <style>
         @font-face {
             font-family: 'codicon';
-            src: url('./monaco-editor-lc-comp/codicon.ttf') format('truetype');
+            src: url('./monaco-editor-lc-comp/assets/codicon.ttf') format('truetype');
         }
     </style>
+    <script type="importmap">
+        {
+            "imports": {
+                "vue": "https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.esm.browser.js"
+            }
+        }
+    </script>
     <script type="module">
-        import { CodeEditorLanguageClient } from "./monaco-editor-lc-comp/monaco-editor-lc-comp.js";
+        import { buildWorkerDefinition } from "./monaco-editor-workers/index.js";
+        buildWorkerDefinition('./monaco-editor-workers/workers', import.meta.url, false);
+        import { CodeEditorLanguageClient } from "./monaco-editor-lc-comp/index.js";
     </script>
     <div style="height: 50vh;">
         <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42">

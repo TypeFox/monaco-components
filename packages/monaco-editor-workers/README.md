@@ -1,6 +1,6 @@
 # Monaco Editor Worker Support Package
 
-This package supplies all [monaco-editor](https://github.com/microsoft/monaco-editor) workers as module or classic workers (bundled with vite) and it contains a utility function that helps configuring them:
+This package supplies all [monaco-editor](https://github.com/microsoft/monaco-editor) workers as module or classic workers (bundled with vite) and it contains a utility function that applies them to `MonacoEnvironment`:
 
 ```javascript
 import { buildWorkerDefinition } from "monaco-editor-workers";

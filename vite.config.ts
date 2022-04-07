@@ -18,9 +18,9 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                monacoEditorComp: path.resolve(__dirname, '/packages/monaco-editor-comp/index.html'),
                 monacoEditorLCComp: path.resolve(__dirname, '/packages/monaco-editor-lc-comp/index.html'),
-                monacoEditorWorkers: path.resolve(__dirname, '/packages/monaco-editor-workers/index.html')
+                monacoEditorWorkers: path.resolve(__dirname, '/packages/monaco-editor-workers/index.html'),
+                verifyMonacoEditorLCComp: path.resolve(__dirname, '/verify/monaco-editor-lc-comp/index.html')
             }
         }
     },

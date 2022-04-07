@@ -8,32 +8,28 @@
   "type": "module",
   "scripts": {
     "clean": "npm run clean --workspaces",
-    "dev-comp": "npm run dev --workspace packages/monaco-editor-comp",
     "dev-lc-comp": "npm run dev --workspace packages/monaco-editor-lc-comp",
+    "dev-workers": "npm run dev --workspace packages/monaco-editor-workers",
     "lint": "npm run lint --workspaces",
-    "build-comp": "npm run build --workspace packages/monaco-editor-comp",
     "build-lc-comp": "npm run build --workspace packages/monaco-editor-lc-comp",
+    "build-workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
-    "verify-comp-direct": "cd verify/monaco-editor-comp/ && npm run verify-direct",
-    "verify-comp-vite": "cd verify/monaco-editor-comp/ && npm run verify-vite",
-    "verify-lc-comp-direct": "cd verify/monaco-editor-lc-comp/ && npm run verify-direct",
     "verify-lc-comp-vite": "cd verify/monaco-editor-lc-comp/ && npm run verify-vite",
-    "verify-monaco-vite": "cd verify/monaco-editor/ && npm run verify-vite",
-    "install-verify": "cd verify/monaco-editor-comp && npm i && cd ../monaco-editor-lc-comp && npm i",
+    "install-verify": "cd ../monaco-editor-lc-comp && npm i",
     "prepare-release": "npm i && npm run clean && npm run build && npm run install-verify"
   },
   "devDependencies": {
     "vite": "^2.9.1",
     "typescript": "^4.6.3",
-    "shx": "^0.3.4",
     "eslint": "^8.12.0",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "editorconfig": "^0.15.3",
-    "tslib": "^2.3.1"
+    "tslib": "^2.3.1",
+    "shx": "^0.3.4"
   },
   "workspaces": [
-    "packages/monaco-editor-comp",
     "packages/monaco-editor-lc-comp",
-    "packages/monaco-editor-workers"
+    "packages/monaco-editor-workers",
+    "verify/monaco-editor-lc-comp"
   ]
 }

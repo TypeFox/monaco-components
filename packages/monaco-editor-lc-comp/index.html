@@ -10,7 +10,7 @@
 <body>
     <script type="module">
         import { buildWorkerDefinition } from "monaco-editor-workers";
-        buildWorkerDefinition('../../monaco-editor-workers/dist/workers', import.meta.url, false);
+        buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
         import "./src/main.ts";
     </script>
     <div style="height: 33vh;">
@@ -74,7 +74,7 @@ Same again.`,
     </div>
     <script type="module">
         let monComps = document.querySelectorAll('monaco-editor-lc-comp');
-        async function sleepOne(milliseconds) {
+        function sleepOne(milliseconds) {
             setTimeout(() => {
                 alert(`Updating editors after ${milliseconds}ms`);
 
@@ -84,6 +84,7 @@ Same again.`,
                 comp42.setCode(`function logMe() {
     console.log('Hello swap editors!');
 };`);
+                comp42.setLanguageId('javascript');
                 comp42.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
 
                 const comp43 = monComps[1];
@@ -111,9 +112,9 @@ Same again.`,
             }, milliseconds);
         }
         // change the editors config, content or swap normal and diff editors after five seconds
-        await sleepOne(5000);
+        sleepOne(5000);
 
-        async function sleepTwo(milliseconds) {
+        function sleepTwo(milliseconds) {
             setTimeout(() => {
                 alert(`Updating last editor after ${milliseconds}ms`);
 

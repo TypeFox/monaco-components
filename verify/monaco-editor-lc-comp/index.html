@@ -11,10 +11,12 @@
     <style>
         @font-face {
             font-family: 'codicon';
-            src: url('../../node_modules/monaco-editor-lc-comp/dist/codicon.ttf') format('truetype');
+            src: url('../../node_modules/monaco-editor-lc-comp/dist/assets/codicon.ttf') format('truetype');
         }
     </style>
     <script type="module">
+        import { buildWorkerDefinition } from "monaco-editor-workers";
+        buildWorkerDefinition('../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
         import { CodeEditorLanguageClient } from "monaco-editor-lc-comp";
     </script>
     <div style="height: 50vh;">

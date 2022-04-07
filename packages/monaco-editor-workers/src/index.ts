@@ -19,8 +19,8 @@ export function buildWorkerDefinition(workerPath: string, basePath: string, useM
 
             const workerFilename = globals.workerOptions.type === 'module' ? `${workerName}-es.js` : `${workerName}-iife.js`;
             const workerPathLocal = `${globals.workerPath}/${workerFilename}`;
-            const workerUrl = new URL(workerPathLocal, basePath);
-            console.log(`${editorType}: url: ${workerUrl.href} created from basePath: ${basePath} and file: ${workerPathLocal}`);
+            const workerUrl = new URL(workerPathLocal, globals.basePath);
+            console.log(`${editorType}: url: ${workerUrl.href} created from basePath: ${globals.basePath} and file: ${workerPathLocal}`);
 
             return new Worker(workerUrl.href, globals.workerOptions);
         };

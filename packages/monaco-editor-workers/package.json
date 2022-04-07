@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.33.0-next.2",
+  "version": "0.33.0-next.3",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
@@ -24,12 +24,11 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "shx rm -rf ./dist && shx rm -fr tsconfig.tsbuildinfo",
+    "clean": "npx shx rm -rf ./dist && npx shx rm -fr tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "compile": "tsc",
-    "copy-ttf": "shx cp ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist",
     "_build-workers": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
-    "build": "npm run clean && npm run compile && npm run _build-workers && npm run copy-ttf"
+    "build": "npm run clean && npm run compile && npm run _build-workers"
   },
   "dependencies": {
     "monaco-editor": "0.33.0"

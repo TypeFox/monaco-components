@@ -57,6 +57,7 @@ export class CodeEditorConfig {
     };
     languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
     themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
+
 }
 
 export class MonacoLanguageClientWrapper {

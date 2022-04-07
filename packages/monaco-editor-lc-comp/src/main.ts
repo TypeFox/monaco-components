@@ -3,11 +3,9 @@ import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
-import { MonacoLanguageClientWrapper } from './wrapper';
+import { MonacoLanguageClientWrapper, WebSocketConfigOptions } from './wrapper';
 
-import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
-
-import { WebSocketConfigOptions } from '.';
+import { getMonacoCss } from './generated/css';
 
 @customElement('monaco-editor-lc-comp')
 export class CodeEditorLanguageClient extends LitElement {
@@ -43,8 +41,8 @@ export class CodeEditorLanguageClient extends LitElement {
 
     override render() {
         return html`
-        <style>${monacoStyles}</style>
-        <style>${CodeEditorLanguageClient.styles}</style>
+        <style >${getMonacoCss()}</style>
+        <style >${CodeEditorLanguageClient.styles}</style>
         <main ${ref(this.container)} id="monacoContainer${this.id}" class="main"></main>
         `;
     }
@@ -156,7 +154,7 @@ export class CodeEditorLanguageClient extends LitElement {
         wrapperConfig.webSocketOptions.wsHost = this.wsHost;
         wrapperConfig.webSocketOptions.wsPort = this.wsPort;
         wrapperConfig.webSocketOptions.wsPath = this.wsPath;
-        wrapperConfig.useLanguageClient = this.useLanguageClient;
+        wrapperConfig.useLanguageClient = this.useLanguageClient === true;
 
         this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
     }

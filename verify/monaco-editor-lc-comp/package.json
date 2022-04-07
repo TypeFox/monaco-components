@@ -5,19 +5,19 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "clean": "shx rm -rf ./dist",
-    "update-verify": "shx cp -r ../../packages/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
-    "clean-verify": "shx rm -rf ./verify-direct/monaco-editor-lc-comp",
-    "verify-direct": "npm run clean-verify && npm run update-verify && http-server --port 22003 ./verify-direct",
-    "verify-vite": "vite --force --debug"
+    "clean": "npx shx rm -rf ./dist",
+    "clean-verify": "npx shx rm -rf ./verify-direct/monaco-editor-lc-comp && npx shx rm -rf ./verify-direct/monaco-editor-workers",
+    "copy-lc-comp": "npx shx cp -r ../../node_modules/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
+    "copy-workers": "npx shx cp -r ../../node_modules/monaco-editor-workers/dist ./verify-direct/monaco-editor-workers",
+    "update-verify": "npm run clean-verify && npm run copy-lc-comp && npm run copy-workers",
+    "verify": "npm run update-verify && http-server --port 20002 ./verify-direct",
+    "build": "echo 'No build needed for verify-monaco-editor-lc-comp'"
   },
   "dependencies": {
-    "monaco-editor": "^0.33.0",
-    "monaco-editor-lc-comp": "../../packages/monaco-editor-lc-comp"
+    "monaco-editor-lc-comp": "../../packages/monaco-editor-lc-comp",
+    "monaco-editor-workers": "../../packages/monaco-editor-workers"
   },
   "devDependencies": {
-    "vite": "^2.8.6",
-    "http-server": "^14.1.0",
-    "shx": "^0.3.4"
+    "http-server": "^14.1.0"
   }
 }
