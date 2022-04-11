@@ -32,11 +32,11 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist ./build/dist tsconfig.tsbuildinfo",
+    "clean": "npx shx rm -rf ./dist ./build/dist ./src/generated tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "copy-ttf": "npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
     "copy-assets": "npx shx mkdir -p ./dist/assets && npm run copy-ttf",
-    "create-css": "tsc -p ./build",
+    "create-css": "tsc -p ./build && node ./build/dist/buildAssets.js",
     "compile": "npm run copy-assets && npm run create-css && tsc",
     "build:vite": "vite --config vite.build.config.ts build",
     "build": "npm run clean && npm run compile && npm run build:vite"
