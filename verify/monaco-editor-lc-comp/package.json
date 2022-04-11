@@ -5,17 +5,13 @@
   "type": "module",
   "main": "index.html",
   "scripts": {
-    "clean": "npx shx rm -rf ./dist",
-    "clean-verify": "npx shx rm -rf ./verify-direct/monaco-editor-lc-comp && npx shx rm -rf ./verify-direct/monaco-editor-workers",
-    "copy-lc-comp": "npx shx cp -r ../../node_modules/monaco-editor-lc-comp/dist ./verify-direct/monaco-editor-lc-comp",
-    "copy-workers": "npx shx cp -r ../../node_modules/monaco-editor-workers/dist ./verify-direct/monaco-editor-workers",
-    "update-verify": "npm run clean-verify && npm run copy-lc-comp && npm run copy-workers",
-    "verify": "npm run update-verify && http-server --port 20002 ./verify-direct",
-    "build": "echo 'No build needed for verify-monaco-editor-lc-comp'"
-  },
-  "dependencies": {
-    "monaco-editor-lc-comp": "../../packages/monaco-editor-lc-comp",
-    "monaco-editor-workers": "../../packages/monaco-editor-workers"
+    "clean": "npx shx rm -rf ./libs",
+    "copy-lc-comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-lc-comp/dist ./libs/monaco-editor-lc-comp",
+    "copy-monaco-workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
+    "copy-monaco-editor": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor ./libs/monaco-editor",
+    "update-libs": "npm run clean && npm run copy-lc-comp && npm run copy-monaco-workers && npm run copy-monaco-editor",
+    "start": "http-server --port 20002 ./",
+    "build": "npm run update-libs"
   },
   "devDependencies": {
     "http-server": "^14.1.0"

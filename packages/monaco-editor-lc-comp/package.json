@@ -19,6 +19,10 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./bundle": {
+      "import": "./dist/bundles/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
@@ -34,12 +38,13 @@
     "copy-assets": "npx shx mkdir -p ./dist/assets && npm run copy-ttf",
     "create-css": "tsc -p ./build",
     "compile": "npm run copy-assets && npm run create-css && tsc",
-    "build": "npm run clean && npm run compile"
+    "build:vite": "vite --config vite.build.config.ts build",
+    "build": "npm run clean && npm run compile && npm run build:vite"
   },
   "dependencies": {
     "monaco-editor": "0.33.0",
     "monaco-editor-workers": "0.33.0-next.3",
-    "monaco-languageclient": "0.19.0-next.0",
+    "monaco-languageclient": "0.19.0-next.1",
     "@codingame/monaco-jsonrpc": "^0.3.1",
     "lit": "^2.2.1",
     "normalize-url": "^7.0.3"

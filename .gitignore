@@ -9,5 +9,4 @@ dist
 
 packages/monaco-editor-lc-comp/src/generated
 
-verify/monaco-editor-lc-comp/verify-direct
-!verify/monaco-editor-lc-comp/verify-direct/index.html
+verify/monaco-editor-lc-comp/libs

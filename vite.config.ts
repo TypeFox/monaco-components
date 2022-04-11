@@ -20,7 +20,6 @@ export default defineConfig({
             input: {
                 monacoEditorLCComp: path.resolve(__dirname, '/packages/monaco-editor-lc-comp/index.html'),
                 monacoEditorWorkers: path.resolve(__dirname, '/packages/monaco-editor-workers/index.html'),
-                verifyMonacoEditorLCComp: path.resolve(__dirname, '/verify/monaco-editor-lc-comp/index.html')
             }
         }
     },

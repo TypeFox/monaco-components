@@ -27,8 +27,6 @@ import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, Mona
 import { listen } from '@codingame/monaco-jsonrpc';
 import normalizeUrl from 'normalize-url';
 
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-
 export type WebSocketConfigOptions = {
     wsSecured: boolean;
     wsHost: string;
@@ -86,9 +84,6 @@ export class MonacoLanguageClientWrapper {
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
-
-        // register Worker function if not done before
-        buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
         if (this.editorConfig.useDiffEditor) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);

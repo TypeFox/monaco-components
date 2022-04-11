@@ -8,15 +8,12 @@
   "type": "module",
   "scripts": {
     "clean": "npm run clean --workspaces",
-    "dev-lc-comp": "npm run dev --workspace packages/monaco-editor-lc-comp",
-    "dev-workers": "npm run dev --workspace packages/monaco-editor-workers",
+    "dev": "vite --debug",
     "lint": "npm run lint --workspaces",
     "build-lc-comp": "npm run build --workspace packages/monaco-editor-lc-comp",
     "build-workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
-    "verify-lc-comp-vite": "cd verify/monaco-editor-lc-comp/ && npm run verify-vite",
-    "install-verify": "cd ../monaco-editor-lc-comp && npm i",
-    "prepare-release": "npm i && npm run clean && npm run build && npm run install-verify"
+    "prepare-release": "npm i && npm run clean && npm run build"
   },
   "devDependencies": {
     "vite": "^2.9.1",

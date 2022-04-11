@@ -12,16 +12,18 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
+            entry: path.resolve(__dirname, 'src/main.ts'),
             name: 'monaco-editor-lc-comp',
-            fileName: () => 'index.js',
+            fileName: () => 'bundle/index.js',
             formats: ['es']
         },
+        outDir: 'dist',
+        assetsDir: 'dist/assets',
         emptyOutDir: false,
         cssCodeSplit: false,
-        assetsDir: 'dist/assets',
         rollupOptions: {
             external: [
+                /*
                 'monaco-editor/esm/vs/editor/editor.api',
                 'monaco-editor/esm/vs/editor/editor.all.js',
                 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js',
@@ -41,15 +43,14 @@ export default defineConfig({
                 'monaco-editor/esm/vs/basic-languages/monaco.contribution',
                 'monaco-languageclient',
                 '@codingame/monaco-jsonrpc',
+*/
                 'monaco-editor-workers'
             ],
             output: {
+                inlineDynamicImports: true,
                 name: 'monaco-editor-lc-comp',
                 exports: 'named',
                 sourcemap: false,
-                globals: {
-                    vscode: 'vscode',
-                },
                 assetFileNames: (assetInfo) => {
                     return `assets/${assetInfo.name}`;
                 },
