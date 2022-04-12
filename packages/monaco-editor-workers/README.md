@@ -11,3 +11,7 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 ```
 
 The version of this package is aligned with the version of monaco-editor.
+
+## Getting Started
+
+See main [README](../../README.md#getting-started).
