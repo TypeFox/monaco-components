@@ -14,7 +14,7 @@
         import "./src/main.ts";
     </script>
     <div style="height: 33vh;">
-    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42"
+    <monaco-editor-comp enableInlineConfig useDiffEditor id="42"
         wsHost="localhost" wsPort="3000" wsPath="sampleServer" useLanguageClient>
         <script type="text/javascript">
             function getMonacoDiffEditorOptions42() {
@@ -32,10 +32,10 @@ Same again.`,
                 };
             }
             </script>
-    </monaco-editor-lc-comp>
+    </monaco-editor-comp>
     </div>
     <div style="height: 33vh;">
-        <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="43"
+        <monaco-editor-comp enableInlineConfig useDiffEditor id="43"
         code="This line is equal.This number is different 3022.Misspelled!Same again."
         languageId="text/plain"
         modifiedCode="This line is equal.This number is different 3002.Misspelled!Same again."
@@ -52,10 +52,10 @@ Same again.`,
 
                 }
                 </script>
-        </monaco-editor-lc-comp>
+        </monaco-editor-comp>
     </div>
     <div style="height: 33vh;">
-    <monaco-editor-lc-comp enableInlineConfig id="44">
+    <monaco-editor-comp enableInlineConfig id="44">
         <script type="text/javascript">
             function getMonacoEditorOptions44() {
                     return {
@@ -70,10 +70,10 @@ Same again.`,
                     }
                 }
         </script>
-    </monaco-editor-lc-comp>
+    </monaco-editor-comp>
     </div>
     <script type="module">
-        let monComps = document.querySelectorAll('monaco-editor-lc-comp');
+        let monComps = document.querySelectorAll('monaco-editor-comp');
         function sleepOne(milliseconds) {
             setTimeout(() => {
                 alert(`Updating editors after ${milliseconds}ms`);

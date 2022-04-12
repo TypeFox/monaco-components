@@ -7,7 +7,7 @@ import { MonacoLanguageClientWrapper, WebSocketConfigOptions } from './wrapper';
 
 import { getMonacoCss } from './generated/css';
 
-@customElement('monaco-editor-lc-comp')
+@customElement('monaco-editor-comp')
 export class CodeEditorLanguageClient extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
@@ -269,6 +269,6 @@ export class CodeEditorLanguageClient extends LitElement {
 
 declare global {
     interface HTMLElementTagNameMap {
-        'monaco-editor-lc-comp': CodeEditorLanguageClient;
+        'monaco-editor-comp': CodeEditorLanguageClient;
     }
 }

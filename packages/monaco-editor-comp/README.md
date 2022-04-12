@@ -21,7 +21,7 @@ The component can be fully configured with embedded JavaScript. It can be config
 
 ## Help / Hints
 
-Proper styling of at least the Diff Editor requires that the *codicon* font is loaded outside the web component. Due to limitations of the Shadow DOM this can unfortunately not be transparently handled by the web component and requires user code adjustments shown [here](../../verify/monaco-editor-lc-comp/verify-direct/index.html#L11-16) and [monaco-editor sample]( https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-shadow-dom/index.html)).
+Proper styling of at least the Diff Editor requires that the *codicon* font is loaded outside the web component. Due to limitations of the Shadow DOM this can unfortunately not be transparently handled by the web component and requires user code adjustments shown [here](../../verify/monaco-editor-comp/index.html#L11-16) and [monaco-editor sample]( https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-shadow-dom/index.html)).
 
 ## Getting Started
 

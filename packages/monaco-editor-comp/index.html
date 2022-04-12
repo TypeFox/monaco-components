@@ -14,7 +14,7 @@
         import "./src/main.ts";
     </script>
     <div style="height: 100vh;">
-    <monaco-editor-lc-comp enableInlineConfig id="42"
+    <monaco-editor-comp enableInlineConfig id="42"
         wsHost="localhost" wsPort="3000" wsPath="sampleServer" useLanguageClient>
         <script type="text/javascript">
             function getMonacoDiffEditorOptions42() {
@@ -27,11 +27,11 @@
                 }
             }
             </script>
-    </monaco-editor-lc-comp>
+    </monaco-editor-comp>
     </div>
 
     <script type="module">
-        let monComps = document.querySelectorAll('monaco-editor-lc-comp');
+        let monComps = document.querySelectorAll('monaco-editor-comp');
         const comp42 = monComps[0];
     </script>
 </body>

@@ -6,5 +6,5 @@ dist
 *.tsbuildinfo
 *.tgz
 
-packages/monaco-editor-lc-comp/src/generated
-verify/monaco-editor-lc-comp/libs
+packages/monaco-editor-comp/src/generated
+verify/monaco-editor-comp/libs

@@ -13,7 +13,7 @@ export default defineConfig({
     build: {
         lib: {
             entry: path.resolve(__dirname, 'src/main.ts'),
-            name: 'monaco-editor-lc-comp',
+            name: 'monaco-editor-comp',
             fileName: () => 'bundle/index.js',
             formats: ['es']
         },
@@ -48,7 +48,7 @@ export default defineConfig({
             ],
             output: {
                 inlineDynamicImports: true,
-                name: 'monaco-editor-lc-comp',
+                name: 'monaco-editor-comp',
                 exports: 'named',
                 sourcemap: false,
                 assetFileNames: (assetInfo) => {
