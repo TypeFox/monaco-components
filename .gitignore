@@ -1,3 +1,10 @@
 node_modules
+
+lib
 dist
+
+*.tsbuildinfo
 *.tgz
+
+packages/monaco-editor-comp/src/generated
+verify/monaco-editor-comp/libs

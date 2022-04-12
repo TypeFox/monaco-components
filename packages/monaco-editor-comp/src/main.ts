@@ -2,16 +2,17 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { MonacoWrapper, WorkerOverride } from './wrapper';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import { MonacoLanguageClientWrapper, WebSocketConfigOptions } from './wrapper';
 
-import monacoStyles from 'monaco-editor/min/vs/editor/editor.main.css';
+import { getMonacoCss } from './generated/css';
 
 @customElement('monaco-editor-comp')
-export class CodeEditor extends LitElement {
+export class CodeEditorLanguageClient extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
 
-    private monacoWrapper = new MonacoWrapper(this.id);
+    private monacoWrapper = new MonacoLanguageClientWrapper(this.id);
 
     @property({ reflect: true }) code = '';
     @property({ reflect: true }) languageId = 'javascript';
@@ -20,13 +21,19 @@ export class CodeEditor extends LitElement {
     @property({ reflect: true }) theme = 'vs-light';
     @property({ type: Boolean, reflect: true }) enableInlineConfig? = false;
     @property({ type: Boolean, reflect: true }) useDiffEditor? = false;
+    @property({ type: Boolean, reflect: true }) useLanguageClient? = false;
+
+    @property({ type: Boolean, reflect: true }) wsSecured? = false;
+    @property({ reflect: true }) wsHost = 'localhost';
+    @property({ type: Number, reflect: true }) wsPort = 8080;
+    @property({ reflect: true }) wsPath = '';
 
     static override styles = css`
         :host {
             --editor-width: 100%;
             --editor-height: 100%;
         }
-        .main {
+        main {
             width: var(--editor-width);
             height: var(--editor-height);
         }
@@ -34,8 +41,9 @@ export class CodeEditor extends LitElement {
 
     override render() {
         return html`
-        <style>${monacoStyles}</style>
-        <div ${ref(this.container)} id="monacoContainer${this.id}" class="main"></div>
+        <style >${getMonacoCss()}</style>
+        <style >${CodeEditorLanguageClient.styles}</style>
+        <main ${ref(this.container)} id="monacoContainer${this.id}" class="main"></main>
         `;
     }
 
@@ -62,6 +70,31 @@ export class CodeEditor extends LitElement {
     setTheme(theme: string): void {
         this.theme = theme;
         this.monacoWrapper.getEditorConfig().theme = theme;
+    }
+
+    setWsSecured(wsSecured: boolean) {
+        this.wsSecured = wsSecured;
+        this.monacoWrapper.getEditorConfig().webSocketOptions.wsSecured = wsSecured;
+    }
+
+    setWsHost(wsHost: string) {
+        this.wsHost = wsHost;
+        this.monacoWrapper.getEditorConfig().webSocketOptions.wsHost = wsHost;
+    }
+
+    setWsPort(wsPort: number) {
+        this.wsPort = wsPort;
+        this.monacoWrapper.getEditorConfig().webSocketOptions.wsPort = wsPort;
+    }
+
+    setWsPath(wsPath: string) {
+        this.wsPath = wsPath;
+        this.monacoWrapper.getEditorConfig().webSocketOptions.wsPath = wsPath;
+    }
+
+    setUseLanguageClient(useLanguageClient: boolean) {
+        this.useLanguageClient = useLanguageClient;
+        this.monacoWrapper.getEditorConfig().useLanguageClient = useLanguageClient;
     }
 
     private startEditor(reloadInlineConfig: boolean) {
@@ -92,6 +125,7 @@ export class CodeEditor extends LitElement {
         if (this.isEnableInlineConfig()) {
             this.retrieveMonacoEditorOptions();
             this.retrieveMonacoDiffEditorOptions();
+            this.retrieveWebSocketOptions();
         }
     }
 
@@ -114,6 +148,13 @@ export class CodeEditor extends LitElement {
             wrapperConfig.codeModified[1] = this.modifiedLanguageId;
         }
         wrapperConfig.theme = this.theme;
+        if (this.wsSecured) {
+            wrapperConfig.webSocketOptions.wsSecured = this.wsSecured;
+        }
+        wrapperConfig.webSocketOptions.wsHost = this.wsHost;
+        wrapperConfig.webSocketOptions.wsPort = this.wsPort;
+        wrapperConfig.webSocketOptions.wsPath = this.wsPath;
+        wrapperConfig.useLanguageClient = this.useLanguageClient === true;
 
         this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
     }
@@ -186,9 +227,30 @@ export class CodeEditor extends LitElement {
         this.monacoWrapper.getEditorConfig().monacoDiffEditorOptions = options;
     }
 
+    private retrieveWebSocketOptions() {
+        if (!this.isEnableInlineConfig()) return;
+
+        const options = this.buildAndCallConfigFunction('getWebSocketOptions', 'language server connection');
+        this.setMonacoEditorOptions(options);
+    }
+
+    setWebSocketOptions(options: Record<string, unknown>) {
+        this.monacoWrapper.getEditorConfig().webSocketOptions = options as WebSocketConfigOptions;
+    }
+
     private isEnableInlineConfig() {
         const content = this.children.length === 1 ? this.children[0] : undefined;
         return content instanceof HTMLScriptElement && this.enableInlineConfig;
+    }
+
+    registerMonarchTokensProvider(languageId: string, languageDef: unknown) {
+        this.setLanguageId(languageId);
+        this.monacoWrapper.getEditorConfig().languageDef = languageDef as monaco.languages.IMonarchLanguage;
+    }
+
+    registerEditorTheme(theme: string, themeData: unknown) {
+        this.setTheme(theme);
+        this.monacoWrapper.getEditorConfig().themeData = themeData as monaco.editor.IStandaloneThemeData;
     }
 
     firstUpdated() {
@@ -203,13 +265,10 @@ export class CodeEditor extends LitElement {
                 this.monacoWrapper.updateTheme();
             });
     }
-
 }
 
 declare global {
     interface HTMLElementTagNameMap {
-        'monaco-editor-comp': CodeEditor;
+        'monaco-editor-comp': CodeEditorLanguageClient;
     }
 }
-
-export { WorkerOverride };

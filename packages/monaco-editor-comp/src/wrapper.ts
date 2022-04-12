@@ -23,51 +23,42 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker&inline';
+import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
+import { listen } from '@codingame/monaco-jsonrpc';
+import normalizeUrl from 'normalize-url';
 
-export class WorkerOverride {
-
-    // static worker load override functions
-    static getEditorWorker() {
-        return new editorWorker();
-    }
-
-    // generate empty instructions as default
-
-    static getTsWorker() {
-        // use this in vite 2.8.x: new URL('../../../node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js', import.meta.url)
-        return new Worker('ts.worker.js', { type: 'module' });
-    }
-
-    static getHtmlWorker() {
-        return new Worker('html.worker.js', { type: 'module' });
-    }
-
-    static getCssWorker() {
-        return new Worker('css.worker.js', { type: 'module' });
-    }
-
-    static getJsonWorker() {
-        return new Worker('json.worker.js', { type: 'module' });
-    }
-
+export type WebSocketConfigOptions = {
+    wsSecured: boolean;
+    wsHost: string;
+    wsPort: number;
+    wsPath: string;
 }
 
 export class CodeEditorConfig {
 
     useDiffEditor = false;
+    useLanguageClient = false;
     codeOriginal: [string, string] = ['', 'javascript'];
     codeModified: [string, string] = ['', 'javascript'];
     theme = 'vs-light';
     monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
+    webSocketOptions: WebSocketConfigOptions = {
+        wsSecured: false,
+        wsHost: 'localhost',
+        wsPort: 8080,
+        wsPath: ''
+    };
     monacoDiffEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
+    languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
+    themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
+
 }
 
-export class MonacoWrapper {
+export class MonacoLanguageClientWrapper {
 
     private editor: monaco.editor.IStandaloneCodeEditor | undefined;
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
@@ -94,9 +85,6 @@ export class MonacoWrapper {
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
 
-        // register Worker function
-        this.defineMonacoEnvironment();
-
         if (this.editorConfig.useDiffEditor) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
         }
@@ -109,6 +97,12 @@ export class MonacoWrapper {
             });
         }
         this.updateEditor();
+
+        if (this.editorConfig.useLanguageClient) {
+            console.log('Enabling monaco-languageclient');
+            this.installMonaco();
+            this.establishWebSocket(this.editorConfig.webSocketOptions);
+        }
     }
 
     swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
@@ -146,8 +140,8 @@ export class MonacoWrapper {
         const options = this.editorConfig.monacoEditorOptions as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
         this.editor?.updateOptions(options);
 
-        const languageId = this.editorConfig.codeOriginal[1];
         const currentModel = this.editor?.getModel();
+        const languageId = this.editorConfig.codeOriginal[1];
         if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
             monaco.editor.setModelLanguage(currentModel, languageId);
         }
@@ -167,6 +161,18 @@ export class MonacoWrapper {
     }
 
     private updateCommonEditorConfig() {
+        if (this.editorConfig.useLanguageClient) {
+            const languageId = this.editorConfig.codeOriginal[1];
+
+            // apply monarch definitions
+            if (this.editorConfig.languageDef && languageId) {
+                monaco.languages.register({ id: languageId });
+                monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
+            }
+            if (this.editorConfig.themeData) {
+                monaco.editor.defineTheme(this.editorConfig.theme as string, this.editorConfig.themeData);
+            }
+        }
         this.updateTheme();
     }
 
@@ -191,42 +197,63 @@ export class MonacoWrapper {
         }
     }
 
-    private defineMonacoEnvironment() {
-        const getWorker = (_: string, label: string) => {
-            console.log('getWorker: workerId: ' + _ + ' label: ' + label);
-
-            switch (label) {
-                case 'typescript':
-                case 'javascript':
-                    return WorkerOverride.getTsWorker();
-                case 'html':
-                case 'handlebars':
-                case 'razor':
-                    return WorkerOverride.getHtmlWorker();
-                case 'css':
-                case 'scss':
-                case 'less':
-                    return WorkerOverride.getCssWorker();
-                case 'json':
-                    return WorkerOverride.getJsonWorker();
-                default:
-                    return WorkerOverride.getEditorWorker();
+    private installMonaco() {
+        // install Monaco language client services
+        if (monaco) {
+            try {
+                MonacoServices.get();
             }
-        };
-
-        const monWin = (self as monaco.Window);
-        if (monWin) {
-            if (!monWin.MonacoEnvironment) {
-                monWin.MonacoEnvironment = {
-                    getWorker: getWorker
-                };
-            }
-            else {
-                monWin.MonacoEnvironment.getWorker = getWorker;
+            catch (e: unknown) {
+                // install only if services are not yet available (exception will happen only then)
+                MonacoServices.install(monaco);
+                console.log(`Component (${this.id}): Installed MonacoServices`);
             }
         }
     }
 
-}
+    private establishWebSocket(websocketConfig: WebSocketConfigOptions) {
+        // create the web socket
+        const url = this.createUrl(websocketConfig);
+        const webSocket = new WebSocket(url);
 
-export { monaco };
+        // listen when the web socket is opened
+        listen({
+            webSocket,
+            onConnection: connection => {
+                console.log('Connected');
+
+                // create and start the language client
+                const languageClient = this.createLanguageClient(connection);
+                const disposable = languageClient.start();
+                connection.onClose(() => disposable.dispose());
+            }
+        });
+    }
+
+    private createLanguageClient(connection: MessageConnection): MonacoLanguageClient {
+        return new MonacoLanguageClient({
+            name: 'Sample Language Client',
+            clientOptions: {
+                // use a language id as a document selector
+                documentSelector: [this.editorConfig.codeOriginal[1]],
+                // disable the default error handler
+                errorHandler: {
+                    error: () => ErrorAction.Continue,
+                    closed: () => CloseAction.DoNotRestart
+                }
+            },
+            // create a language client connection from the JSON RPC connection on demand
+            connectionProvider: {
+                get: (errorHandler, closeHandler) => {
+                    return Promise.resolve(createConnection(connection, errorHandler, closeHandler));
+                }
+            }
+        });
+    }
+
+    private createUrl(websocketConfig: WebSocketConfigOptions) {
+        const protocol = websocketConfig.wsSecured ? 'wss' : 'ws';
+        return normalizeUrl(`${protocol}://${websocketConfig.wsHost}:${websocketConfig.wsPort}/${websocketConfig.wsPath}`);
+    }
+
+}

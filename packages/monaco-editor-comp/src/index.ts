@@ -1,16 +1,16 @@
 import {
-    CodeEditor
+    CodeEditorLanguageClient,
 } from './main';
 
 import {
+    WebSocketConfigOptions,
     CodeEditorConfig,
-    WorkerOverride,
-    MonacoWrapper
+    MonacoLanguageClientWrapper
 } from './wrapper';
 
 export {
+    CodeEditorLanguageClient,
+    WebSocketConfigOptions,
     CodeEditorConfig,
-    CodeEditor,
-    WorkerOverride,
-    MonacoWrapper
+    MonacoLanguageClientWrapper
 };

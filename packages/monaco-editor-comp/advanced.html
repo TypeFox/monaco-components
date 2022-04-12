@@ -9,10 +9,13 @@
 
 <body>
     <script type="module">
-        import { WorkerOverride } from "/src/main.ts";
+        import { buildWorkerDefinition } from "monaco-editor-workers";
+        buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
+        import "./src/main.ts";
     </script>
     <div style="height: 33vh;">
-    <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="42" wsSecured wsPort="3000" wsPath="sampleServer">
+    <monaco-editor-comp enableInlineConfig useDiffEditor id="42"
+        wsHost="localhost" wsPort="3000" wsPath="sampleServer" useLanguageClient>
         <script type="text/javascript">
             function getMonacoDiffEditorOptions42() {
                 return {
@@ -29,16 +32,15 @@ Same again.`,
                 };
             }
             </script>
-    </monaco-editor-lc-comp>
+    </monaco-editor-comp>
     </div>
     <div style="height: 33vh;">
-        <monaco-editor-lc-comp enableInlineConfig useDiffEditor id="43"
+        <monaco-editor-comp enableInlineConfig useDiffEditor id="43"
         code="This line is equal.This number is different 3022.Misspelled!Same again."
         languageId="text/plain"
         modifiedCode="This line is equal.This number is different 3002.Misspelled!Same again."
         modifiedLanguageId="text/plain"
-        theme="vs-dark"
-        wsSecured wsHost="localhost" wsPort="3000" wsPath="sampleServer">
+        theme="vs-dark">
             <script type="text/javascript">
                 function getMonacoDiffEditorOptions43() {
                     return {
@@ -50,10 +52,10 @@ Same again.`,
 
                 }
                 </script>
-        </monaco-editor-lc-comp>
+        </monaco-editor-comp>
     </div>
     <div style="height: 33vh;">
-    <monaco-editor-lc-comp enableInlineConfig id="44" wsSecured wsPort="3000" wsPath="sampleServer">
+    <monaco-editor-comp enableInlineConfig id="44">
         <script type="text/javascript">
             function getMonacoEditorOptions44() {
                     return {
@@ -68,11 +70,11 @@ Same again.`,
                     }
                 }
         </script>
-    </monaco-editor-lc-comp>
+    </monaco-editor-comp>
     </div>
     <script type="module">
-        let monComps = document.querySelectorAll('monaco-editor-lc-comp');
-        async function sleepOne(milliseconds) {
+        let monComps = document.querySelectorAll('monaco-editor-comp');
+        function sleepOne(milliseconds) {
             setTimeout(() => {
                 alert(`Updating editors after ${milliseconds}ms`);
 
@@ -82,6 +84,7 @@ Same again.`,
                 comp42.setCode(`function logMe() {
     console.log('Hello swap editors!');
 };`);
+                comp42.setLanguageId('javascript');
                 comp42.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
 
                 const comp43 = monComps[1];
@@ -109,9 +112,9 @@ Same again.`,
             }, milliseconds);
         }
         // change the editors config, content or swap normal and diff editors after five seconds
-        await sleepOne(5000);
+        sleepOne(5000);
 
-        async function sleepTwo(milliseconds) {
+        function sleepTwo(milliseconds) {
             setTimeout(() => {
                 alert(`Updating last editor after ${milliseconds}ms`);
 
@@ -121,7 +124,7 @@ Same again.`,
                 comp44.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
             }, milliseconds);
         };
-        await sleepTwo(10000);
+        sleepTwo(10000);
     </script>
 </body>
 

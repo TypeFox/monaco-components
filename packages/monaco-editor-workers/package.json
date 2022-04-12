@@ -1,0 +1,47 @@
+{
+  "name": "monaco-editor-workers",
+  "version": "0.33.0-next.3",
+  "license": "MIT",
+  "description": "Monaco Editor Worker Support Package",
+  "keywords": [
+    "monaco-editor",
+    "typescript"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "npx shx rm -rf ./dist && npx shx rm -fr tsconfig.tsbuildinfo",
+    "lint": "eslint src",
+    "compile": "tsc",
+    "_build-workers": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
+    "build": "npm run clean && npm run compile && npm run _build-workers"
+  },
+  "dependencies": {
+    "monaco-editor": "0.33.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-workers"
+  },
+  "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-workers/README.md",
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
+  }
+}

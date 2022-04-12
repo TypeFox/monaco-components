@@ -1,56 +1,58 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "license": "MIT",
-  "description": "Lit Component for Monaco Editor",
+  "private": "true",
+  "description": "Lit Component for Monaco Languageclient",
   "keywords": [
     "monaco-editor",
+    "monaco-languageclient",
     "lit",
     "web-component",
     "typescript"
   ],
   "type": "module",
-  "main": "./dist/monaco-editor-comp.js",
-  "module": "./dist/monaco-editor-comp.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/monaco-editor-comp.js",
-      "types": "./dist/src/index.d.ts"
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     },
-    "./monaco-editor-comp-workers": {
-      "import": "./dist/monaco-editor-comp-workers.js"
-    },
-    "./monaco-editor-comp-workers-vite": {
-      "import": "./dist/monaco-editor-comp-workers-vite.js"
+    "./bundle": {
+      "import": "./dist/bundles/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
-    "dist/assets",
-    "dist/src",
-    "dist/monaco-editor-comp*.js",
-    "dist/style.css",
+    "dist",
     "src",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
-    "prepare": "npm run _build-workers",
-    "clean": "shx rm -rf ./dist",
-    "dev": "vite",
+    "clean": "npx shx rm -rf ./dist ./build/dist ./src/generated tsconfig.tsbuildinfo",
     "lint": "eslint src",
-    "_build-workers": "vite -c vite.config.worker.ts build",
-    "_build-main": "tsc && vite build",
-    "copy-ttf": "shx cp ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist",
-    "build": "npm run clean && npm run _build-main && npm run _build-workers && npm run copy-ttf",
-    "serve": "tsc && vite preview"
+    "copy-ttf": "npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
+    "copy-assets": "npx shx mkdir -p ./dist/assets && npm run copy-ttf",
+    "create-css": "tsc -p ./build && node ./build/dist/buildAssets.js",
+    "compile": "npm run copy-assets && npm run create-css && tsc",
+    "build:vite": "vite --config vite.build.config.ts build",
+    "build": "npm run clean && npm run compile && npm run build:vite"
   },
   "dependencies": {
+    "monaco-editor": "0.33.0",
+    "monaco-editor-workers": "0.33.0-next.3",
+    "monaco-languageclient": "0.19.0-next.1",
+    "@codingame/monaco-jsonrpc": "^0.3.1",
     "lit": "^2.2.1",
-    "monaco-editor": "^0.33.0"
+    "normalize-url": "^7.0.3"
   },
   "devDependencies": {
-    "tslib": "^2.3.1"
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.66.0",
+    "@types/glob-to-regexp": "^0.4.1"
   },
   "repository": {
     "type": "git",
