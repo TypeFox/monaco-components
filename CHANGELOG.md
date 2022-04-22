@@ -5,11 +5,12 @@
 * Build own code and workers and create a super bundle in addition
 * Merged **monaco-editor-lc-comp** and **monaco-editor-comp**. Newest version of [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) no longer relies on `monaco-editor-core`
 * Added package [Monaco Editor Workers](./packages/monaco-editor-workers) which eases loading the workers of Monaco Editor for different browsers
+* Default export is the bundle. You can get the "raw" version with `monaco-editor-comp/raw`
 * Update dependencies:
-  * `vite` to `2.9.1`
+  * `vite` to `2.9.5`
   * `typescript` to `4.6.3`
-  * `eslint` to `8.12.0`
-  * `@typescript-eslint/eslint-plugin` to `5.19.0`
+  * `eslint` to `8.13.0`
+  * `@typescript-eslint/eslint-plugin` to `5.20.0`
 
 ## [0.2.4]
 
