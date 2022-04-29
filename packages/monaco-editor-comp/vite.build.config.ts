@@ -12,9 +12,9 @@ export default defineConfig({
     },
     build: {
         lib: {
-            entry: path.resolve(__dirname, 'src/main.ts'),
+            entry: path.resolve(__dirname, 'src/index.ts'),
             name: 'monaco-editor-comp',
-            fileName: () => 'bundle.js',
+            fileName: () => 'bundle/index.js',
             formats: ['es']
         },
         outDir: 'dist',

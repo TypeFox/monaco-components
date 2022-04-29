@@ -9,9 +9,8 @@
     "copy-lc-comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-comp/dist ./libs/monaco-editor-comp",
     "copy-monaco-workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy-monaco-editor": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor ./libs/monaco-editor",
-    "update-libs": "npm run clean && npm run copy-lc-comp && npm run copy-monaco-workers && npm run copy-monaco-editor",
-    "start": "http-server --port 20002 ./",
-    "build": "npm run update-libs"
+    "build": "npm run clean && npm run copy-lc-comp && npm run copy-monaco-workers && npm run copy-monaco-editor",
+    "start": "http-server --port 20002 ./"
   },
   "devDependencies": {
     "http-server": "^14.1.0"

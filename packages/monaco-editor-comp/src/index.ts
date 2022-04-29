@@ -8,9 +8,14 @@ import {
     MonacoLanguageClientWrapper
 } from './wrapper';
 
+import {
+    getMonacoCss
+} from './generated/css';
+
 export {
     CodeEditorLanguageClient,
     WebSocketConfigOptions,
     CodeEditorConfig,
-    MonacoLanguageClientWrapper
+    MonacoLanguageClientWrapper,
+    getMonacoCss
 };

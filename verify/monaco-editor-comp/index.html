@@ -16,7 +16,7 @@
     </style>
     <script type="module">
         console.log('hello');
-        import { CodeEditorLanguageClient } from './libs/monaco-editor-comp/bundle.js';
+        import { CodeEditorLanguageClient } from './libs/monaco-editor-comp/bundle/index.js';
         import { buildWorkerDefinition } from "./libs/monaco-editor-workers/index.js";
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
     </script>
