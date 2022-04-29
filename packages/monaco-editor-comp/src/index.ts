@@ -3,10 +3,11 @@ import {
 } from './main';
 
 import {
-    WebSocketConfigOptions,
     CodeEditorConfig,
     MonacoLanguageClientWrapper
 } from './wrapper';
+
+import type { WebSocketConfigOptions } from './wrapper';
 
 import {
     getMonacoCss
