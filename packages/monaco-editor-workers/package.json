@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.33.0-next.4",
+  "version": "0.33.0-next.5",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
