@@ -23,8 +23,9 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
-import { MonacoLanguageClient, MessageConnection, CloseAction, ErrorAction, MonacoServices, createConnection } from 'monaco-languageclient';
-import { listen } from '@codingame/monaco-jsonrpc';
+import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices } from 'monaco-languageclient';
+import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from '@codingame/monaco-jsonrpc';
+import { MessageTransports } from 'monaco-languageclient';
 import normalizeUrl from 'normalize-url';
 
 export type WebSocketConfigOptions = {
@@ -216,21 +217,18 @@ export class MonacoLanguageClientWrapper {
         const url = this.createUrl(websocketConfig);
         const webSocket = new WebSocket(url);
 
-        // listen when the web socket is opened
-        listen({
-            webSocket,
-            onConnection: connection => {
-                console.log('Connected');
-
-                // create and start the language client
-                const languageClient = this.createLanguageClient(connection);
-                const disposable = languageClient.start();
-                connection.onClose(() => disposable.dispose());
-            }
+        const socket = toSocket(webSocket);
+        const reader = new WebSocketMessageReader(socket);
+        const writer = new WebSocketMessageWriter(socket);
+        const languageClient = this.createLanguageClient({
+            reader,
+            writer
         });
+        languageClient.start();
+        reader.onClose(() => languageClient.stop());
     }
 
-    private createLanguageClient(connection: MessageConnection): MonacoLanguageClient {
+    private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
         return new MonacoLanguageClient({
             name: 'Sample Language Client',
             clientOptions: {
@@ -238,14 +236,14 @@ export class MonacoLanguageClientWrapper {
                 documentSelector: [this.editorConfig.codeOriginal[1]],
                 // disable the default error handler
                 errorHandler: {
-                    error: () => ErrorAction.Continue,
-                    closed: () => CloseAction.DoNotRestart
+                    error: () => ({ action: ErrorAction.Continue }),
+                    closed: () => ({ action: CloseAction.DoNotRestart })
                 }
             },
             // create a language client connection from the JSON RPC connection on demand
             connectionProvider: {
-                get: (errorHandler, closeHandler) => {
-                    return Promise.resolve(createConnection(connection, errorHandler, closeHandler));
+                get: () => {
+                    return Promise.resolve(transports);
                 }
             }
         });
