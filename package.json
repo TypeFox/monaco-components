@@ -9,19 +9,23 @@
     "clean": "npm run clean --workspaces",
     "dev": "vite --debug",
     "lint": "npm run lint --workspaces",
-    "build-comp": "npm run build --workspace packages/monaco-editor-comp",
-    "build-workers": "npm run build --workspace packages/monaco-editor-workers",
+    "build:comp": "npm run build --workspace packages/monaco-editor-comp",
+    "build:workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
-    "prepare-release": "npm i && npm run clean && npm run build"
+    "release:prepare": "npm i && npm run clean && npm run build"
   },
   "devDependencies": {
     "vite": "2.9.6",
-    "typescript": "^4.6.4",
-    "eslint": "^8.15.0",
-    "@typescript-eslint/eslint-plugin": "^5.25.0",
+    "typescript": "^4.7.2",
+    "eslint": "^8.16.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
     "editorconfig": "^0.15.3",
     "tslib": "^2.4.0",
     "shx": "^0.3.4"
+  },
+  "volta": {
+    "node": "16.15.0",
+    "npm": "8.12.0"
   },
   "workspaces": [
     "packages/monaco-editor-comp",
