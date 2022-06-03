@@ -6,7 +6,7 @@
   "main": "index.html",
   "scripts": {
     "clean": "npx shx rm -rf ./libs",
-    "copy-lc-comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-comp/dist ./libs/monaco-editor-comp",
+    "copy-lc-comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-comp/bundle ./libs/monaco-editor-comp",
     "copy-monaco-workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy-monaco-editor": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor ./libs/monaco-editor",
     "build": "npm run clean && npm run copy-lc-comp && npm run copy-monaco-workers && npm run copy-monaco-editor",
