@@ -31,6 +31,8 @@ import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from '@codin
 import { MessageTransports } from 'monaco-languageclient';
 import normalizeUrl from 'normalize-url';
 
+import type { } from 'css-font-loading-module';
+
 export type WebSocketConfigOptions = {
     wsSecured: boolean;
     wsHost: string;
@@ -280,6 +282,25 @@ export class MonacoLanguageClientWrapper {
     private createUrl(websocketConfig: WebSocketConfigOptions) {
         const protocol = websocketConfig.wsSecured ? 'wss' : 'ws';
         return normalizeUrl(`${protocol}://${websocketConfig.wsHost}:${websocketConfig.wsPort}/${websocketConfig.wsPath}`);
+    }
+
+    static addMonacoStyles(idOfStyleElement: string) {
+        const style = document.createElement('style');
+        style.id = idOfStyleElement;
+        style.innerHTML = getMonacoCss();
+        document.head.appendChild(style);
+    }
+
+    static addCodiconTtf(): void {
+        const ttf = getCodiconTtf();
+        const codicon = new FontFace('Codicon', `url(${ttf})`);
+        codicon.load().then(l => {
+            document.fonts.add(l);
+            document.body.style.fontFamily = '"Codicon", Arial';
+            console.log('Loaded Codicon TTF font');
+        }).catch(e => {
+            throw e;
+        });
     }
 
 }

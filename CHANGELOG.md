@@ -2,6 +2,11 @@
 
 ## monaco-editor-comp
 
+### [0.3.1]
+
+* Polish the monaco-editor wrapper API and add direct monaco-editor wrapper usage examples
+* Add static helper functions for Codicon TTF loading and addition of monaco style sheets
+
 ### [0.3.0]
 
 * Merged **monaco-editor-lc-comp** and **monaco-editor-comp**. Newest version of [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) no longer relies on `monaco-editor-core`

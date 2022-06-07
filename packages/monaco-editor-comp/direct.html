@@ -15,15 +15,7 @@
         buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
         import { getCodiconTtf, MonacoLanguageClientWrapper } from "./src/wrapper.ts";
 
-        const ttf = getCodiconTtf();
-        const codicon = new FontFace('Codicon', `url(${ttf})`);
-        codicon.load().then( l => {
-	        document.fonts.add(l);
-  	        document.body.style.fontFamily = '"Codicon", Arial';
-              console.log('Loaded Codicon TTF font');
-        }).catch(e => {
-	        console.error(e);
-        });
+        MonacoLanguageClientWrapper.addCodiconTtf();
 
         const client = new MonacoLanguageClientWrapper(42);
         client.editorConfig.codeOriginal = [ `{

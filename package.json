@@ -16,9 +16,9 @@
   },
   "devDependencies": {
     "vite": "2.9.6",
-    "typescript": "^4.7.2",
-    "eslint": "^8.16.0",
-    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "typescript": "^4.7.3",
+    "eslint": "^8.17.0",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
     "editorconfig": "^0.15.3",
     "tslib": "^2.4.0",
     "shx": "^0.3.4"
