@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.3.1-next.1",
+  "version": "0.3.1-next.3",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -37,10 +37,10 @@
     "clean": "npx shx rm -rf ./dist ./build/dist ./bundle ./src/generated tsconfig.tsbuildinfo",
     "lint": "eslint src",
     "copy:ttf": "npx shx mkdir -p ./dist/assets && npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
-    "create:css": "tsc -p ./build && node ./build/dist/buildAssets.js",
-    "compile": "npm run create:css && tsc",
+    "create:assets": "tsc -p ./build && node ./build/dist/buildAssets.js",
+    "compile": "npm run create:assets && tsc",
     "build:bundle": "npx shx cp -rf dist bundle && vite --config vite.bundle.config.ts build",
-    "build": "npm run clean && npm run compile && npm run build:bundle && npm run copy:ttf"
+    "build": "npm run clean && npm run compile && npm run copy:ttf && npm run build:bundle"
   },
   "dependencies": {
     "monaco-editor": "0.33.0",

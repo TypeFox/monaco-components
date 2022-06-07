@@ -4,19 +4,18 @@ import {
 
 import {
     CodeEditorConfig,
-    MonacoLanguageClientWrapper
+    MonacoLanguageClientWrapper,
+    getMonacoCss,
+    getCodiconTtf
 } from './wrapper';
 
 import type { WebSocketConfigOptions } from './wrapper';
-
-import {
-    getMonacoCss
-} from './generated/css';
 
 export {
     CodeEditorLanguageClient,
     WebSocketConfigOptions,
     CodeEditorConfig,
     MonacoLanguageClientWrapper,
-    getMonacoCss
+    getMonacoCss,
+    getCodiconTtf
 };

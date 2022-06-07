@@ -23,6 +23,9 @@ import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 
+import { getMonacoCss } from './generated/css';
+import { getCodiconTtf } from './generated/ttf';
+
 import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from '@codingame/monaco-jsonrpc';
 import { MessageTransports } from 'monaco-languageclient';
@@ -57,6 +60,31 @@ export class CodeEditorConfig {
     languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
     themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 
+    setMainLanguageId(languageId: string): void {
+        this.codeOriginal[1] = languageId;
+    }
+
+    setMainCode(code: string): void {
+        this.codeOriginal[0] = code;
+    }
+
+    setDiffLanguageId(languageId: string): void {
+        this.codeModified[1] = languageId;
+    }
+
+    setDiffCode(code: string): void {
+        this.codeModified[0] = code;
+    }
+
+    registerMonarchTokensProvider(languageId: string, languageDef: unknown) {
+        this.codeOriginal[1] = languageId;
+        this.languageDef = languageDef as monaco.languages.IMonarchLanguage;
+    }
+
+    registerEditorTheme(theme: string, themeData: unknown) {
+        this.theme = theme;
+        this.themeData = themeData as monaco.editor.IStandaloneThemeData;
+    }
 }
 
 export class MonacoLanguageClientWrapper {
@@ -255,3 +283,5 @@ export class MonacoLanguageClientWrapper {
     }
 
 }
+
+export { getMonacoCss, getCodiconTtf };
