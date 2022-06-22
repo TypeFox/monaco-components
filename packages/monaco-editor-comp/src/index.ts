@@ -9,11 +9,11 @@ import {
     getCodiconTtf
 } from './wrapper';
 
-import type { WebSocketConfigOptions } from './wrapper';
+import type { LanguageClientConfigOptions } from './wrapper';
 
 export {
     CodeEditorLanguageClient,
-    WebSocketConfigOptions,
+    LanguageClientConfigOptions,
     CodeEditorConfig,
     MonacoLanguageClientWrapper,
     getMonacoCss,

@@ -26,35 +26,40 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
 import { getMonacoCss } from './generated/css';
 import { getCodiconTtf } from './generated/ttf';
 
-import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices } from 'monaco-languageclient';
-import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from '@codingame/monaco-jsonrpc';
-import { MessageTransports } from 'monaco-languageclient';
+import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports } from 'monaco-languageclient';
+import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
+import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser';
 import normalizeUrl from 'normalize-url';
 
 import type { } from 'css-font-loading-module';
 
-export type WebSocketConfigOptions = {
+export type LanguageClientConfigOptions = {
+    useLanguageClient: boolean;
+    useWebSocket: boolean;
     wsSecured: boolean;
     wsHost: string;
     wsPort: number;
     wsPath: string;
+    workerURL: string;
 }
 
 export class CodeEditorConfig {
 
     useDiffEditor = false;
-    useLanguageClient = false;
     codeOriginal: [string, string] = ['', 'javascript'];
     codeModified: [string, string] = ['', 'javascript'];
     theme = 'vs-light';
     monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
-    webSocketOptions: WebSocketConfigOptions = {
+    lcConfigOptions: LanguageClientConfigOptions = {
+        useLanguageClient: false,
+        useWebSocket: true,
         wsSecured: false,
         wsHost: 'localhost',
         wsPort: 8080,
-        wsPath: ''
+        wsPath: '',
+        workerURL: ''
     };
     monacoDiffEditorOptions: Record<string, unknown> = {
         readOnly: false
@@ -129,11 +134,12 @@ export class MonacoLanguageClientWrapper {
         }
         this.updateEditor();
 
-        if (this.editorConfig.useLanguageClient) {
+        if (this.editorConfig.lcConfigOptions.useLanguageClient) {
             console.log('Enabling monaco-languageclient');
             this.installMonaco();
-            this.establishWebSocket(this.editorConfig.webSocketOptions);
+            this.startLanguageClientConnection(this.editorConfig.lcConfigOptions);
         }
+
     }
 
     swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
@@ -192,12 +198,14 @@ export class MonacoLanguageClientWrapper {
     }
 
     private updateCommonEditorConfig() {
-        if (this.editorConfig.useLanguageClient) {
+        if (this.editorConfig.lcConfigOptions.useLanguageClient) {
             const languageId = this.editorConfig.codeOriginal[1];
 
             // apply monarch definitions
-            if (this.editorConfig.languageDef && languageId) {
+            if (languageId) {
                 monaco.languages.register({ id: languageId });
+            }
+            if (this.editorConfig.languageDef) {
                 monaco.languages.setMonarchTokensProvider(languageId, this.editorConfig.languageDef);
             }
             if (this.editorConfig.themeData) {
@@ -236,31 +244,40 @@ export class MonacoLanguageClientWrapper {
             }
             catch (e: unknown) {
                 // install only if services are not yet available (exception will happen only then)
-                MonacoServices.install(monaco);
+                MonacoServices.install();
                 console.log(`Component (${this.id}): Installed MonacoServices`);
             }
         }
     }
 
-    private establishWebSocket(websocketConfig: WebSocketConfigOptions) {
-        // create the web socket
-        const url = this.createUrl(websocketConfig);
-        const webSocket = new WebSocket(url);
+    private startLanguageClientConnection(lcConfigOptions: LanguageClientConfigOptions) {
+        let reader: WebSocketMessageReader | BrowserMessageReader;
+        let writer: WebSocketMessageWriter | BrowserMessageWriter;
+        if (lcConfigOptions.useWebSocket) {
+            const url = this.createUrl(lcConfigOptions);
+            const webSocket = new WebSocket(url);
 
-        const socket = toSocket(webSocket);
-        const reader = new WebSocketMessageReader(socket);
-        const writer = new WebSocketMessageWriter(socket);
-        const languageClient = this.createLanguageClient({
-            reader,
-            writer
-        });
-        languageClient.start();
-        reader.onClose(() => languageClient.stop());
+            webSocket.onopen = () => {
+                const socket = toSocket(webSocket);
+                const reader = new WebSocketMessageReader(socket);
+                const writer = new WebSocketMessageWriter(socket);
+                const languageClient = this.createLanguageClient({ reader, writer });
+                languageClient.start();
+                reader.onClose(() => languageClient.stop());
+            };
+        } else {
+            const worker = new Worker(new URL(lcConfigOptions.workerURL, window.location.href).href);
+            reader = new BrowserMessageReader(worker);
+            writer = new BrowserMessageWriter(worker);
+            const languageClient = this.createLanguageClient({ reader, writer });
+            languageClient.start();
+            reader.onClose(() => languageClient.stop());
+        }
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
         return new MonacoLanguageClient({
-            name: 'Sample Language Client',
+            name: 'Monaco Wrapper Language Client',
             clientOptions: {
                 // use a language id as a document selector
                 documentSelector: [this.editorConfig.codeOriginal[1]],
@@ -279,9 +296,9 @@ export class MonacoLanguageClientWrapper {
         });
     }
 
-    private createUrl(websocketConfig: WebSocketConfigOptions) {
-        const protocol = websocketConfig.wsSecured ? 'wss' : 'ws';
-        return normalizeUrl(`${protocol}://${websocketConfig.wsHost}:${websocketConfig.wsPort}/${websocketConfig.wsPath}`);
+    private createUrl(lcConfigOptions: LanguageClientConfigOptions) {
+        const protocol = lcConfigOptions.wsSecured ? 'wss' : 'ws';
+        return normalizeUrl(`${protocol}://${lcConfigOptions.wsHost}:${lcConfigOptions.wsPort}/${lcConfigOptions.wsPath}`);
     }
 
     static addMonacoStyles(idOfStyleElement: string) {

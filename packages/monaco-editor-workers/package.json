@@ -13,8 +13,8 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
   "files": [
@@ -31,8 +31,7 @@
     "build": "npm run clean && npm run compile && npm run build:workers"
   },
   "dependencies": {
-    "monaco-editor": "0.33.0",
-    "@types/css-font-loading-module": "^0.0.7"
+    "monaco-editor": "0.33.0"
   },
   "repository": {
     "type": "git",

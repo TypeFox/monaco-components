@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -16,14 +16,17 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./bundle": {
-      "import": "./bundle/index.js",
       "types": "./bundle/index.d.ts",
       "default": "./bundle/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "bundle": [ "bundle/index" ]
     }
   },
   "files": [
@@ -43,11 +46,13 @@
     "build": "npm run clean && npm run compile && npm run copy:ttf && npm run build:bundle"
   },
   "dependencies": {
+    "@types/css-font-loading-module": "^0.0.7",
     "monaco-editor": "0.33.0",
     "monaco-editor-workers": "0.33.0",
-    "monaco-languageclient": "1.0.1",
-    "@codingame/monaco-jsonrpc": "0.4.0",
-    "lit": "^2.2.5",
+    "monaco-languageclient": "2.0.2",
+    "vscode-ws-jsonrpc": "1.0.1",
+    "vscode-languageserver-protocol": "3.17.1",
+    "lit": "^2.2.6",
     "normalize-url": "^7.0.3"
   },
   "devDependencies": {

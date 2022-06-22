@@ -17,7 +17,12 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["ES2020", "dom"]
+    "skipLibCheck": true, // Skip type checking of declaration files.
+    "lib": [
+      "ES2020",
+      "dom",
+      "WebWorker"
+    ]
   },
   "files": []
 }

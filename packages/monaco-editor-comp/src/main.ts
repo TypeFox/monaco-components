@@ -2,7 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { getMonacoCss, MonacoLanguageClientWrapper, WebSocketConfigOptions } from './wrapper';
+import { getMonacoCss, LanguageClientConfigOptions, MonacoLanguageClientWrapper } from './wrapper';
 
 @customElement('monaco-editor-comp')
 export class CodeEditorLanguageClient extends LitElement {
@@ -16,14 +16,17 @@ export class CodeEditorLanguageClient extends LitElement {
     @property({ reflect: true }) modifiedCode?= '';
     @property({ reflect: true }) modifiedLanguageId?= 'javascript';
     @property({ reflect: true }) theme = 'vs-light';
+
     @property({ type: Boolean, reflect: true }) enableInlineConfig?= false;
     @property({ type: Boolean, reflect: true }) useDiffEditor?= false;
-    @property({ type: Boolean, reflect: true }) useLanguageClient?= false;
 
+    @property({ type: Boolean, reflect: true }) useLanguageClient?= false;
+    @property({ type: Boolean, reflect: true }) useWebSocket?= true;
     @property({ type: Boolean, reflect: true }) wsSecured?= false;
     @property({ reflect: true }) wsHost = 'localhost';
     @property({ type: Number, reflect: true }) wsPort = 8080;
     @property({ reflect: true }) wsPath = '';
+    @property({ type: String, reflect: true }) workerURL?= '';
 
     static override styles = css`
         :host {
@@ -69,29 +72,39 @@ export class CodeEditorLanguageClient extends LitElement {
         this.monacoWrapper.getEditorConfig().theme = theme;
     }
 
+    setUseLanguageClient(useLanguageClient: boolean) {
+        this.useLanguageClient = useLanguageClient;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.useLanguageClient = useLanguageClient;
+    }
+
+    setUseWebSocket(useWebSocket: boolean) {
+        this.useWebSocket = useWebSocket;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.useWebSocket = useWebSocket;
+    }
+
     setWsSecured(wsSecured: boolean) {
         this.wsSecured = wsSecured;
-        this.monacoWrapper.getEditorConfig().webSocketOptions.wsSecured = wsSecured;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.wsSecured = wsSecured;
     }
 
     setWsHost(wsHost: string) {
         this.wsHost = wsHost;
-        this.monacoWrapper.getEditorConfig().webSocketOptions.wsHost = wsHost;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.wsHost = wsHost;
     }
 
     setWsPort(wsPort: number) {
         this.wsPort = wsPort;
-        this.monacoWrapper.getEditorConfig().webSocketOptions.wsPort = wsPort;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.wsPort = wsPort;
     }
 
     setWsPath(wsPath: string) {
         this.wsPath = wsPath;
-        this.monacoWrapper.getEditorConfig().webSocketOptions.wsPath = wsPath;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.wsPath = wsPath;
     }
 
-    setUseLanguageClient(useLanguageClient: boolean) {
-        this.useLanguageClient = useLanguageClient;
-        this.monacoWrapper.getEditorConfig().useLanguageClient = useLanguageClient;
+    setWorkerURL(workerURL: string) {
+        this.workerURL = workerURL;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions.workerURL = workerURL;
     }
 
     private startEditor(reloadInlineConfig: boolean) {
@@ -145,14 +158,15 @@ export class CodeEditorLanguageClient extends LitElement {
             wrapperConfig.setDiffLanguageId(this.modifiedLanguageId);
         }
         wrapperConfig.theme = this.theme;
-        wrapperConfig.webSocketOptions = {
+        wrapperConfig.lcConfigOptions = {
+            useLanguageClient: this.useLanguageClient === true,
+            useWebSocket: this.useWebSocket === true,
             wsSecured: this.wsSecured === true,
             wsHost: this.wsHost,
             wsPort: this.wsPort,
-            wsPath: this.wsPath
+            wsPath: this.wsPath,
+            workerURL: this.workerURL!
         };
-        wrapperConfig.useLanguageClient = this.useLanguageClient === true;
-
         this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
     }
 
@@ -232,7 +246,7 @@ export class CodeEditorLanguageClient extends LitElement {
     }
 
     setWebSocketOptions(options: Record<string, unknown>) {
-        this.monacoWrapper.getEditorConfig().webSocketOptions = options as WebSocketConfigOptions;
+        this.monacoWrapper.getEditorConfig().lcConfigOptions = options as LanguageClientConfigOptions;
     }
 
     private isEnableInlineConfig() {
