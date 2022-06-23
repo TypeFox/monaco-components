@@ -25,7 +25,7 @@
   ],
   "scripts": {
     "clean": "npx shx rm -rf ./dist && npx shx rm -fr tsconfig.tsbuildinfo",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "compile": "tsc",
     "build:workers": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
     "build": "npm run clean && npm run compile && npm run build:workers"

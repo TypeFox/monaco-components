@@ -2,6 +2,15 @@
 
 ## monaco-editor-comp
 
+### [0.4.0]
+
+* Fixed Web Socket usage broken with version 0.3.0+
+* Property application of the Web Component has been unified (gather and apply at one specific point)
+* Added a Monaco Language Client example to the pure HTML/JS verification examples and clean-up all examples
+* Updated important dependencies:
+    `monaco-languageclient` to `2.0.2`
+    `vscode-ws-jsonrpc` to `1.0.1`
+
 ### [0.3.1]
 
 * Polish the monaco-editor wrapper API and add direct monaco-editor wrapper usage examples

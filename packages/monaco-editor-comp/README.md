@@ -13,11 +13,13 @@ The component can be fully configured with embedded JavaScript. It can be config
 * **useDiffEditor**: Use the diff editor instead of the regular editor by specifying function `getMonacoDiffEditorOptions`. It can only be used if `enableInlineConfig` is passed. See examples below. Attach the id directly to the name if you use more than one editor (e.g. `getMonacoDiffEditorOptions42`).
 * **modifiedCode**: *Only Diff Editor*: Specify the modified language (default: `javascript`)
 * **modifiedLanguageId**: *Only Diff Editor*: Code or text that is shown in the modified editor. (default: `''`)
-* **useLanguageClient**: Enable monaco languageclient. You have to configure the following WebDocket configuration options (or use `getWebSocketOptions` if `enableInlineConfig` is set):
+* **useLanguageClient**: Enable monaco languageclient. You have to configure the following WebDocket configuration options (or use `getLanguageClientOptions` if `enableInlineConfig` is set):
+  * **useWebSocket**: Use the web socket connection (default: `true`), if `false` implementation tries to use a web worker instead (need to set **workerURL**)
   * **wsSecured**: Use secure connection (default: `false`)
   * **wsHost**: Specify host (default: `localhost`)
   * **wsPort**: Specify port (default: `8080`)
   * **wsPath**: Specify path (default: `''`)
+  * (*Optional*) **workerURL**: Specify a url to a web worker that is used for running a language server in the browser
 
 ## Help / Hints
 

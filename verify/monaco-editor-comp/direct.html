@@ -4,43 +4,36 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Monaco Editor Languagclient Component Verify HTML</title>
+    <title>Verify: Monaco Editor Wrapper: Diff</title>
 </head>
 
 <body>
     <div id="monaco-editor-root" style="height: 100vh;"></div>
 
     <script type="module">
-        console.log('hello');
-        import { getCodiconTtf, getMonacoCss, MonacoLanguageClientWrapper } from './libs/monaco-editor-comp/index.js';
+        import { getCodiconTtf, getMonacoCss, MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-comp/index.js';
         import { buildWorkerDefinition } from "./libs/monaco-editor-workers/index.js";
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
 
-        // helper functions for adding Codicon TTF to document to head and monaco styles to head
-        MonacoLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-        MonacoLanguageClientWrapper.addCodiconTtf();
+        // helper functions for adding Codicon TTF to document and monaco styles to head
+        MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
+        MonacoEditorLanguageClientWrapper.addCodiconTtf();
 
-        const client = new MonacoLanguageClientWrapper(42);
-        client.editorConfig.setMainLanguageId('text/plain');
-        client.editorConfig.setMainCode(`This line is equal.
+        const client = new MonacoEditorLanguageClientWrapper(42);
+        const editorConfig = client.getEditorConfig();
+        client.editorConfig.useDiffEditor = true;
+
+        editorConfig.setMainLanguageId('text/plain');
+        editorConfig.setMainCode(`This line is equal.
 This number is different 2022
 Misspelled!
 Same again.`);
-
-        client.editorConfig.setDiffLanguageId('text/plain');
-        client.editorConfig.setDiffCode(`This line is equal.
+        editorConfig.setDiffLanguageId('text/plain');
+        editorConfig.setDiffCode(`This line is equal.
 This number is different 2002
 Misspeelled!
 Same again.`);
-        client.editorConfig.theme = 'vs-dark';
-        client.editorConfig.webSocketOptions = {
-            wsSecured: false,
-            wsHost: "localhost",
-            wsPort: "3000",
-            wsPath: "sampleServer",
-        }
-        client.editorConfig.useLanguageClient = true;
-        client.editorConfig.useDiffEditor = true;
+        editorConfig.theme = 'vs-dark';
 
         client.startEditor(document.getElementById("monaco-editor-root"));
     </script>

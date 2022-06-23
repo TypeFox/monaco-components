@@ -10,7 +10,6 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGot
 import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/quickInput/standaloneQuickInputService.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 
 // add workers
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution';
@@ -34,13 +33,12 @@ import normalizeUrl from 'normalize-url';
 import type { } from 'css-font-loading-module';
 
 export type LanguageClientConfigOptions = {
-    useLanguageClient: boolean;
     useWebSocket: boolean;
     wsSecured: boolean;
     wsHost: string;
     wsPort: number;
     wsPath: string;
-    workerURL: string;
+    workerURL?: string;
 }
 
 export class CodeEditorConfig {
@@ -52,14 +50,13 @@ export class CodeEditorConfig {
     monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
+    useLanguageClient = false;
     lcConfigOptions: LanguageClientConfigOptions = {
-        useLanguageClient: false,
         useWebSocket: true,
         wsSecured: false,
         wsHost: 'localhost',
         wsPort: 8080,
-        wsPath: '',
-        workerURL: ''
+        wsPath: ''
     };
     monacoDiffEditorOptions: Record<string, unknown> = {
         readOnly: false
@@ -83,22 +80,21 @@ export class CodeEditorConfig {
         this.codeModified[0] = code;
     }
 
-    registerMonarchTokensProvider(languageId: string, languageDef: unknown) {
-        this.codeOriginal[1] = languageId;
+    setMonarchTokensProvider(languageDef: unknown) {
         this.languageDef = languageDef as monaco.languages.IMonarchLanguage;
     }
 
-    registerEditorTheme(theme: string, themeData: unknown) {
-        this.theme = theme;
+    setEditorThemeData(themeData: unknown) {
         this.themeData = themeData as monaco.editor.IStandaloneThemeData;
     }
 }
 
-export class MonacoLanguageClientWrapper {
+export class MonacoEditorLanguageClientWrapper {
 
     private editor: monaco.editor.IStandaloneCodeEditor | undefined;
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
+    private languageClient: MonacoLanguageClient | undefined;
 
     private id: string;
 
@@ -118,6 +114,10 @@ export class MonacoLanguageClientWrapper {
         this.editorConfig.useDiffEditor = useDiffEditor;
     }
 
+    isUseDiffEditor(): boolean {
+        return this.editorConfig.useDiffEditor;
+    }
+
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
 
@@ -134,7 +134,7 @@ export class MonacoLanguageClientWrapper {
         }
         this.updateEditor();
 
-        if (this.editorConfig.lcConfigOptions.useLanguageClient) {
+        if (this.editorConfig.useLanguageClient) {
             console.log('Enabling monaco-languageclient');
             this.installMonaco();
             this.startLanguageClientConnection(this.editorConfig.lcConfigOptions);
@@ -198,7 +198,7 @@ export class MonacoLanguageClientWrapper {
     }
 
     private updateCommonEditorConfig() {
-        if (this.editorConfig.lcConfigOptions.useLanguageClient) {
+        if (this.editorConfig.useLanguageClient) {
             const languageId = this.editorConfig.codeOriginal[1];
 
             // apply monarch definitions
@@ -251,6 +251,8 @@ export class MonacoLanguageClientWrapper {
     }
 
     private startLanguageClientConnection(lcConfigOptions: LanguageClientConfigOptions) {
+        if (this.languageClient && this.languageClient.isRunning()) return;
+
         let reader: WebSocketMessageReader | BrowserMessageReader;
         let writer: WebSocketMessageWriter | BrowserMessageWriter;
         if (lcConfigOptions.useWebSocket) {
@@ -261,17 +263,19 @@ export class MonacoLanguageClientWrapper {
                 const socket = toSocket(webSocket);
                 const reader = new WebSocketMessageReader(socket);
                 const writer = new WebSocketMessageWriter(socket);
-                const languageClient = this.createLanguageClient({ reader, writer });
-                languageClient.start();
-                reader.onClose(() => languageClient.stop());
+                this.languageClient = this.createLanguageClient({ reader, writer });
+                this.languageClient.start();
+                reader.onClose(() => this.languageClient?.stop());
             };
-        } else {
+        } else if (lcConfigOptions.workerURL) {
             const worker = new Worker(new URL(lcConfigOptions.workerURL, window.location.href).href);
             reader = new BrowserMessageReader(worker);
             writer = new BrowserMessageWriter(worker);
-            const languageClient = this.createLanguageClient({ reader, writer });
-            languageClient.start();
-            reader.onClose(() => languageClient.stop());
+            this.languageClient = this.createLanguageClient({ reader, writer });
+            this.languageClient.start();
+            reader.onClose(() => this.languageClient?.stop());
+        } else {
+            throw new Error('No valid WebSocket or Web Worker configuration is available.');
         }
     }
 

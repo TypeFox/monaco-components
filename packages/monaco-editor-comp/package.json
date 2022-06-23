@@ -38,7 +38,7 @@
   ],
   "scripts": {
     "clean": "npx shx rm -rf ./dist ./build/dist ./bundle ./src/generated tsconfig.tsbuildinfo",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "copy:ttf": "npx shx mkdir -p ./dist/assets && npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
     "create:assets": "tsc -p ./build && node ./build/dist/buildAssets.js",
     "compile": "npm run create:assets && tsc",

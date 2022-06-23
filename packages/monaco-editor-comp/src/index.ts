@@ -1,10 +1,10 @@
 import {
-    CodeEditorLanguageClient,
+    MonacoEditorWebComponent,
 } from './main';
 
 import {
     CodeEditorConfig,
-    MonacoLanguageClientWrapper,
+    MonacoEditorLanguageClientWrapper,
     getMonacoCss,
     getCodiconTtf
 } from './wrapper';
@@ -12,10 +12,10 @@ import {
 import type { LanguageClientConfigOptions } from './wrapper';
 
 export {
-    CodeEditorLanguageClient,
+    MonacoEditorWebComponent,
     LanguageClientConfigOptions,
     CodeEditorConfig,
-    MonacoLanguageClientWrapper,
+    MonacoEditorLanguageClientWrapper,
     getMonacoCss,
     getCodiconTtf
 };
