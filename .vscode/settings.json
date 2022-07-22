@@ -8,6 +8,9 @@
     "[typescript]": {
         "editor.formatOnSave": true
     },
+    "[yml]": {
+      "editor.formatOnSave": true
+    },
     "eslint.validate": [
         "javascript",
         "typescript"
