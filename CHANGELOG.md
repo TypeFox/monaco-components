@@ -2,6 +2,11 @@
 
 ## monaco-editor-comp
 
+### [0.4.2]
+
+* Properties are not treated optionally in TS code
+* Updated READMEs
+
 ### [0.4.1]
 
 * Properly separate web worker and websocket configuration of monaco-Languageclient
