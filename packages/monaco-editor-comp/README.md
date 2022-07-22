@@ -15,11 +15,15 @@ The component can be fully configured with embedded JavaScript. It can be config
 * **modifiedLanguageId**: *Only Diff Editor*: Code or text that is shown in the modified editor. (default: `''`)
 * **useLanguageClient**: Enable monaco languageclient. You have to configure the following WebDocket configuration options (or use `getLanguageClientOptions` if `enableInlineConfig` is set):
   * **useWebSocket**: Use the web socket connection (default: `true`), if `false` implementation tries to use a web worker instead (need to set **workerURL**)
-  * **wsSecured**: Use secure connection (default: `false`)
-  * **wsHost**: Specify host (default: `localhost`)
-  * **wsPort**: Specify port (default: `8080`)
-  * **wsPath**: Specify path (default: `''`)
-  * (*Optional*) **workerURL**: Specify a url to a web worker that is used for running a language server in the browser
+  * Options for web socket:
+    * **wsSecured**: Use secure connection (default: `false`)
+    * **wsHost**: Specify host (default: `localhost`)
+    * **wsPort**: Specify port (default: `8080`)
+    * **wsPath**: Specify path (default: `''`)
+  * Options for web worker:
+    * **workerURL**: Specify a url to a web worker that is used for running a language server in the browser (default: `''`)
+    * **useModuleWorker**: Tells if worker is a module (`true`) or a worker with classical syntax (`false`) (default: `false`)
+    * **workerName**: The name to be used for the web worker (default: `''`)
 
 ## Help / Hints
 

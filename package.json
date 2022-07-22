@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "clean": "npm run clean --workspaces",
-    "dev": "vite --debug",
+    "dev": "vite",
+    "dev:debug": "vite --debug --force",
     "lint": "npm run lint --workspaces",
     "build:comp": "npm run build --workspace packages/monaco-editor-comp",
     "build:workers": "npm run build --workspace packages/monaco-editor-workers",

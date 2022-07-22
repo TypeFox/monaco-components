@@ -21,24 +21,24 @@ export class MonacoEditorWebComponent extends LitElement {
 
     @property({ reflect: true }) code = '';
     @property({ reflect: true }) languageId = 'javascript';
-    @property({ reflect: true }) modifiedCode?= '';
-    @property({ reflect: true }) modifiedLanguageId?= 'javascript';
+    @property({ reflect: true }) modifiedCode = '';
+    @property({ reflect: true }) modifiedLanguageId = 'javascript';
     @property({ reflect: true }) theme = 'vs-light';
 
-    @property({ type: Boolean, reflect: true }) enableInlineConfig?= false;
-    @property({ type: Boolean, reflect: true }) useDiffEditor?= false;
+    @property({ type: Boolean, reflect: true }) enableInlineConfig = false;
+    @property({ type: Boolean, reflect: true }) useDiffEditor = false;
 
-    @property({ type: Boolean, reflect: true }) useLanguageClient?= false;
-    @property({ type: Boolean, reflect: true }) useWebSocket?= true;
+    @property({ type: Boolean, reflect: true }) useLanguageClient = false;
+    @property({ type: Boolean, reflect: true }) useWebSocket = true;
 
-    @property({ type: Boolean, reflect: true }) wsSecured?= false;
+    @property({ type: Boolean, reflect: true }) wsSecured = false;
     @property({ reflect: true }) wsHost = 'localhost';
     @property({ type: Number, reflect: true }) wsPort = 8080;
     @property({ reflect: true }) wsPath = '';
 
-    @property({ type: String, reflect: true }) workerURL?= '';
-    @property({ type: String, reflect: true }) useModuleWorker?= false;
-    @property({ type: String, reflect: true }) workerName?= '';
+    @property({ type: String, reflect: true }) workerURL = '';
+    @property({ type: String, reflect: true }) useModuleWorker = false;
+    @property({ type: String, reflect: true }) workerName = '';
 
     static override styles = css`
         :host {
