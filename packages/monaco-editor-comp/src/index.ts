@@ -4,18 +4,15 @@ import {
 
 import {
     CodeEditorConfig,
-    MonacoEditorLanguageClientWrapper,
-    getMonacoCss,
-    getCodiconTtf
+    MonacoEditorLanguageClientWrapper
 } from './wrapper';
 
-import type { LanguageClientConfigOptions } from './wrapper';
+import type { WebSocketConfigOptions, WorkerConfigOptions } from './wrapper';
 
 export {
     MonacoEditorWebComponent,
-    LanguageClientConfigOptions,
+    WebSocketConfigOptions,
+    WorkerConfigOptions,
     CodeEditorConfig,
-    MonacoEditorLanguageClientWrapper,
-    getMonacoCss,
-    getCodiconTtf
+    MonacoEditorLanguageClientWrapper
 };

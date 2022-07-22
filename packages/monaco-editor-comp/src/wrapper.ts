@@ -32,13 +32,17 @@ import normalizeUrl from 'normalize-url';
 
 import type { } from 'css-font-loading-module';
 
-export type LanguageClientConfigOptions = {
-    useWebSocket: boolean;
+export type WebSocketConfigOptions = {
     wsSecured: boolean;
     wsHost: string;
     wsPort: number;
     wsPath: string;
-    workerURL?: string;
+}
+
+export type WorkerConfigOptions = {
+    workerURL: string;
+    workerType: 'classic' | 'module';
+    workerName?: string;
 }
 
 export class CodeEditorConfig {
@@ -51,13 +55,11 @@ export class CodeEditorConfig {
         readOnly: false
     };
     useLanguageClient = false;
-    lcConfigOptions: LanguageClientConfigOptions = {
-        useWebSocket: true,
-        wsSecured: false,
-        wsHost: 'localhost',
-        wsPort: 8080,
-        wsPath: ''
-    };
+
+    // create config type web socket / web worker
+    useWebSocket = true;
+
+    lcConfigOptions = this.useWebSocket ? this.getDefaultWebSocketConfig() : this.getDefaultWorkerConfig();
     monacoDiffEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
@@ -87,6 +89,27 @@ export class CodeEditorConfig {
     setEditorThemeData(themeData: unknown) {
         this.themeData = themeData as monaco.editor.IStandaloneThemeData;
     }
+
+    getLcConfigOptions() {
+        return this.lcConfigOptions;
+    }
+
+    getDefaultWebSocketConfig(): WebSocketConfigOptions {
+        return {
+            wsSecured: false,
+            wsHost: 'localhost',
+            wsPort: 8080,
+            wsPath: ''
+        };
+    }
+
+    getDefaultWorkerConfig(): WorkerConfigOptions {
+        return {
+            workerURL: '',
+            workerType: 'classic',
+            workerName: 'WrapperWorker'
+        };
+    }
 }
 
 export class MonacoEditorLanguageClientWrapper {
@@ -95,6 +118,7 @@ export class MonacoEditorLanguageClientWrapper {
     private diffEditor: monaco.editor.IStandaloneDiffEditor | undefined;
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
     private languageClient: MonacoLanguageClient | undefined;
+    private worker: Worker | undefined;
 
     private id: string;
 
@@ -116,6 +140,10 @@ export class MonacoEditorLanguageClientWrapper {
 
     isUseDiffEditor(): boolean {
         return this.editorConfig.useDiffEditor;
+    }
+
+    setWorker(worker: Worker) {
+        this.worker = worker;
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
@@ -250,13 +278,14 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    private startLanguageClientConnection(lcConfigOptions: LanguageClientConfigOptions) {
+    private startLanguageClientConnection(lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions) {
         if (this.languageClient && this.languageClient.isRunning()) return;
 
         let reader: WebSocketMessageReader | BrowserMessageReader;
         let writer: WebSocketMessageWriter | BrowserMessageWriter;
-        if (lcConfigOptions.useWebSocket) {
-            const url = this.createUrl(lcConfigOptions);
+        if (this.editorConfig.useWebSocket) {
+            const webSocketConfigOptions = lcConfigOptions as WebSocketConfigOptions;
+            const url = this.createUrl(webSocketConfigOptions);
             const webSocket = new WebSocket(url);
 
             webSocket.onopen = () => {
@@ -267,15 +296,19 @@ export class MonacoEditorLanguageClientWrapper {
                 this.languageClient.start();
                 reader.onClose(() => this.languageClient?.stop());
             };
-        } else if (lcConfigOptions.workerURL) {
-            const worker = new Worker(new URL(lcConfigOptions.workerURL, window.location.href).href);
-            reader = new BrowserMessageReader(worker);
-            writer = new BrowserMessageWriter(worker);
+        } else {
+            const workerConfigOptions = lcConfigOptions as WorkerConfigOptions;
+            if (!this.worker) {
+                this.worker = new Worker(new URL(workerConfigOptions.workerURL, window.location.href).href, {
+                    type: workerConfigOptions.workerType,
+                    name: workerConfigOptions.workerName,
+                });
+            }
+            reader = new BrowserMessageReader(this.worker);
+            writer = new BrowserMessageWriter(this.worker);
             this.languageClient = this.createLanguageClient({ reader, writer });
             this.languageClient.start();
             reader.onClose(() => this.languageClient?.stop());
-        } else {
-            throw new Error('No valid WebSocket or Web Worker configuration is available.');
         }
     }
 
@@ -300,9 +333,9 @@ export class MonacoEditorLanguageClientWrapper {
         });
     }
 
-    private createUrl(lcConfigOptions: LanguageClientConfigOptions) {
-        const protocol = lcConfigOptions.wsSecured ? 'wss' : 'ws';
-        return normalizeUrl(`${protocol}://${lcConfigOptions.wsHost}:${lcConfigOptions.wsPort}/${lcConfigOptions.wsPath}`);
+    private createUrl(config: WebSocketConfigOptions) {
+        const protocol = config.wsSecured ? 'wss' : 'ws';
+        return normalizeUrl(`${protocol}://${config.wsHost}:${config.wsPort}/${config.wsPath}`);
     }
 
     static addMonacoStyles(idOfStyleElement: string) {
@@ -325,5 +358,3 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
 }
-
-export { getMonacoCss, getCodiconTtf };

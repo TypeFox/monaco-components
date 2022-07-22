@@ -12,6 +12,11 @@ export default defineConfig({
             }
         }
     },
+    resolve: {
+        alias: {
+            path: "path-browserify"
+        }
+    },
     server: {
         port: 20001
     }

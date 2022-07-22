@@ -2,7 +2,8 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { createRef, Ref, ref } from 'lit/directives/ref.js';
 
-import { getMonacoCss, LanguageClientConfigOptions, MonacoEditorLanguageClientWrapper } from './wrapper';
+import { getMonacoCss } from './generated/css';
+import { WebSocketConfigOptions, WorkerConfigOptions, MonacoEditorLanguageClientWrapper } from './wrapper';
 
 @customElement('monaco-editor-comp')
 export class MonacoEditorWebComponent extends LitElement {
@@ -29,11 +30,15 @@ export class MonacoEditorWebComponent extends LitElement {
 
     @property({ type: Boolean, reflect: true }) useLanguageClient?= false;
     @property({ type: Boolean, reflect: true }) useWebSocket?= true;
+
     @property({ type: Boolean, reflect: true }) wsSecured?= false;
     @property({ reflect: true }) wsHost = 'localhost';
     @property({ type: Number, reflect: true }) wsPort = 8080;
     @property({ reflect: true }) wsPath = '';
+
     @property({ type: String, reflect: true }) workerURL?= '';
+    @property({ type: String, reflect: true }) useModuleWorker?= false;
+    @property({ type: String, reflect: true }) workerName?= '';
 
     static override styles = css`
         :host {
@@ -102,6 +107,14 @@ export class MonacoEditorWebComponent extends LitElement {
         this.workerURL = workerURL;
     }
 
+    setUseModuleWorker(useModuleWorker: boolean) {
+        this.useModuleWorker = useModuleWorker;
+    }
+
+    setWorkerName(workerName: string) {
+        this.workerName = workerName;
+    }
+
     setLanguageDef(languageDef: unknown) {
         this.languageDef = languageDef;
     }
@@ -138,7 +151,7 @@ export class MonacoEditorWebComponent extends LitElement {
         if (this.isEnableInlineConfig()) {
             this.retrieveMonacoEditorOptions();
             this.retrieveMonacoDiffEditorOptions();
-            this.retrieveWebSocketOptions();
+            this.retrieveLanguageClientOptions();
         }
     }
 
@@ -164,14 +177,26 @@ export class MonacoEditorWebComponent extends LitElement {
         wrapperConfig.monacoEditorOptions = this.monacoEditorOptions;
 
         wrapperConfig.useLanguageClient = this.useLanguageClient === true;
-        const lcConfigOptions = wrapperConfig.lcConfigOptions;
-        lcConfigOptions.useWebSocket = this.useWebSocket === true;
-        lcConfigOptions.wsSecured = this.wsSecured === true;
-        lcConfigOptions.wsHost = this.wsHost;
-        lcConfigOptions.wsPort = this.wsPort;
-        lcConfigOptions.wsPath = this.wsPath;
-        if (this.workerURL) {
-            lcConfigOptions.workerURL = this.workerURL;
+        wrapperConfig.useWebSocket = this.useWebSocket === true;
+
+        if (wrapperConfig.useWebSocket) {
+            const lcConfigOptions = wrapperConfig.getDefaultWebSocketConfig();
+            lcConfigOptions.wsSecured = this.wsSecured === true;
+            lcConfigOptions.wsHost = this.wsHost;
+            lcConfigOptions.wsPort = this.wsPort;
+            lcConfigOptions.wsPath = this.wsPath;
+            wrapperConfig.lcConfigOptions = lcConfigOptions;
+        }
+        else {
+            const lcConfigOptions = wrapperConfig.getDefaultWorkerConfig();
+            if (this.workerURL) {
+                lcConfigOptions.workerURL = this.workerURL;
+            }
+            lcConfigOptions.workerType = this.useModuleWorker ? 'module' : 'classic';
+            if (this.workerName) {
+                lcConfigOptions.workerName = this.workerName;
+            }
+            wrapperConfig.lcConfigOptions = lcConfigOptions;
         }
 
         this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
@@ -259,7 +284,7 @@ export class MonacoEditorWebComponent extends LitElement {
         }
     }
 
-    private retrieveWebSocketOptions() {
+    private retrieveLanguageClientOptions() {
         if (!this.isEnableInlineConfig()) return;
 
         const options = this.buildAndCallConfigFunction('getLanguageClientOptions', 'language server connection');
@@ -269,17 +294,29 @@ export class MonacoEditorWebComponent extends LitElement {
     setLanguageClientOptions(options: Record<string, unknown> | undefined) {
         if (!options) return;
 
-        const input = options as LanguageClientConfigOptions;
-        this.setUseWebSocket(input.useWebSocket === true);
-        this.setWsSecured(input.wsSecured === true);
-        if (input.wsHost) {
-            this.setWsHost(input.wsHost);
-        }
-        if (input.wsPort) {
-            this.setWsPort(input.wsPort);
-        }
-        if (input.wsPath) {
-            this.setWsPath(input.wsPath);
+        if (this.useWebSocket) {
+            const input = options as WebSocketConfigOptions;
+            this.setWsSecured(input.wsSecured === true);
+            if (input.wsHost) {
+                this.setWsHost(input.wsHost);
+            }
+            if (input.wsPort) {
+                this.setWsPort(input.wsPort);
+            }
+            if (input.wsPath) {
+                this.setWsPath(input.wsPath);
+            }
+        } else {
+            const input = options as WorkerConfigOptions;
+            if (input.workerURL) {
+                this.setWorkerURL(input.workerURL);
+            }
+            if (input.workerType) {
+                this.setUseModuleWorker(input.workerType === 'module');
+            }
+            if (input.workerName) {
+                this.setWorkerName(input.workerName);
+            }
         }
     }
 

@@ -17,11 +17,10 @@
         MonacoEditorLanguageClientWrapper.addCodiconTtf();
     </script>
     <div style="height: 50vh;">
-        <monaco-editor-comp enableInlineConfig useLanguageClient id="42">
+        <monaco-editor-comp enableInlineConfig useLanguageClient useWebSocket id="42">
             <script type="text/javascript">
                 function getLanguageClientOptions() {
                     return {
-                        useWebSocket: true,
                         wsSecured: false,
                         wsHost: 'localhost',
                         wsPort: 3000,
