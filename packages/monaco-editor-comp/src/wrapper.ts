@@ -170,6 +170,22 @@ export class MonacoEditorLanguageClientWrapper {
 
     }
 
+    async dispose(): Promise<void> {
+        if (this.editor) {
+            const model = this.editor.getModel();
+            model?.dispose();
+            this.editor.dispose();
+        }
+        if (this.diffEditor) {
+            const model = this.diffEditor.getModel();
+            model?.modified.dispose();
+            model?.original.dispose();
+            this.diffEditor.dispose();
+        }
+        await this.languageClient?.dispose();
+        this.worker?.terminate();
+    }
+
     swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
         if (this.editorConfig.useDiffEditor) {
             if (this.editor) {
