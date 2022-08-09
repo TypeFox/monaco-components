@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "0.4.2",
+  "version": "0.5.0-rc.0",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -46,19 +46,19 @@
     "build": "npm run clean && npm run compile && npm run copy:ttf && npm run build:bundle"
   },
   "dependencies": {
-    "@types/css-font-loading-module": "^0.0.7",
+    "@types/css-font-loading-module": "0.0.7",
     "monaco-editor": "0.33.0",
     "monaco-editor-workers": "0.33.0",
     "monaco-languageclient": "2.1.0",
     "vscode-ws-jsonrpc": "1.0.2",
     "vscode-languageserver-protocol": "3.17.2",
-    "lit": "^2.2.8",
-    "normalize-url": "^7.0.3"
+    "lit": "2.2.8",
+    "normalize-url": "7.0.3"
   },
   "devDependencies": {
-    "@types/node": "^16.11.7",
-    "@types/vscode": "^1.67.0",
-    "@types/glob-to-regexp": "^0.4.1"
+    "@types/node": "16.11.7",
+    "@types/vscode": "1.67.0",
+    "@types/glob-to-regexp": "0.4.1"
   },
   "repository": {
     "type": "git",

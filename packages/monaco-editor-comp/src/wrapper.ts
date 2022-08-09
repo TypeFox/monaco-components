@@ -66,6 +66,10 @@ export class CodeEditorConfig {
     languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
     themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 
+    setUseDiffEditor(useDiffEditor: boolean): void {
+        this.useDiffEditor = useDiffEditor;
+    }
+
     setMainLanguageId(languageId: string): void {
         this.codeOriginal[1] = languageId;
     }
@@ -146,6 +150,10 @@ export class MonacoEditorLanguageClientWrapper {
         this.worker = worker;
     }
 
+    isStarted(): boolean {
+        return this.editor !== undefined || this.diffEditor !== undefined;
+    }
+
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
 
@@ -167,40 +175,56 @@ export class MonacoEditorLanguageClientWrapper {
             this.installMonaco();
             this.startLanguageClientConnection(this.editorConfig.lcConfigOptions);
         }
-
     }
 
     async dispose(): Promise<void> {
+        this.disposeEditor();
+        this.disposeDiffEditor();
+        return this.disposeLanguageClient();
+    }
+
+    private disposeEditor() {
         if (this.editor) {
             const model = this.editor.getModel();
             model?.dispose();
             this.editor.dispose();
+            this.editor = undefined;
         }
+    }
+
+    private disposeDiffEditor() {
         if (this.diffEditor) {
             const model = this.diffEditor.getModel();
             model?.modified.dispose();
             model?.original.dispose();
             this.diffEditor.dispose();
+            this.diffEditor = undefined;
         }
-        await this.languageClient?.dispose();
-        this.worker?.terminate();
+    }
+
+    private async disposeLanguageClient() {
+        if (this.languageClient) {
+            await this.languageClient.dispose()
+                .then(() => {
+                    this.worker?.terminate();
+                    this.worker = undefined;
+                    this.languageClient = undefined;
+                });
+        }
+        else {
+            return Promise.resolve();
+        }
     }
 
     swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
         if (this.editorConfig.useDiffEditor) {
-            if (this.editor) {
-                this.editor?.dispose();
-                this.editor = undefined;
-            }
+            this.disposeEditor();
             if (!this.diffEditor) {
                 this.startEditor(container, dispatchEvent);
             }
         }
         else {
-            if (this.diffEditor) {
-                this.diffEditor?.dispose();
-                this.diffEditor = undefined;
-            }
+            this.disposeDiffEditor();
             if (!this.editor) {
                 this.startEditor(container, dispatchEvent);
             }
