@@ -35,23 +35,23 @@
 
         function startEditor() {
             if (client.isStarted()) {
-                alert('Edtior is already started!');
+                alert('Editor was already started!');
                 return;
             }
 
             const editorConfig = client.getEditorConfig();
             editorConfig.setMainLanguageId(languageId);
             editorConfig.setMainCode(codeMain);
-            editorConfig.theme = 'vs-dark';
+            editorConfig.setTheme('vs-dark');
 
-            editorConfig.useLanguageClient = true;
-            editorConfig.useWebSocket = true;
-            editorConfig.lcConfigOptions = {
+            editorConfig.setUseLanguageClient(true);
+            editorConfig.setUseWebSocket(true);
+            editorConfig.setLanguageClientConfigOptions({
                 wsSecured: false,
                 wsHost: "localhost",
                 wsPort: "3000",
                 wsPath: "sampleServer"
-            };
+            });
 
             client.startEditor(document.getElementById("monaco-editor-root"));
         };

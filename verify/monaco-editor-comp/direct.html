@@ -21,7 +21,7 @@
 
         const client = new MonacoEditorLanguageClientWrapper(42);
         const editorConfig = client.getEditorConfig();
-        client.editorConfig.useDiffEditor = true;
+        editorConfig.setUseDiffEditor(true);
 
         editorConfig.setMainLanguageId('text/plain');
         editorConfig.setMainCode(`This line is equal.
@@ -33,7 +33,7 @@ Same again.`);
 This number is different 2002
 Misspeelled!
 Same again.`);
-        editorConfig.theme = 'vs-dark';
+        editorConfig.setTheme('vs-dark');
 
         client.startEditor(document.getElementById("monaco-editor-root"));
     </script>

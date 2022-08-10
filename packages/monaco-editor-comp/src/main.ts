@@ -173,22 +173,22 @@ export class MonacoEditorWebComponent extends LitElement {
         if (this.modifiedLanguageId) {
             wrapperConfig.setDiffLanguageId(this.modifiedLanguageId);
         }
-        wrapperConfig.theme = this.theme;
-        wrapperConfig.monacoEditorOptions = this.monacoEditorOptions;
+        wrapperConfig.setTheme(this.theme);
+        wrapperConfig.setMonacoEditorOptions(this.monacoEditorOptions);
 
-        wrapperConfig.useLanguageClient = this.useLanguageClient === true;
-        wrapperConfig.useWebSocket = this.useWebSocket === true;
+        wrapperConfig.setUseLanguageClient(this.useLanguageClient === true);
+        wrapperConfig.setUseWebSocket(this.useWebSocket === true);
 
-        if (wrapperConfig.useWebSocket) {
-            const lcConfigOptions = wrapperConfig.getDefaultWebSocketConfig();
+        let lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions;
+        if (wrapperConfig.isUseWebSocket()) {
+            lcConfigOptions = wrapperConfig.getDefaultWebSocketConfig();
             lcConfigOptions.wsSecured = this.wsSecured === true;
             lcConfigOptions.wsHost = this.wsHost;
             lcConfigOptions.wsPort = this.wsPort;
             lcConfigOptions.wsPath = this.wsPath;
-            wrapperConfig.lcConfigOptions = lcConfigOptions;
         }
         else {
-            const lcConfigOptions = wrapperConfig.getDefaultWorkerConfig();
+            lcConfigOptions = wrapperConfig.getDefaultWorkerConfig();
             if (this.workerURL) {
                 lcConfigOptions.workerURL = this.workerURL;
             }
@@ -196,12 +196,12 @@ export class MonacoEditorWebComponent extends LitElement {
             if (this.workerName) {
                 lcConfigOptions.workerName = this.workerName;
             }
-            wrapperConfig.lcConfigOptions = lcConfigOptions;
         }
+        wrapperConfig.setLanguageClientConfigOptions(lcConfigOptions);
 
-        this.monacoWrapper.setUseDiffEditor(this.useDiffEditor || false);
-        if (this.monacoWrapper.isUseDiffEditor()) {
-            wrapperConfig.monacoDiffEditorOptions = this.monacoDiffEditorOptions;
+        wrapperConfig.setUseDiffEditor(this.useDiffEditor || false);
+        if (wrapperConfig.isUseDiffEditor()) {
+            wrapperConfig.setMonacoDiffEditorOptions(this.monacoDiffEditorOptions);
         }
 
         if (this.languageDef) {

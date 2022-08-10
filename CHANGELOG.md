@@ -6,6 +6,9 @@
 
 - Support dispose on client wrapper #[7](https://github.com/TypeFox/monaco-components/pull/7)
 - Check that all resources are properly closed when swapping editors #[8](https://github.com/TypeFox/monaco-components/issues/8)
+- Expose all setters and getters of `CodeEditorConfig`
+- Updated important dependencies:
+  - `vite` to `3.0.5`
 
 ### [0.4.2]
 
