@@ -22,6 +22,6 @@ jobs:
     - name: Build
       shell: bash
       run: |
-        npm i
+        npm ci
         npm run build
         npm run lint
