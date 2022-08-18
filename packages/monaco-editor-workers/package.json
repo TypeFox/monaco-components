@@ -16,35 +16,35 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./worker/module/editor": {
-      "default": "./dist/worker/editorWorker-es.js"
+    "./workers/module/editor": {
+      "default": "./dist/workers/editorWorker-es.js"
     },
-    "./worker/module/ts": {
-      "default": "./dist/worker/tsWorker-es.js"
+    "./workers/module/ts": {
+      "default": "./dist/workers/tsWorker-es.js"
     },
-    "./worker/module/html": {
-      "default": "./dist/worker/htmlWorker-es.js"
+    "./workers/module/html": {
+      "default": "./dist/workers/htmlWorker-es.js"
     },
-    "./worker/module/css": {
-      "default": "./dist/worker/cssWorker-es.js"
+    "./workers/module/css": {
+      "default": "./dist/workers/cssWorker-es.js"
     },
-    "./worker/module/json": {
-      "default": "./dist/worker/jsonWorker-es.js"
+    "./workers/module/json": {
+      "default": "./dist/workers/jsonWorker-es.js"
     },
-    "./worker/classic/editor": {
-      "default": "./dist/worker/editorWorker-iife.js"
+    "./workers/classic/editor": {
+      "default": "./dist/workers/editorWorker-iife.js"
     },
-    "./worker/classic/ts": {
-      "default": "./dist/worker/tsWorker-iife.js"
+    "./workers/classic/ts": {
+      "default": "./dist/workers/tsWorker-iife.js"
     },
-    "./worker/classic/html": {
-      "default": "./dist/worker/htmlWorker-iife.js"
+    "./workers/classic/html": {
+      "default": "./dist/workers/htmlWorker-iife.js"
     },
-    "./worker/classic/css": {
-      "default": "./dist/worker/cssWorker-iife.js"
+    "./workers/classic/css": {
+      "default": "./dist/workers/cssWorker-iife.js"
     },
-    "./worker/classic/json": {
-      "default": "./dist/worker/jsonWorker-iife.js"
+    "./workers/classic/json": {
+      "default": "./dist/workers/jsonWorker-iife.js"
     }
   },
   "files": [
