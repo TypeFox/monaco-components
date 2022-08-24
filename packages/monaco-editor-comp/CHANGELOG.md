@@ -2,6 +2,11 @@
 
 All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
+## [0.6.0]
+
+- Updated `monaco-languageclient` to version `3.0.1` making it rely on monaco-editor `0.34.0` and vscode api `1.69`
+- Updated 
+
 ## [0.5.0]
 
 - Support dispose on client wrapper #[7](https://github.com/TypeFox/monaco-components/pull/7)
