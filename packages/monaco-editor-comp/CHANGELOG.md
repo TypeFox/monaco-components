@@ -1,6 +1,6 @@
 # CHANGELOG
 
-All notable changes to npm module `monaco-editor-comp` are documented in this file.
+All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
 ## [0.5.0]
 
