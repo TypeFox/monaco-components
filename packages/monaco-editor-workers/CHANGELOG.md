@@ -2,20 +2,24 @@
 
 All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/package/monaco-editor-workers) are documented in this file.
 
+## [0.34.1]
+
+- fix: Use correct re-exports [#9](https://github.com/TypeFox/monaco-components/pull/9)
+
 ## [0.34.0]
 
 - Updated to [0.34.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.34.0)
 - All workers are now exported in package.json:
-  - ./worker/module/editor
-  - ./worker/module/ts
-  - ./worker/module/html
-  - ./worker/module/css
-  - ./worker/module/json
-  - ./worker/classic/editor
-  - ./worker/classic/ts
-  - ./worker/classic/html
-  - ./worker/classic/css
-  - ./worker/classic/json
+  - ./workers/module/editor
+  - ./workers/module/ts
+  - ./workers/module/html
+  - ./workers/module/css
+  - ./workers/module/json
+  - ./workers/classic/editor
+  - ./workers/classic/ts
+  - ./workers/classic/html
+  - ./workers/classic/css
+  - ./workers/classic/json
 
 ## [0.33.0]
 

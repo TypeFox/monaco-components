@@ -6,16 +6,16 @@ Workers are now exported in the `packages.json`. This could be handy for re-bund
 
 Additional exports:
 
-- **./worker/module/editor** (Editor Module Worker)
-- **./worker/module/ts** (TypeScript/JavaScript Module Worker)
-- **./worker/module/html** (HTML Module Worker)
-- **./worker/module/css** (CSS Module Worker)
-- **./worker/module/json** (JSON Module Worker)
-- **./worker/classic/editor** (Editor Classic/Firefox compatible Worker)
-- **./worker/classic/ts** (TypeScript/JavaScript Classic/Firefox compatible Worker)
-- **./worker/classic/html** (HTML Classic/Firefox compatible Worker)
-- **./worker/classic/css** (CSS Classic/Firefox compatible Worker)
-- **./worker/classic/json** (JSON Classic/Firefox compatible Worker)
+- **./workers/module/editor** (Editor Module Worker)
+- **./workers/module/ts** (TypeScript/JavaScript Module Worker)
+- **./workers/module/html** (HTML Module Worker)
+- **./workers/module/css** (CSS Module Worker)
+- **./workers/module/json** (JSON Module Worker)
+- **./workers/classic/editor** (Editor Classic/Firefox compatible Worker)
+- **./workers/classic/ts** (TypeScript/JavaScript Classic/Firefox compatible Worker)
+- **./workers/classic/html** (HTML Classic/Firefox compatible Worker)
+- **./workers/classic/css** (CSS Classic/Firefox compatible Worker)
+- **./workers/classic/json** (JSON Classic/Firefox compatible Worker)
 
 ```javascript
 import { buildWorkerDefinition } from "monaco-editor-workers";
