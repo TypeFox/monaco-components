@@ -196,6 +196,7 @@ export class MonacoEditorLanguageClientWrapper {
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
     private languageClient: MonacoLanguageClient | undefined;
     private worker: Worker | undefined;
+    private dispatchEvent: ((event: Event) => boolean) | undefined;
 
     private id: string;
 
@@ -221,17 +222,13 @@ export class MonacoEditorLanguageClientWrapper {
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
+        this.dispatchEvent = dispatchEvent;
 
         if (this.editorConfig.isUseDiffEditor()) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
         }
         else {
             this.editor = monaco.editor.create(container!);
-            this.editor.getModel()!.onDidChangeContent(() => {
-                if (dispatchEvent) {
-                    dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
-                }
-            });
         }
         this.updateEditor();
 
@@ -317,6 +314,11 @@ export class MonacoEditorLanguageClientWrapper {
         if (this.editor) {
             const model = monaco.editor.createModel(this.editorConfig.getMainCode(), this.editorConfig.getMainLanguageId());
             this.editor.setModel(model);
+            this.editor.getModel()!.onDidChangeContent(() => {
+                if (this.dispatchEvent) {
+                    this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+                }
+            });
         }
     }
 
