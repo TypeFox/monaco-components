@@ -196,6 +196,7 @@ export class MonacoEditorLanguageClientWrapper {
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
     private languageClient: MonacoLanguageClient | undefined;
     private worker: Worker | undefined;
+    private dispatchEvent: ((event: Event) => boolean) | undefined;
 
     private id: string;
 
@@ -221,17 +222,13 @@ export class MonacoEditorLanguageClientWrapper {
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
         console.log(`Starting monaco-editor (${this.id})`);
+        this.dispatchEvent = dispatchEvent;
 
         if (this.editorConfig.isUseDiffEditor()) {
             this.diffEditor = monaco.editor.createDiffEditor(container!);
         }
         else {
             this.editor = monaco.editor.create(container!);
-            this.editor.getModel()!.onDidChangeContent(() => {
-                if (dispatchEvent) {
-                    dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
-                }
-            });
         }
         this.updateEditor();
 
@@ -309,18 +306,20 @@ export class MonacoEditorLanguageClientWrapper {
         this.updateCommonEditorConfig();
         const options = this.editorConfig.getMonacoEditorOptions();
         this.editor?.updateOptions(options);
-
-        const currentModel = this.editor?.getModel();
-        const languageId = this.editorConfig.getMainLanguageId();
-        if (languageId && currentModel && currentModel.getLanguageId() !== languageId) {
-            monaco.editor.setModelLanguage(currentModel, languageId);
-        }
-
-        const mainCode = this.editorConfig.getMainCode();
-        if (mainCode) {
-            this.editor?.setValue(mainCode);
-        }
+        this.updateMainModel();
         this.updateLayout();
+    }
+
+    private updateMainModel(): void {
+        if (this.editor) {
+            const model = monaco.editor.createModel(this.editorConfig.getMainCode(), this.editorConfig.getMainLanguageId());
+            this.editor.setModel(model);
+            this.editor.getModel()!.onDidChangeContent(() => {
+                if (this.dispatchEvent) {
+                    this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
+                }
+            });
+        }
     }
 
     private updateDiffEditor() {
@@ -332,21 +331,20 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     private updateCommonEditorConfig() {
-        if (this.editorConfig.isUseLanguageClient()) {
-            const languageId = this.editorConfig.getMainLanguageId();
+        const languageId = this.editorConfig.getMainLanguageId();
+        const languageRegistered = monaco.languages.getLanguages().filter(x => x.id === languageId);
+        if (languageRegistered.length === 0) {
+            monaco.languages.register({ id: languageId });
+        }
 
-            // apply monarch definitions
-            if (languageId) {
-                monaco.languages.register({ id: languageId });
-            }
-            const tokenProvider = this.editorConfig.getMonarchTokensProvider();
-            if (tokenProvider) {
-                monaco.languages.setMonarchTokensProvider(languageId, tokenProvider);
-            }
-            const themeData = this.editorConfig.getEditorThemeData();
-            if (themeData) {
-                monaco.editor.defineTheme(this.editorConfig.getTheme(), themeData);
-            }
+        // apply monarch definitions
+        const tokenProvider = this.editorConfig.getMonarchTokensProvider();
+        if (tokenProvider) {
+            monaco.languages.setMonarchTokensProvider(languageId, tokenProvider);
+        }
+        const themeData = this.editorConfig.getEditorThemeData();
+        if (themeData) {
+            monaco.editor.defineTheme(this.editorConfig.getTheme(), themeData);
         }
         this.updateTheme();
     }
