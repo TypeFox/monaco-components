@@ -1,0 +1,86 @@
+{
+  "name": "monaco-editor-wrapper",
+  "version": "1.0.0-next.1",
+  "license": "MIT",
+  "description": "Monaco-Editor and Monaco Languageclient Wrapper",
+  "keywords": [
+    "monaco-editor",
+    "monaco-languageclient",
+    "typescript"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./bundle": {
+      "types": "./bundle/index.d.ts",
+      "default": "./bundle/index.js"
+    },
+    "./monaco-css": {
+      "types": "./dist/generated/css.d.ts",
+      "default": "./dist/generated/css.js"
+    },
+    "./monaco-ttf": {
+      "types": "./dist/generated/ttf.d.ts",
+      "default": "./dist/generated/ttf.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "bundle": [
+        "bundle/index"
+      ],
+      "monaco-css": [
+        "dist/generated/css"
+      ],
+      "monaco-ttf": [
+        "dist/generated/ttf"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "bundle",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "npx shx rm -rf ./dist ./build/dist ./bundle ./src/generated tsconfig.tsbuildinfo",
+    "lint": "eslint src --ext .ts",
+    "copy:ttf": "npx shx mkdir -p ./dist/assets && npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
+    "create:assets": "tsc -p ./build && node ./build/dist/buildAssets.js",
+    "compile": "npm run create:assets && tsc",
+    "build:bundle": "npx shx cp -rf dist bundle && npx shx rm -rf bundle/generated && vite --config vite.bundle.config.ts build",
+    "build": "npm run clean && npm run compile && npm run copy:ttf && npm run build:bundle"
+  },
+  "dependencies": {
+    "@types/css-font-loading-module": "0.0.7",
+    "monaco-languageclient": "3.0.1",
+    "vscode-ws-jsonrpc": "1.0.2",
+    "vscode-languageserver-protocol": "3.17.2",
+    "normalize-url": "7.0.3"
+  },
+  "devDependencies": {
+    "monaco-editor-workers": "0.34.1",
+    "@types/node": "16.11.7",
+    "@types/vscode": "~1.69.1",
+    "@types/glob-to-regexp": "0.4.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-wrapper"
+  },
+  "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-wrapper/README.md",
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
+  }
+}

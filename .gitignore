@@ -7,5 +7,5 @@ bundle
 *.tsbuildinfo
 *.tgz
 
-packages/monaco-editor-comp/src/generated
+packages/monaco-editor-wrapper/src/generated
 verify/monaco-editor-comp/libs
