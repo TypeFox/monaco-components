@@ -4,7 +4,9 @@
     "rootDir": "src",
     "outDir": "dist",
     "declarationDir": "dist",
-    "composite": true
+    "composite": true,
+    "module": "Node16",
+    "moduleResolution": "Node16"
   },
   "include": [
     "src/**/*.ts",

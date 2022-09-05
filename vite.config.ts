@@ -5,12 +5,13 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                monacoEditorLCComp: path.resolve(__dirname, '/packages/monaco-editor-comp/index.html'),
-                monacoEditorLCCompAdvanced: path.resolve(__dirname, '/packages/monaco-editor-comp/advanced.html'),
-                monacoEditorDirect: path.resolve(__dirname, '/packages/monaco-editor-wrapper/index.html'),
+                monacoEditorWrapper: path.resolve(__dirname, '/packages/monaco-editor-wrapper/index.html'),
+                monacoEditorComp: path.resolve(__dirname, '/packages/monaco-editor-comp/index.html'),
+                monacoEditorCompAdvanced: path.resolve(__dirname, '/packages/monaco-editor-comp/advanced.html'),
                 monacoEditorWorkers: path.resolve(__dirname, '/packages/monaco-editor-workers/index.html'),
             }
-        }
+        },
+        target: ['node16']
     },
     resolve: {
         alias: {

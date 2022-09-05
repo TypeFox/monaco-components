@@ -20,14 +20,14 @@ import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 // support all basic-languages
 import 'monaco-editor/esm/vs/basic-languages/monaco.contribution';
 
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 
-import { getMonacoCss } from './generated/css';
-import { getCodiconTtf } from './generated/ttf';
+import { getMonacoCss } from './generated/css.js';
+import { getCodiconTtf } from './generated/ttf.js';
 
 import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
-import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser';
+import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import normalizeUrl from 'normalize-url';
 
 import type { } from 'css-font-loading-module';
