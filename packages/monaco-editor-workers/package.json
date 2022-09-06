@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.34.1",
+  "version": "0.34.2-next.1",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
@@ -57,20 +57,11 @@
     "clean": "npx shx rm -rf ./dist && npx shx rm -fr tsconfig.tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "compile": "tsc",
-    "build:workers:editor": "esbuild ../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js --bundle --format=iife --outfile=./dist/workers/editorWorker-iife.js && esbuild ../../node_modules/monaco-editor/esm/vs/editor/editor.worker.js --bundle --format=esm --outfile=./dist/workers/editorWorker-esm.js",
-    "build:workers:ts": "esbuild ../../node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js --bundle --format=iife --outfile=./dist/workers/tsWorker-iife.js && esbuild ../../node_modules/monaco-editor/esm/vs/language/typescript/ts.worker.js --bundle --format=esm --outfile=./dist/workers/tsWorker-esm.js",
-    "build:workers:html": "esbuild ../../node_modules/monaco-editor/esm/vs/language/html/html.worker.js --bundle --format=iife --outfile=./dist/workers/htmlWorker-iife.js && esbuild ../../node_modules/monaco-editor/esm/vs/language/html/html.worker.js --bundle --format=esm --outfile=./dist/workers/htmlWorker-esm.js",
-    "build:workers:css": "esbuild ../../node_modules/monaco-editor/esm/vs/language/css/css.worker.js --bundle --format=iife --outfile=./dist/workers/cssWorker-iife.js && esbuild ../../node_modules/monaco-editor/esm/vs/language/css/css.worker.js --bundle --format=esm --outfile=./dist/workers/cssWorker-esm.js",
-    "build:workers:json": "esbuild ../../node_modules/monaco-editor/esm/vs/language/json/json.worker.js --bundle --format=iife --outfile=./dist/workers/jsonWorker-iife.js && esbuild ../../node_modules/monaco-editor/esm/vs/language/json/json.worker.js --bundle --format=esm --outfile=./dist/workers/jsonWorker-esm.js",
-    "build:workers:esbuild": "npm run build:workers:editor && npm run build:workers:ts && npm run build:workers:html && npm run build:workers:css && npm run build:workers:json",
     "build:workers:vite": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
     "build": "npm run clean && npm run compile && npm run build:workers:vite"
   },
-  "dependencies": {
-    "monaco-editor": "0.34.0"
-  },
   "devDependencies": {
-    "esbuild": "^0.14.54"
+    "monaco-editor": "0.34.0"
   },
   "repository": {
     "type": "git",

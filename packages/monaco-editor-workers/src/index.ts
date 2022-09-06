@@ -1,4 +1,15 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+// copied Window & Environment definitions from monaco-editor/esm/vs/editor/editor.api.js to be able to remove dependencies
+interface Window {
+    MonacoEnvironment?: Environment;
+}
+
+export interface Environment {
+    globalAPI?: boolean;
+    baseUrl?: string;
+    getWorker?(workerId: string, label: string): Promise<Worker> | Worker;
+    getWorkerUrl?(workerId: string, label: string): string;
+    workerOverrideGlobals: WorkerOverrideGlobals;
+}
 
 type WorkerOverrideGlobals = {
     basePath: string;
@@ -8,13 +19,25 @@ type WorkerOverrideGlobals = {
 
 export function buildWorkerDefinition(workerPath: string, basePath: string, useModuleWorker: boolean) {
 
+    const monWin = (self as Window);
+    const workerOverrideGlobals: WorkerOverrideGlobals = {
+        basePath: basePath,
+        workerPath: workerPath,
+        workerOptions: {
+            type: useModuleWorker ? 'module' : 'classic'
+        }
+    };
+
+    if (!monWin.MonacoEnvironment) {
+        monWin.MonacoEnvironment = {
+            workerOverrideGlobals: workerOverrideGlobals
+        };
+    }
+
     const getWorker = (_: string, label: string) => {
         console.log('getWorker: workerId: ' + _ + ' label: ' + label);
 
-        const monWin = (self as monaco.Window);
-
-        const buildWorker = (label: string, workerName: string, editorType: string) => {
-            const globals = (monWin.MonacoEnvironment as Record<string, unknown>).workerOverrideGlobals as WorkerOverrideGlobals;
+        const buildWorker = (globals: WorkerOverrideGlobals, label: string, workerName: string, editorType: string) => {
             globals.workerOptions.name = label;
 
             const workerFilename = globals.workerOptions.type === 'module' ? `${workerName}-es.js` : `${workerName}-iife.js`;
@@ -28,39 +51,21 @@ export function buildWorkerDefinition(workerPath: string, basePath: string, useM
         switch (label) {
             case 'typescript':
             case 'javascript':
-                return buildWorker(label, 'tsWorker', 'TS Worker');
+                return buildWorker(workerOverrideGlobals, label, 'tsWorker', 'TS Worker');
             case 'html':
             case 'handlebars':
             case 'razor':
-                return buildWorker(label, 'htmlWorker', 'HTML Worker');
+                return buildWorker(workerOverrideGlobals, label, 'htmlWorker', 'HTML Worker');
             case 'css':
             case 'scss':
             case 'less':
-                return buildWorker(label, 'cssWorker', 'CSS Worker');
+                return buildWorker(workerOverrideGlobals, label, 'cssWorker', 'CSS Worker');
             case 'json':
-                return buildWorker(label, 'jsonWorker', 'JSON Worker');
+                return buildWorker(workerOverrideGlobals, label, 'jsonWorker', 'JSON Worker');
             default:
-                return buildWorker(label, 'editorWorker', 'Editor Worker');
+                return buildWorker(workerOverrideGlobals, label, 'editorWorker', 'Editor Worker');
         }
     };
 
-    const monWin = (self as monaco.Window);
-    if (monWin) {
-        if (!monWin.MonacoEnvironment) {
-            monWin.MonacoEnvironment = {
-            };
-        }
-
-        (monWin.MonacoEnvironment as Record<string, unknown>).getWorker = getWorker;
-        const globals = (monWin.MonacoEnvironment as Record<string, unknown>).workerOverrideGlobals as WorkerOverrideGlobals;
-        if (!globals) {
-            (monWin.MonacoEnvironment as Record<string, unknown>).workerOverrideGlobals = {
-                basePath: basePath,
-                workerPath: workerPath,
-                workerOptions: {
-                    type: useModuleWorker ? 'module' : 'classic'
-                }
-            };
-        }
-    }
+    monWin.MonacoEnvironment.getWorker = getWorker;
 }
