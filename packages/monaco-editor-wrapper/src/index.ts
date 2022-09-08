@@ -217,10 +217,17 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     isStarted(): boolean {
-        return this.editor !== undefined || this.diffEditor !== undefined;
+        const haveEditor = this.editor !== undefined || this.diffEditor !== undefined;
+        if (this.editorConfig.isUseLanguageClient()) {
+            return haveEditor && this.languageClient !== undefined && this.languageClient.isRunning();
+        }
+        else {
+            return haveEditor;
+        }
+
     }
 
-    startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean) {
+    startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): Promise<string> {
         console.log(`Starting monaco-editor (${this.id})`);
         this.dispatchEvent = dispatchEvent;
 
@@ -235,14 +242,23 @@ export class MonacoEditorLanguageClientWrapper {
         if (this.editorConfig.isUseLanguageClient()) {
             console.log('Enabling monaco-languageclient');
             this.installMonaco();
-            this.startLanguageClientConnection(this.editorConfig.getLanguageClientConfigOptions());
+            return this.startLanguageClientConnection(this.editorConfig.getLanguageClientConfigOptions());
         }
+        else {
+            return Promise.resolve('All fine. monaco-languageclient is not used.');
+        }
+
     }
 
-    async dispose(): Promise<void> {
-        this.disposeEditor();
-        this.disposeDiffEditor();
-        return this.disposeLanguageClient();
+    dispose(): Promise<string> {
+        if (this.editorConfig.isUseLanguageClient()) {
+            return this.disposeLanguageClient();
+        }
+        else {
+            this.disposeEditor();
+            this.disposeDiffEditor();
+            return Promise.resolve('Monaco editor has been disposed');
+        }
     }
 
     private disposeEditor() {
@@ -265,32 +281,40 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     private async disposeLanguageClient() {
-        if (this.languageClient) {
-            await this.languageClient.dispose()
+        if (this.languageClient && this.languageClient.isRunning()) {
+            this.disposeEditor();
+            this.disposeDiffEditor();
+
+            return await this.languageClient.dispose()
                 .then(() => {
                     this.worker?.terminate();
                     this.worker = undefined;
                     this.languageClient = undefined;
+                    return 'monaco-languageclient and monaco-editor were successfully disposed';
+                })
+                .catch((e: Error) => {
+                    throw new Error(`Disposing the monaco-languageclient resulted in error: ${e}`);
                 });
         }
         else {
-            return Promise.resolve();
+            return Promise.reject('Unable to dispose monaco-languageclient: It is not yet started.');
         }
     }
 
-    swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): void {
+    swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): Promise<string> {
         if (this.editorConfig.isUseDiffEditor()) {
             this.disposeEditor();
             if (!this.diffEditor) {
-                this.startEditor(container, dispatchEvent);
+                return this.startEditor(container, dispatchEvent);
             }
         }
         else {
             this.disposeDiffEditor();
             if (!this.editor) {
-                this.startEditor(container, dispatchEvent);
+                return this.startEditor(container, dispatchEvent);
             }
         }
+        return Promise.resolve('Nothing to do.');
     }
 
     updateEditor() {
@@ -384,38 +408,57 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    private startLanguageClientConnection(lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions) {
-        if (this.languageClient && this.languageClient.isRunning()) return;
+    private startLanguageClientConnection(lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions): Promise<string> {
+        if (this.languageClient && this.languageClient.isRunning()) {
+            return Promise.resolve('monaco-languageclient already running!');
+        }
 
         let reader: WebSocketMessageReader | BrowserMessageReader;
         let writer: WebSocketMessageWriter | BrowserMessageWriter;
-        if (this.editorConfig.isUseWebSocket()) {
-            const webSocketConfigOptions = lcConfigOptions as WebSocketConfigOptions;
-            const url = this.createUrl(webSocketConfigOptions);
-            const webSocket = new WebSocket(url);
 
-            webSocket.onopen = () => {
-                const socket = toSocket(webSocket);
-                const reader = new WebSocketMessageReader(socket);
-                const writer = new WebSocketMessageWriter(socket);
-                this.languageClient = this.createLanguageClient({ reader, writer });
-                this.languageClient.start();
-                reader.onClose(() => this.languageClient?.stop());
-            };
-        } else {
-            const workerConfigOptions = lcConfigOptions as WorkerConfigOptions;
-            if (!this.worker) {
-                this.worker = new Worker(new URL(workerConfigOptions.workerURL, window.location.href).href, {
-                    type: workerConfigOptions.workerType,
-                    name: workerConfigOptions.workerName,
-                });
+        return new Promise((resolve, reject) => {
+            if (this.editorConfig.isUseWebSocket()) {
+                const webSocketConfigOptions = lcConfigOptions as WebSocketConfigOptions;
+                const url = this.createUrl(webSocketConfigOptions);
+                const webSocket = new WebSocket(url);
+
+                webSocket.onopen = () => {
+                    const socket = toSocket(webSocket);
+                    const reader = new WebSocketMessageReader(socket);
+                    const writer = new WebSocketMessageWriter(socket);
+                    this.handleLanguageClienStart(reader, writer, resolve, reject);
+                };
+            } else {
+                const workerConfigOptions = lcConfigOptions as WorkerConfigOptions;
+                if (!this.worker) {
+                    this.worker = new Worker(new URL(workerConfigOptions.workerURL, window.location.href).href, {
+                        type: workerConfigOptions.workerType,
+                        name: workerConfigOptions.workerName,
+                    });
+                }
+                reader = new BrowserMessageReader(this.worker);
+                writer = new BrowserMessageWriter(this.worker);
+                this.handleLanguageClienStart(reader, writer, resolve, reject);
             }
-            reader = new BrowserMessageReader(this.worker);
-            writer = new BrowserMessageWriter(this.worker);
-            this.languageClient = this.createLanguageClient({ reader, writer });
-            this.languageClient.start();
-            reader.onClose(() => this.languageClient?.stop());
-        }
+        });
+    }
+
+    private async handleLanguageClienStart(reader: WebSocketMessageReader | BrowserMessageReader,
+        writer: WebSocketMessageWriter | BrowserMessageWriter,
+        resolve: (value: string) => void, reject: (reason?: unknown) => void) {
+
+        this.languageClient = this.createLanguageClient({ reader, writer });
+        reader.onClose(() => this.languageClient?.stop());
+
+        await this.languageClient.start()
+            .then(() => {
+                const msg = 'monaco-languageclient was successfully started.';
+                resolve(msg);
+            })
+            .catch((e: Error) => {
+                const errorMsg = `monaco-languageclient start was unsuccessful: ${e.message}`;
+                reject(errorMsg);
+            });
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
@@ -458,7 +501,7 @@ export class MonacoEditorLanguageClientWrapper {
             document.fonts.add(l);
             document.body.style.fontFamily = '"Codicon", Arial';
             console.log('Loaded Codicon TTF font');
-        }).catch(e => {
+        }).catch((e: Error) => {
             throw e;
         });
     }
