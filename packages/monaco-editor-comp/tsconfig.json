@@ -8,6 +8,9 @@
     "module": "Node16",
     "moduleResolution": "Node16"
   },
+  "references": [{
+    "path": "../monaco-editor-wrapper"
+  }],
   "include": [
     "src/**/*.ts",
   ],

@@ -10,7 +10,6 @@
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -45,6 +44,13 @@
     },
     "./workers/classic/json": {
       "default": "./dist/workers/jsonWorker-iife.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/index"
+      ]
     }
   },
   "files": [

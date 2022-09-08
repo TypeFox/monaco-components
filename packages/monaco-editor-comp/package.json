@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.0.0-next.1",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -13,7 +13,6 @@
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -26,7 +25,12 @@
   },
   "typesVersions": {
     "*": {
-      "bundle": [ "bundle/index" ]
+      ".": [
+        "dist/index"
+      ],
+      "bundle": [
+        "bundle/index"
+      ]
     }
   },
   "files": [
@@ -44,7 +48,7 @@
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "../monaco-editor-wrapper",
+    "monaco-editor-wrapper": "1.0.0",
     "lit": "^2.3.1"
   },
   "devDependencies": {

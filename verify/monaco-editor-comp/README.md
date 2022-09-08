@@ -1,4 +1,4 @@
-# Pure HTML + JavaScript eerification examples
+# Pure HTML + JavaScript verification examples
 
 These examples are using the bundled version of `monaco-edior-comp`. The are statically served.
 

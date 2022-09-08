@@ -1,4 +1,4 @@
-# Monaco Editor Component and Wrapper for Monaco Editor
+# Monaco Editor Wrapper and Monaco Editor Wrapper Lit Component
 
 Lit component for Monaco Editor
 
