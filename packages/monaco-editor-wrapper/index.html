@@ -33,7 +33,7 @@
 }`;
         let toggleDiff = true;
 
-        async function startEditor() {
+        function startEditor() {
             if (client.isStarted()) {
                 alert('Editor was already started!');
                 return;
@@ -65,7 +65,7 @@
             }, 10);
         };
 
-        async function swapEditors() {
+        function swapEditors() {
             const editorConfig = client.getEditorConfig();
             editorConfig.setUseDiffEditor(toggleDiff);
             editorConfig.setMainLanguageId(languageId);

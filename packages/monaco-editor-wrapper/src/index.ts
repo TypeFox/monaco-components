@@ -426,7 +426,7 @@ export class MonacoEditorLanguageClientWrapper {
                     const socket = toSocket(webSocket);
                     const reader = new WebSocketMessageReader(socket);
                     const writer = new WebSocketMessageWriter(socket);
-                    this.handleLanguageClienStart(reader, writer, resolve, reject);
+                    this.handleLanguageClientStart(reader, writer, resolve, reject);
                 };
             } else {
                 const workerConfigOptions = lcConfigOptions as WorkerConfigOptions;
@@ -438,12 +438,12 @@ export class MonacoEditorLanguageClientWrapper {
                 }
                 reader = new BrowserMessageReader(this.worker);
                 writer = new BrowserMessageWriter(this.worker);
-                this.handleLanguageClienStart(reader, writer, resolve, reject);
+                this.handleLanguageClientStart(reader, writer, resolve, reject);
             }
         });
     }
 
-    private async handleLanguageClienStart(reader: WebSocketMessageReader | BrowserMessageReader,
+    private async handleLanguageClientStart(reader: WebSocketMessageReader | BrowserMessageReader,
         writer: WebSocketMessageWriter | BrowserMessageWriter,
         resolve: (value: string) => void, reject: (reason?: unknown) => void) {
 
