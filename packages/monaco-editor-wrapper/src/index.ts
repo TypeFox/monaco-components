@@ -280,7 +280,7 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    private async disposeLanguageClient() {
+    private async disposeLanguageClient(): Promise<string> {
         if (this.languageClient && this.languageClient.isRunning()) {
             this.disposeEditor();
             this.disposeDiffEditor();
@@ -293,7 +293,7 @@ export class MonacoEditorLanguageClientWrapper {
                     return 'monaco-languageclient and monaco-editor were successfully disposed';
                 })
                 .catch((e: Error) => {
-                    throw new Error(`Disposing the monaco-languageclient resulted in error: ${e}`);
+                    return `Disposing the monaco-languageclient resulted in error: ${e}`;
                 });
         }
         else {
