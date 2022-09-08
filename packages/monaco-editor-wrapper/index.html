@@ -53,7 +53,16 @@
                 wsPath: "sampleServer"
             });
 
-            client.startEditor(document.getElementById("monaco-editor-root"));
+            client.startEditor(document.getElementById("monaco-editor-root"))
+                .then(s => console.log(s))
+                .catch(e => console.error(e));
+
+            // provoke a too early dispose
+            setTimeout(() => {
+                client.dispose()
+                    .then(s => console.log(s))
+                    .catch(e => console.error(e));
+            }, 10);
         };
 
         function swapEditors() {
@@ -64,8 +73,12 @@
             editorConfig.setDiffLanguageId(languageId)
             editorConfig.setDiffCode(codeDiff);
 
-            client.swapEditors(document.getElementById("monaco-editor-root"));
-            toggleDiff = !toggleDiff;
+            client.swapEditors(document.getElementById("monaco-editor-root"))
+                .then(s => {
+                    toggleDiff = !toggleDiff;
+                    console.log(s)
+                })
+                .catch(e => console.error(e));
         }
 
         async function disposeEditor() {
@@ -74,7 +87,7 @@
             console.log(`LanguageClient ${client.languageClient}`);
             console.log(`Worker ${client.worker}`);
 
-            await client.dispose(true)
+            await client.dispose()
                 .then(() => {
                     console.log(`Editor ${client.editor}`);
                     console.log(`DiffEditor ${client.diffEditor}`);
