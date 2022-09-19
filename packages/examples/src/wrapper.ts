@@ -43,10 +43,11 @@ function startEditor() {
         type: 'module',
         name: 'LS'
     });
+
+    // test if external creation works
     const reader = new BrowserMessageReader(lsWorker);
     const writer = new BrowserMessageWriter(lsWorker);
     client.setWorker(lsWorker, { reader: reader, writer: writer });
-    //client.setWorker(lsWorker);
 
     client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => console.log(s))

@@ -2,9 +2,13 @@
 
 All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/package/monaco-editor-workers) are documented in this file.
 
+## [0.34.2]
+
+- Fix: Removed direct dependency to monaco editor in `buildWorkerDefinition`.
+
 ## [0.34.1]
 
-- fix: Use correct re-exports [#9](https://github.com/TypeFox/monaco-components/pull/9)
+- Fix: Use correct re-exports [#9](https://github.com/TypeFox/monaco-components/pull/9)
 
 ## [0.34.0]
 

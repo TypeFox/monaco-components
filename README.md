@@ -1,11 +1,14 @@
 # Monaco Editor Wrapper and Monaco Editor Wrapper Lit Component
 
-Lit component for Monaco Editor
+This repository started as Lit component for Monaco Editor, but this is evolved into more.
 
 ## Packages
 
-- Monaco Editor + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with full basic language support and enhanced support via workers for special languages (e.g. TS, HTML) and the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers.
-- Monaco Editor Worker Support Package: Supplies all monaco-editor workers as module or classic workers + utility function to bind them to `MonacoEnvironment`
+Currently there are three npm packages generated from this repository:
+
+- [Monaco Editor Wrapper](./packages/monaco-editor-wrapper/) + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers.
+- [Monaco Editor Component](./packages/monaco-editor-comp/) Monaco Editor Lit Component that also overs the capability to plug-in monaco-languageclient with more limited configurability compared to the wrapper
+- [Monaco Editor Workers](./packages/monaco-editor-workers/) Bundles the editor and language workers of monaco as module and classic worker. It supplies a function that eases loading them in an application context.
 
 ## Getting Started
 
@@ -23,10 +26,3 @@ npm run dev
 ```
 
 You find examples (manual human testing) here [index.html](./index.html). They can be used once Vite is running.
-
-## Inspiration
-
-Before starting this project, I got inspired by:
-
-- https://github.com/rodydavis/lit-code-editor
-- https://github.com/vanillawc/wc-monaco-editor
