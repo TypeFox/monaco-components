@@ -7,9 +7,10 @@
     "clean": "npx shx rm -rf ./libs",
     "lint": "echo No linting is performed in verify/monaco-editor-comp",
     "copy-lc-comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-comp/bundle ./libs/monaco-editor-comp",
+    "copy-wrapper": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-wrapper/bundle ./libs/monaco-editor-wrapper",
     "copy-monaco-workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy-monaco-editor": "npx shx mkdir -p ./libs && npx shx cp -fr ../../node_modules/monaco-editor ./libs/monaco-editor",
-    "build": "npm run clean && npm run copy-lc-comp && npm run copy-monaco-workers && npm run copy-monaco-editor",
+    "build": "npm run clean && npm run copy-lc-comp && npm run copy-wrapper && npm run copy-monaco-workers && npm run copy-monaco-editor",
     "start": "http-server --port 20002 ./"
   },
   "devDependencies": {
