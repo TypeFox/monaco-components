@@ -253,6 +253,18 @@ export class MonacoEditorLanguageClientWrapper {
         return this.languageClient;
     }
 
+    getMainCode(): string | undefined {
+        if (this.editor) {
+            return this.editor?.getValue();
+        } else {
+            return this.diffEditor?.getOriginalEditor().getValue();
+        }
+    }
+
+    getDiffCode(): string | undefined {
+        return this.diffEditor?.getModifiedEditor().getValue();
+    }
+
     updateTheme() {
         monaco.editor.setTheme(this.editorConfig.getTheme());
     }

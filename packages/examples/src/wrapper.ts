@@ -9,10 +9,10 @@ MonacoEditorLanguageClientWrapper.addCodiconTtf();
 const client = new MonacoEditorLanguageClientWrapper();
 
 const languageId = 'plaintext';
-const codeMain = `#ff0000 (red)
+let codeMain = `#ff0000 (red)
 #00ff00 (green)
 #0000ff (blue)`;
-const codeDiff = `#ffff00 (yellow)
+let codeDiff = `#ffff00 (yellow)
 #00ff00 (green)
 #0000ff (blue)`;
 let toggleDiff = true;
@@ -52,7 +52,8 @@ function startEditor() {
     client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => {
             console.log(s);
-            console.log(`# of configured languages: ${client.getMonaco().languages.getLanguages().length}`);
+            logEditorInfo(client);
+            toggleSwapDiffButton(true);
         })
         .catch((e: Error) => console.error(e));
 
@@ -69,6 +70,7 @@ function startEditor() {
 
 function swapEditors() {
     const editorConfig = client.getEditorConfig();
+    updateColors();
     editorConfig.setUseDiffEditor(toggleDiff);
     editorConfig.setMainLanguageId(languageId);
     editorConfig.setMainCode(codeMain);
@@ -79,16 +81,41 @@ function swapEditors() {
         .then((s: string) => {
             toggleDiff = !toggleDiff;
             console.log(s);
+            logEditorInfo(client);
         })
         .catch((e: Error) => console.error(e));
 }
 
 async function disposeEditor() {
+    toggleSwapDiffButton(false);
     client.reportStatus();
+    updateColors();
     await client.dispose()
         .then(() => {
             client.reportStatus();
         });
+}
+
+function toggleSwapDiffButton(enabled: boolean) {
+    const button = document.getElementById('button-swap') as HTMLButtonElement;
+    if (button !== null) {
+        button.disabled = !enabled;
+    }
+}
+
+function updateColors() {
+    if (client.getMainCode()) {
+        codeMain = client.getMainCode();
+    }
+    if (client.getDiffCode()) {
+        codeDiff = client.getDiffCode();
+    }
+}
+
+function logEditorInfo(client: MonacoEditorLanguageClientWrapper) {
+    console.log(`# of configured languages: ${client.getMonaco().languages.getLanguages().length}`);
+    console.log(`Main code: ${client.getMainCode()}`);
+    console.log(`Modified code: ${client.getDiffCode()}`);
 }
 
 document.querySelector('#button-start')?.addEventListener('click', startEditor);
