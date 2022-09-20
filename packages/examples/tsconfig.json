@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "declarationDir": "dist",
+    "composite": true,
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "lib": [
+      "ESNext",
+      "DOM",
+      "webworker"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+  ],
+  "exclude": [
+    "build",
+    "dist",
+    "node_modules",
+    "src/json-server.ts"
+  ]
+}

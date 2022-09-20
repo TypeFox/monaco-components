@@ -9,7 +9,8 @@
 
 <body>
     <script type="module">
-        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-comp/index.js';
+        import { MonacoEditorWebComponent } from './libs/monaco-editor-comp/index.js';
+        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/index.js';
         import { buildWorkerDefinition } from "./libs/monaco-editor-workers/index.js";
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
 

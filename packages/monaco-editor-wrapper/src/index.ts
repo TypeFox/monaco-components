@@ -25,7 +25,7 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { getMonacoCss } from './generated/css.js';
 import { getCodiconTtf } from './generated/ttf.js';
 
-import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports } from 'monaco-languageclient';
+import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports, MessageWriter, MessageReader } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import normalizeUrl from 'normalize-url';
@@ -45,11 +45,26 @@ export type WorkerConfigOptions = {
     workerName?: string;
 }
 
+/**
+ * This is derived from:
+ * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
+ */
+export type LanguageExtensionConfig = {
+    id: string;
+    extensions?: string[];
+    filenames?: string[];
+    filenamePatterns?: string[];
+    firstLine?: string;
+    aliases?: string[];
+    mimetypes?: string[];
+}
+
 export class CodeEditorConfig {
 
     private useDiffEditor = false;
     private codeOriginal: [string, string] = ['', 'javascript'];
     private codeModified: [string, string] = ['', 'javascript'];
+    private languageExtensionConfig: LanguageExtensionConfig | undefined;
     private theme = 'vs-light';
     private monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
@@ -131,6 +146,14 @@ export class CodeEditorConfig {
         this.codeModified[0] = code;
     }
 
+    setLanguageExtensionConfig(languageExtensionConfig: LanguageExtensionConfig): void {
+        this.languageExtensionConfig = languageExtensionConfig;
+    }
+
+    getLanguageExtensionConfig(): LanguageExtensionConfig | undefined {
+        return this.languageExtensionConfig;
+    }
+
     getMonacoEditorOptions(): monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions {
         return this.monacoEditorOptions;
     }
@@ -189,6 +212,11 @@ export class CodeEditorConfig {
     }
 }
 
+export type WorkerCommunitcationConfig = {
+    reader: MessageReader,
+    writer: MessageWriter
+};
+
 export class MonacoEditorLanguageClientWrapper {
 
     private editor: monaco.editor.IStandaloneCodeEditor | undefined;
@@ -196,12 +224,13 @@ export class MonacoEditorLanguageClientWrapper {
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
     private languageClient: MonacoLanguageClient | undefined;
     private worker: Worker | undefined;
+    private workerCommunitcationConfig: WorkerCommunitcationConfig | undefined;
     private dispatchEvent: ((event: Event) => boolean) | undefined;
 
     private id: string;
 
-    constructor(id: string) {
-        this.id = id;
+    constructor(id?: string) {
+        this.id = id ?? '42';
     }
 
     getEditorConfig() {
@@ -212,8 +241,11 @@ export class MonacoEditorLanguageClientWrapper {
         monaco.editor.setTheme(this.editorConfig.getTheme());
     }
 
-    setWorker(worker: Worker) {
+    setWorker(worker: Worker, workerCommunitcationConfig?: WorkerCommunitcationConfig) {
         this.worker = worker;
+        if (workerCommunitcationConfig) {
+            this.workerCommunitcationConfig = workerCommunitcationConfig;
+        }
     }
 
     isStarted(): boolean {
@@ -280,6 +312,13 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
+    public reportStatus() {
+        console.log(`Editor ${this.editor}`);
+        console.log(`DiffEditor ${this.diffEditor}`);
+        console.log(`LanguageClient ${this.languageClient}`);
+        console.log(`Worker ${this.worker}`);
+    }
+
     private async disposeLanguageClient(): Promise<string> {
         if (this.languageClient && this.languageClient.isRunning()) {
             this.disposeEditor();
@@ -336,7 +375,9 @@ export class MonacoEditorLanguageClientWrapper {
 
     private updateMainModel(): void {
         if (this.editor) {
-            const model = monaco.editor.createModel(this.editorConfig.getMainCode(), this.editorConfig.getMainLanguageId());
+            const languageId = this.editorConfig.getMainLanguageId();
+            const model = monaco.editor.createModel(this.editorConfig.getMainCode(), languageId,
+                monaco.Uri.parse(`inmemory://model.${languageId}`));
             this.editor.setModel(model);
             this.editor.getModel()!.onDidChangeContent(() => {
                 if (this.dispatchEvent) {
@@ -356,8 +397,17 @@ export class MonacoEditorLanguageClientWrapper {
 
     private updateCommonEditorConfig() {
         const languageId = this.editorConfig.getMainLanguageId();
+
+        // register own language first
+        const extLang = this.editorConfig.getLanguageExtensionConfig();
+        if (extLang) {
+            //(monaco.languages as Record<string, unknown>)[extLang.id] = undefined;
+            monaco.languages.register(this.editorConfig.getLanguageExtensionConfig() as monaco.languages.ILanguageExtensionPoint);
+        }
+
         const languageRegistered = monaco.languages.getLanguages().filter(x => x.id === languageId);
         if (languageRegistered.length === 0) {
+            // this is only meaningful for languages supported by monaco out of the box
             monaco.languages.register({ id: languageId });
         }
 
@@ -436,16 +486,20 @@ export class MonacoEditorLanguageClientWrapper {
                         name: workerConfigOptions.workerName,
                     });
                 }
-                reader = new BrowserMessageReader(this.worker);
-                writer = new BrowserMessageWriter(this.worker);
-                this.handleLanguageClientStart(reader, writer, resolve, reject);
+                if (this.workerCommunitcationConfig) {
+                    this.handleLanguageClientStart(this.workerCommunitcationConfig.reader, this.workerCommunitcationConfig.writer, resolve, reject);
+                } else {
+                    reader = new BrowserMessageReader(this.worker);
+                    writer = new BrowserMessageWriter(this.worker);
+                    this.handleLanguageClientStart(reader, writer, resolve, reject);
+                }
             }
         });
     }
 
-    private async handleLanguageClientStart(reader: WebSocketMessageReader | BrowserMessageReader,
-        writer: WebSocketMessageWriter | BrowserMessageWriter,
-        resolve: (value: string) => void, reject: (reason?: unknown) => void) {
+    private async handleLanguageClientStart(reader: MessageReader, writer: MessageWriter,
+        resolve: (value: string) => void,
+        reject: (reason?: unknown) => void) {
 
         this.languageClient = this.createLanguageClient({ reader, writer });
         reader.onClose(() => this.languageClient?.stop());

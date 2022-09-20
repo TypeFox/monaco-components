@@ -27,8 +27,28 @@ The component can be fully configured with embedded JavaScript. It can be config
 
 ## Help / Hints
 
-Proper styling of at least the Diff Editor requires that the *codicon* font is loaded outside the web component. Due to limitations of the Shadow DOM this can unfortunately not be transparently handled by the web component and requires user code adjustments shown [here](../../verify/monaco-editor-comp/index.html#L11-16) and [monaco-editor sample]( https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-shadow-dom/index.html)).
+Proper styling of at least the Diff Editor requires that the *codicon* font is loaded outside the web component. Due to limitations of the Shadow DOM this can unfortunately not be transparently handled by the web component and requires user code adjustments shown [here](../../verify/monaco-editor-comp/comp.html#L17) and [monaco-editor sample]( https://github.com/microsoft/monaco-editor/blob/main/samples/browser-amd-shadow-dom/index.html)).
 
 ## Getting Started
 
-See main [README](../../README.md#getting-started).
+If you have node.js LTS available, then from the root of the project run:
+
+```bash
+npm i
+npm run build
+```
+
+Afterwards launch the Vite.js development mode:
+
+```bash
+npm run dev
+```
+
+You find examples (manual human testing) in the root of the repository [index.html](../../index.html). They can be used once Vite is running.
+
+## Inspiration
+
+This project was inspired by:
+
+* <https://github.com/rodydavis/lit-code-editor>
+* <https://github.com/vanillawc/wc-monaco-editor>

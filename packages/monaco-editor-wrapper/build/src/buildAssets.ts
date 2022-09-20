@@ -21,5 +21,5 @@ fs.readFile('../../node_modules/monaco-editor/esm/vs/base/browser/ui/codicons/co
     if (!fs.existsSync('./src/generated')) {
         fs.mkdirSync('./src/generated');
     }
-    fs.writeFileSync('./src/generated/ttf.ts', `export function getCodiconTtf() {\n    return \'${output}\';\n}`);
+    fs.writeFileSync('./src/generated/ttf.ts', `export function getCodiconTtf() {\n    return '${output}';\n}`);
 });
