@@ -33,7 +33,6 @@
     "packages/monaco-editor-wrapper",
     "packages/monaco-editor-comp",
     "packages/monaco-editor-workers",
-    "packages/examples",
-    "verify/monaco-editor-comp"
+    "packages/examples"
   ]
 }

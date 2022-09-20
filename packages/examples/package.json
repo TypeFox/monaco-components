@@ -2,24 +2,29 @@
   "name": "monaco-editor-wrapper-examples",
   "private": true,
   "type": "module",
-  "dependencies": {
+  "devDependencies": {
     "monaco-editor-wrapper": "^1.1.0-next.1",
     "monaco-editor-comp": "1.0.0-next.0",
     "monaco-editor-workers": "0.34.2",
     "request-light": "^0.5.8",
     "vscode-uri": "^3.0.5",
     "vscode-languageserver": "^8.0.2",
-    "vscode-json-languageservice": "^5.1.0"
+    "vscode-json-languageservice": "^5.1.0",
+    "http-server": "^14.1.1"
   },
   "volta": {
     "node": "16.17.0",
     "npm": "8.15.0"
   },
   "scripts": {
-    "clean": "npx shx rm -rf ./dist tsconfig.tsbuildinfo",
+    "clean": "npx shx rm -rf ./dist ./libs tsconfig.tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "compile": "tsc",
+    "copy:wrapper": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-wrapper/bundle ./libs/monaco-editor-wrapper",
+    "copy:comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-comp/bundle ./libs/monaco-editor-comp",
+    "copy:workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "build:worker": "vite -c vite.config.worker.ts build",
-    "build": "npm run clean && npm run compile && npm run build:worker"
+    "build": "npm run clean && npm run compile && npm run build:worker && npm run copy:wrapper && npm run copy:comp && npm run copy:workers",
+    "start": "http-server --port 20002 ./"
   }
 }

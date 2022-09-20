@@ -8,4 +8,4 @@ bundle
 *.tgz
 
 packages/monaco-editor-wrapper/src/generated
-verify/monaco-editor-comp/libs
+packages/examples/libs
