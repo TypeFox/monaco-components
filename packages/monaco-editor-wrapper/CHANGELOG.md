@@ -5,7 +5,8 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
 ## [1.1.0]
 
 - Allows to set `MessageReader` and `MessageWriter` for the web worker. This opens the possibility to emit and intercept messages.
-- It is now possible to configure and use a full language extension configuration.
+- It is now possible to configure and use a full language extension configuration
+- Added get functions to access to monaco, editor, diffEditor and languageClient
 
 ## [1.0.0]
 

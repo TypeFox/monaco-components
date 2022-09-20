@@ -50,14 +50,20 @@ function startEditor() {
     client.setWorker(lsWorker, { reader: reader, writer: writer });
 
     client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
-        .then((s: unknown) => console.log(s))
+        .then((s: unknown) => {
+            console.log(s);
+            console.log(`# of configured languages: ${client.getMonaco().languages.getLanguages().length}`);
+        })
         .catch((e: Error) => console.error(e));
 
     // provoke a too early dispose
     setTimeout(() => {
         client.dispose()
             .then((s: unknown) => console.log(s))
-            .catch((e: Error) => console.error(e));
+            .catch((e: Error) => {
+                console.log('The next error is expected behaviour as it was provoked:');
+                console.error(e);
+            });
     }, 10);
 }
 

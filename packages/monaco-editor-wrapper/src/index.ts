@@ -237,6 +237,22 @@ export class MonacoEditorLanguageClientWrapper {
         return this.editorConfig;
     }
 
+    getMonaco() {
+        return monaco;
+    }
+
+    getEditor(): monaco.editor.IStandaloneCodeEditor | undefined {
+        return this.editor;
+    }
+
+    getDiffEditor(): monaco.editor.IStandaloneDiffEditor | undefined {
+        return this.diffEditor;
+    }
+
+    getLanguageClient(): MonacoLanguageClient | undefined {
+        return this.languageClient;
+    }
+
     updateTheme() {
         monaco.editor.setTheme(this.editorConfig.getTheme());
     }
