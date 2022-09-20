@@ -70,7 +70,7 @@ function startEditor() {
 
 function swapEditors() {
     const editorConfig = client.getEditorConfig();
-    updateColors();
+    updateCode();
     editorConfig.setUseDiffEditor(toggleDiff);
     editorConfig.setMainLanguageId(languageId);
     editorConfig.setMainCode(codeMain);
@@ -89,7 +89,7 @@ function swapEditors() {
 async function disposeEditor() {
     toggleSwapDiffButton(false);
     client.reportStatus();
-    updateColors();
+    updateCode();
     await client.dispose()
         .then(() => {
             client.reportStatus();
@@ -103,12 +103,14 @@ function toggleSwapDiffButton(enabled: boolean) {
     }
 }
 
-function updateColors() {
-    if (client.getMainCode()) {
-        codeMain = client.getMainCode();
+function updateCode() {
+    const main = client.getMainCode();
+    const diff = client.getDiffCode();
+    if (main) {
+        codeMain = main;
     }
-    if (client.getDiffCode()) {
-        codeDiff = client.getDiffCode();
+    if (diff) {
+        codeDiff = diff;
     }
 }
 
