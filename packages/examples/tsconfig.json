@@ -13,6 +13,12 @@
       "webworker"
     ]
   },
+  "references": [{
+    "path": "../monaco-editor-wrapper"
+  },
+  {
+    "path": "../monaco-editor-comp"
+  }],
   "include": [
     "src/**/*.ts",
   ],
