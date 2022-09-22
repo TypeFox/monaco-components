@@ -124,14 +124,13 @@ export class MonacoEditorWebComponent extends LitElement {
     }
 
     private startEditor(reloadInlineConfig: boolean) {
-        this.syncPropertiesAndEditorConfig(reloadInlineConfig);
-        this.monacoWrapper.startEditor(this.container.value!);
+        this.restartEditor(reloadInlineConfig);
         this.registerListeners();
     }
 
-    updateEditor(reloadInlineConfig: boolean) {
+    restartEditor(reloadInlineConfig: boolean) {
         this.syncPropertiesAndEditorConfig(reloadInlineConfig);
-        this.monacoWrapper.updateEditor();
+        this.monacoWrapper.startEditor(this.container.value!);
     }
 
     swapEditors(options: { useDiffEditor: boolean, reloadInlineConfig: boolean }): void {

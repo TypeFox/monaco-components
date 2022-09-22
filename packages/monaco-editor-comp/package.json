@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "license": "MIT",
   "description": "Lit Component for Monaco Languageclient",
   "keywords": [
@@ -48,7 +48,7 @@
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "1.1.0",
+    "monaco-editor-wrapper": "../monaco-editor-wrapper",
     "lit": "^2.3.1"
   },
   "devDependencies": {

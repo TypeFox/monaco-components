@@ -2,6 +2,13 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.2.0]
+
+- Fix model URI path #[13](https://github.com/TypeFox/monaco-components/pull/13)
+- Added inmemory uri to diff editor as well
+- Re-worked the start/dispose/restart of the editor
+- Ensure model uris are unique for different languages and across multiple editor instances
+
 ## [1.1.0]
 
 - Allows to set `MessageReader` and `MessageWriter` for the web worker. This opens the possibility to emit and intercept messages.

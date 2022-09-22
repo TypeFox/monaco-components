@@ -230,7 +230,7 @@ export class MonacoEditorLanguageClientWrapper {
     private id: string;
 
     constructor(id?: string) {
-        this.id = id ?? '42';
+        this.id = id ?? Math.floor(Math.random() * 101).toString();
     }
 
     getEditorConfig() {
@@ -284,30 +284,38 @@ export class MonacoEditorLanguageClientWrapper {
         else {
             return haveEditor;
         }
-
     }
 
     startEditor(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): Promise<string> {
         console.log(`Starting monaco-editor (${this.id})`);
         this.dispatchEvent = dispatchEvent;
 
+        this.updateMonacoConfig();
         if (this.editorConfig.isUseDiffEditor()) {
+            this.disposeDiffEditor();
             this.diffEditor = monaco.editor.createDiffEditor(container!);
-        }
-        else {
+            this.updateDiffModels();
+
+            const options = this.editorConfig.getMonacoDiffEditorOptions();
+            this.diffEditor.updateOptions(options);
+            this.diffEditor.layout();
+        } else {
+            this.disposeEditor();
             this.editor = monaco.editor.create(container!);
+            this.updateMainModel();
+
+            const options = this.editorConfig.getMonacoEditorOptions();
+            this.editor.updateOptions(options);
+            this.editor.layout();
         }
-        this.updateEditor();
 
         if (this.editorConfig.isUseLanguageClient()) {
             console.log('Enabling monaco-languageclient');
             this.installMonaco();
             return this.startLanguageClientConnection(this.editorConfig.getLanguageClientConfigOptions());
-        }
-        else {
+        } else {
             return Promise.resolve('All fine. monaco-languageclient is not used.');
         }
-
     }
 
     dispose(): Promise<string> {
@@ -333,8 +341,8 @@ export class MonacoEditorLanguageClientWrapper {
     private disposeDiffEditor() {
         if (this.diffEditor) {
             const model = this.diffEditor.getModel();
-            model?.modified.dispose();
-            model?.original.dispose();
+            model?.modified?.dispose();
+            model?.original?.dispose();
             this.diffEditor.dispose();
             this.diffEditor = undefined;
         }
@@ -374,8 +382,7 @@ export class MonacoEditorLanguageClientWrapper {
             if (!this.diffEditor) {
                 return this.startEditor(container, dispatchEvent);
             }
-        }
-        else {
+        } else {
             this.disposeDiffEditor();
             if (!this.editor) {
                 return this.startEditor(container, dispatchEvent);
@@ -384,29 +391,18 @@ export class MonacoEditorLanguageClientWrapper {
         return Promise.resolve('Nothing to do.');
     }
 
-    updateEditor() {
-        if (this.editorConfig.isUseDiffEditor()) {
-            this.updateDiffEditor();
-        }
-        else {
-            this.updateMainEditor();
-        }
-    }
-
-    private updateMainEditor() {
-        this.updateCommonEditorConfig();
-        const options = this.editorConfig.getMonacoEditorOptions();
-        this.editor?.updateOptions(options);
-        this.updateMainModel();
-        this.updateLayout();
-    }
-
     private updateMainModel(): void {
         if (this.editor) {
             const languageId = this.editorConfig.getMainLanguageId();
-            const model = monaco.editor.createModel(this.editorConfig.getMainCode(), languageId,
-                monaco.Uri.parse(`inmemory:///model.${languageId}`));
-            this.editor.setModel(model);
+            const mainUri = monaco.Uri.parse(`inmemory:///model${this.id}.${languageId}`);
+            let model = monaco.editor.getModel(mainUri);
+            if (model === null) {
+                model = monaco.editor.createModel(this.editorConfig.getMainCode(), languageId, mainUri);
+            }
+            const orgModel = this.editor.getModel();
+            if (orgModel !== model) {
+                this.editor.setModel(model);
+            }
             this.editor.getModel()!.onDidChangeContent(() => {
                 if (this.dispatchEvent) {
                     this.dispatchEvent(new CustomEvent('ChangeContent', { detail: {} }));
@@ -415,21 +411,12 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    private updateDiffEditor() {
-        this.updateCommonEditorConfig();
-        const options = this.editorConfig.getMonacoDiffEditorOptions();
-        this.diffEditor?.updateOptions(options);
-        this.updateDiffModels();
-        this.updateLayout();
-    }
-
-    private updateCommonEditorConfig() {
+    private updateMonacoConfig() {
         const languageId = this.editorConfig.getMainLanguageId();
 
         // register own language first
         const extLang = this.editorConfig.getLanguageExtensionConfig();
         if (extLang) {
-            //(monaco.languages as Record<string, unknown>)[extLang.id] = undefined;
             monaco.languages.register(this.editorConfig.getLanguageExtensionConfig() as monaco.languages.ILanguageExtensionPoint);
         }
 
@@ -453,8 +440,18 @@ export class MonacoEditorLanguageClientWrapper {
 
     private updateDiffModels() {
         if (this.diffEditor) {
-            const originalModel = monaco.editor.createModel(this.editorConfig.getMainCode(), this.editorConfig.getMainLanguageId());
-            const modifiedModel = monaco.editor.createModel(this.editorConfig.getDiffCode(), this.editorConfig.getDiffLanguageId());
+            const mainUri = monaco.Uri.parse(`inmemory:///model${this.id}.${this.editorConfig.getMainLanguageId()}`);
+            const diffUri = monaco.Uri.parse(`inmemory:///modelDiff${this.id}.${this.editorConfig.getMainLanguageId()}`);
+
+            let originalModel = monaco.editor.getModel(mainUri);
+            if (originalModel === null) {
+                originalModel = monaco.editor.createModel(this.editorConfig.getMainCode(), this.editorConfig.getMainLanguageId(), mainUri);
+            }
+
+            let modifiedModel = monaco.editor.getModel(diffUri);
+            if (modifiedModel === null) {
+                modifiedModel = monaco.editor.createModel(this.editorConfig.getDiffCode(), this.editorConfig.getDiffLanguageId(), diffUri);
+            }
 
             this.diffEditor.setModel({
                 original: originalModel,

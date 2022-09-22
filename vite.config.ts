@@ -13,8 +13,7 @@ export default defineConfig({
                 verifyComp: path.resolve(__dirname, '/packages/examples/verify_comp.html'),
                 verifyCompLc: path.resolve(__dirname, '/packages/examples/verify_comp_lc.html')
             }
-        },
-        target: ['node16']
+        }
     },
     resolve: {
         alias: {

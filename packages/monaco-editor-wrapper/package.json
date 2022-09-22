@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
