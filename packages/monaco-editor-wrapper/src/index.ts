@@ -405,7 +405,7 @@ export class MonacoEditorLanguageClientWrapper {
         if (this.editor) {
             const languageId = this.editorConfig.getMainLanguageId();
             const model = monaco.editor.createModel(this.editorConfig.getMainCode(), languageId,
-                monaco.Uri.parse(`inmemory://model.${languageId}`));
+                monaco.Uri.parse(`inmemory:///model.${languageId}`));
             this.editor.setModel(model);
             this.editor.getModel()!.onDidChangeContent(() => {
                 if (this.dispatchEvent) {
