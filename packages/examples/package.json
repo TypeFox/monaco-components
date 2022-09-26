@@ -20,11 +20,13 @@
     "clean": "npx shx rm -rf ./dist ./libs tsconfig.tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "compile": "tsc",
-    "copy:wrapper": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-wrapper/bundle ./libs/monaco-editor-wrapper",
-    "copy:comp": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-comp/bundle ./libs/monaco-editor-comp",
-    "copy:workers": "npx shx mkdir -p ./libs && npx shx cp -fr ../../packages/monaco-editor-workers/dist ./libs/monaco-editor-workers",
+    "copy:prepare": "npx shx mkdir -p ./libs",
+    "copy:wrapper": "npx shx cp -fr ../../packages/monaco-editor-wrapper/bundle ./libs/monaco-editor-wrapper",
+    "copy:comp": "npx shx cp -fr ../../packages/monaco-editor-comp/bundle ./libs/monaco-editor-comp",
+    "copy:workers": "npx shx cp -fr ../../packages/monaco-editor-workers/dist ./libs/monaco-editor-workers",
+    "copy:all": "npm run copy:prepare && npm run copy:wrapper && npm run copy:comp && npm run copy:workers",
     "build:worker": "vite -c vite.config.worker.ts build",
-    "build": "npm run clean && npm run compile && npm run build:worker && npm run copy:wrapper && npm run copy:comp && npm run copy:workers",
+    "build": "npm run clean && npm run compile && npm run build:worker && npm run copy:all",
     "start": "http-server --port 20002 ./"
   }
 }

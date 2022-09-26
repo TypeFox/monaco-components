@@ -18,6 +18,9 @@
   },
   {
     "path": "../monaco-editor-comp"
+  },
+  {
+    "path": "../monaco-editor-workers"
   }],
   "include": [
     "src/**/*.ts",
