@@ -1,6 +1,4 @@
 import 'monaco-editor/esm/vs/editor/editor.all.js';
-
-// select features
 import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/inspectTokens/inspectTokens.js';
@@ -10,7 +8,6 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneGot
 import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCommandsQuickAccess.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
-
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 import { getMonacoCss } from './generated/css.js';

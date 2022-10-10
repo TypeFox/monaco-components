@@ -1,8 +1,8 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.2.0",
+  "version": "1.3.0-next.0",
   "license": "MIT",
-  "description": "Lit Component for Monaco Languageclient",
+  "description": "Lit Component for Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
     "monaco-editor",
     "monaco-languageclient",
@@ -18,9 +18,17 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./dist/indexAllLanguages.js"
+    },
     "./bundle": {
-      "types": "./bundle/index.d.ts",
+      "types": "./dist/index.d.ts",
       "default": "./bundle/index.js"
+    },
+    "./bundle/allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./bundle/indexAllLanguages.js"
     }
   },
   "typesVersions": {
@@ -28,8 +36,14 @@
       ".": [
         "dist/index"
       ],
+      "allLanguages": [
+        "dist/indexAllLanguages"
+      ],
       "bundle": [
-        "bundle/index"
+        "dist/index"
+      ],
+      "bundle/allLanguages": [
+        "dist/indexAllLanguages"
       ]
     }
   },
@@ -44,15 +58,21 @@
     "clean": "npx shx rm -rf ./dist ./bundle tsconfig.tsbuildinfo",
     "lint": "eslint src --ext .ts",
     "compile": "tsc",
-    "build:bundle": "npx shx cp -rf dist bundle && vite --config vite.bundle.config.ts build",
+    "build:bundle:main": "vite --config vite.bundle.config.ts build",
+    "build:bundle:languages": "vite --config vite.languages.config.ts build",
+    "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
     "build": "npm run clean && npm run compile && npm run build:bundle"
+  },
+  "volta": {
+    "node": "16.17.1",
+    "npm": "8.19.2"
   },
   "dependencies": {
     "monaco-editor-wrapper": "../monaco-editor-wrapper",
-    "lit": "^2.3.1"
+    "lit": "^2.4.0"
   },
   "devDependencies": {
-    "monaco-editor-workers": "0.34.1"
+    "monaco-editor-workers": "0.34.2"
   },
   "repository": {
     "type": "git",

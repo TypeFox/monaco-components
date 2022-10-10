@@ -12,7 +12,7 @@
 
     <script type="module">
         //import langauges export to get the wrapper with all languages
-        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/languages.js';
+        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/indexAllLanguages.js';
 
         import { buildWorkerDefinition } from "./libs/monaco-editor-workers/index.js";
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
