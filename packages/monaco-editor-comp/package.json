@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.3.0-next.0",
+  "version": "1.3.0",
   "license": "MIT",
   "description": "Lit Component for Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -64,11 +64,11 @@
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "volta": {
-    "node": "16.17.1",
+    "node": "16.18.0",
     "npm": "8.19.2"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "../monaco-editor-wrapper",
+    "monaco-editor-wrapper": "1.3.0",
     "lit": "^2.4.0"
   },
   "devDependencies": {

@@ -2,6 +2,14 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.3.0]
+
+- Bundling issues with imported workers from wrapper #[14](https://github.com/TypeFox/monaco-components/issue/14)
+  - The new default is that no additional language support is contained. Yuu can use another export to obtain them. The same applies to the bundles:
+    - `monaco-editor-wrapper/allLanguages`
+    - `monaco-editor-wrapper/bundle`
+    - `monaco-editor-wrapper/bundle/allLanguages`
+
 ## [1.2.0]
 
 - Fix model URI path #[13](https://github.com/TypeFox/monaco-components/pull/13)
