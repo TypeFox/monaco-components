@@ -66,6 +66,10 @@
     "build:workers:vite": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
     "build": "npm run clean && npm run compile && npm run build:workers:vite"
   },
+  "volta": {
+    "node": "16.17.1",
+    "npm": "8.19.2"
+  },
   "devDependencies": {
     "monaco-editor": "0.34.0"
   },

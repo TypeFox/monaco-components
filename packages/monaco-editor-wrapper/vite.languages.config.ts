@@ -4,9 +4,9 @@ import path from 'path';
 export default defineConfig({
     build: {
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'),
-            name: 'monaco-editor-wrapper',
-            fileName: () => 'index.js',
+            entry: path.resolve(__dirname, 'src/indexAllLanguages.ts'),
+            name: 'monaco-editor-wrapper-languages',
+            fileName: () => 'indexAllLanguages.js',
             formats: ['es']
         },
         outDir: 'bundle',
@@ -19,7 +19,7 @@ export default defineConfig({
             ],
             output: {
                 inlineDynamicImports: true,
-                name: 'monaco-editor-wrapper',
+                name: 'monaco-editor-wrapper-languages',
                 exports: 'named',
                 sourcemap: false,
                 assetFileNames: (assetInfo) => {
