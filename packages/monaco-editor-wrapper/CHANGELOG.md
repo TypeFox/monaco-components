@@ -4,8 +4,8 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
 
 ## [1.3.0]
 
-- Bundling issues with imported workers from wrapper #[14](https://github.com/TypeFox/monaco-components/issue/14)
-  - The new default is that no additional language support is contained. Yuu can use another export to obtain them. The same applies to the bundles:
+- Bundling issues with imported workers from wrapper #[14](https://github.com/TypeFox/monaco-components/issues/14)
+  - The new default is that no additional language support is contained. You can use another export to obtain them. The same applies to the bundles:
     - `monaco-editor-wrapper/allLanguages`
     - `monaco-editor-wrapper/bundle`
     - `monaco-editor-wrapper/bundle/allLanguages`
