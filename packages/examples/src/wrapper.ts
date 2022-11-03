@@ -54,6 +54,12 @@ function startEditor() {
             console.log(s);
             logEditorInfo(client);
             toggleSwapDiffButton(true);
+
+            const vscode = client.getVscode();
+            vscode.commands.getCommands().then((x) => {
+                console.log('Currently registered # of vscode commands: ' + x.length);
+            });
+
         })
         .catch((e: Error) => console.error(e));
 

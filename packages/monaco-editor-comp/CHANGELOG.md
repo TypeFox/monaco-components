@@ -2,7 +2,11 @@
 
 All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
-## [1.3.0]
+## [1.2.0] - 2022-11-03
+
+- Updated `monaco-editor-wrapper` to `1.3.1` and align own version number
+
+## [1.3.0] - 2022-10-28
 
 - Bundling issues with imported workers from wrapper #[14](https://github.com/TypeFox/monaco-components/issues/14)
   - The new default is that no additional language support is contained. You can use another export to obtain them. The same applies to the bundles:
@@ -10,11 +14,11 @@ All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/pac
     - `monaco-editor-comp/bundle`
     - `monaco-editor-comp/bundle/allLanguages`
 
-## [1.2.0]
+## [1.2.0] - 2022-09-22
 
 - Updated `monaco-editor-wrapper` to `1.2.0` and align own version number
 
-## [1.0.0]
+## [1.0.0] - 2022-09-20
 
 - Separated `monaco-editor-wrapper` from `monaco-editor-comp`
 

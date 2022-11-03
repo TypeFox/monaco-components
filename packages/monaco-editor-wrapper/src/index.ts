@@ -10,6 +10,8 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standalon
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 
+import * as vscode from 'vscode';
+
 import { getMonacoCss } from './generated/css.js';
 import { getCodiconTtf } from './generated/ttf.js';
 
@@ -227,6 +229,10 @@ export class MonacoEditorLanguageClientWrapper {
 
     getMonaco() {
         return monaco;
+    }
+
+    getVscode() {
+        return vscode;
     }
 
     getEditor(): monaco.editor.IStandaloneCodeEditor | undefined {
