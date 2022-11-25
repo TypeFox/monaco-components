@@ -31,9 +31,8 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 const client = new MonacoEditorLanguageClientWrapper();
 
-// helper functions for adding Codicon TTF to document and monaco styles to head
+// helper functions for adding monaco styles with embedded codicon TTF
 MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-MonacoEditorLanguageClientWrapper.addCodiconTtf();
 
 const client = new MonacoEditorLanguageClientWrapper();
 const editorConfig = client.getEditorConfig();
@@ -59,9 +58,8 @@ import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 const client = new MonacoEditorLanguageClientWrapper();
 
-// helper functions for adding Codicon TTF to document and monaco styles to head
+// helper functions for adding monaco styles with embedded codicon TTF
 MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-MonacoEditorLanguageClientWrapper.addCodiconTtf();
 
 const editorConfig = client.getEditorConfig();
 editorConfig.setMainLanguageId('plaintext');

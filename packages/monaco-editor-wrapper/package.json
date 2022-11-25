@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -76,17 +76,16 @@
   "scripts": {
     "clean": "npx shx rm -rf ./dist ./build/dist ./bundle ./src/generated tsconfig.tsbuildinfo",
     "lint": "eslint src --ext .ts",
-    "copy:ttf": "npx shx mkdir -p ./dist/assets && npx shx cp -f ../../node_modules/monaco-editor/min/vs/base/browser/ui/codicons/codicon/codicon.ttf ./dist/assets",
     "create:assets": "tsc -p ./build && node ./build/dist/buildAssets.js",
     "compile": "npm run create:assets && tsc",
     "build:bundle:main": "npx shx rm -rf bundle/generated && vite --config vite.bundle.config.ts build",
     "build:bundle:languages": "vite --config vite.languages.config.ts build",
     "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
-    "build": "npm run clean && npm run compile && npm run copy:ttf && npm run build:bundle"
+    "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "volta": {
-    "node": "16.18.0",
-    "npm": "8.19.2"
+    "node": "16.18.1",
+    "npm": "8.19.3"
   },
   "dependencies": {
     "@types/css-font-loading-module": "^0.0.7",
@@ -94,7 +93,7 @@
     "vscode-ws-jsonrpc": "2.0.0",
     "vscode-languageserver-protocol": "3.17.2",
     "vscode": "npm:@codingame/monaco-vscode-api@1.69.12",
-    "normalize-url": "7.2.0"
+    "normalize-url": "^8.0.0"
   },
   "devDependencies": {
     "@types/glob-to-regexp": "0.4.1",
