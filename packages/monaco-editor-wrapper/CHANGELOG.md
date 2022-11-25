@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.3.2] - 2022-11-25
+
+- Merged css and ttf helper functions. Now ttf is included in css removing unknown path errors.
+
 ## [1.3.1] - 2022-11-03
 
 - Added get function to access `monaco-vscode-api` via `getVscode()`

@@ -2,7 +2,11 @@
 
 All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
-## [1.2.0] - 2022-11-03
+## [1.3.2] - 2022-11-25
+
+- Updated `monaco-editor-wrapper` to `1.3.2` and align own version number
+
+## [1.3.1] - 2022-11-03
 
 - Updated `monaco-editor-wrapper` to `1.3.1` and align own version number
 
