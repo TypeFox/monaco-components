@@ -13,7 +13,6 @@ import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
 
 import { getMonacoCss } from './generated/css.js';
-import { getCodiconTtf } from './generated/ttf.js';
 
 import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports, MessageWriter, MessageReader } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
@@ -565,18 +564,6 @@ export class MonacoEditorLanguageClientWrapper {
         style.id = idOfStyleElement;
         style.innerHTML = getMonacoCss();
         document.head.appendChild(style);
-    }
-
-    static addCodiconTtf(): void {
-        const ttf = getCodiconTtf();
-        const codicon = new FontFace('Codicon', `url(${ttf})`);
-        codicon.load().then(l => {
-            document.fonts.add(l);
-            document.body.style.fontFamily = '"Codicon", Arial';
-            console.log('Loaded Codicon TTF font');
-        }).catch((e: Error) => {
-            throw e;
-        });
     }
 
 }

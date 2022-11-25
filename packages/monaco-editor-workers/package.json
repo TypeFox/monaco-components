@@ -67,8 +67,8 @@
     "build": "npm run clean && npm run compile && npm run build:workers:vite"
   },
   "volta": {
-    "node": "16.18.0",
-    "npm": "8.19.2"
+    "node": "16.18.1",
+    "npm": "8.19.3"
   },
   "devDependencies": {
     "monaco-editor": "0.34.1"

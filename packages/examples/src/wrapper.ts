@@ -3,9 +3,8 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers'
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver/browser.js';
 
-// helper functions for adding Codicon TTF to document and monaco styles to head
+// helper functions for adding monaco styles with embedded codicon TTF
 MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-MonacoEditorLanguageClientWrapper.addCodiconTtf();
 const client = new MonacoEditorLanguageClientWrapper();
 
 const languageId = 'plaintext';
