@@ -5,11 +5,12 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                monacoEditorWrapper: path.resolve(__dirname, '/packages/examples/wrapper.html'),
-                monacoEditorComp: path.resolve(__dirname, '/packages/examples/comp.html'),
-                monacoEditorCompAdvanced: path.resolve(__dirname, '/packages/examples/comp-adv.html'),
-                monacoEditorWorkers: path.resolve(__dirname, '/packages/examples/workers.html'),
-                verifyDirect: path.resolve(__dirname, '/packages/examples/verify_wrapper.html'),
+                wrapper: path.resolve(__dirname, '/packages/examples/wrapper.html'),
+                wrapperTs: path.resolve(__dirname, '/packages/examples/wrapper_ts.html'),
+                comp: path.resolve(__dirname, '/packages/examples/comp.html'),
+                compAdvanced: path.resolve(__dirname, '/packages/examples/comp-adv.html'),
+                workers: path.resolve(__dirname, '/packages/examples/workers.html'),
+                verifyWrapper: path.resolve(__dirname, '/packages/examples/verify_wrapper.html'),
                 verifyComp: path.resolve(__dirname, '/packages/examples/verify_comp.html'),
                 verifyCompLc: path.resolve(__dirname, '/packages/examples/verify_comp_lc.html')
             }

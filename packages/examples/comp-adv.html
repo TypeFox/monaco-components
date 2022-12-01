@@ -17,7 +17,7 @@
     <script type="module">
         import { buildWorkerDefinition } from "../monaco-editor-workers/src/index.ts";
         buildWorkerDefinition('../monaco-editor-workers/dist/workers', import.meta.url, false);
-        import "../monaco-editor-comp/src/index.ts";
+        import "../monaco-editor-comp/src/indexAllLanguages.ts";
     </script>
     <div style="height: 33vh;">
     <monaco-editor-comp enableInlineConfig useDiffEditor id="42"

@@ -24,6 +24,7 @@ export class MonacoEditorWebComponent extends LitElement {
     @property({ reflect: true }) modifiedCode = '';
     @property({ reflect: true }) modifiedLanguageId = 'javascript';
     @property({ reflect: true }) theme = 'vs-light';
+    @property({ type: Boolean, reflect: true }) automaticLayout = true;
 
     @property({ type: Boolean, reflect: true }) enableInlineConfig = false;
     @property({ type: Boolean, reflect: true }) useDiffEditor = false;
@@ -77,6 +78,10 @@ export class MonacoEditorWebComponent extends LitElement {
 
     setTheme(theme: string): void {
         this.theme = theme;
+    }
+
+    setAutomaticLayout(automaticLayout: boolean): void {
+        this.automaticLayout = automaticLayout;
     }
 
     setUseLanguageClient(useLanguageClient: boolean) {
@@ -173,6 +178,7 @@ export class MonacoEditorWebComponent extends LitElement {
             wrapperConfig.setDiffLanguageId(this.modifiedLanguageId);
         }
         wrapperConfig.setTheme(this.theme);
+        wrapperConfig.setAutomaticLayout(this.automaticLayout);
         wrapperConfig.setMonacoEditorOptions(this.monacoEditorOptions);
 
         wrapperConfig.setUseLanguageClient(this.useLanguageClient === true);
