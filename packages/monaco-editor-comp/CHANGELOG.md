@@ -2,6 +2,12 @@
 
 All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
+## [1.4.0] - 2022-12-01
+
+- `automaticLayout` is configured as default
+- Fixed full configuration of editor and diff editor via `monacoEditorOptions` and `monacoDiffEditorOptions`
+- Changed the compile target and module to ES2022.
+
 ## [1.3.2] - 2022-11-25
 
 - Updated `monaco-editor-wrapper` to `1.3.2` and align own version number

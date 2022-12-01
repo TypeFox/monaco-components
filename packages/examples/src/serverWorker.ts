@@ -1,6 +1,6 @@
 import { createConnection, BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver/browser.js';
 
-import { Color, ColorInformation, Range, InitializeParams, InitializeResult, ServerCapabilities, TextDocuments, ColorPresentation, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver';
+import { Color, ColorInformation, Range, InitializeResult, ServerCapabilities, TextDocuments, ColorPresentation, TextEdit, TextDocumentIdentifier } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 // This is an example copied as is from here:
@@ -19,7 +19,7 @@ const connection = createConnection(messageReader, messageWriter);
 
 /* from here on, all code is non-browser specific and could be shared with a regular extension */
 
-connection.onInitialize((_params: InitializeParams): InitializeResult => {
+connection.onInitialize((): InitializeResult => {
     const capabilities: ServerCapabilities = {
         colorProvider: {} // provide a color providr
     };

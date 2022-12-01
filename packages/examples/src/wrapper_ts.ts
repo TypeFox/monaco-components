@@ -1,19 +1,18 @@
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { monaco, vscode, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver/browser.js';
+import { monaco, vscode, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper/allLanguages';
 
 // helper functions for adding monaco styles with embedded codicon TTF
 MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
 const client = new MonacoEditorLanguageClientWrapper();
 
-const languageId = 'plaintext';
-let codeMain = `#ff0000 (red)
-#00ff00 (green)
-#0000ff (blue)`;
-let codeDiff = `#ffff00 (yellow)
-#00ff00 (green)
-#0000ff (blue)`;
+const languageId = 'typescript';
+let codeMain = `function sayHello(): string {
+    return "Hello";
+};`;
+let codeDiff = `function sayGoodbye(): string {
+    return "Goodbye";
+};`;
 let toggleDiff = true;
 
 function startEditor() {
@@ -23,40 +22,19 @@ function startEditor() {
     }
 
     const editorConfig = client.getEditorConfig();
-    editorConfig.setLanguageExtensionConfig({
-        id: 'plaintext',
-        extensions: ['.txt'],
-        aliases: ['PLAINTEXT', 'plaintext'],
-        mimetypes: ['text/plain']
-    });
     editorConfig.setMainLanguageId(languageId);
     editorConfig.setMainCode(codeMain);
     editorConfig.setTheme('vs-dark');
 
-    editorConfig.setUseLanguageClient(true);
-    editorConfig.setUseWebSocket(false);
     editorConfig.setMonacoEditorOptions({
         glyphMargin: true,
         guides: {
             bracketPairs: true
         },
-        lineHeight: 30,
         lightbulb: {
             enabled: true
         },
     });
-    const workerURL = new URL('./src/serverWorker.ts', window.location.href).href;
-    console.log(workerURL);
-
-    const lsWorker = new Worker(workerURL, {
-        type: 'module',
-        name: 'LS'
-    });
-
-    // test if external creation works
-    const reader = new BrowserMessageReader(lsWorker);
-    const writer = new BrowserMessageWriter(lsWorker);
-    client.setWorker(lsWorker, { reader: reader, writer: writer });
 
     client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => {
@@ -67,19 +45,8 @@ function startEditor() {
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
             });
-
         })
         .catch((e: Error) => console.error(e));
-
-    // provoke a too early dispose
-    setTimeout(() => {
-        client.dispose()
-            .then((s: unknown) => console.log(s))
-            .catch((e: Error) => {
-                console.log('The next error is expected behaviour as it was provoked:');
-                console.error(e);
-            });
-    }, 10);
 }
 
 function swapEditors() {

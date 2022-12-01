@@ -1,4 +1,4 @@
-import { MonacoEditorWebComponent } from 'monaco-editor-comp';
+import { MonacoEditorWebComponent } from 'monaco-editor-comp/allLanguages';
 
 const monComps = document.querySelectorAll('monaco-editor-comp');
 

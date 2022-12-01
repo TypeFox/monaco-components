@@ -34,6 +34,11 @@ export type WorkerConfigOptions = {
     workerName?: string;
 }
 
+export type LanguageDescription = {
+    code: string;
+    languageId: string;
+}
+
 /**
  * This is derived from:
  * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
@@ -51,16 +56,13 @@ export type LanguageExtensionConfig = {
 export class CodeEditorConfig {
 
     private useDiffEditor = false;
-    private codeOriginal: [string, string] = ['', 'javascript'];
-    private codeModified: [string, string] = ['', 'javascript'];
+    private codeOriginal: LanguageDescription = { code: '', languageId: 'javascript' };
+    private codeModified: LanguageDescription = { code: '', languageId: 'javascript' };
     private languageExtensionConfig: LanguageExtensionConfig | undefined;
     private theme = 'vs-light';
-    private monacoEditorOptions: Record<string, unknown> = {
-        readOnly: false
-    };
-    private monacoDiffEditorOptions: Record<string, unknown> = {
-        readOnly: false
-    };
+    private automaticLayout = true;
+    private monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions = {};
+    private monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions = {};
 
     // languageclient related configuration
     private useLanguageClient = false;
@@ -104,35 +106,35 @@ export class CodeEditorConfig {
     }
 
     getMainLanguageId(): string {
-        return this.codeOriginal[1];
+        return this.codeOriginal.languageId;
     }
 
     setMainLanguageId(languageId: string): void {
-        this.codeOriginal[1] = languageId;
+        this.codeOriginal.languageId = languageId;
     }
 
     getMainCode(): string {
-        return this.codeOriginal[0];
+        return this.codeOriginal.code;
     }
 
     setMainCode(code: string): void {
-        this.codeOriginal[0] = code;
+        this.codeOriginal.code = code;
     }
 
     getDiffLanguageId(): string {
-        return this.codeModified[1];
+        return this.codeModified.languageId;
     }
 
     setDiffLanguageId(languageId: string): void {
-        this.codeModified[1] = languageId;
+        this.codeModified.languageId = languageId;
     }
 
     getDiffCode(): string {
-        return this.codeModified[0];
+        return this.codeModified.code;
     }
 
     setDiffCode(code: string): void {
-        this.codeModified[0] = code;
+        this.codeModified.code = code;
     }
 
     setLanguageExtensionConfig(languageExtensionConfig: LanguageExtensionConfig): void {
@@ -143,19 +145,27 @@ export class CodeEditorConfig {
         return this.languageExtensionConfig;
     }
 
-    getMonacoEditorOptions(): monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions {
+    isAutomaticLayout() {
+        return this.automaticLayout;
+    }
+
+    setAutomaticLayout(automaticLayout: boolean) {
+        this.automaticLayout = automaticLayout;
+    }
+
+    getMonacoEditorOptions() {
         return this.monacoEditorOptions;
     }
 
-    setMonacoEditorOptions(monacoEditorOptions: Record<string, unknown>): void {
+    setMonacoEditorOptions(monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions): void {
         this.monacoEditorOptions = monacoEditorOptions;
     }
 
-    getMonacoDiffEditorOptions(): monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions {
+    getMonacoDiffEditorOptions() {
         return this.monacoDiffEditorOptions;
     }
 
-    setMonacoDiffEditorOptions(monacoDiffEditorOptions: Record<string, unknown>): void {
+    setMonacoDiffEditorOptions(monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions): void {
         this.monacoDiffEditorOptions = monacoDiffEditorOptions;
     }
 
@@ -226,14 +236,6 @@ export class MonacoEditorLanguageClientWrapper {
         return this.editorConfig;
     }
 
-    getMonaco() {
-        return monaco;
-    }
-
-    getVscode() {
-        return vscode;
-    }
-
     getEditor(): monaco.editor.IStandaloneCodeEditor | undefined {
         return this.editor;
     }
@@ -286,20 +288,20 @@ export class MonacoEditorLanguageClientWrapper {
         this.updateMonacoConfig();
         if (this.editorConfig.isUseDiffEditor()) {
             this.disposeDiffEditor();
-            this.diffEditor = monaco.editor.createDiffEditor(container!);
-            this.updateDiffModels();
-
             const options = this.editorConfig.getMonacoDiffEditorOptions();
-            this.diffEditor.updateOptions(options);
-            this.diffEditor.layout();
+            if (options.automaticLayout === undefined) {
+                options.automaticLayout = this.editorConfig.isAutomaticLayout();
+            }
+            this.diffEditor = monaco.editor.createDiffEditor(container!, options);
+            this.updateDiffModels();
         } else {
             this.disposeEditor();
-            this.editor = monaco.editor.create(container!);
-            this.updateMainModel();
-
             const options = this.editorConfig.getMonacoEditorOptions();
-            this.editor.updateOptions(options);
-            this.editor.layout();
+            if (options.automaticLayout === undefined) {
+                options.automaticLayout = this.editorConfig.isAutomaticLayout();
+            }
+            this.editor = monaco.editor.create(container!, options);
+            this.updateMainModel();
         }
 
         if (this.editorConfig.isUseLanguageClient()) {
@@ -567,3 +569,5 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
 }
+
+export { monaco, vscode };
