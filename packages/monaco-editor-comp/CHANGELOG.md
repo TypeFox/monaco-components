@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-comp](https://www.npmjs.com/package/monaco-editor-comp) are documented in this file.
 
+## [1.4.1] - 2022-12-01
+
+- Update to `monaco-editor-wrapper@1.4.1` and align own version number
+
 ## [1.4.0] - 2022-12-01
 
 - `automaticLayout` is configured as default

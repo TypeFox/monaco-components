@@ -2,12 +2,18 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.4.1] - 2022-12-01
+
+- Update to `monaco-languageclient@4.0.3`
+
 ## [1.4.0] - 2022-12-01
 
 - Export `vscode` (monaco-vscode-api) and `monaco` and remove getters
-- automaticLayout is configured as default
+- `automaticLayout` is configured as default
 - Fixed full configuration of editor and diff editor via `monacoEditorOptions` and `monacoDiffEditorOptions`
 - Changed the compile target and module to ES2022.
+- Update to `monaco-languageclient@4.0.2`
+- Update to `vscode-ws-jsonrpc@2.0.1`
 
 ## [1.3.2] - 2022-11-25
 
