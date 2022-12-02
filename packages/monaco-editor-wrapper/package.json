@@ -35,10 +35,6 @@
     "./monaco-css": {
       "types": "./dist/generated/css.d.ts",
       "default": "./dist/generated/css.js"
-    },
-    "./monaco-ttf": {
-      "types": "./dist/generated/ttf.d.ts",
-      "default": "./dist/generated/ttf.js"
     }
   },
   "typesVersions": {
@@ -60,9 +56,6 @@
       ],
       "monaco-css": [
         "dist/generated/css"
-      ],
-      "monaco-ttf": [
-        "dist/generated/ttf"
       ]
     }
   },
