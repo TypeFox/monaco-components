@@ -1,6 +1,6 @@
 {
   "name": "@typefox/monaco-editor-react",
-  "version": "1.0.0-next.1",
+  "version": "1.0.0-next.2",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -16,17 +16,25 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./bundle": {
+      "types": "./dist/index.d.ts",
+      "default": "./bundle/index.js"
     }
   },
   "typesVersions": {
     "*": {
       ".": [
         "dist/index"
+      ],
+      "bundle": [
+        "dist/index"
       ]
     }
   },
   "files": [
     "dist",
+    "bundle",
     "src",
     "LICENSE",
     "README.md"
@@ -36,7 +44,8 @@
     "lint": "eslint src --ext .tsx",
     "compile": "tsc",
     "watch": "tsc -w",
-    "build": "npm run clean && npm run compile",
+    "build:bundle:main": "vite --config vite.bundle.config.ts build",
+    "build": "npm run clean && npm run compile && npm run build:bundle:main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "volta": {
