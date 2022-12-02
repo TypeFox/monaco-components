@@ -1,6 +1,6 @@
 {
-  "name": "monaco-editor-react",
-  "version": "1.0.0",
+  "name": "@typefox/monaco-editor-react",
+  "version": "1.0.0-next.1",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -27,13 +27,15 @@
   },
   "files": [
     "dist",
-    "src/*.tsx",
+    "src",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
     "clean": "npx shx rm -rf ./dist tsconfig.tsbuildinfo",
+    "lint": "eslint src --ext .tsx",
     "compile": "tsc",
+    "watch": "tsc -w",
     "build": "npm run clean && npm run compile",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -48,7 +50,8 @@
     "react-dom": "~18.2.0"
   },
   "devDependencies": {
-    "@types/react": "~18.0.25"
+    "@types/react": "~18.0.25",
+    "@types/react-dom": "~18.0.9"
   },
   "repository": {
     "type": "git",

@@ -3,19 +3,27 @@
     "editor.formatOnSave": false,
     "workbench.editor.revealIfOpen": true,
     "[javascript]": {
-        "editor.formatOnSave": true
+      "editor.formatOnSave": true
+    },
+    "[typescriptreact]": {
+      "editor.formatOnSave": true
     },
     "[typescript]": {
-        "editor.formatOnSave": true
+      "editor.formatOnSave": true
     },
     "[yml]": {
       "editor.formatOnSave": true
     },
+    "eslint.codeAction.showDocumentation": {
+      "enable": true
+    },
+    "eslint.format.enable": true,
     "eslint.validate": [
-        "javascript",
-        "typescript"
+      "javascript",
+      "typescript",
+      "typescriptreact"
     ],
     "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features"
+      "editor.defaultFormatter": "vscode.json-language-features"
     }
 }

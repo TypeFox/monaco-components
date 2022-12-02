@@ -1,6 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { monaco, MonacoEditorLanguageClientWrapper, vscode } from 'monaco-editor-wrapper';
-import type { MonacoLanguageClient } from 'monaco-languageclient';
+import { LanguageExtensionConfig, monaco, MonacoEditorLanguageClientWrapper, vscode } from 'monaco-editor-wrapper';
 
 export interface MonacoEditorProps {
     languageId: string;
@@ -10,6 +9,11 @@ export interface MonacoEditorProps {
     webworkerUri?: string;
     readOnly?: boolean;
     syntax: monaco.languages.IMonarchLanguage;
+    languageExtensionConfig?: LanguageExtensionConfig;
+    theme?: string,
+    workerName?: string,
+    workerType?: WorkerType,
+    rawMonacoEditorOptions?: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions,
     onTextChanged?: (text: string, isDirty: boolean) => void;
     onLoading?: () => void;
     onLoad?: () => void;
@@ -17,7 +21,7 @@ export interface MonacoEditorProps {
 
 MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
 
-export class MonacoEditor extends React.Component<MonacoEditorProps> {
+export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     private editor: MonacoEditorLanguageClientWrapper | null = null;
 
     private containerElement?: HTMLDivElement;
@@ -36,8 +40,7 @@ export class MonacoEditor extends React.Component<MonacoEditorProps> {
     }
 
     componentDidUpdate(prevProps: MonacoEditorProps) {
-        const { className, text, webworkerUri, syntax, languageId } =
-            this.props;
+        const { className, text, webworkerUri, syntax, languageId } = this.props;
 
         const { editor } = this;
 
@@ -96,65 +99,55 @@ export class MonacoEditor extends React.Component<MonacoEditorProps> {
             syntax,
             languageId,
             webworkerUri,
+            rawMonacoEditorOptions,
+            workerName,
+            workerType,
+            theme,
+            languageExtensionConfig,
             onTextChanged,
             onLoading,
             onLoad,
-            readOnly = false,
         } = this.props;
+
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
             this.editor = new MonacoEditorLanguageClientWrapper('42');
             const editorConfig = this.editor.getEditorConfig();
             editorConfig.setMainLanguageId(languageId);
             editorConfig.setMonarchTokensProvider(syntax);
+            if (languageExtensionConfig) {
+                editorConfig.setLanguageExtensionConfig(languageExtensionConfig);
+            }
             editorConfig.setMainCode(text);
             editorConfig.setUseWebSocket(false);
             editorConfig.setUseLanguageClient(false);
-            editorConfig.setTheme('vs-dark');
+            editorConfig.setTheme(theme ?? 'vs-dark');
+            if (rawMonacoEditorOptions) {
+                editorConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
+            }
+            else {
+                editorConfig.setMonacoEditorOptions({});
+            }
 
             if (webworkerUri) {
                 editorConfig.setUseLanguageClient(true);
                 const workerURL = new URL(webworkerUri, window.origin);
                 const lsWorker = new Worker(workerURL.href, {
-                    type: 'classic',
-                    name: 'LS',
+                    type: workerType ?? 'classic',
+                    name: workerName ?? 'LanguageServerWorker',
                 });
                 this.editor.setWorker(lsWorker);
             }
 
-            editorConfig.setMonacoEditorOptions({
-                readOnly
-            });
-
             this.isStarting = this.editor.startEditor(this.containerElement);
             await this.isStarting;
-
-            if (webworkerUri) {
-                const languageClient: MonacoLanguageClient =
-                    // eslint-disable-next-line dot-notation
-                    this.editor['languageClient'];
-                this.isStarting = new Promise((resolve, reject) => {
-                    const timeout = setTimeout(() => reject(), 20_000);
-                    const interval = setInterval(async () => {
-                        const ready = (await languageClient.sendRequest(
-                            'fullInit'
-                        )) as boolean;
-                        if (ready) {
-                            clearTimeout(timeout);
-                            clearInterval(interval);
-                            resolve('initialized');
-                        }
-                    }, 100);
-                });
-            }
 
             onLoading && onLoading();
             onLoad && this.isStarting.then(() => onLoad());
 
             if (onTextChanged) {
-                const innerEditor: monaco.editor.IStandaloneCodeEditor =
-                    // eslint-disable-next-line dot-notation
-                    this.editor['editor'];
+                // eslint-disable-next-line dot-notation
+                const innerEditor: monaco.editor.IStandaloneCodeEditor = this.editor['editor'];
                 const model = innerEditor.getModel();
                 if (model) {
                     this._subscription = model.onDidChangeContent(() => {
@@ -176,9 +169,8 @@ export class MonacoEditor extends React.Component<MonacoEditorProps> {
 
     getText(): string {
         try {
-            const innerEditor: monaco.editor.IStandaloneCodeEditor =
-                // eslint-disable-next-line dot-notation
-                this.editor!['editor'];
+            // eslint-disable-next-line dot-notation
+            const innerEditor: monaco.editor.IStandaloneCodeEditor = this.editor!['editor'];
             const model = innerEditor.getModel();
             return model?.getValue() ?? '';
         } catch {
