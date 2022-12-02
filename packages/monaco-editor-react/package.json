@@ -37,6 +37,8 @@
     "compile": "tsc",
     "watch": "tsc -w",
     "build": "npm run clean && npm run compile",
+    "build:storybook": "build-storybook",
+    "start": "start-storybook -p 6006",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "volta": {
@@ -50,8 +52,17 @@
     "react-dom": "~18.2.0"
   },
   "devDependencies": {
+    "@babel/core": "~7.20.5",
+    "@storybook/addon-actions": "~6.5.13",
+    "@storybook/addon-essentials": "~6.5.13",
+    "@storybook/addon-interactions": "~6.5.13",
+    "@storybook/addon-links": "~6.5.13",
+    "@storybook/builder-vite": "~0.2.5",
+    "@storybook/react": "~6.5.13",
+    "@storybook/testing-library": "~0.0.13",
     "@types/react": "~18.0.25",
-    "@types/react-dom": "~18.0.9"
+    "@types/react-dom": "~18.0.9",
+    "babel-loader": "~9.1.0"
   },
   "repository": {
     "type": "git",
