@@ -1,0 +1,64 @@
+{
+  "name": "monaco-editor-react",
+  "version": "1.0.0",
+  "license": "MIT",
+  "description": "React component for Monaco-Editor and Monaco Languageclient",
+  "keywords": [
+    "monaco-editor",
+    "monaco-languageclient",
+    "typescript",
+    "react"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/index"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "src/*.tsx",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "npx shx rm -rf ./dist tsconfig.tsbuildinfo",
+    "compile": "tsc",
+    "build": "npm run clean && npm run compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "volta": {
+    "node": "16.18.1",
+    "npm": "8.19.3"
+  },
+  "dependencies": {
+    "monaco-editor-workers": "0.34.2",
+    "monaco-editor-wrapper": "1.4.1",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "~18.0.25"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-react"
+  },
+  "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-react/README.md",
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
+  }
+}

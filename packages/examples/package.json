@@ -5,6 +5,7 @@
   "devDependencies": {
     "monaco-editor-wrapper": "../monaco-editor-wrapper",
     "monaco-editor-comp": "../monaco-editor-comp",
+    "monaco-editor-react": "../monaco-editor-react",
     "monaco-editor-workers": "../monaco-editor-workers",
     "request-light": "~0.6.0",
     "vscode-uri": "3.0.6",

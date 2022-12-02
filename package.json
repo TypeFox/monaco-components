@@ -33,6 +33,7 @@
   "workspaces": [
     "packages/monaco-editor-wrapper",
     "packages/monaco-editor-comp",
+    "packages/monaco-editor-react",
     "packages/monaco-editor-workers",
     "packages/examples"
   ]
