@@ -18,9 +18,7 @@ const languageExtensionConfig = {
 const rawMonacoEditorOptions = {
     lineHeight: 24
 };
-let comp: JSX.Element | undefined = undefined;
-
-comp = <MonacoEditorReactComp
+const comp = <MonacoEditorReactComp
     languageId={languageId}
     text={codeMain}
     rawMonacoEditorOptions={rawMonacoEditorOptions}

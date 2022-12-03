@@ -1,6 +1,6 @@
 {
   "name": "@typefox/monaco-editor-react",
-  "version": "1.0.0-next.2",
+  "version": "1.0.0-next.3",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -17,9 +17,17 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./dist/indexAllLanguages.js"
+    },
     "./bundle": {
       "types": "./dist/index.d.ts",
       "default": "./bundle/index.js"
+    },
+    "./bundle/allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./bundle/indexAllLanguages.js"
     }
   },
   "typesVersions": {
@@ -27,8 +35,14 @@
       ".": [
         "dist/index"
       ],
+      "allLanguages": [
+        "dist/indexAllLanguages"
+      ],
       "bundle": [
         "dist/index"
+      ],
+      "bundle/allLanguages": [
+        "dist/indexAllLanguages"
       ]
     }
   },
@@ -45,7 +59,9 @@
     "compile": "tsc",
     "watch": "tsc -w",
     "build:bundle:main": "vite --config vite.bundle.config.ts build",
-    "build": "npm run clean && npm run compile && npm run build:bundle:main",
+    "build:bundle:languages": "vite --config vite.languages.config.ts build",
+    "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
+    "build": "npm run clean && npm run compile && npm run build:bundle",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "volta": {

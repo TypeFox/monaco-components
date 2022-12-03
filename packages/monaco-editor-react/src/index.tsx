@@ -1,7 +1,8 @@
 import React, { CSSProperties } from 'react';
 import { LanguageExtensionConfig, monaco, MonacoEditorLanguageClientWrapper, vscode } from 'monaco-editor-wrapper';
+import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
-export interface MonacoEditorProps {
+export type MonacoEditorProps = {
     languageId: string;
     text: string;
     style?: CSSProperties;
@@ -198,3 +199,12 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         );
     }
 }
+
+export function addMonacoStyles(idOfStyleElement: string) {
+    const style = document.createElement('style');
+    style.id = idOfStyleElement;
+    style.innerHTML = getMonacoCss();
+    document.head.appendChild(style);
+}
+
+export { monaco, vscode };
