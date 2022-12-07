@@ -50,8 +50,8 @@ const comp = <MonacoEditorReactComp
 You can also pass in custom syntax highlighting using the Monarch language. Here's an example for a simple statemachine language.
 
 ```ts
-// helps to bring in Monaco from the wrapper, but not required
-import { monaco } from 'monaco-editor-wrapper';
+// helps to bring in Monaco from the react component, but not required
+import { monaco } from 'monaco-editor-react';
 
 const syntaxHighlighting = {
   keywords: [
