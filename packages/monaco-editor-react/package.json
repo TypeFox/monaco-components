@@ -1,0 +1,92 @@
+{
+  "name": "@typefox/monaco-editor-react",
+  "version": "1.0.0-next.3",
+  "license": "MIT",
+  "description": "React component for Monaco-Editor and Monaco Languageclient",
+  "keywords": [
+    "monaco-editor",
+    "monaco-languageclient",
+    "typescript",
+    "react"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./dist/indexAllLanguages.js"
+    },
+    "./bundle": {
+      "types": "./dist/index.d.ts",
+      "default": "./bundle/index.js"
+    },
+    "./bundle/allLanguages": {
+      "types": "./dist/indexAllLanguages.d.ts",
+      "default": "./bundle/indexAllLanguages.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      ".": [
+        "dist/index"
+      ],
+      "allLanguages": [
+        "dist/indexAllLanguages"
+      ],
+      "bundle": [
+        "dist/index"
+      ],
+      "bundle/allLanguages": [
+        "dist/indexAllLanguages"
+      ]
+    }
+  },
+  "files": [
+    "dist",
+    "bundle",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "clean": "npx shx rm -rf ./dist tsconfig.tsbuildinfo",
+    "lint": "eslint src --ext .tsx",
+    "compile": "tsc",
+    "watch": "tsc -w",
+    "build:bundle:main": "vite --config vite.bundle.config.ts build",
+    "build:bundle:languages": "vite --config vite.languages.config.ts build",
+    "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
+    "build": "npm run clean && npm run compile && npm run build:bundle",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "volta": {
+    "node": "16.18.1",
+    "npm": "8.19.3"
+  },
+  "dependencies": {
+    "monaco-editor-workers": "0.34.2",
+    "monaco-editor-wrapper": "1.4.1",
+    "react": "~18.2.0",
+    "react-dom": "~18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "~18.0.25",
+    "@types/react-dom": "~18.0.9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TypeFox/monaco-components",
+    "directory": "packages/monaco-editor-react"
+  },
+  "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-react/README.md",
+  "bugs": "https://github.com/TypeFox/monaco-components/issues",
+  "author": {
+    "name": "TypeFox",
+    "url": "https://www.typefox.io"
+  }
+}

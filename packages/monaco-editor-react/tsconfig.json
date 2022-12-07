@@ -4,21 +4,15 @@
     "rootDir": "src",
     "outDir": "dist",
     "declarationDir": "dist",
+    "composite": true,
     "jsx": "react"
   },
-  "references": [{
-    "path": "../monaco-editor-wrapper"
-  },
-  {
-    "path": "../monaco-editor-comp"
-  },
-  {
-    "path": "../monaco-editor-workers"
-  }],
   "include": [
     "src/**/*.ts",
+    "src/**/*.tsx",
   ],
   "exclude": [
-    "dist",
+    "src/stories/**/*",
+    "dist"
   ]
 }
