@@ -31,9 +31,6 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 const client = new MonacoEditorLanguageClientWrapper();
 
-// helper functions for adding monaco styles with embedded codicon TTF
-MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-
 const client = new MonacoEditorLanguageClientWrapper();
 const editorConfig = client.getEditorConfig();
 editorConfig.setMainLanguageId('javascript');
@@ -57,9 +54,6 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 const client = new MonacoEditorLanguageClientWrapper();
-
-// helper functions for adding monaco styles with embedded codicon TTF
-MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
 
 const editorConfig = client.getEditorConfig();
 editorConfig.setMainLanguageId('plaintext');

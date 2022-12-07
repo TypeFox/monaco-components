@@ -28,10 +28,7 @@ You can import the monaco react component for easy use in an existing React proj
 ```ts
 import { MonacoEditorReactComp, addMonacoStyles } from 'monaco-editor-react/allLanguages';
 
-addMonacoStyles('monaco-editor-styles');
-
 const languageId = 'typescript';
-
 const codeMain = `function sayHello(): string {
     return "Hello";
 };`;
@@ -96,6 +93,8 @@ For special cases where you might want the component to be processed in advance,
 ```ts
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
 
+// use this utility funciton to add monaco-editor css/ttf when using the bundle
+addMonacoStyles('monaco-editor-styles');
 ...
 
 const comp = <MonacoEditorReactComp languageId="statemachine" text={codeMain}/>

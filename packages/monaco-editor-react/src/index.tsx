@@ -20,8 +20,6 @@ export type MonacoEditorProps = {
     onLoad?: () => void;
 }
 
-MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-
 export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     private editor: MonacoEditorLanguageClientWrapper | null = null;
 

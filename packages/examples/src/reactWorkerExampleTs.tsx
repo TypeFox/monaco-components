@@ -3,9 +3,7 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers'
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { MonacoEditorReactComp, addMonacoStyles } from 'monaco-editor-react/allLanguages';
-
-addMonacoStyles('monaco-editor-styles');
+import { MonacoEditorReactComp } from 'monaco-editor-react/allLanguages';
 
 const languageId = 'typescript';
 const codeMain = `function sayHello(): string {
