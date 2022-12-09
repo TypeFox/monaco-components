@@ -128,20 +128,14 @@ export class MonacoEditorWebComponent extends LitElement {
         this.themeData = themeData;
     }
 
-    private startEditor(reloadInlineConfig: boolean) {
-        this.restartEditor(reloadInlineConfig);
-        this.registerListeners();
+    setUseDiffEditor(useDiffEditor: boolean) {
+        this.useDiffEditor = useDiffEditor;
     }
 
-    restartEditor(reloadInlineConfig: boolean) {
+    startEditor(reloadInlineConfig: boolean) {
         this.syncPropertiesAndEditorConfig(reloadInlineConfig);
         this.monacoWrapper.startEditor(this.container.value!);
-    }
-
-    swapEditors(options: { useDiffEditor: boolean, reloadInlineConfig: boolean }): void {
-        this.useDiffEditor = options.useDiffEditor;
-        this.syncPropertiesAndEditorConfig(options.reloadInlineConfig);
-        this.monacoWrapper.swapEditors(this.container.value!);
+        this.registerListeners();
     }
 
     updateDiffEditorContent(code: string, languageId: string, modifiedCode: string, modifiedLanguageId: string) {

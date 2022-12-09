@@ -13,7 +13,9 @@ function sleepOne(milliseconds: number) {
     console.log('Hello swap editors!');
 };`);
         comp42.setLanguageId('javascript');
-        comp42.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
+        comp42.setUseDiffEditor(false);
+        comp42.startEditor(false);
+
         const comp43 = monComps[1];
         // ensure base configuration is reloaded
         comp43.loadInlineConfig();
@@ -21,8 +23,7 @@ function sleepOne(milliseconds: number) {
             'text 1234', 'javascript',
             'text 5678', 'javascript'
         );
-
-        comp43.restartEditor(false);
+        comp43.startEditor(false);
 
         const comp44 = monComps[2];
         // ensure base configuration is reloaded
@@ -34,7 +35,8 @@ function sleepOne(milliseconds: number) {
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
         comp44.setTheme('vs-light');
-        comp44.swapEditors({ useDiffEditor: true, reloadInlineConfig: false });
+        comp44.setUseDiffEditor(true);
+        comp44.startEditor(false);
     }, milliseconds);
 }
 // change the editors config, content or swap normal and diff editors after five seconds
@@ -47,7 +49,8 @@ function sleepTwo(milliseconds: number) {
         const comp44 = monComps[2];
         // ensure base configuration is reloaded
         comp44.setTheme('vs-light');
-        comp44.swapEditors({ useDiffEditor: false, reloadInlineConfig: false });
+        comp44.setUseDiffEditor(false);
+        comp44.startEditor(false);
     }, milliseconds);
 }
 sleepTwo(10000);

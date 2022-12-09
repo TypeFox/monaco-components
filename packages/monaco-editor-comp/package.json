@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "license": "MIT",
   "description": "Lit Component for Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -69,7 +69,7 @@
     "npm": "8.19.3"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "1.4.0",
+    "monaco-editor-wrapper": "1.5.0",
     "lit": "~2.4.1"
   },
   "devDependencies": {

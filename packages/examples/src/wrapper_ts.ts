@@ -58,7 +58,7 @@ function swapEditors() {
     editorConfig.setDiffLanguageId(languageId);
     editorConfig.setDiffCode(codeDiff);
 
-    client.swapEditors(document.getElementById('monaco-editor-root') as HTMLElement)
+    client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: string) => {
             toggleDiff = !toggleDiff;
             console.log(s);

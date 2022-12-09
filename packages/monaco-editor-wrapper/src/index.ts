@@ -286,8 +286,12 @@ export class MonacoEditorLanguageClientWrapper {
         this.dispatchEvent = dispatchEvent;
 
         this.updateMonacoConfig();
+
+        // dispose old instances (try both, no need for swap)
+        this.disposeEditor();
+        this.disposeDiffEditor();
+
         if (this.editorConfig.isUseDiffEditor()) {
-            this.disposeDiffEditor();
             const options = this.editorConfig.getMonacoDiffEditorOptions();
             if (options.automaticLayout === undefined) {
                 options.automaticLayout = this.editorConfig.isAutomaticLayout();
@@ -295,7 +299,6 @@ export class MonacoEditorLanguageClientWrapper {
             this.diffEditor = monaco.editor.createDiffEditor(container!, options);
             this.updateDiffModels();
         } else {
-            this.disposeEditor();
             const options = this.editorConfig.getMonacoEditorOptions();
             if (options.automaticLayout === undefined) {
                 options.automaticLayout = this.editorConfig.isAutomaticLayout();
@@ -369,21 +372,6 @@ export class MonacoEditorLanguageClientWrapper {
         else {
             return Promise.reject('Unable to dispose monaco-languageclient: It is not yet started.');
         }
-    }
-
-    swapEditors(container?: HTMLElement, dispatchEvent?: (event: Event) => boolean): Promise<string> {
-        if (this.editorConfig.isUseDiffEditor()) {
-            this.disposeEditor();
-            if (!this.diffEditor) {
-                return this.startEditor(container, dispatchEvent);
-            }
-        } else {
-            this.disposeDiffEditor();
-            if (!this.editor) {
-                return this.startEditor(container, dispatchEvent);
-            }
-        }
-        return Promise.resolve('Nothing to do.');
     }
 
     private updateMainModel(): void {

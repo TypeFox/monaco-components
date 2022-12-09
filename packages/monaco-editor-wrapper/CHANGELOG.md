@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.5.0] - 2022-12-09
+
+- Remove `swapEditors` function. `startEditor` disposes old (diff)editor and starts a freshly configured one.
+
 ## [1.4.1] - 2022-12-01
 
 - Update to `monaco-languageclient@4.0.3`
