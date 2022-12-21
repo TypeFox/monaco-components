@@ -6,6 +6,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 wrapper: path.resolve(__dirname, '/packages/examples/wrapper.html'),
+                wrapperWs: path.resolve(__dirname, '/packages/examples/wrapper_ws.html'),
                 wrapperTs: path.resolve(__dirname, '/packages/examples/wrapper_ts.html'),
                 comp: path.resolve(__dirname, '/packages/examples/comp.html'),
                 compAdvanced: path.resolve(__dirname, '/packages/examples/comp-adv.html'),

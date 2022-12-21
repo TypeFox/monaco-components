@@ -322,12 +322,13 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     dispose(): Promise<string> {
+        this.disposeEditor();
+        this.disposeDiffEditor();
+
         if (this.editorConfig.isUseLanguageClient()) {
             return this.disposeLanguageClient();
         }
         else {
-            this.disposeEditor();
-            this.disposeDiffEditor();
             return Promise.resolve('Monaco editor has been disposed');
         }
     }
@@ -352,17 +353,17 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     public reportStatus() {
-        console.log(`Editor ${this.editor}`);
-        console.log(`DiffEditor ${this.diffEditor}`);
-        console.log(`LanguageClient ${this.languageClient}`);
-        console.log(`Worker ${this.worker}`);
+        const status = [];
+        status.push('Wrapper status:');
+        status.push(`Editor: ${this.editor}`);
+        status.push(`DiffEditor: ${this.diffEditor}`);
+        status.push(`LanguageClient: ${this.languageClient}`);
+        status.push(`Worker: ${this.worker}`);
+        return status;
     }
 
     private async disposeLanguageClient(): Promise<string> {
         if (this.languageClient && this.languageClient.isRunning()) {
-            this.disposeEditor();
-            this.disposeDiffEditor();
-
             return await this.languageClient.dispose()
                 .then(() => {
                     this.worker?.terminate();
