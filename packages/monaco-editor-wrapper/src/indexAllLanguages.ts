@@ -1,8 +1,7 @@
 export type {
     WebSocketConfigOptions,
     WorkerConfigOptions,
-    LanguageExtensionConfig,
-    CommunitcationConfig
+    LanguageExtensionConfig
 } from './index.js';
 
 export {

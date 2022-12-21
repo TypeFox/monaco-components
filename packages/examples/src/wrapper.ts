@@ -62,7 +62,7 @@ function startEditor() {
         .then((s: unknown) => {
             console.log(s);
             logEditorInfo(client);
-            client.getCommunitcationConfig()?.reader?.listen(x => console.log(x));
+            client.getMessageTransports()?.reader?.listen(x => console.log(x));
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);

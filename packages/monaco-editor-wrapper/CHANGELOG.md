@@ -2,6 +2,12 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.6.0] - 2022-12-21
+
+- Fix error in `disposeLanguageClient` preventing proper editor disposal
+- Expose `MessageTransports` configuration for accessing `MessageReader` and `MessageWriter`
+- Polish wrapper examples and add web socket example
+
 ## [1.5.0] - 2022-12-09
 
 - Remove `swapEditors` function. `startEditor` disposes old (diff)editor and starts a freshly configured one.
