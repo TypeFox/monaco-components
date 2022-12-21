@@ -211,7 +211,7 @@ export class CodeEditorConfig {
     }
 }
 
-export type WorkerCommunitcationConfig = {
+export type CommunitcationConfig = {
     reader: MessageReader,
     writer: MessageWriter
 };
@@ -223,7 +223,8 @@ export class MonacoEditorLanguageClientWrapper {
     private editorConfig: CodeEditorConfig = new CodeEditorConfig();
     private languageClient: MonacoLanguageClient | undefined;
     private worker: Worker | undefined;
-    private workerCommunitcationConfig: WorkerCommunitcationConfig | undefined;
+    private communitcationConfig: CommunitcationConfig | undefined;
+
     private dispatchEvent: ((event: Event) => boolean) | undefined;
 
     private id: string;
@@ -264,11 +265,15 @@ export class MonacoEditorLanguageClientWrapper {
         monaco.editor.setTheme(this.editorConfig.getTheme());
     }
 
-    setWorker(worker: Worker, workerCommunitcationConfig?: WorkerCommunitcationConfig) {
+    setWorker(worker: Worker, communitcationConfig?: CommunitcationConfig) {
         this.worker = worker;
-        if (workerCommunitcationConfig) {
-            this.workerCommunitcationConfig = workerCommunitcationConfig;
+        if (communitcationConfig) {
+            this.communitcationConfig = communitcationConfig;
         }
+    }
+
+    getCommunitcationConfig(): CommunitcationConfig | undefined {
+        return this.communitcationConfig;
     }
 
     isStarted(): boolean {
@@ -471,9 +476,6 @@ export class MonacoEditorLanguageClientWrapper {
             return Promise.resolve('monaco-languageclient already running!');
         }
 
-        let reader: WebSocketMessageReader | BrowserMessageReader;
-        let writer: WebSocketMessageWriter | BrowserMessageWriter;
-
         return new Promise((resolve, reject) => {
             if (this.editorConfig.isUseWebSocket()) {
                 const webSocketConfigOptions = lcConfigOptions as WebSocketConfigOptions;
@@ -482,9 +484,11 @@ export class MonacoEditorLanguageClientWrapper {
 
                 webSocket.onopen = () => {
                     const socket = toSocket(webSocket);
-                    const reader = new WebSocketMessageReader(socket);
-                    const writer = new WebSocketMessageWriter(socket);
-                    this.handleLanguageClientStart(reader, writer, resolve, reject);
+                    this.communitcationConfig = {
+                        reader: new WebSocketMessageReader(socket),
+                        writer: new WebSocketMessageWriter(socket)
+                    };
+                    this.handleLanguageClientStart(this.communitcationConfig, resolve, reject);
                 };
             } else {
                 const workerConfigOptions = lcConfigOptions as WorkerConfigOptions;
@@ -494,23 +498,26 @@ export class MonacoEditorLanguageClientWrapper {
                         name: workerConfigOptions.workerName,
                     });
                 }
-                if (this.workerCommunitcationConfig) {
-                    this.handleLanguageClientStart(this.workerCommunitcationConfig.reader, this.workerCommunitcationConfig.writer, resolve, reject);
-                } else {
-                    reader = new BrowserMessageReader(this.worker);
-                    writer = new BrowserMessageWriter(this.worker);
-                    this.handleLanguageClientStart(reader, writer, resolve, reject);
+                if (!this.communitcationConfig) {
+                    this.communitcationConfig = {
+                        reader: new BrowserMessageReader(this.worker),
+                        writer: new BrowserMessageWriter(this.worker)
+                    };
                 }
+                this.handleLanguageClientStart(this.communitcationConfig, resolve, reject);
             }
         });
     }
 
-    private async handleLanguageClientStart(reader: MessageReader, writer: MessageWriter,
+    private async handleLanguageClientStart(communitcationConfig: CommunitcationConfig,
         resolve: (value: string) => void,
         reject: (reason?: unknown) => void) {
 
-        this.languageClient = this.createLanguageClient({ reader, writer });
-        reader.onClose(() => this.languageClient?.stop());
+        this.languageClient = this.createLanguageClient({
+            reader: communitcationConfig.reader,
+            writer: communitcationConfig.writer
+        });
+        communitcationConfig.reader.onClose(() => this.languageClient?.stop());
 
         await this.languageClient.start()
             .then(() => {

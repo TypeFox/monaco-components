@@ -54,6 +54,7 @@ function startEditor() {
     // test if external creation works
     const reader = new BrowserMessageReader(lsWorker);
     const writer = new BrowserMessageWriter(lsWorker);
+
     client.setWorker(lsWorker, { reader: reader, writer: writer });
 
     client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -61,6 +62,8 @@ function startEditor() {
             console.log(s);
             logEditorInfo(client);
             toggleSwapDiffButton(true);
+
+            client.getCommunitcationConfig()?.reader?.listen(x => console.log(x));
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
