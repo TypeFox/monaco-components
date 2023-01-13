@@ -27,9 +27,7 @@ Monaco Editor with JavaScript language support in web worker
 // helper function for loading monaco-editor's own workers
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-const client = new MonacoEditorLanguageClientWrapper();
 
 const client = new MonacoEditorLanguageClientWrapper();
 const editorConfig = client.getEditorConfig();
@@ -50,7 +48,6 @@ Monaco Editor with language server running in a web worker:
 // helper function for loading monaco-editor's own workers
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 const client = new MonacoEditorLanguageClientWrapper();

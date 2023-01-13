@@ -17,10 +17,10 @@
   },
   "devDependencies": {
     "@types/react": "~18.0.26",
-    "@types/react-dom": "~18.0.9"
+    "@types/react-dom": "~18.0.10"
   },
   "volta": {
-    "node": "16.18.1",
+    "node": "16.19.0",
     "npm": "8.19.3"
   },
   "scripts": {

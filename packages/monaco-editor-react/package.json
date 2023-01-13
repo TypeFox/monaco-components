@@ -1,6 +1,6 @@
 {
   "name": "@typefox/monaco-editor-react",
-  "version": "1.0.0-next.5",
+  "version": "1.0.0-next.6",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -65,7 +65,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "volta": {
-    "node": "16.18.1",
+    "node": "16.19.0",
     "npm": "8.19.3"
   },
   "dependencies": {
@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@types/react": "~18.0.26",
-    "@types/react-dom": "~18.0.9"
+    "@types/react-dom": "~18.0.10"
   },
   "repository": {
     "type": "git",

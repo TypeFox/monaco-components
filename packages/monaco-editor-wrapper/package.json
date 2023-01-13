@@ -78,7 +78,7 @@
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "volta": {
-    "node": "16.18.1",
+    "node": "16.19.0",
     "npm": "8.19.3"
   },
   "dependencies": {

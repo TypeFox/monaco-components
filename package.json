@@ -17,17 +17,17 @@
   },
   "devDependencies": {
     "@types/node": "~16.18.3",
-    "@typescript-eslint/eslint-plugin": "~5.47.0",
-    "vite": "~4.0.2",
+    "@typescript-eslint/eslint-plugin": "~5.48.1",
+    "vite": "~4.0.4",
     "path-browserify": "~1.0.1",
     "typescript": "~4.9.4",
-    "eslint": "~8.30.0",
+    "eslint": "~8.31.0",
     "editorconfig": "~1.0.1",
     "tslib": "~2.4.1",
     "shx": "~0.3.4"
   },
   "volta": {
-    "node": "16.18.1",
+    "node": "16.19.0",
     "npm": "8.19.3"
   },
   "workspaces": [

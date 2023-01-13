@@ -21,7 +21,7 @@ export type MonacoEditorProps = {
 }
 
 export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
-    private editor: MonacoEditorLanguageClientWrapper | null = null;
+    private wrapper: MonacoEditorLanguageClientWrapper | null = null;
 
     private containerElement?: HTMLDivElement;
 
@@ -41,12 +41,12 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     componentDidUpdate(prevProps: MonacoEditorProps) {
         const { className, text, webworkerUri, syntax, languageId } = this.props;
 
-        const { editor } = this;
+        const { wrapper } = this;
 
-        const editorConfig = editor!.getEditorConfig();
+        const editorConfig = wrapper!.getEditorConfig();
         const innerEditor: monaco.editor.IStandaloneCodeEditor =
             // eslint-disable-next-line dot-notation
-            editor!['editor'];
+            wrapper!['editor'];
 
         if (prevProps.className !== className && this.containerElement) {
             this.containerElement.className = className ?? '';
@@ -57,7 +57,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             editorConfig.setMainLanguageId(languageId);
             editorConfig.setMonarchTokensProvider(syntax);
             // eslint-disable-next-line dot-notation
-            editor!['updateMonacoConfig']();
+            wrapper!['updateMonacoConfig']();
             const model = innerEditor.getModel();
             if (model && text !== model.getValue()) {
                 model.setValue(text);
@@ -74,17 +74,17 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     };
 
     private async destroyMonaco(): Promise<void> {
-        if (this.editor) {
+        if (this.wrapper) {
             await this.isStarting;
             try {
-                await this.editor.dispose();
+                await this.wrapper.dispose();
             } catch {
                 // This is fine
                 // Sometimes the language client throws an error during disposal
                 // This should not prevent us from continue working
             }
             // eslint-disable-next-line dot-notation
-            this.editor['languageClient'] = undefined;
+            this.wrapper['languageClient'] = undefined;
         }
         if (this._subscription) {
             this._subscription.dispose();
@@ -110,8 +110,8 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
-            this.editor = new MonacoEditorLanguageClientWrapper('42');
-            const editorConfig = this.editor.getEditorConfig();
+            this.wrapper = new MonacoEditorLanguageClientWrapper('42');
+            const editorConfig = this.wrapper.getEditorConfig();
             editorConfig.setMainLanguageId(languageId);
             editorConfig.setMonarchTokensProvider(syntax);
             if (languageExtensionConfig) {
@@ -135,10 +135,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                     type: workerType ?? 'classic',
                     name: workerName ?? 'LanguageServerWorker',
                 });
-                this.editor.setWorker(lsWorker);
+                this.wrapper.setWorker(lsWorker);
             }
 
-            this.isStarting = this.editor.startEditor(this.containerElement);
+            this.isStarting = this.wrapper.startEditor(this.containerElement);
             await this.isStarting;
 
             onLoading && onLoading();
@@ -146,7 +146,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 
             if (onTextChanged) {
                 // eslint-disable-next-line dot-notation
-                const innerEditor: monaco.editor.IStandaloneCodeEditor = this.editor['editor'];
+                const innerEditor: monaco.editor.IStandaloneCodeEditor = this.wrapper['editor'];
                 const model = innerEditor.getModel();
                 if (model) {
                     this._subscription = model.onDidChangeContent(() => {
@@ -163,18 +163,22 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     }
 
     updateLayout(): void {
-        this.editor!.updateLayout();
+        this.wrapper!.updateLayout();
     }
 
     getText(): string {
         try {
             // eslint-disable-next-line dot-notation
-            const innerEditor: monaco.editor.IStandaloneCodeEditor = this.editor!['editor'];
+            const innerEditor: monaco.editor.IStandaloneCodeEditor = this.wrapper!['editor'];
             const model = innerEditor.getModel();
             return model?.getValue() ?? '';
         } catch {
             return '';
         }
+    }
+
+    getEditorWrapper() {
+        return this.wrapper;
     }
 
     /**
