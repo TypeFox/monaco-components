@@ -9,14 +9,14 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/quickAccess/standaloneCom
 import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standaloneReferenceSearch.js';
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
-
 import * as vscode from 'vscode';
 
 import { getMonacoCss } from './generated/css.js';
 
-import { MonacoLanguageClient, CloseAction, ErrorAction, MonacoServices, MessageTransports } from 'monaco-languageclient';
+import { MonacoLanguageClient, MonacoServices } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
+import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import normalizeUrl from 'normalize-url';
 
 import type { } from 'css-font-loading-module';
@@ -348,7 +348,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     public reportStatus() {
-        const status = [];
+        const status: string[] = [];
         status.push('Wrapper status:');
         status.push(`Editor: ${this.editor}`);
         status.push(`DiffEditor: ${this.diffEditor}`);

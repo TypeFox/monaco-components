@@ -60,15 +60,14 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist && npx shx rm -fr tsconfig.tsbuildinfo",
-    "lint": "eslint src --ext .ts",
-    "compile": "tsc",
+    "clean": "npx shx rm -rf ./dist && npx shx rm -fr *.tsbuildinfo",
+    "compile": "tsc --build tsconfig.src.json",
     "build:workers:vite": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
     "build": "npm run clean && npm run compile && npm run build:workers:vite"
   },
   "volta": {
-    "node": "16.19.0",
-    "npm": "8.19.3"
+    "node": "18.14.0",
+    "npm": "9.4.1"
   },
   "devDependencies": {
     "monaco-editor": "0.34.1"

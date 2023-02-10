@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "declarationDir": "dist"
+  },
+  "references": [{
+    "path": "../monaco-editor-wrapper/tsconfig.src.json"
+  },
+  {
+    "path": "../monaco-editor-comp/tsconfig.src.json"
+  },
+  {
+    "path": "../monaco-editor-workers/tsconfig.src.json"
+  }],
+  "include": [
+    "src/**/*.ts"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-comp",
-  "version": "1.6.0",
+  "version": "2.0.0-next.0",
   "license": "MIT",
   "description": "Lit Component for Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -55,21 +55,19 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist ./bundle tsconfig.tsbuildinfo",
-    "lint": "eslint src --ext .ts",
-    "compile": "tsc",
-    "watch": "tsc -w",
+    "clean": "npx shx rm -rf ./dist ./bundle *.tsbuildinfo",
+    "compile": "tsc --build tsconfig.src.json",
     "build:bundle:main": "vite --config vite.bundle.config.ts build",
     "build:bundle:languages": "vite --config vite.languages.config.ts build",
     "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "volta": {
-    "node": "16.19.0",
-    "npm": "8.19.3"
+    "node": "18.14.0",
+    "npm": "9.4.1"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "1.6.0",
+    "monaco-editor-wrapper": "2.0.0-next.0",
     "lit": "~2.6.1"
   },
   "devDependencies": {

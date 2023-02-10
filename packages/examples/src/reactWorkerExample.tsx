@@ -3,7 +3,7 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers'
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { MonacoEditorReactComp } from 'monaco-editor-react';
+import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 
 const languageId = 'plaintext';
 const codeMain = `#ff0000 (red)

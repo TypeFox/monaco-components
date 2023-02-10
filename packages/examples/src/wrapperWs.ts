@@ -1,6 +1,10 @@
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { monaco, vscode, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import * as vscode from 'vscode';
+import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import { Message } from 'vscode-languageserver/browser.js';
 
 const client = new MonacoEditorLanguageClientWrapper();
 
@@ -57,7 +61,9 @@ function startEditor() {
         .then((s: unknown) => {
             console.log(s);
             logEditorInfo(client);
-            client.getMessageTransports()?.reader?.listen(x => console.log(x));
+            client.getMessageTransports()?.reader?.listen((x: Message) => {
+                console.log(x);
+            });
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);

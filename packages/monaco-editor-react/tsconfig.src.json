@@ -4,21 +4,12 @@
     "rootDir": "src",
     "outDir": "dist",
     "declarationDir": "dist",
-    "jsx": "react"
   },
   "references": [{
-    "path": "../monaco-editor-wrapper"
-  },
-  {
-    "path": "../monaco-editor-comp"
-  },
-  {
-    "path": "../monaco-editor-workers"
+    "path": "../monaco-editor-wrapper/tsconfig.src.json"
   }],
   "include": [
     "src/**/*.ts",
-  ],
-  "exclude": [
-    "dist",
+    "src/**/*.tsx"
   ]
 }

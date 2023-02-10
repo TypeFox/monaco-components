@@ -14,16 +14,31 @@
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
+    "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "forceConsistentCasingInFileNames": true,
     // Skip type checking of declaration files.
     "skipLibCheck": true,
+    "jsx": "react",
     "lib": [
       "ES2022",
       "DOM",
       "WebWorker"
     ]
-  }
+  },
+  "include": [
+    "**/src/**/*.ts",
+    "**/test/**/*.ts",
+    "**/src/**/*.tsx",
+    "**/test/**/*.tsx",
+    "packages/*/*.ts"
+  ],
+  "exclude": [
+    "**/node_modules/**/*",
+    "**/dist/**/*",
+    "**/lib/**/*",
+    "**/build/**/*"
+  ]
 }

@@ -1,34 +1,35 @@
 {
   "name": "monaco-components",
   "private": true,
-  "files": [
-    "lib"
-  ],
-  "type": "module",
   "scripts": {
     "clean": "npm run clean --workspaces",
     "dev": "vite",
     "dev:debug": "vite --debug --force",
-    "lint": "npm run lint --workspaces",
+    "watch": "tsc --build tsconfig.build.json --watch --verbose",
+    "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
     "build:comp": "npm run build --workspace packages/monaco-editor-comp",
     "build:workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
     "release:prepare": "npm i && npm run clean && npm run build"
   },
   "devDependencies": {
-    "@types/node": "~16.18.3",
-    "@typescript-eslint/eslint-plugin": "~5.48.1",
-    "vite": "~4.0.4",
+    "@types/node": "~18.13.0",
+    "@typescript-eslint/eslint-plugin": "~5.51.0",
+    "@typescript-eslint/parser": "~5.51.0",
+    "@vitest/coverage-c8": "~0.28.4",
+    "@vitest/ui": "~0.28.4",
     "path-browserify": "~1.0.1",
-    "typescript": "~4.9.4",
-    "eslint": "~8.31.0",
-    "editorconfig": "~1.0.1",
-    "tslib": "~2.4.1",
-    "shx": "~0.3.4"
+    "typescript": "~4.9.5",
+    "eslint": "~8.33.0",
+    "editorconfig": "~1.0.2",
+    "tslib": "~2.5.0",
+    "shx": "~0.3.4",
+    "vite": "~4.1.1",
+    "vitest": "~0.28.4"
   },
   "volta": {
-    "node": "16.19.0",
-    "npm": "8.19.3"
+    "node": "18.14.0",
+    "npm": "9.4.1"
   },
   "workspaces": [
     "packages/monaco-editor-wrapper",

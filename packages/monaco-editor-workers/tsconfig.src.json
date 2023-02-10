@@ -5,14 +5,7 @@
     "outDir": "dist",
     "declarationDir": "dist"
   },
-  "references": [{
-    "path": "../monaco-editor-wrapper"
-  }],
   "include": [
-    "src/**/*.ts",
+    "src/**/*.ts"
   ],
-  "exclude": [
-    "build",
-    "dist"
-  ]
 }

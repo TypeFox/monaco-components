@@ -9,7 +9,7 @@ export type MonacoEditorProps = {
     className?: string;
     webworkerUri?: string;
     readOnly?: boolean;
-    syntax: monaco.languages.IMonarchLanguage;
+    syntax?: monaco.languages.IMonarchLanguage;
     languageExtensionConfig?: LanguageExtensionConfig;
     theme?: string,
     workerName?: string,

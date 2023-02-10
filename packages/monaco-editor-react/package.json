@@ -1,6 +1,6 @@
 {
   "name": "@typefox/monaco-editor-react",
-  "version": "1.0.0-next.6",
+  "version": "1.0.0-next.7",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -54,10 +54,8 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist tsconfig.tsbuildinfo",
-    "lint": "eslint src --ext .tsx",
-    "compile": "tsc",
-    "watch": "tsc -w",
+    "clean": "npx shx rm -rf ./dist *.tsbuildinfo",
+    "compile": " tsc --build tsconfig.src.json",
     "build:bundle:main": "vite --config vite.bundle.config.ts build",
     "build:bundle:languages": "vite --config vite.languages.config.ts build",
     "build:bundle": "npm run build:bundle:main && npm run build:bundle:languages",
@@ -65,17 +63,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "volta": {
-    "node": "16.19.0",
-    "npm": "8.19.3"
+    "node": "18.14.0",
+    "npm": "9.4.1"
   },
   "dependencies": {
     "monaco-editor-workers": "0.34.2",
-    "monaco-editor-wrapper": "1.6.0",
+    "monaco-editor-wrapper": "2.0.0-next.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0"
   },
   "devDependencies": {
-    "@types/react": "~18.0.26",
+    "@types/react": "~18.0.27",
     "@types/react-dom": "~18.0.10"
   },
   "repository": {

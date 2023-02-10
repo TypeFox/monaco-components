@@ -1,6 +1,19 @@
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { monaco, vscode, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper/allLanguages';
+
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import * as vscode from 'vscode';
+import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper/allLanguages';
+import { StandaloneServices } from 'vscode/services';
+import getNotificationServiceOverride from 'vscode/service-override/notifications';
+import getDialogServiceOverride from 'vscode/service-override/dialogs';
+import getKeybindingsServiceOverride, { updateUserKeybindings } from 'vscode/service-override/keybindings';
+
+StandaloneServices.initialize({
+    ...getNotificationServiceOverride(document.body),
+    ...getDialogServiceOverride(),
+    ...getKeybindingsServiceOverride(),
+});
 
 const client = new MonacoEditorLanguageClientWrapper();
 
@@ -30,8 +43,8 @@ function startEditor() {
         },
         lightbulb: {
             enabled: true
-        },
-    };
+        }
+    } as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
 
     editorConfig.setMonacoEditorOptions(monacoEditorConfig);
     editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
@@ -41,6 +54,22 @@ function startEditor() {
         .then((s: unknown) => {
             console.log(s);
             logEditorInfo(client);
+
+            const keybindingsModel = monaco.editor.createModel(
+                `[
+                  {
+                    "key": "ctrl+p",
+                    "command": "editor.action.quickCommand",
+                    "when": "editorTextFocus"
+                  },
+                  {
+                    "key": "ctrl+shift+c",
+                    "command": "editor.action.commentLine",
+                    "when": "editorTextFocus"
+                  },
+                ]`, 'json', monaco.Uri.file('/keybindings.json'));
+
+            updateUserKeybindings(keybindingsModel.getValue());
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
