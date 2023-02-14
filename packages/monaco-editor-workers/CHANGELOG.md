@@ -2,6 +2,14 @@
 
 All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/package/monaco-editor-workers) are documented in this file.
 
+## [0.36.0]
+
+- Updated to [0.36.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.36.0)
+
+## [0.35.0]
+
+- Updated to [0.35.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.35.0)
+
 ## [0.34.2]
 
 - Fix: Removed direct dependency to monaco editor in `buildWorkerDefinition`.

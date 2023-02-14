@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.34.2",
+  "version": "0.36.0",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
@@ -66,11 +66,11 @@
     "build": "npm run clean && npm run compile && npm run build:workers:vite"
   },
   "volta": {
-    "node": "18.14.0",
-    "npm": "9.4.1"
+    "node": "18.14.2",
+    "npm": "9.5.0"
   },
   "devDependencies": {
-    "monaco-editor": "0.34.1"
+    "monaco-editor": "0.35.0"
   },
   "repository": {
     "type": "git",

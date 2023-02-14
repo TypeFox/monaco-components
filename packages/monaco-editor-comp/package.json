@@ -63,8 +63,8 @@
     "build": "npm run clean && npm run compile && npm run build:bundle"
   },
   "volta": {
-    "node": "18.14.0",
-    "npm": "9.4.1"
+    "node": "18.14.2",
+    "npm": "9.5.0"
   },
   "dependencies": {
     "monaco-editor-wrapper": "2.0.0-next.0",

@@ -1,5 +1,7 @@
 import React, { CSSProperties } from 'react';
-import { LanguageExtensionConfig, monaco, MonacoEditorLanguageClientWrapper, vscode } from 'monaco-editor-wrapper';
+import { LanguageExtensionConfig, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import * as vscode from 'vscode';
 import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
 export type MonacoEditorProps = {

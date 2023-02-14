@@ -6,9 +6,7 @@ export type {
 
 export {
     CodeEditorConfig,
-    MonacoEditorLanguageClientWrapper,
-    monaco,
-    vscode
+    MonacoEditorLanguageClientWrapper
 } from './index.js';
 
 import './indexLanguagesOnly.js';

@@ -66,7 +66,7 @@ function startEditor() {
                     "key": "ctrl+shift+c",
                     "command": "editor.action.commentLine",
                     "when": "editorTextFocus"
-                  },
+                  }
                 ]`, 'json', monaco.Uri.file('/keybindings.json'));
 
             updateUserKeybindings(keybindingsModel.getValue());
