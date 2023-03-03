@@ -67,7 +67,7 @@
   },
   "volta": {
     "node": "18.14.2",
-    "npm": "9.5.0"
+    "npm": "9.5.1"
   },
   "devDependencies": {
     "monaco-editor": "0.36.0"

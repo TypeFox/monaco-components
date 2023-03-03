@@ -5,9 +5,9 @@ export default defineConfig({
     build: {
         rollupOptions: {
             input: {
-                wrapper: path.resolve(__dirname, '/packages/examples/wrapper.html'),
-                wrapperWs: path.resolve(__dirname, '/packages/examples/wrapper_ws.html'),
+                wrapperLangium: path.resolve(__dirname, '/packages/examples/wrapper_langium.html'),
                 wrapperTs: path.resolve(__dirname, '/packages/examples/wrapper_ts.html'),
+                wrapperWebSocket: path.resolve(__dirname, '/packages/examples/wrapper_ws.html'),
                 comp: path.resolve(__dirname, '/packages/examples/comp.html'),
                 compAdvanced: path.resolve(__dirname, '/packages/examples/comp-adv.html'),
                 react: path.resolve(__dirname, '/packages/examples/react.html'),

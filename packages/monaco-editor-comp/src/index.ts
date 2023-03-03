@@ -9,7 +9,7 @@ import { WebSocketConfigOptions, WorkerConfigOptions, MonacoEditorLanguageClient
 export class MonacoEditorWebComponent extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
-    private monacoWrapper = new MonacoEditorLanguageClientWrapper(this.id);
+    private monacoWrapper = new MonacoEditorLanguageClientWrapper(false, this.id);
     private monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
@@ -204,10 +204,10 @@ export class MonacoEditorWebComponent extends LitElement {
         }
 
         if (this.languageDef) {
-            wrapperConfig.setMonarchTokensProvider(this.languageDef);
+            this.monacoWrapper.getMonacoConfig().setMonarchTokensProvider(this.languageDef);
         }
         if (this.themeData) {
-            wrapperConfig.setEditorThemeData(this.themeData);
+            this.monacoWrapper.getMonacoConfig().setEditorThemeData(this.themeData);
         }
     }
 
@@ -324,7 +324,7 @@ export class MonacoEditorWebComponent extends LitElement {
         return content instanceof HTMLScriptElement && this.enableInlineConfig;
     }
 
-    firstUpdated() {
+    override firstUpdated() {
         this.startEditor(true);
     }
 
@@ -333,7 +333,7 @@ export class MonacoEditorWebComponent extends LitElement {
             .matchMedia('(prefers-color-scheme: dark)')
             .addEventListener('change', (e) => {
                 this.setTheme(e.matches ? 'vs-dark' : 'vs-light');
-                this.monacoWrapper.updateTheme();
+                this.monacoWrapper.updateTheme(this.monacoWrapper.getEditorConfig().getTheme());
             });
     }
 }

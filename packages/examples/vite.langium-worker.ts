@@ -10,7 +10,7 @@ const config = defineConfig({
             formats: ['iife']
         },
         outDir: resolve(__dirname, 'dist/worker/'),
-        emptyOutDir: false
+        emptyOutDir: true,
     }
 });
 

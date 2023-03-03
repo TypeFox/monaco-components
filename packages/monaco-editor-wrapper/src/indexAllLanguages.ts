@@ -1,7 +1,8 @@
 export type {
+    LanguageDescription,
+    MonacoLanguageExtensionConfig,
     WebSocketConfigOptions,
-    WorkerConfigOptions,
-    LanguageExtensionConfig
+    WorkerConfigOptions
 } from './index.js';
 
 export {
