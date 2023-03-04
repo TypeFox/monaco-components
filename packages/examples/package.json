@@ -36,7 +36,7 @@
     "copy:workers": "npx shx cp -fr ../../packages/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy:all": "npm run copy:prepare && npm run copy:wrapper && npm run copy:comp && npm run copy:workers",
     "build:worker:vite": "vite --config vite.langium-worker.ts build",
-    "build:worker": "esbuild ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js --bundle --tree-shaking=true --minify --format=iife --outfile=./dist/worker/statemachineServerWorker.js",
+    "build:worker": "vite-node ./build/statemachineServerWorker.mts",
     "build": "npm run clean && npm run compile && npm run build:worker && npm run copy:all",
     "start": "http-server --port 20002 ./"
   }
