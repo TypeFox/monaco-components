@@ -15,7 +15,9 @@ StandaloneServices.initialize({
     ...getKeybindingsServiceOverride(),
 });
 
-const client = new MonacoEditorLanguageClientWrapper(false);
+const client = new MonacoEditorLanguageClientWrapper({
+    useVscodeConfig: false
+});
 
 const languageId = 'typescript';
 let codeMain = `function sayHello(): string {

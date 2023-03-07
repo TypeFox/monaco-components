@@ -12,7 +12,24 @@ import getThemeServiceOverride from 'vscode/service-override/theme';
 
 import { loadAllDefaultThemes } from 'monaco-languageclient/themeLocalHelper';
 
+export type MonacoVscodeApiActivtion = {
+    enableModelEditorService: boolean;
+    // notificationService and dialogsService are enabled by default
+    enableConfigurationService: boolean;
+    enableKeybindingsService: boolean;
+    enableTextmateService: boolean;
+    // theme service is required
+    enableTokenClassificationService: boolean;
+    enableLanguageConfigurationService: boolean;
+};
+
+export type ExtendedITMSyntaxExtensionPoint = {
+    content: Promise<string>
+} & ITMSyntaxExtensionPoint;
+
 export class VscodeApiConfig {
+
+    private activationConfig: MonacoVscodeApiActivtion | undefined;
 
     private onigFileUrl = new URL('../../node_modules/vscode-oniguruma/release/onig.wasm', window.location.href).href;
     private themesUrl = new URL('../monaco-editor-wrapper/resources/themes', window.location.href).href;
@@ -22,9 +39,8 @@ export class VscodeApiConfig {
 
     // grammars
     private grammarsConfig: {
-        grammars?: ITMSyntaxExtensionPoint[] | undefined;
-        getContentFunc?: ((grammar: ITMSyntaxExtensionPoint) => Promise<string>) | undefined;
-    } = {};
+        grammarMap: Map<string, ExtendedITMSyntaxExtensionPoint>,
+    } = { grammarMap: new Map<string, ExtendedITMSyntaxExtensionPoint>() };
 
     private languageConfig: {
         languages?: (Array<Partial<IRawLanguageExtensionPoint>>)
@@ -32,18 +48,30 @@ export class VscodeApiConfig {
         getConfiguration?: () => Promise<string>
     } = {};
 
-    async init() {
+    async init(input?: MonacoVscodeApiActivtion) {
+        this.activationConfig = {
+            enableModelEditorService: input?.enableModelEditorService ?? true,
+            enableConfigurationService: input?.enableConfigurationService ?? true,
+            enableKeybindingsService: input?.enableKeybindingsService ?? true,
+            enableTextmateService: input?.enableTextmateService ?? true,
+            enableTokenClassificationService: input?.enableTokenClassificationService ?? true,
+            enableLanguageConfigurationService: input?.enableLanguageConfigurationService ?? true,
+        };
+
         const responseOnig = await fetch(this.onigFileUrl);
+        const modelService = this.activationConfig.enableModelEditorService ? getModelEditorServiceOverride(async (model, options) => {
+            console.log('trying to open a model', model, options);
+            return undefined;
+        }) : undefined;
+        const configurationService = this.activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : undefined;
+        const keybindingsService = this.activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : undefined;
 
         StandaloneServices.initialize({
-            ...getModelEditorServiceOverride(async (model, options) => {
-                console.log('trying to open a model', model, options);
-                return undefined;
-            }),
+            ...modelService,
             ...getNotificationServiceOverride(),
             ...getDialogsServiceOverride(),
-            ...getConfigurationServiceOverride(),
-            ...getKeybindingsServiceOverride(),
+            ...configurationService,
+            ...keybindingsService,
             ...getTextmateServiceOverride(async () => {
                 return await responseOnig.arrayBuffer();
             }),
@@ -52,7 +80,6 @@ export class VscodeApiConfig {
             ...getLanguageConfigurationServiceOverride(),
             ...getLanguagesServiceOverride()
         });
-
         console.log('Basic init of VscodeApiConfig was completed.');
     }
 
@@ -65,8 +92,16 @@ export class VscodeApiConfig {
             vscodeSetLanguageConfiguration(this.languageConfig.path, this.languageConfig.getConfiguration);
         }
 
-        if (this.grammarsConfig.grammars && this.grammarsConfig.getContentFunc) {
-            vscodeSetGrammars(this.grammarsConfig.grammars, this.grammarsConfig.getContentFunc);
+        if (this.activationConfig?.enableLanguageConfigurationService && this.grammarsConfig.grammarMap) {
+            const contentFunc = (grammar: ExtendedITMSyntaxExtensionPoint) => {
+                const def = this.grammarsConfig.grammarMap.get(grammar.language ?? '');
+                if (def) {
+                    return def.content;
+                } else {
+                    return Promise.reject(new Error(`Grammar language ${grammar.language} not found!`));
+                }
+            };
+            vscodeSetGrammars(Array.from(this.grammarsConfig.grammarMap.values()), contentFunc);
         }
 
         await loadAllDefaultThemes(this.themesUrl);
@@ -75,7 +110,7 @@ export class VscodeApiConfig {
             void vscodeUpdateUserConfiguration(this.userConfigurationJson);
         }
 
-        if (this.keybindingsJson) {
+        if (this.activationConfig?.enableKeybindingsService && this.keybindingsJson) {
             void updateUserKeybindings(this.keybindingsJson);
         }
     }
@@ -84,9 +119,8 @@ export class VscodeApiConfig {
         this.userConfigurationJson = configurationJson;
     }
 
-    setGrammars(grammars: ITMSyntaxExtensionPoint[], getContent: (grammar: ITMSyntaxExtensionPoint) => Promise<string>): void {
-        this.grammarsConfig.grammars = grammars;
-        this.grammarsConfig.getContentFunc = getContent;
+    setGrammar(languageId: string, grammar: ExtendedITMSyntaxExtensionPoint) {
+        this.grammarsConfig.grammarMap.set(languageId, grammar);
     }
 
     setLanguages(languages: Array<Partial<IRawLanguageExtensionPoint>>): void {

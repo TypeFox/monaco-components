@@ -113,7 +113,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
-            this.wrapper = new MonacoEditorLanguageClientWrapper(false, '42');
+            this.wrapper = new MonacoEditorLanguageClientWrapper({
+                useVscodeConfig: false,
+                id: '42'
+            });
             const editorConfig = this.wrapper.getEditorConfig();
             editorConfig.setMainLanguageId(languageId);
 

@@ -6,7 +6,9 @@ import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { Message } from 'vscode-languageserver/browser.js';
 
-const client = new MonacoEditorLanguageClientWrapper(false);
+const client = new MonacoEditorLanguageClientWrapper({
+    useVscodeConfig: false
+});
 
 const languageId = 'json';
 let codeMain = `{

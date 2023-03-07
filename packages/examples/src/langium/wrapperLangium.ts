@@ -5,7 +5,17 @@ import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { BrowserMessageReader, BrowserMessageWriter, Message } from 'vscode-languageserver/browser.js';
 
-const client = new MonacoEditorLanguageClientWrapper(true);
+const client = new MonacoEditorLanguageClientWrapper({
+    useVscodeConfig: true,
+    vscodeActivationConfig: {
+        enableModelEditorService: true,
+        enableConfigurationService: true,
+        enableKeybindingsService: true,
+        enableTextmateService: true,
+        enableTokenClassificationService: true,
+        enableLanguageConfigurationService: true
+    }
+});
 
 const languageId = 'statemachine';
 let codeMain = '';
@@ -45,18 +55,28 @@ async function startEditor() {
     }]);
     vscodeApiConfig.setLanguageConfiguration('/statemachine-configuration.json', () => responseLanguageConfig.text());
 
-    vscodeApiConfig.setGrammars([{
-        language: languageId,
-        scopeName: 'source.statemachine',
-        path: './statemachine-grammar.json'
-    }], (grammar) => {
-        switch (grammar.language) {
-            case languageId:
-                return responseStatemachineTm.text();
-            default:
-                return Promise.reject(new Error(`Grammar language ${grammar.language} not found!`));
+    vscodeApiConfig.setGrammar(
+        languageId,
+        {
+            language: languageId,
+            scopeName: 'source.statemachine',
+            path: './statemachine-grammar.json',
+            content: responseStatemachineTm.text()
         }
-    });
+    );
+    /*
+        vscodeApiConfig.setGrammars([{
+            language: languageId,
+            scopeName: 'source.statemachine',
+            path: './statemachine-grammar.json'
+        }], (grammar) => {
+            switch (grammar.language) {
+                case languageId:
+                    return responseStatemachineTm.text();
+                default:
+                    return Promise.reject(new Error(`Grammar language ${grammar.language} not found!`));
+            }
+        }); */
 
     vscodeApiConfig.setUserConfiguration(`{
         "workbench.colorTheme": "Dark+ (Experimental)",

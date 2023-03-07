@@ -22,7 +22,7 @@ import normalizeUrl from 'normalize-url';
 
 import type { } from 'css-font-loading-module';
 
-import { VscodeApiConfig } from './vscodeApiConfig.js';
+import { MonacoVscodeApiActivtion, VscodeApiConfig } from './vscodeApiConfig.js';
 import { MonacoConfig } from './monacoConfig.js';
 import type { WebSocketConfigOptions, WorkerConfigOptions } from './codeEditorConfig.js';
 import { CodeEditorConfig } from './codeEditorConfig.js';
@@ -41,12 +41,16 @@ export class MonacoEditorLanguageClientWrapper {
     private monacoConfig = new MonacoConfig();
     private vscodeApiConfig = new VscodeApiConfig();
 
-    constructor(useVscodeConfig: boolean, id?: string) {
-        this.id = id ?? Math.floor(Math.random() * 101).toString();
-        this.useVscodeConfig = useVscodeConfig;
+    constructor(config: {
+        useVscodeConfig: boolean,
+        vscodeActivationConfig?: MonacoVscodeApiActivtion,
+        id?: string
+    }) {
+        this.id = config.id ?? Math.floor(Math.random() * 101).toString();
+        this.useVscodeConfig = config.useVscodeConfig;
 
         if (this.useVscodeConfig) {
-            this.vscodeApiConfig.init();
+            this.vscodeApiConfig.init(config.vscodeActivationConfig);
         } else {
             this.monacoConfig.init();
         }

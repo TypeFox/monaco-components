@@ -9,7 +9,10 @@ import { WebSocketConfigOptions, WorkerConfigOptions, MonacoEditorLanguageClient
 export class MonacoEditorWebComponent extends LitElement {
 
     private container: Ref<HTMLElement> = createRef();
-    private monacoWrapper = new MonacoEditorLanguageClientWrapper(false, this.id);
+    private monacoWrapper = new MonacoEditorLanguageClientWrapper({
+        useVscodeConfig: false,
+        id: this.id
+    });
     private monacoEditorOptions: Record<string, unknown> = {
         readOnly: false
     };
