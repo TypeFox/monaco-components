@@ -4,7 +4,7 @@ import getNotificationServiceOverride from 'vscode/service-override/notification
 import getDialogsServiceOverride from 'vscode/service-override/dialogs';
 import getConfigurationServiceOverride, { updateUserConfiguration as vscodeUpdateUserConfiguration } from 'vscode/service-override/configuration';
 import getKeybindingsServiceOverride, { updateUserKeybindings } from 'vscode/service-override/keybindings';
-import getTextmateServiceOverride, { ITMSyntaxExtensionPoint, setGrammars as vscodeSetGrammars } from 'vscode/service-override/textmate';
+import getTextmateServiceOverride, { ITMSyntaxExtensionPoint, setGrammars } from 'vscode/service-override/textmate';
 import getLanguagesServiceOverride, { IRawLanguageExtensionPoint, setLanguages as vscodeSetLanguages } from 'vscode/service-override/languages';
 import getTokenClassificationServiceOverride from 'vscode/service-override/tokenClassification';
 import getLanguageConfigurationServiceOverride, { setLanguageConfiguration as vscodeSetLanguageConfiguration } from 'vscode/service-override/languageConfiguration';
@@ -13,6 +13,7 @@ import getThemeServiceOverride from 'vscode/service-override/theme';
 import { loadAllDefaultThemes } from 'monaco-languageclient/themeLocalHelper';
 
 export type MonacoVscodeApiActivtion = {
+    basePath: string,
     enableModelEditorService: boolean;
     // notificationService and dialogsService are enabled by default
     enableConfigurationService: boolean;
@@ -31,9 +32,6 @@ export class VscodeApiConfig {
 
     private activationConfig: MonacoVscodeApiActivtion | undefined;
 
-    private onigFileUrl = new URL('../../node_modules/vscode-oniguruma/release/onig.wasm', window.location.href).href;
-    private themesUrl = new URL('../monaco-editor-wrapper/resources/themes', window.location.href).href;
-
     private userConfigurationJson: string | undefined;
     private keybindingsJson: string | undefined;
 
@@ -49,7 +47,9 @@ export class VscodeApiConfig {
     } = {};
 
     async init(input?: MonacoVscodeApiActivtion) {
+        console.log(window.location.href);
         this.activationConfig = {
+            basePath: input?.basePath ?? '.',
             enableModelEditorService: input?.enableModelEditorService ?? true,
             enableConfigurationService: input?.enableConfigurationService ?? true,
             enableKeybindingsService: input?.enableKeybindingsService ?? true,
@@ -58,7 +58,8 @@ export class VscodeApiConfig {
             enableLanguageConfigurationService: input?.enableLanguageConfigurationService ?? true,
         };
 
-        const responseOnig = await fetch(this.onigFileUrl);
+        const onigFileUrl = new URL(this.activationConfig?.basePath + '/resources/wasm/onig.wasm', window.location.href).href;
+        const responseOnig = await fetch(onigFileUrl);
         const modelService = this.activationConfig.enableModelEditorService ? getModelEditorServiceOverride(async (model, options) => {
             console.log('trying to open a model', model, options);
             return undefined;
@@ -66,19 +67,28 @@ export class VscodeApiConfig {
         const configurationService = this.activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : undefined;
         const keybindingsService = this.activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : undefined;
 
+        const textmateService = this.activationConfig.enableTextmateService ? getTextmateServiceOverride(async () => {
+            return await responseOnig.arrayBuffer();
+        }) : undefined;
+        const tokenClassificationService = this.activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : undefined;
+        let languageConfigurationService;
+        let languageService;
+        if (tokenClassificationService) {
+            languageConfigurationService = getLanguageConfigurationServiceOverride();
+            languageService = getLanguagesServiceOverride();
+        }
+
         StandaloneServices.initialize({
             ...modelService,
             ...getNotificationServiceOverride(),
             ...getDialogsServiceOverride(),
             ...configurationService,
             ...keybindingsService,
-            ...getTextmateServiceOverride(async () => {
-                return await responseOnig.arrayBuffer();
-            }),
+            ...textmateService,
             ...getThemeServiceOverride(),
-            ...getTokenClassificationServiceOverride(),
-            ...getLanguageConfigurationServiceOverride(),
-            ...getLanguagesServiceOverride()
+            ...tokenClassificationService,
+            ...languageConfigurationService,
+            ...languageService
         });
         console.log('Basic init of VscodeApiConfig was completed.');
     }
@@ -101,10 +111,11 @@ export class VscodeApiConfig {
                     return Promise.reject(new Error(`Grammar language ${grammar.language} not found!`));
                 }
             };
-            vscodeSetGrammars(Array.from(this.grammarsConfig.grammarMap.values()), contentFunc);
+            setGrammars(Array.from(this.grammarsConfig.grammarMap.values()), contentFunc);
         }
 
-        await loadAllDefaultThemes(this.themesUrl);
+        const themesUrl = new URL(this.activationConfig?.basePath + '/resources/themes', window.location.href).href;
+        await loadAllDefaultThemes(themesUrl);
 
         if (this.userConfigurationJson) {
             void vscodeUpdateUserConfiguration(this.userConfigurationJson);

@@ -8,6 +8,7 @@ import { BrowserMessageReader, BrowserMessageWriter, Message } from 'vscode-lang
 const client = new MonacoEditorLanguageClientWrapper({
     useVscodeConfig: true,
     vscodeActivationConfig: {
+        basePath: '../monaco-editor-wrapper',
         enableModelEditorService: true,
         enableConfigurationService: true,
         enableKeybindingsService: true,
@@ -64,19 +65,6 @@ async function startEditor() {
             content: responseStatemachineTm.text()
         }
     );
-    /*
-        vscodeApiConfig.setGrammars([{
-            language: languageId,
-            scopeName: 'source.statemachine',
-            path: './statemachine-grammar.json'
-        }], (grammar) => {
-            switch (grammar.language) {
-                case languageId:
-                    return responseStatemachineTm.text();
-                default:
-                    return Promise.reject(new Error(`Grammar language ${grammar.language} not found!`));
-            }
-        }); */
 
     vscodeApiConfig.setUserConfiguration(`{
         "workbench.colorTheme": "Dark+ (Experimental)",
