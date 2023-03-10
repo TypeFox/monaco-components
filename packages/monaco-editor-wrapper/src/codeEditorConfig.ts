@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 export type WebSocketConfigOptions = {
@@ -30,6 +31,7 @@ export class CodeEditorConfig {
 
     // languageclient related configuration
     private useLanguageClient = false;
+    private initializationOptions: any = undefined;
     // create config type web socket / web worker
     private useWebSocket = true;
     private lcConfigOptions = this.useWebSocket ? this.getDefaultWebSocketConfig() : this.getDefaultWorkerConfig();
@@ -128,6 +130,14 @@ export class CodeEditorConfig {
 
     setLanguageClientConfigOptions(lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions): void {
         this.lcConfigOptions = lcConfigOptions;
+    }
+
+    getInitializationOptions(): any {
+        return this.initializationOptions;
+    }
+
+    setInitializationOptions(options: any): void {
+        this.initializationOptions = options;
     }
 
     getDefaultWebSocketConfig(): WebSocketConfigOptions {
