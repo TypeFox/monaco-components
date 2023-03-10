@@ -30,6 +30,8 @@ export class CodeEditorConfig {
 
     // languageclient related configuration
     private useLanguageClient = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private initializationOptions: any = undefined;
     // create config type web socket / web worker
     private useWebSocket = true;
     private lcConfigOptions = this.useWebSocket ? this.getDefaultWebSocketConfig() : this.getDefaultWorkerConfig();
@@ -128,6 +130,16 @@ export class CodeEditorConfig {
 
     setLanguageClientConfigOptions(lcConfigOptions: WebSocketConfigOptions | WorkerConfigOptions): void {
         this.lcConfigOptions = lcConfigOptions;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    getInitializationOptions(): any {
+        return this.initializationOptions;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setInitializationOptions(options: any): void {
+        this.initializationOptions = options;
     }
 
     getDefaultWebSocketConfig(): WebSocketConfigOptions {

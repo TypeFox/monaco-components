@@ -344,7 +344,9 @@ export class MonacoEditorLanguageClientWrapper {
                 errorHandler: {
                     error: () => ({ action: ErrorAction.Continue }),
                     closed: () => ({ action: CloseAction.DoNotRestart })
-                }
+                },
+                // allow to initialize the language client with user specific options
+                initializationOptions: this.editorConfig.getInitializationOptions()
             },
             // create a language client connection from the JSON RPC connection on demand
             connectionProvider: {
