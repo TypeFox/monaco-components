@@ -156,6 +156,14 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
+    async restart(): Promise<string> {
+        await this.disposeLanguageClient();
+        if (!this.useVscodeConfig) {
+            this.monacoConfig.updateMonacoConfig(this.editorConfig.getMainLanguageId(), this.editorConfig.getTheme());
+        }
+        return this.startLanguageClientConnection(this.editorConfig.getLanguageClientConfigOptions());
+    }
+
     private disposeEditor() {
         if (this.editor) {
             const model = this.editor.getModel();
