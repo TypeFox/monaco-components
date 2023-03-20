@@ -156,7 +156,7 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    async restart(): Promise<string> {
+    async restartLanguageClient(): Promise<string> {
         await this.disposeLanguageClient();
         if (!this.useVscodeConfig) {
             this.monacoConfig.updateMonacoConfig(this.editorConfig.getMainLanguageId(), this.editorConfig.getTheme());
