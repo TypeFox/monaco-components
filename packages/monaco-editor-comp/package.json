@@ -69,7 +69,7 @@
     "npm": "8.19.3"
   },
   "dependencies": {
-    "monaco-editor-wrapper": "1.6.0",
+    "monaco-editor-wrapper": "1.6.1",
     "lit": "~2.6.1"
   },
   "devDependencies": {

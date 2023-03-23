@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "http-server": "~14.1.1",
-    "monaco-editor-wrapper": "../monaco-editor-wrapper",
+    "monaco-editor-wrapper": "1.6.1",
     "monaco-editor-comp": "../monaco-editor-comp",
     "monaco-editor-react": "../monaco-editor-react",
     "monaco-editor-workers": "../monaco-editor-workers",
