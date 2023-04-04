@@ -15,12 +15,31 @@ export type MonacoLanguageExtensionConfig = {
 }
 
 export class MonacoConfig {
+
+    private monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneEditorConstructionOptions = {};
+    private monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneDiffEditorConstructionOptions = {};
     private languageExtensionConfig: MonacoLanguageExtensionConfig | undefined;
     private languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
     private themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
 
     async init() {
         console.log('Basic init of MonacoConfig was completed.');
+    }
+
+    getMonacoEditorOptions() {
+        return this.monacoEditorOptions;
+    }
+
+    setMonacoEditorOptions(monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions): void {
+        this.monacoEditorOptions = monacoEditorOptions;
+    }
+
+    getMonacoDiffEditorOptions() {
+        return this.monacoDiffEditorOptions;
+    }
+
+    setMonacoDiffEditorOptions(monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions): void {
+        this.monacoDiffEditorOptions = monacoDiffEditorOptions;
     }
 
     setLanguageExtensionConfig(languageExtensionConfig: MonacoLanguageExtensionConfig): void {
@@ -71,5 +90,19 @@ export class MonacoConfig {
         }
 
         monaco.editor.setTheme(theme);
+    }
+
+    createEditor(container: HTMLElement, automaticLayout: boolean) {
+        if (this.monacoEditorOptions.automaticLayout === undefined) {
+            this.monacoEditorOptions.automaticLayout = automaticLayout;
+        }
+        return monaco.editor.create(container!, this.monacoEditorOptions);
+    }
+
+    createDiffEditor(container: HTMLElement, automaticLayout: boolean) {
+        if (this.monacoEditorOptions.automaticLayout === undefined) {
+            this.monacoEditorOptions.automaticLayout = automaticLayout;
+        }
+        return monaco.editor.createDiffEditor(container!, this.monacoEditorOptions);
     }
 }

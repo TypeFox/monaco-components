@@ -7,7 +7,8 @@ import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper/allLang
 import { StandaloneServices } from 'vscode/services';
 import getNotificationServiceOverride from 'vscode/service-override/notifications';
 import getDialogServiceOverride from 'vscode/service-override/dialogs';
-import getKeybindingsServiceOverride, { updateUserKeybindings } from 'vscode/service-override/keybindings';
+import getKeybindingsServiceOverride from 'vscode/service-override/keybindings';
+// import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
 StandaloneServices.initialize({
     ...getNotificationServiceOverride(document.body),
@@ -15,7 +16,7 @@ StandaloneServices.initialize({
     ...getKeybindingsServiceOverride(),
 });
 
-const client = new MonacoEditorLanguageClientWrapper({
+const wrapper = new MonacoEditorLanguageClientWrapper({
     useVscodeConfig: false
 });
 
@@ -29,12 +30,15 @@ const codeOrg = `function sayGoodbye(): string {
 let useDiffEditor = false;
 
 function startEditor() {
-    if (client.isStarted()) {
+    if (wrapper.isStarted()) {
         alert('Editor was already started!');
         return;
     }
 
-    const editorConfig = client.getEditorConfig();
+    //console.log(getMonacoCss());
+
+    const editorConfig = wrapper.getEditorConfig();
+    const monacoConfig = wrapper.getMonacoConfig();
     configureCodeEditors();
     editorConfig.setTheme('vs-dark');
 
@@ -48,30 +52,14 @@ function startEditor() {
         }
     } as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
 
-    editorConfig.setMonacoEditorOptions(monacoEditorConfig);
-    editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
+    monacoConfig.setMonacoEditorOptions(monacoEditorConfig);
+    monacoConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
-    client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
+    wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => {
             console.log(s);
-            logEditorInfo(client);
-
-            const keybindingsModel = monaco.editor.createModel(
-                `[
-                  {
-                    "key": "ctrl+p",
-                    "command": "editor.action.quickCommand",
-                    "when": "editorTextFocus"
-                  },
-                  {
-                    "key": "ctrl+shift+c",
-                    "command": "editor.action.commentLine",
-                    "when": "editorTextFocus"
-                  }
-                ]`, 'json', monaco.Uri.file('/keybindings.json'));
-
-            updateUserKeybindings(keybindingsModel.getValue());
+            logEditorInfo(wrapper);
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
@@ -81,7 +69,7 @@ function startEditor() {
 }
 
 function configureCodeEditors() {
-    const editorConfig = client.getEditorConfig();
+    const editorConfig = wrapper.getEditorConfig();
     editorConfig.setUseDiffEditor(useDiffEditor);
     if (useDiffEditor) {
         editorConfig.setMainLanguageId(languageId);
@@ -96,10 +84,10 @@ function configureCodeEditors() {
 
 function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
     if (saveFromDiff) {
-        codeMain = client.getDiffCode()!;
+        codeMain = wrapper.getDiffCode()!;
     }
     if (saveFromMain) {
-        codeMain = client.getMainCode()!;
+        codeMain = wrapper.getMainCode()!;
     }
 }
 
@@ -108,21 +96,21 @@ function swapEditors() {
     saveMainCode(!useDiffEditor, false);
     configureCodeEditors();
 
-    client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
+    wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: string) => {
             console.log(s);
-            logEditorInfo(client);
+            logEditorInfo(wrapper);
         })
         .catch((e: Error) => console.error(e));
 }
 
 async function disposeEditor() {
-    client.reportStatus();
+    wrapper.reportStatus();
     toggleSwapDiffButton(false);
     saveMainCode(useDiffEditor, !useDiffEditor);
-    await client.dispose()
+    await wrapper.dispose()
         .then(() => {
-            console.log(client.reportStatus().join('\n'));
+            console.log(wrapper.reportStatus().join('\n'));
         })
         .catch((e: Error) => console.error(e));
 }

@@ -63,13 +63,12 @@
   "scripts": {
     "clean": "npx shx rm -rf ./dist && npx shx rm -fr *.tsbuildinfo",
     "compile": "tsc --build tsconfig.src.json",
-    "build:workers:vite": "vite -c ./workers/vite.editorWorker.ts build && vite -c ./workers/vite.tsWorker.ts build && vite -c ./workers/vite.htmlWorker.ts build && vite -c ./workers/vite.cssWorker.ts build && vite -c ./workers/vite.jsonWorker.ts build",
     "build:workers": "vite-node ./workers/buildWorkers.mts",
     "build": "npm run clean && npm run compile && npm run build:workers"
   },
   "volta": {
-    "node": "18.14.2",
-    "npm": "9.5.1"
+    "node": "18.15.0",
+    "npm": "9.6.3"
   },
   "devDependencies": {
     "monaco-editor": "0.37.0"

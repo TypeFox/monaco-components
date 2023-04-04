@@ -1,8 +1,9 @@
 import React, { CSSProperties } from 'react';
 import { MonacoLanguageExtensionConfig, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
-import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
+// import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
 export type MonacoEditorProps = {
     languageId: string;
@@ -129,11 +130,12 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             editorConfig.setUseWebSocket(false);
             editorConfig.setUseLanguageClient(false);
             editorConfig.setTheme(theme ?? 'vs-dark');
+
             if (rawMonacoEditorOptions) {
-                editorConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
+                monacoConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
             }
             else {
-                editorConfig.setMonacoEditorOptions({});
+                monacoConfig.setMonacoEditorOptions({});
             }
 
             if (webworkerUri) {
@@ -213,7 +215,8 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 export function addMonacoStyles(idOfStyleElement: string) {
     const style = document.createElement('style');
     style.id = idOfStyleElement;
-    style.innerHTML = getMonacoCss();
+    // style.innerHTML = getMonacoCss();
+    style.innerHTML = '';
     document.head.appendChild(style);
 }
 

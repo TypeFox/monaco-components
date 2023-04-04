@@ -25,6 +25,8 @@ export default defineConfig({
         }
     },
     server: {
+        origin: 'http://localhost:20001',
         port: 20001
-    }
+    },
+    assetsInclude: ['**/*.wasm']
 });

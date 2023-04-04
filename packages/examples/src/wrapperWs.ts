@@ -6,7 +6,7 @@ import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { Message } from 'vscode-languageserver/browser.js';
 
-const client = new MonacoEditorLanguageClientWrapper({
+const wrapper = new MonacoEditorLanguageClientWrapper({
     useVscodeConfig: false
 });
 
@@ -22,13 +22,13 @@ const codeOrg = `{
 let useDiffEditor = false;
 
 function startEditor() {
-    if (client.isStarted()) {
+    if (wrapper.isStarted()) {
         alert('Editor was already started!');
         return;
     }
 
-    const editorConfig = client.getEditorConfig();
-    const monacoConfig = client.getMonacoConfig();
+    const editorConfig = wrapper.getEditorConfig();
+    const monacoConfig = wrapper.getMonacoConfig();
     monacoConfig.setLanguageExtensionConfig({
         id: 'json',
         extensions: ['.json', '.jsonc'],
@@ -56,15 +56,15 @@ function startEditor() {
         },
     };
 
-    editorConfig.setMonacoEditorOptions(monacoEditorConfig);
-    editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
+    monacoConfig.setMonacoEditorOptions(monacoEditorConfig);
+    monacoConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
-    client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
+    wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => {
             console.log(s);
-            logEditorInfo(client);
-            client.getMessageTransports()?.reader?.listen((x: Message) => {
+            logEditorInfo(wrapper);
+            wrapper.getMessageTransports()?.reader?.listen((x: Message) => {
                 console.log(x);
             });
 
@@ -76,7 +76,7 @@ function startEditor() {
 }
 
 function configureCodeEditors() {
-    const editorConfig = client.getEditorConfig();
+    const editorConfig = wrapper.getEditorConfig();
     editorConfig.setUseDiffEditor(useDiffEditor);
     if (useDiffEditor) {
         editorConfig.setMainLanguageId(languageId);
@@ -91,10 +91,10 @@ function configureCodeEditors() {
 
 function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
     if (saveFromDiff) {
-        codeMain = client.getDiffCode()!;
+        codeMain = wrapper.getDiffCode()!;
     }
     if (saveFromMain) {
-        codeMain = client.getMainCode()!;
+        codeMain = wrapper.getMainCode()!;
     }
 }
 
@@ -103,21 +103,21 @@ function swapEditors() {
     saveMainCode(!useDiffEditor, false);
     configureCodeEditors();
 
-    client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
+    wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: string) => {
             console.log(s);
-            logEditorInfo(client);
+            logEditorInfo(wrapper);
         })
         .catch((e: Error) => console.error(e));
 }
 
 async function disposeEditor() {
-    client.reportStatus();
+    wrapper.reportStatus();
     toggleSwapDiffButton(false);
     saveMainCode(useDiffEditor, !useDiffEditor);
-    await client.dispose()
+    await wrapper.dispose()
         .then(() => {
-            console.log(client.reportStatus().join('\n'));
+            console.log(wrapper.reportStatus().join('\n'));
         })
         .catch((e: Error) => console.error(e));
 }

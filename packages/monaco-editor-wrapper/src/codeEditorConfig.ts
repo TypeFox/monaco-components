@@ -1,5 +1,3 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
-
 export type WebSocketConfigOptions = {
     wsSecured: boolean;
     wsHost: string;
@@ -25,8 +23,6 @@ export class CodeEditorConfig {
     private codeModified: LanguageDescription = { code: '', languageId: 'javascript' };
     private theme = 'vs-light';
     private automaticLayout = true;
-    private monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneEditorConstructionOptions = {};
-    private monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneDiffEditorConstructionOptions = {};
 
     // languageclient related configuration
     private useLanguageClient = false;
@@ -106,22 +102,6 @@ export class CodeEditorConfig {
 
     setAutomaticLayout(automaticLayout: boolean) {
         this.automaticLayout = automaticLayout;
-    }
-
-    getMonacoEditorOptions() {
-        return this.monacoEditorOptions;
-    }
-
-    setMonacoEditorOptions(monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions): void {
-        this.monacoEditorOptions = monacoEditorOptions;
-    }
-
-    getMonacoDiffEditorOptions() {
-        return this.monacoDiffEditorOptions;
-    }
-
-    setMonacoDiffEditorOptions(monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions): void {
-        this.monacoDiffEditorOptions = monacoDiffEditorOptions;
     }
 
     getLanguageClientConfigOptions(): WebSocketConfigOptions | WorkerConfigOptions {

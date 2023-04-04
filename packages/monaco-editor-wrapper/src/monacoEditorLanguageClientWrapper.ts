@@ -10,10 +10,6 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/referenceSearch/standalon
 import 'monaco-editor/esm/vs/editor/standalone/browser/toggleHighContrast/toggleHighContrast.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 
-import { createConfiguredEditor, createConfiguredDiffEditor } from 'vscode/monaco';
-
-import { getMonacoCss } from './generated/css.js';
-
 import { MonacoLanguageClient, MonacoServices } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
@@ -92,6 +88,10 @@ export class MonacoEditorLanguageClientWrapper {
         return this.diffEditor?.getModifiedEditor().getValue();
     }
 
+    /**
+     * This methods updates the theme. If the given provide theme is not available this will not work.
+     * @param theme the theme name
+     */
     updateTheme(theme: string) {
         monaco.editor.setTheme(theme);
     }
@@ -223,16 +223,11 @@ export class MonacoEditorLanguageClientWrapper {
             model = monaco.editor.createModel(this.editorConfig.getMainCode(), languageId, mainUri);
         }
 
-        const options = this.editorConfig.getMonacoEditorOptions();
-        if (options.automaticLayout === undefined) {
-            options.automaticLayout = this.editorConfig.isAutomaticLayout();
-        }
-        options.model = model;
-
         if (this.useVscodeConfig) {
-            this.editor = createConfiguredEditor(container!, options);
+            this.editor = this.vscodeApiConfig.createEditor(container!, this.editorConfig.isAutomaticLayout());
         } else {
-            this.editor = monaco.editor.create(container!, options);
+            this.monacoConfig.getMonacoEditorOptions().model = model;
+            this.editor = this.monacoConfig.createEditor(container, this.editorConfig.isAutomaticLayout());
         }
     }
 
@@ -250,15 +245,10 @@ export class MonacoEditorLanguageClientWrapper {
             modifiedModel = monaco.editor.createModel(this.editorConfig.getDiffCode(), this.editorConfig.getDiffLanguageId(), diffUri);
         }
 
-        const options = this.editorConfig.getMonacoDiffEditorOptions();
-        if (options.automaticLayout === undefined) {
-            options.automaticLayout = this.editorConfig.isAutomaticLayout();
-        }
-
         if (this.useVscodeConfig) {
-            this.diffEditor = createConfiguredDiffEditor(container!, options);
+            this.diffEditor = this.vscodeApiConfig.createDiffEditor(container!, this.editorConfig.isAutomaticLayout());
         } else {
-            this.diffEditor = monaco.editor.createDiffEditor(container!, options);
+            this.diffEditor = this.monacoConfig.createDiffEditor(container, this.editorConfig.isAutomaticLayout());
         }
 
         this.diffEditor.setModel({
@@ -372,13 +362,6 @@ export class MonacoEditorLanguageClientWrapper {
     private createUrl(config: WebSocketConfigOptions) {
         const protocol = config.wsSecured ? 'wss' : 'ws';
         return normalizeUrl(`${protocol}://${config.wsHost}:${config.wsPort}/${config.wsPath}`);
-    }
-
-    static addMonacoStyles(idOfStyleElement: string) {
-        const style = document.createElement('style');
-        style.id = idOfStyleElement;
-        style.innerHTML = getMonacoCss();
-        document.head.appendChild(style);
     }
 
 }
