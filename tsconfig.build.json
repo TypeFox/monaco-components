@@ -3,7 +3,6 @@
     "references": [
         { "path": "packages/monaco-editor-wrapper/tsconfig.src.json" },
         { "path": "packages/monaco-editor-wrapper/build/tsconfig.src.json" },
-        { "path": "packages/monaco-editor-comp/tsconfig.src.json" },
         { "path": "packages/monaco-editor-react/tsconfig.src.json" },
         { "path": "packages/monaco-editor-workers/tsconfig.src.json" },
         { "path": "packages/examples/tsconfig.src.json" }

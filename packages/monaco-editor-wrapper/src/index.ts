@@ -3,7 +3,7 @@ import type {
 } from './monacoConfig.js';
 
 import type {
-    LanguageDescription,
+    LanguageContent,
     WebSocketConfigOptions,
     WorkerConfigOptions
 } from './codeEditorConfig.js';
@@ -14,10 +14,10 @@ import {
 
 import {
     MonacoEditorLanguageClientWrapper
-} from './monacoEditorLanguageClientWrapper.js';
+} from './wrapper.js';
 
 export type {
-    LanguageDescription,
+    LanguageContent,
     MonacoLanguageExtensionConfig,
     WebSocketConfigOptions,
     WorkerConfigOptions

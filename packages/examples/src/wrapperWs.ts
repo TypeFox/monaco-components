@@ -6,10 +6,6 @@ import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { Message } from 'vscode-languageserver/browser.js';
 
-const wrapper = new MonacoEditorLanguageClientWrapper({
-    useVscodeConfig: false
-});
-
 const languageId = 'json';
 let codeMain = `{
     "$schema": "http://json.schemastore.org/coffeelint",
@@ -19,7 +15,25 @@ const codeOrg = `{
     "$schema": "http://json.schemastore.org/coffeelint",
     "line_endings": {"value": "unix"}
 }`;
-let useDiffEditor = false;
+const wrapper = new MonacoEditorLanguageClientWrapper({
+    useVscodeConfig: false,
+    theme: 'vs-dark',
+    content: {
+        languageId: languageId,
+        code: codeMain,
+        useDiffEditor: false,
+        codeModified: codeOrg
+    },
+    languageClient: {
+        useWebSocket: true,
+        options: {
+            wsHost: 'localhost',
+            wsPort: 3000,
+            wsPath: 'sampleServer',
+            wsSecured: false
+        }
+    }
+});
 
 function startEditor() {
     if (wrapper.isStarted()) {
@@ -28,7 +42,7 @@ function startEditor() {
     }
 
     const editorConfig = wrapper.getEditorConfig();
-    const monacoConfig = wrapper.getMonacoConfig();
+    const monacoConfig = editorConfig.getMonacoConfig();
     monacoConfig.setLanguageExtensionConfig({
         id: 'json',
         extensions: ['.json', '.jsonc'],
@@ -36,16 +50,7 @@ function startEditor() {
         mimetypes: ['application/json']
     });
     configureCodeEditors();
-    editorConfig.setTheme('vs-dark');
 
-    editorConfig.setUseLanguageClient(true);
-    editorConfig.setUseWebSocket(true);
-    editorConfig.setLanguageClientConfigOptions({
-        wsHost: 'localhost',
-        wsPort: 3000,
-        wsPath: 'sampleServer',
-        wsSecured: false
-    });
     const monacoEditorConfig = {
         glyphMargin: true,
         guides: {
@@ -56,8 +61,8 @@ function startEditor() {
         },
     };
 
-    monacoConfig.setMonacoEditorOptions(monacoEditorConfig);
-    monacoConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
+    editorConfig.setMonacoEditorOptions(monacoEditorConfig);
+    editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -76,16 +81,12 @@ function startEditor() {
 }
 
 function configureCodeEditors() {
-    const editorConfig = wrapper.getEditorConfig();
-    editorConfig.setUseDiffEditor(useDiffEditor);
-    if (useDiffEditor) {
-        editorConfig.setMainLanguageId(languageId);
-        editorConfig.setMainCode(codeOrg);
-        editorConfig.setDiffLanguageId(languageId);
-        editorConfig.setDiffCode(codeMain);
+    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    if (runtimeConfig.content.useDiffEditor) {
+        runtimeConfig.content.code = codeOrg;
+        runtimeConfig.content.codeModified = codeMain;
     } else {
-        editorConfig.setMainLanguageId(languageId);
-        editorConfig.setMainCode(codeMain);
+        runtimeConfig.content.code = codeMain;
     }
 }
 
@@ -99,8 +100,9 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 }
 
 function swapEditors() {
-    useDiffEditor = !useDiffEditor;
-    saveMainCode(!useDiffEditor, false);
+    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    runtimeConfig.content.useDiffEditor = !runtimeConfig.content.useDiffEditor;
+    saveMainCode(!runtimeConfig.content.useDiffEditor, false);
     configureCodeEditors();
 
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -114,6 +116,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
+    const useDiffEditor = wrapper.getEditorConfig().getRuntimeConfig().content.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {

@@ -1,4 +1,4 @@
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 /**
  * This is derived from:
@@ -16,30 +16,12 @@ export type MonacoLanguageExtensionConfig = {
 
 export class MonacoConfig {
 
-    private monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneEditorConstructionOptions = {};
-    private monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions & monaco.editor.IStandaloneDiffEditorConstructionOptions = {};
     private languageExtensionConfig: MonacoLanguageExtensionConfig | undefined;
-    private languageDef: monaco.languages.IMonarchLanguage | undefined = undefined;
-    private themeData: monaco.editor.IStandaloneThemeData | undefined = undefined;
+    private languageDef: languages.IMonarchLanguage | undefined = undefined;
+    private themeData: editor.IStandaloneThemeData | undefined = undefined;
 
     async init() {
         console.log('Basic init of MonacoConfig was completed.');
-    }
-
-    getMonacoEditorOptions() {
-        return this.monacoEditorOptions;
-    }
-
-    setMonacoEditorOptions(monacoEditorOptions: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions): void {
-        this.monacoEditorOptions = monacoEditorOptions;
-    }
-
-    getMonacoDiffEditorOptions() {
-        return this.monacoDiffEditorOptions;
-    }
-
-    setMonacoDiffEditorOptions(monacoDiffEditorOptions: monaco.editor.IDiffEditorOptions & monaco.editor.IGlobalEditorOptions): void {
-        this.monacoDiffEditorOptions = monacoDiffEditorOptions;
     }
 
     setLanguageExtensionConfig(languageExtensionConfig: MonacoLanguageExtensionConfig): void {
@@ -50,19 +32,19 @@ export class MonacoConfig {
         return this.languageExtensionConfig;
     }
 
-    getMonarchTokensProvider(): monaco.languages.IMonarchLanguage | undefined {
+    getMonarchTokensProvider(): languages.IMonarchLanguage | undefined {
         return this.languageDef;
     }
 
     setMonarchTokensProvider(languageDef: unknown): void {
-        this.languageDef = languageDef as monaco.languages.IMonarchLanguage;
+        this.languageDef = languageDef as languages.IMonarchLanguage;
     }
 
     setEditorThemeData(themeData: unknown): void {
-        this.themeData = themeData as monaco.editor.IStandaloneThemeData;
+        this.themeData = themeData as editor.IStandaloneThemeData;
     }
 
-    getEditorThemeData(): monaco.editor.IStandaloneThemeData | undefined {
+    getEditorThemeData(): editor.IStandaloneThemeData | undefined {
         return this.themeData;
     }
 
@@ -70,39 +52,33 @@ export class MonacoConfig {
         // register own language first
         const extLang = this.getLanguageExtensionConfig();
         if (extLang) {
-            monaco.languages.register(this.getLanguageExtensionConfig() as monaco.languages.ILanguageExtensionPoint);
+            languages.register(this.getLanguageExtensionConfig() as languages.ILanguageExtensionPoint);
         }
 
-        const languageRegistered = monaco.languages.getLanguages().filter(x => x.id === languageId);
+        const languageRegistered = languages.getLanguages().filter(x => x.id === languageId);
         if (languageRegistered.length === 0) {
             // this is only meaningful for languages supported by monaco out of the box
-            monaco.languages.register({ id: languageId });
+            languages.register({ id: languageId });
         }
 
         // apply monarch definitions
         const tokenProvider = this.getMonarchTokensProvider();
         if (tokenProvider) {
-            monaco.languages.setMonarchTokensProvider(languageId, tokenProvider);
+            languages.setMonarchTokensProvider(languageId, tokenProvider);
         }
         const themeData = this.getEditorThemeData();
         if (themeData) {
-            monaco.editor.defineTheme(theme, themeData);
+            editor.defineTheme(theme, themeData);
         }
 
-        monaco.editor.setTheme(theme);
+        editor.setTheme(theme);
     }
 
-    createEditor(container: HTMLElement, automaticLayout: boolean) {
-        if (this.monacoEditorOptions.automaticLayout === undefined) {
-            this.monacoEditorOptions.automaticLayout = automaticLayout;
-        }
-        return monaco.editor.create(container!, this.monacoEditorOptions);
+    createEditor(container: HTMLElement, options?: editor.IStandaloneEditorConstructionOptions) {
+        return editor.create(container!, options);
     }
 
-    createDiffEditor(container: HTMLElement, automaticLayout: boolean) {
-        if (this.monacoEditorOptions.automaticLayout === undefined) {
-            this.monacoEditorOptions.automaticLayout = automaticLayout;
-        }
-        return monaco.editor.createDiffEditor(container!, this.monacoEditorOptions);
+    createDiffEditor(container: HTMLElement, options?: editor.IStandaloneDiffEditorConstructionOptions) {
+        return editor.createDiffEditor(container!, options);
     }
 }

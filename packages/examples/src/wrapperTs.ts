@@ -16,18 +16,23 @@ StandaloneServices.initialize({
     ...getKeybindingsServiceOverride(),
 });
 
-const wrapper = new MonacoEditorLanguageClientWrapper({
-    useVscodeConfig: false
-});
-
 const languageId = 'typescript';
-let codeMain = `function sayHello(): string {
+const codeOrg = `function sayHello(): string {
     return "Hello";
 };`;
-const codeOrg = `function sayGoodbye(): string {
+let codeMain = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
-let useDiffEditor = false;
+const wrapper = new MonacoEditorLanguageClientWrapper({
+    useVscodeConfig: false,
+    theme: 'vs-dark',
+    content: {
+        languageId: languageId,
+        code: codeMain,
+        useDiffEditor: false,
+        codeModified: codeOrg
+    }
+});
 
 function startEditor() {
     if (wrapper.isStarted()) {
@@ -35,12 +40,8 @@ function startEditor() {
         return;
     }
 
-    //console.log(getMonacoCss());
-
     const editorConfig = wrapper.getEditorConfig();
-    const monacoConfig = wrapper.getMonacoConfig();
     configureCodeEditors();
-    editorConfig.setTheme('vs-dark');
 
     const monacoEditorConfig = {
         glyphMargin: true,
@@ -52,8 +53,8 @@ function startEditor() {
         }
     } as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
 
-    monacoConfig.setMonacoEditorOptions(monacoEditorConfig);
-    monacoConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
+    editorConfig.setMonacoEditorOptions(monacoEditorConfig);
+    editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -69,16 +70,12 @@ function startEditor() {
 }
 
 function configureCodeEditors() {
-    const editorConfig = wrapper.getEditorConfig();
-    editorConfig.setUseDiffEditor(useDiffEditor);
-    if (useDiffEditor) {
-        editorConfig.setMainLanguageId(languageId);
-        editorConfig.setMainCode(codeOrg);
-        editorConfig.setDiffLanguageId(languageId);
-        editorConfig.setDiffCode(codeMain);
+    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    if (runtimeConfig.content.useDiffEditor) {
+        runtimeConfig.content.code = codeOrg;
+        runtimeConfig.content.codeModified = codeMain;
     } else {
-        editorConfig.setMainLanguageId(languageId);
-        editorConfig.setMainCode(codeMain);
+        runtimeConfig.content.code = codeMain;
     }
 }
 
@@ -92,8 +89,9 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 }
 
 function swapEditors() {
-    useDiffEditor = !useDiffEditor;
-    saveMainCode(!useDiffEditor, false);
+    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    runtimeConfig.content.useDiffEditor = !runtimeConfig.content.useDiffEditor;
+    saveMainCode(!runtimeConfig.content.useDiffEditor, false);
     configureCodeEditors();
 
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -107,6 +105,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
+    const useDiffEditor = wrapper.getEditorConfig().getRuntimeConfig().content.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {

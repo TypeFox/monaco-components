@@ -1,5 +1,5 @@
 export type {
-    LanguageDescription,
+    LanguageContent,
     MonacoLanguageExtensionConfig,
     WebSocketConfigOptions,
     WorkerConfigOptions

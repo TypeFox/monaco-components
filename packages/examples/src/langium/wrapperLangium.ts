@@ -5,6 +5,10 @@ import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { BrowserMessageReader, BrowserMessageWriter, Message } from 'vscode-languageserver/browser.js';
 
+const exampleStatemachineUrl = new URL('./src/langium/example.statemachine', window.location.href).href;
+const responseStatemachine = await fetch(exampleStatemachineUrl);
+const codeMain = await responseStatemachine.text();
+
 const wrapper = new MonacoEditorLanguageClientWrapper({
     useVscodeConfig: true,
     vscodeActivationConfig: {
@@ -15,28 +19,27 @@ const wrapper = new MonacoEditorLanguageClientWrapper({
         enableTextmateService: true,
         enableTokenClassificationService: true,
         enableLanguageConfigurationService: true
+    },
+    content: {
+        languageId: 'statemachine',
+        code: codeMain,
+        useDiffEditor: false
+    },
+    languageClient: {
+        useWebSocket: false
     }
 });
 
-const languageId = 'statemachine';
-
-async function startEditor() {
+const startEditor = async () => {
     if (wrapper.isStarted()) {
         alert('Editor was already started!');
         return;
     }
 
-    const exampleStatemachineUrl = new URL('./src/langium/example.statemachine', window.location.href).href;
-    const responseStatemachine = await fetch(exampleStatemachineUrl);
-    const codeMain = await responseStatemachine.text();
-
     const editorConfig = wrapper.getEditorConfig();
-    editorConfig.setMainLanguageId(languageId);
-    editorConfig.setMainCode(codeMain);
-    editorConfig.setUseLanguageClient(true);
-    editorConfig.setUseWebSocket(false);
+    const vscodeApiConfig = editorConfig.getVscodeApiConfig();
+    const languageId = editorConfig.getRuntimeConfig().content.languageId;
 
-    const vscodeApiConfig = wrapper.getVscodeApiConfig();
     const extension = {
         name: 'langium-example',
         publisher: 'monaco-languageclient-project',
@@ -112,16 +115,16 @@ async function startEditor() {
             });
         })
         .catch((e: Error) => console.error(e));
-}
+};
 
-async function disposeEditor() {
+const disposeEditor = async () => {
     wrapper.reportStatus();
     await wrapper.dispose()
         .then(() => {
             console.log(wrapper.reportStatus().join('\n'));
         })
         .catch((e: Error) => console.error(e));
-}
+};
 
 document.querySelector('#button-start')?.addEventListener('click', startEditor);
 document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);

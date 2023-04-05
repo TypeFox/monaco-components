@@ -11,9 +11,8 @@ import getTokenClassificationServiceOverride from 'vscode/service-override/token
 import getLanguageConfigurationServiceOverride from 'vscode/service-override/languageConfiguration';
 import getThemeServiceOverride from 'vscode/service-override/theme';
 import getAudioCueServiceOverride from 'vscode/service-override/audioCue';
-
 import { createConfiguredEditor, createConfiguredDiffEditor } from 'vscode/monaco';
-
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { loadAllDefaultThemes } from './helpers/themeLocalHelper.js';
 
 export type MonacoVscodeApiActivtion = {
@@ -117,15 +116,11 @@ export class VscodeApiConfig {
         this.keybindingsJson = keybindingsJson;
     }
 
-    createEditor(container: HTMLElement, automaticLayout: boolean) {
-        return createConfiguredEditor(container!, {
-            automaticLayout
-        });
+    createEditor(container: HTMLElement, options?: monaco.editor.IStandaloneEditorConstructionOptions) {
+        return createConfiguredEditor(container!, options);
     }
 
-    createDiffEditor(container: HTMLElement, automaticLayout: boolean) {
-        return createConfiguredDiffEditor(container!, {
-            automaticLayout
-        });
+    createDiffEditor(container: HTMLElement, options?: monaco.editor.IStandaloneDiffEditorConstructionOptions) {
+        return createConfiguredDiffEditor(container!, options);
     }
 }

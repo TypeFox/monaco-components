@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "clean": "npm run clean --workspaces",
+    "clean:watch": "tsc --build tsconfig.build.json --clean",
     "dev": "vite",
     "dev:debug": "vite --debug --force",
     "watch": "tsc --build tsconfig.build.json --watch --verbose",

@@ -57,11 +57,11 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         if (prevProps.webworkerUri !== webworkerUri) {
             this.destroyMonaco().then(() => this.initMonaco());
         } else {
-            editorConfig.setMainLanguageId(languageId);
-            const monacoConfig = wrapper?.getMonacoConfig();
-            monacoConfig?.setMonarchTokensProvider(syntax);
+            editorConfig.getRuntimeConfig().content.languageId = languageId;
+            const monacoConfig = editorConfig.getMonacoConfig();
+            monacoConfig.setMonarchTokensProvider(syntax);
             // eslint-disable-next-line dot-notation
-            monacoConfig?.updateMonacoConfig(languageId, editorConfig.getTheme());
+            monacoConfig.updateMonacoConfig(languageId, editorConfig.getRuntimeConfig().theme);
             const model = innerEditor.getModel();
             if (model && text !== model.getValue()) {
                 model.setValue(text);
@@ -116,30 +116,30 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             this.containerElement.className = className ?? '';
             this.wrapper = new MonacoEditorLanguageClientWrapper({
                 useVscodeConfig: false,
-                id: '42'
+                id: '42',
+                content: {
+                    languageId: languageId,
+                    code: text,
+                    useDiffEditor: false
+                },
+                theme: theme ?? 'vs-dark'
             });
             const editorConfig = this.wrapper.getEditorConfig();
-            editorConfig.setMainLanguageId(languageId);
+            const monacoConfig = editorConfig.getMonacoConfig();
 
-            const monacoConfig = this.wrapper.getMonacoConfig();
             monacoConfig.setMonarchTokensProvider(syntax);
             if (languageExtensionConfig) {
                 monacoConfig.setLanguageExtensionConfig(languageExtensionConfig);
             }
-            editorConfig.setMainCode(text);
-            editorConfig.setUseWebSocket(false);
-            editorConfig.setUseLanguageClient(false);
-            editorConfig.setTheme(theme ?? 'vs-dark');
 
             if (rawMonacoEditorOptions) {
-                monacoConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
+                editorConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
             }
             else {
-                monacoConfig.setMonacoEditorOptions({});
+                editorConfig.setMonacoEditorOptions({});
             }
 
             if (webworkerUri) {
-                editorConfig.setUseLanguageClient(true);
                 const workerURL = new URL(webworkerUri, window.origin);
                 const lsWorker = new Worker(workerURL.href, {
                     type: workerType ?? 'classic',
