@@ -14,7 +14,7 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
-export class MonacoConfig {
+export class MonacoEditorWrapper {
 
     private languageExtensionConfig: MonacoLanguageExtensionConfig | undefined;
     private languageDef: languages.IMonarchLanguage | undefined = undefined;

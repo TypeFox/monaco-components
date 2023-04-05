@@ -41,9 +41,8 @@ function startEditor() {
         return;
     }
 
-    const editorConfig = wrapper.getEditorConfig();
-    const monacoConfig = editorConfig.getMonacoConfig();
-    monacoConfig.setLanguageExtensionConfig({
+    const monacoEditorWrapper = wrapper.getMonacoEditorWrapper();
+    monacoEditorWrapper.setLanguageExtensionConfig({
         id: 'json',
         extensions: ['.json', '.jsonc'],
         aliases: ['JSON', 'json'],
@@ -61,8 +60,8 @@ function startEditor() {
         },
     };
 
-    editorConfig.setMonacoEditorOptions(monacoEditorConfig);
-    editorConfig.setMonacoDiffEditorOptions(monacoEditorConfig);
+    wrapper.setMonacoEditorOptions(monacoEditorConfig);
+    wrapper.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -81,7 +80,7 @@ function startEditor() {
 }
 
 function configureCodeEditors() {
-    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    const runtimeConfig = wrapper.getRuntimeConfig();
     if (runtimeConfig.content.useDiffEditor) {
         runtimeConfig.content.code = codeOrg;
         runtimeConfig.content.codeModified = codeMain;
@@ -100,7 +99,7 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 }
 
 function swapEditors() {
-    const runtimeConfig = wrapper.getEditorConfig().getRuntimeConfig();
+    const runtimeConfig = wrapper.getRuntimeConfig();
     runtimeConfig.content.useDiffEditor = !runtimeConfig.content.useDiffEditor;
     saveMainCode(!runtimeConfig.content.useDiffEditor, false);
     configureCodeEditors();
@@ -116,7 +115,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = wrapper.getEditorConfig().getRuntimeConfig().content.useDiffEditor;
+    const useDiffEditor = wrapper.getRuntimeConfig().content.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {

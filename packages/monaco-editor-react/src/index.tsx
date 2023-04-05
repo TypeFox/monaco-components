@@ -46,7 +46,6 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 
         const { wrapper } = this;
 
-        const editorConfig = wrapper!.getEditorConfig();
         const innerEditor: monaco.editor.IStandaloneCodeEditor =
             // eslint-disable-next-line dot-notation
             wrapper!['editor'];
@@ -57,11 +56,11 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         if (prevProps.webworkerUri !== webworkerUri) {
             this.destroyMonaco().then(() => this.initMonaco());
         } else {
-            editorConfig.getRuntimeConfig().content.languageId = languageId;
-            const monacoConfig = editorConfig.getMonacoConfig();
-            monacoConfig.setMonarchTokensProvider(syntax);
+            wrapper!.getRuntimeConfig().content.languageId = languageId;
+            const monacoEditorWrapper = wrapper!.getMonacoEditorWrapper();
+            monacoEditorWrapper.setMonarchTokensProvider(syntax);
             // eslint-disable-next-line dot-notation
-            monacoConfig.updateMonacoConfig(languageId, editorConfig.getRuntimeConfig().theme);
+            monacoEditorWrapper.updateMonacoConfig(languageId, wrapper!.getRuntimeConfig().theme);
             const model = innerEditor.getModel();
             if (model && text !== model.getValue()) {
                 model.setValue(text);
@@ -124,19 +123,18 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 },
                 theme: theme ?? 'vs-dark'
             });
-            const editorConfig = this.wrapper.getEditorConfig();
-            const monacoConfig = editorConfig.getMonacoConfig();
+            const monacoEditorWrapper = this.wrapper.getMonacoEditorWrapper();
 
-            monacoConfig.setMonarchTokensProvider(syntax);
+            monacoEditorWrapper.setMonarchTokensProvider(syntax);
             if (languageExtensionConfig) {
-                monacoConfig.setLanguageExtensionConfig(languageExtensionConfig);
+                monacoEditorWrapper.setLanguageExtensionConfig(languageExtensionConfig);
             }
 
             if (rawMonacoEditorOptions) {
-                editorConfig.setMonacoEditorOptions(rawMonacoEditorOptions);
+                this.wrapper.setMonacoEditorOptions(rawMonacoEditorOptions);
             }
             else {
-                editorConfig.setMonacoEditorOptions({});
+                this.wrapper.setMonacoEditorOptions({});
             }
 
             if (webworkerUri) {

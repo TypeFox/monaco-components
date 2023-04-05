@@ -11,23 +11,26 @@ import getTokenClassificationServiceOverride from 'vscode/service-override/token
 import getLanguageConfigurationServiceOverride from 'vscode/service-override/languageConfiguration';
 import getThemeServiceOverride from 'vscode/service-override/theme';
 import getAudioCueServiceOverride from 'vscode/service-override/audioCue';
+// import getDebugServiceOverride from 'vscode/service-override/debug';
 import { createConfiguredEditor, createConfiguredDiffEditor } from 'vscode/monaco';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { loadAllDefaultThemes } from './helpers/themeLocalHelper.js';
 
 export type MonacoVscodeApiActivtion = {
+    // notificationService, dialogsService and themeService are enabled by default
     basePath: string,
-    enableModelEditorService: boolean;
-    // notificationService and dialogsService are enabled by default
-    enableConfigurationService: boolean;
-    enableKeybindingsService: boolean;
-    enableTextmateService: boolean;
-    // theme service is required
-    enableTokenClassificationService: boolean;
-    enableLanguageConfigurationService: boolean;
+    enableModelEditorService?: boolean;
+    enableConfigurationService?: boolean;
+    enableKeybindingsService?: boolean;
+    enableTextmateService?: boolean;
+    enableTokenClassificationService?: boolean;
+    enableLanguagesService?: boolean;
+    enableLanguageConfigurationService?: boolean;
+    enableAudioCueService?: boolean;
+    enableDebugService?: boolean;
 };
 
-export class VscodeApiConfig {
+export class MonacoVscodeApiWrapper {
 
     private extensionManifest: IExtensionManifest;
     private extensionFiles: Map<string, URL>;
@@ -46,24 +49,35 @@ export class VscodeApiConfig {
             enableKeybindingsService: input?.enableKeybindingsService ?? true,
             enableTextmateService: input?.enableTextmateService ?? true,
             enableTokenClassificationService: input?.enableTokenClassificationService ?? true,
+            enableLanguagesService: input?.enableLanguagesService ?? true,
             enableLanguageConfigurationService: input?.enableLanguageConfigurationService ?? true,
+            enableAudioCueService: input?.enableAudioCueService ?? true,
+            // deactivate debugservices for now
+            enableDebugService: false,
         };
 
         const modelService = this.activationConfig.enableModelEditorService ? getModelEditorServiceOverride(async (model, options) => {
-            console.log('trying to open a model', model, options);
+            console.log('Trying to open a model', model, options);
             return undefined;
-        }) : undefined;
-        const configurationService = this.activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : undefined;
-        const keybindingsService = this.activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : undefined;
+        }) : {};
+        const configurationService = this.activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : {};
+        const keybindingsService = this.activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : {};
 
-        const textmateService = this.activationConfig.enableTextmateService ? getTextmateServiceOverride() : undefined;
-        const tokenClassificationService = this.activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : undefined;
+        const textmateService = this.activationConfig.enableTextmateService ? getTextmateServiceOverride() : {};
+        const tokenClassificationService = this.activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : {};
         let languageConfigurationService;
-        let languageService;
-        if (tokenClassificationService) {
+        let languagesService;
+        // tokenClassificationService requires languagesService and languageConfigurationService
+        if (this.activationConfig.enableTokenClassificationService) {
+            languagesService = getLanguagesServiceOverride();
             languageConfigurationService = getLanguageConfigurationServiceOverride();
-            languageService = getLanguagesServiceOverride();
+        } else {
+            languagesService = this.activationConfig.enableLanguagesService ? getLanguagesServiceOverride() : {};
+            languageConfigurationService = this.activationConfig.enableLanguageConfigurationService ? getLanguageConfigurationServiceOverride() : {};
         }
+        const audioCueService = this.activationConfig.enableAudioCueService ? getAudioCueServiceOverride() : {};
+        // const debugService = this.activationConfig.enableDebugService ? getDebugServiceOverride() : undefined
+        const debugService = {};
 
         StandaloneServices.initialize({
             ...modelService,
@@ -75,8 +89,9 @@ export class VscodeApiConfig {
             ...getThemeServiceOverride(),
             ...tokenClassificationService,
             ...languageConfigurationService,
-            ...languageService,
-            ...getAudioCueServiceOverride()
+            ...languagesService,
+            ...audioCueService,
+            ...debugService
         });
         console.log('Basic init of VscodeApiConfig was completed.');
     }

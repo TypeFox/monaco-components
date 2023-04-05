@@ -12,13 +12,7 @@ const codeMain = await responseStatemachine.text();
 const wrapper = new MonacoEditorLanguageClientWrapper({
     useVscodeConfig: true,
     vscodeActivationConfig: {
-        basePath: '../monaco-editor-wrapper',
-        enableModelEditorService: true,
-        enableConfigurationService: true,
-        enableKeybindingsService: true,
-        enableTextmateService: true,
-        enableTokenClassificationService: true,
-        enableLanguageConfigurationService: true
+        basePath: '../monaco-editor-wrapper'
     },
     content: {
         languageId: 'statemachine',
@@ -36,9 +30,8 @@ const startEditor = async () => {
         return;
     }
 
-    const editorConfig = wrapper.getEditorConfig();
-    const vscodeApiConfig = editorConfig.getVscodeApiConfig();
-    const languageId = editorConfig.getRuntimeConfig().content.languageId;
+    const monacoVscodeApiWrapper = wrapper.getMonacoVscodeApiWrapper();
+    const languageId = wrapper.getRuntimeConfig().content.languageId;
 
     const extension = {
         name: 'langium-example',
@@ -80,9 +73,9 @@ const startEditor = async () => {
     const responseStatemachineTm = new URL('../../../node_modules/langium-statemachine-dsl/syntaxes/statemachine.tmLanguage.json', window.location.href);
     extensionFiles.set('/statemachine-configuration.json', statemachineLanguageConfig);
     extensionFiles.set('/statemachine-grammar.json', responseStatemachineTm);
-    vscodeApiConfig.setExtensionConfiguration(extension, extensionFiles);
+    monacoVscodeApiWrapper.setExtensionConfiguration(extension, extensionFiles);
 
-    vscodeApiConfig.setUserConfiguration(`{
+    monacoVscodeApiWrapper.setUserConfiguration(`{
         "workbench.colorTheme": "Dark+ (Experimental)",
         "editor.fontSize": 14,
         "editor.lightbulb.enabled": true,
