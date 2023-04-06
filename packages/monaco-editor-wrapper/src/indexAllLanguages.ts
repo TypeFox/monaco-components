@@ -1,5 +1,5 @@
 export type {
-    LanguageContent,
+    EditorConfig,
     MonacoLanguageExtensionConfig,
     MonacoVscodeApiActivtion,
     WebSocketConfigOptions,

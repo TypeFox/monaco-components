@@ -1,3 +1,5 @@
+import type { } from 'css-font-loading-module';
+
 export const getMonacoEditoCss = async () => {
     const res = await fetch(new URL('../../bundle/assets/style.css', window.location.href).href);
     return res.text();

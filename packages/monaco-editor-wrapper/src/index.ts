@@ -15,7 +15,7 @@ import {
 } from './monacoVscodeApiWrapper.js';
 
 import type {
-    LanguageContent,
+    EditorConfig,
     WebSocketConfigOptions,
     WorkerConfigOptions,
     GlobalConfig,
@@ -27,7 +27,7 @@ import {
 } from './wrapper.js';
 
 export type {
-    LanguageContent,
+    EditorConfig,
     MonacoLanguageExtensionConfig,
     MonacoVscodeApiActivtion,
     WebSocketConfigOptions,

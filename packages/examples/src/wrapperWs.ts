@@ -4,7 +4,6 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-import { Message } from 'vscode-languageserver/browser.js';
 
 const languageId = 'json';
 let codeMain = `{
@@ -15,22 +14,48 @@ const codeOrg = `{
     "$schema": "http://json.schemastore.org/coffeelint",
     "line_endings": {"value": "unix"}
 }`;
-const wrapper = new MonacoEditorLanguageClientWrapper({
-    useVscodeConfig: false,
-    theme: 'vs-dark',
-    content: {
+const wrapper = new MonacoEditorLanguageClientWrapper();
+
+const monacoEditorConfig = {
+    glyphMargin: true,
+    guides: {
+        bracketPairs: true
+    },
+    lightbulb: {
+        enabled: true
+    },
+};
+wrapper.init({
+    wrapperConfig: {
+        useVscodeConfig: false,
+        monacoEditorConfig: {
+            languageExtensionConfig: {
+                id: 'json',
+                extensions: ['.json', '.jsonc'],
+                aliases: ['JSON', 'json'],
+                mimetypes: ['application/json']
+            }
+        }
+    },
+
+    editorConfig: {
         languageId: languageId,
         code: codeMain,
         useDiffEditor: false,
-        codeModified: codeOrg
+        codeModified: codeOrg,
+        editorOptions: monacoEditorConfig,
+        diffEditorOptions: monacoEditorConfig,
+        theme: 'vs-dark',
+        automaticLayout: true
     },
-    languageClient: {
+    languageClientConfig: {
+        enabled: true,
         useWebSocket: true,
-        options: {
-            wsHost: 'localhost',
-            wsPort: 3000,
-            wsPath: 'sampleServer',
-            wsSecured: false
+        webSocketConfigOptions: {
+            host: 'localhost',
+            port: 3000,
+            path: 'sampleServer',
+            secured: false
         }
     }
 });
@@ -40,37 +65,13 @@ function startEditor() {
         alert('Editor was already started!');
         return;
     }
-
-    const monacoEditorWrapper = wrapper.getMonacoEditorWrapper();
-    monacoEditorWrapper.setLanguageExtensionConfig({
-        id: 'json',
-        extensions: ['.json', '.jsonc'],
-        aliases: ['JSON', 'json'],
-        mimetypes: ['application/json']
-    });
     configureCodeEditors();
-
-    const monacoEditorConfig = {
-        glyphMargin: true,
-        guides: {
-            bracketPairs: true
-        },
-        lightbulb: {
-            enabled: true
-        },
-    };
-
-    wrapper.setMonacoEditorOptions(monacoEditorConfig);
-    wrapper.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
         .then((s: unknown) => {
             console.log(s);
             logEditorInfo(wrapper);
-            wrapper.getMessageTransports()?.reader?.listen((x: Message) => {
-                console.log(x);
-            });
 
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
@@ -81,11 +82,11 @@ function startEditor() {
 
 function configureCodeEditors() {
     const runtimeConfig = wrapper.getRuntimeConfig();
-    if (runtimeConfig.content.useDiffEditor) {
-        runtimeConfig.content.code = codeOrg;
-        runtimeConfig.content.codeModified = codeMain;
+    if (runtimeConfig.editorConfig.useDiffEditor) {
+        runtimeConfig.editorConfig.code = codeOrg;
+        runtimeConfig.editorConfig.codeModified = codeMain;
     } else {
-        runtimeConfig.content.code = codeMain;
+        runtimeConfig.editorConfig.code = codeMain;
     }
 }
 
@@ -100,8 +101,8 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 
 function swapEditors() {
     const runtimeConfig = wrapper.getRuntimeConfig();
-    runtimeConfig.content.useDiffEditor = !runtimeConfig.content.useDiffEditor;
-    saveMainCode(!runtimeConfig.content.useDiffEditor, false);
+    runtimeConfig.editorConfig.useDiffEditor = !runtimeConfig.editorConfig.useDiffEditor;
+    saveMainCode(!runtimeConfig.editorConfig.useDiffEditor, false);
     configureCodeEditors();
 
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -115,7 +116,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = wrapper.getRuntimeConfig().content.useDiffEditor;
+    const useDiffEditor = wrapper.getRuntimeConfig().editorConfig.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {

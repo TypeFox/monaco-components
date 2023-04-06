@@ -35,7 +35,8 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "jsx": "react",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "allowJs": true
   },
   "include": [
     "**/src/**/*.ts",

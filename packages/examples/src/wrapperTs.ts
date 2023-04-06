@@ -1,14 +1,17 @@
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+// support all editor features
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import { editor, languages } from 'monaco-editor/esm/vs/editor/edcore.main.js';
+
 import * as vscode from 'vscode';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper/allLanguages';
 import { StandaloneServices } from 'vscode/services';
 import getNotificationServiceOverride from 'vscode/service-override/notifications';
 import getDialogServiceOverride from 'vscode/service-override/dialogs';
 import getKeybindingsServiceOverride from 'vscode/service-override/keybindings';
-// import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
 StandaloneServices.initialize({
     ...getNotificationServiceOverride(document.body),
@@ -23,14 +26,34 @@ const codeOrg = `function sayHello(): string {
 let codeMain = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
-const wrapper = new MonacoEditorLanguageClientWrapper({
-    useVscodeConfig: false,
-    theme: 'vs-dark',
-    content: {
+
+const monacoEditorConfig = {
+    glyphMargin: true,
+    guides: {
+        bracketPairs: true
+    },
+    lightbulb: {
+        enabled: true
+    }
+} as editor.IEditorOptions & editor.IGlobalEditorOptions;
+
+const wrapper = new MonacoEditorLanguageClientWrapper();
+wrapper.init({
+    wrapperConfig: {
+        useVscodeConfig: false
+    },
+    languageClientConfig: {
+        enabled: false
+    },
+    editorConfig: {
         languageId: languageId,
         code: codeMain,
         useDiffEditor: false,
-        codeModified: codeOrg
+        codeModified: codeOrg,
+        editorOptions: monacoEditorConfig,
+        diffEditorOptions: monacoEditorConfig,
+        theme: 'vs-dark',
+        automaticLayout: true
     }
 });
 
@@ -40,19 +63,6 @@ function startEditor() {
         return;
     }
     configureCodeEditors();
-
-    const monacoEditorConfig = {
-        glyphMargin: true,
-        guides: {
-            bracketPairs: true
-        },
-        lightbulb: {
-            enabled: true
-        }
-    } as monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions;
-
-    wrapper.setMonacoEditorOptions(monacoEditorConfig);
-    wrapper.setMonacoDiffEditorOptions(monacoEditorConfig);
 
     toggleSwapDiffButton(true);
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -69,11 +79,11 @@ function startEditor() {
 
 function configureCodeEditors() {
     const runtimeConfig = wrapper.getRuntimeConfig();
-    if (runtimeConfig.content.useDiffEditor) {
-        runtimeConfig.content.code = codeOrg;
-        runtimeConfig.content.codeModified = codeMain;
+    if (runtimeConfig.editorConfig.useDiffEditor) {
+        runtimeConfig.editorConfig.code = codeOrg;
+        runtimeConfig.editorConfig.codeModified = codeMain;
     } else {
-        runtimeConfig.content.code = codeMain;
+        runtimeConfig.editorConfig.code = codeMain;
     }
 }
 
@@ -88,8 +98,8 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 
 function swapEditors() {
     const runtimeConfig = wrapper.getRuntimeConfig();
-    runtimeConfig.content.useDiffEditor = !runtimeConfig.content.useDiffEditor;
-    saveMainCode(!runtimeConfig.content.useDiffEditor, false);
+    runtimeConfig.editorConfig.useDiffEditor = !runtimeConfig.editorConfig.useDiffEditor;
+    saveMainCode(!runtimeConfig.editorConfig.useDiffEditor, false);
     configureCodeEditors();
 
     wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
@@ -103,7 +113,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = wrapper.getRuntimeConfig().content.useDiffEditor;
+    const useDiffEditor = wrapper.getRuntimeConfig().editorConfig.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {
@@ -120,7 +130,7 @@ function toggleSwapDiffButton(enabled: boolean) {
 }
 
 function logEditorInfo(client: MonacoEditorLanguageClientWrapper) {
-    console.log(`# of configured languages: ${monaco.languages.getLanguages().length}`);
+    console.log(`# of configured languages: ${languages.getLanguages().length}`);
     console.log(`Main code: ${client.getMainCode()}`);
     console.log(`Modified code: ${client.getDiffCode()}`);
 }

@@ -3,7 +3,7 @@ import getModelEditorServiceOverride from 'vscode/service-override/modelEditor';
 import getNotificationServiceOverride from 'vscode/service-override/notifications';
 import getDialogsServiceOverride from 'vscode/service-override/dialogs';
 import getConfigurationServiceOverride, { updateUserConfiguration as vscodeUpdateUserConfiguration } from 'vscode/service-override/configuration';
-import getKeybindingsServiceOverride, { updateUserKeybindings } from 'vscode/service-override/keybindings';
+import getKeybindingsServiceOverride from 'vscode/service-override/keybindings';
 import { registerExtension, IExtensionManifest } from 'vscode/extensions';
 import getTextmateServiceOverride from 'vscode/service-override/textmate';
 import getLanguagesServiceOverride from 'vscode/service-override/languages';
@@ -30,53 +30,53 @@ export type MonacoVscodeApiActivtion = {
     enableDebugService?: boolean;
 };
 
+export type MonacoVscodeApiWrapperConfig = {
+    activationConfig: MonacoVscodeApiActivtion;
+    extension: IExtensionManifest | object;
+    extensionFiles?: Map<string, URL>;
+    userConfiguration?: string;
+}
+
 export class MonacoVscodeApiWrapper {
 
-    private extensionManifest: IExtensionManifest;
-    private extensionFiles: Map<string, URL>;
-
-    private activationConfig: MonacoVscodeApiActivtion | undefined;
-
-    private userConfigurationJson: string | undefined;
-    private keybindingsJson: string | undefined;
-
-    async init(input?: MonacoVscodeApiActivtion) {
+    async init(runtimeConfig: MonacoVscodeApiWrapperConfig) {
         console.log(window.location.href);
-        this.activationConfig = {
-            basePath: input?.basePath ?? '.',
-            enableModelEditorService: input?.enableModelEditorService ?? true,
-            enableConfigurationService: input?.enableConfigurationService ?? true,
-            enableKeybindingsService: input?.enableKeybindingsService ?? true,
-            enableTextmateService: input?.enableTextmateService ?? true,
-            enableTokenClassificationService: input?.enableTokenClassificationService ?? true,
-            enableLanguagesService: input?.enableLanguagesService ?? true,
-            enableLanguageConfigurationService: input?.enableLanguageConfigurationService ?? true,
-            enableAudioCueService: input?.enableAudioCueService ?? true,
+        const activationInput = runtimeConfig.activationConfig;
+        const activationConfig = {
+            basePath: activationInput.basePath ?? '.',
+            enableModelEditorService: activationInput.enableModelEditorService ?? true,
+            enableConfigurationService: activationInput.enableConfigurationService ?? true,
+            enableKeybindingsService: activationInput.enableKeybindingsService ?? true,
+            enableTextmateService: activationInput.enableTextmateService ?? true,
+            enableTokenClassificationService: activationInput.enableTokenClassificationService ?? true,
+            enableLanguagesService: activationInput.enableLanguagesService ?? true,
+            enableLanguageConfigurationService: activationInput.enableLanguageConfigurationService ?? true,
+            enableAudioCueService: activationInput.enableAudioCueService ?? true,
             // deactivate debugservices for now
             enableDebugService: false,
         };
 
-        const modelService = this.activationConfig.enableModelEditorService ? getModelEditorServiceOverride(async (model, options) => {
+        const modelService = activationConfig.enableModelEditorService ? getModelEditorServiceOverride(async (model, options) => {
             console.log('Trying to open a model', model, options);
             return undefined;
         }) : {};
-        const configurationService = this.activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : {};
-        const keybindingsService = this.activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : {};
+        const configurationService = activationConfig.enableModelEditorService ? getConfigurationServiceOverride() : {};
+        const keybindingsService = activationConfig.enableKeybindingsService ? getKeybindingsServiceOverride() : {};
 
-        const textmateService = this.activationConfig.enableTextmateService ? getTextmateServiceOverride() : {};
-        const tokenClassificationService = this.activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : {};
+        const textmateService = activationConfig.enableTextmateService ? getTextmateServiceOverride() : {};
+        const tokenClassificationService = activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : {};
         let languageConfigurationService;
         let languagesService;
         // tokenClassificationService requires languagesService and languageConfigurationService
-        if (this.activationConfig.enableTokenClassificationService) {
+        if (activationConfig.enableTokenClassificationService) {
             languagesService = getLanguagesServiceOverride();
             languageConfigurationService = getLanguageConfigurationServiceOverride();
         } else {
-            languagesService = this.activationConfig.enableLanguagesService ? getLanguagesServiceOverride() : {};
-            languageConfigurationService = this.activationConfig.enableLanguageConfigurationService ? getLanguageConfigurationServiceOverride() : {};
+            languagesService = activationConfig.enableLanguagesService ? getLanguagesServiceOverride() : {};
+            languageConfigurationService = activationConfig.enableLanguageConfigurationService ? getLanguageConfigurationServiceOverride() : {};
         }
-        const audioCueService = this.activationConfig.enableAudioCueService ? getAudioCueServiceOverride() : {};
-        // const debugService = this.activationConfig.enableDebugService ? getDebugServiceOverride() : undefined
+        const audioCueService = activationConfig.enableAudioCueService ? getAudioCueServiceOverride() : {};
+        // const debugService = activationConfig.enableDebugService ? getDebugServiceOverride() : undefined
         const debugService = {};
 
         StandaloneServices.initialize({
@@ -93,42 +93,35 @@ export class MonacoVscodeApiWrapper {
             ...audioCueService,
             ...debugService
         });
+        runtimeConfig.activationConfig = activationConfig;
+
         console.log('Basic init of VscodeApiConfig was completed.');
     }
 
-    async setup() {
-        const { registerFile: registerExtensionFile } = registerExtension(this.extensionManifest);
-        for (const entry of this.extensionFiles) {
-            registerExtensionFile(entry[0], async () => {
-                const json = entry[1].href;
-                return (await fetch(json)).text();
-            });
+    async setup(runtimeConfig: MonacoVscodeApiWrapperConfig) {
+        const extension = runtimeConfig.extension as IExtensionManifest;
+        const { registerFile: registerExtensionFile } = registerExtension(extension);
+        if (runtimeConfig.extensionFiles) {
+            for (const entry of runtimeConfig.extensionFiles) {
+                registerExtensionFile(entry[0], async () => {
+                    const json = entry[1].href;
+                    return (await fetch(json)).text();
+                });
+            }
         }
 
-        const themesUrl = new URL(this.activationConfig?.basePath + '/resources/themes', window.location.href).href;
+        const themesUrl = new URL(runtimeConfig.activationConfig?.basePath + '/resources/themes', window.location.href).href;
         console.log(`Themes are loaded from: ${themesUrl}`);
         await loadAllDefaultThemes(themesUrl);
 
-        if (this.userConfigurationJson) {
-            void vscodeUpdateUserConfiguration(this.userConfigurationJson);
+        if (runtimeConfig.activationConfig.enableConfigurationService && runtimeConfig.userConfiguration) {
+            void vscodeUpdateUserConfiguration(runtimeConfig.userConfiguration);
         }
 
-        if (this.activationConfig?.enableKeybindingsService && this.keybindingsJson) {
-            void updateUserKeybindings(this.keybindingsJson);
+        if (!runtimeConfig.activationConfig.enableKeybindingsService && extension.contributes?.keybindings) {
+            console.warn('Keybindings are set, but the KeybindingsService was not enabled.');
+            extension.contributes.keybindings = [];
         }
-    }
-
-    setExtensionConfiguration(manifest: IExtensionManifest, files: Map<string, URL>): void {
-        this.extensionManifest = manifest;
-        this.extensionFiles = files;
-    }
-
-    setUserConfiguration(configurationJson: string) {
-        this.userConfigurationJson = configurationJson;
-    }
-
-    setUserKeybindings(keybindingsJson: string) {
-        this.keybindingsJson = keybindingsJson;
     }
 
     createEditor(container: HTMLElement, options?: monaco.editor.IStandaloneEditorConstructionOptions) {

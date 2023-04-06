@@ -1,4 +1,5 @@
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { EditorConfig } from './wrapper.js';
 
 /**
  * This is derived from:
@@ -14,64 +15,42 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
+export type MonacoEditorWrapperConfig = {
+    languageExtensionConfig?: MonacoLanguageExtensionConfig;
+    languageDef?: languages.IMonarchLanguage;
+    themeData?: editor.IStandaloneThemeData;
+}
+
 export class MonacoEditorWrapper {
 
-    private languageExtensionConfig: MonacoLanguageExtensionConfig | undefined;
-    private languageDef: languages.IMonarchLanguage | undefined = undefined;
-    private themeData: editor.IStandaloneThemeData | undefined = undefined;
-
-    async init() {
+    async init(_runtimeConfig: MonacoEditorWrapperConfig) {
         console.log('Basic init of MonacoConfig was completed.');
     }
 
-    setLanguageExtensionConfig(languageExtensionConfig: MonacoLanguageExtensionConfig): void {
-        this.languageExtensionConfig = languageExtensionConfig;
-    }
-
-    getLanguageExtensionConfig(): MonacoLanguageExtensionConfig | undefined {
-        return this.languageExtensionConfig;
-    }
-
-    getMonarchTokensProvider(): languages.IMonarchLanguage | undefined {
-        return this.languageDef;
-    }
-
-    setMonarchTokensProvider(languageDef: unknown): void {
-        this.languageDef = languageDef as languages.IMonarchLanguage;
-    }
-
-    setEditorThemeData(themeData: unknown): void {
-        this.themeData = themeData as editor.IStandaloneThemeData;
-    }
-
-    getEditorThemeData(): editor.IStandaloneThemeData | undefined {
-        return this.themeData;
-    }
-
-    updateMonacoConfig(languageId: string, theme: string) {
+    async setup(editorConfig: EditorConfig, runtimeConfig?: MonacoEditorWrapperConfig) {
         // register own language first
-        const extLang = this.getLanguageExtensionConfig();
+        const extLang = runtimeConfig?.languageExtensionConfig;
         if (extLang) {
-            languages.register(this.getLanguageExtensionConfig() as languages.ILanguageExtensionPoint);
+            languages.register(extLang);
         }
 
-        const languageRegistered = languages.getLanguages().filter(x => x.id === languageId);
+        const languageRegistered = languages.getLanguages().filter(x => x.id === editorConfig.languageId);
         if (languageRegistered.length === 0) {
             // this is only meaningful for languages supported by monaco out of the box
-            languages.register({ id: languageId });
+            languages.register({ id: editorConfig.languageId });
         }
 
         // apply monarch definitions
-        const tokenProvider = this.getMonarchTokensProvider();
+        const tokenProvider = runtimeConfig?.languageDef;
         if (tokenProvider) {
-            languages.setMonarchTokensProvider(languageId, tokenProvider);
+            languages.setMonarchTokensProvider(editorConfig.languageId, tokenProvider);
         }
-        const themeData = this.getEditorThemeData();
+        const themeData = runtimeConfig?.themeData;
         if (themeData) {
-            editor.defineTheme(theme, themeData);
+            editor.defineTheme(editorConfig.theme, themeData);
         }
 
-        editor.setTheme(theme);
+        editor.setTheme(editorConfig.theme);
     }
 
     createEditor(container: HTMLElement, options?: editor.IStandaloneEditorConstructionOptions) {
