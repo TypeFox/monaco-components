@@ -27,7 +27,7 @@ let codeMain = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
 
-const monacoEditorConfig = {
+const monacoEditorConfig: editor.IStandaloneEditorConstructionOptions = {
     glyphMargin: true,
     guides: {
         bracketPairs: true
@@ -35,7 +35,7 @@ const monacoEditorConfig = {
     lightbulb: {
         enabled: true
     }
-} as editor.IEditorOptions & editor.IGlobalEditorOptions;
+};
 
 const wrapper = new MonacoEditorLanguageClientWrapper();
 wrapper.init({

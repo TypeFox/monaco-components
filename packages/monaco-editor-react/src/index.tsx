@@ -1,23 +1,25 @@
 import React, { CSSProperties } from 'react';
-import { MonacoLanguageExtensionConfig, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import { MonacoEditorLanguageClientWrapper, GlobalConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
 // import { getMonacoCss } from 'monaco-editor-wrapper/monaco-css';
 
 export type MonacoEditorProps = {
-    languageId: string;
-    text: string;
     style?: CSSProperties;
     className?: string;
+    /*
+    languageId: string;
+    text: string;
     webworkerUri?: string;
-    readOnly?: boolean;
     syntax?: monaco.languages.IMonarchLanguage;
     languageExtensionConfig?: MonacoLanguageExtensionConfig;
     theme?: string,
     workerName?: string,
     workerType?: WorkerType,
     rawMonacoEditorOptions?: monaco.editor.IEditorOptions & monaco.editor.IGlobalEditorOptions,
+*/
+    globalConfig: GlobalConfig,
     onTextChanged?: (text: string, isDirty: boolean) => void;
     onLoading?: () => void;
     onLoad?: () => void;
@@ -42,21 +44,28 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     }
 
     override componentDidUpdate(prevProps: MonacoEditorProps) {
-        const { className, text, webworkerUri, syntax, languageId } = this.props;
+        const { className, globalConfig } = this.props;
 
         const { wrapper } = this;
-
+        /*
         const innerEditor: monaco.editor.IStandaloneCodeEditor =
             // eslint-disable-next-line dot-notation
             wrapper!['editor'];
-
+ */
         if (prevProps.className !== className && this.containerElement) {
             this.containerElement.className = className ?? '';
         }
-        if (prevProps.webworkerUri !== webworkerUri) {
+        const prevUrl = prevProps.globalConfig.languageClientConfig.workerConfigOptions?.url;
+        const url = globalConfig.languageClientConfig.workerConfigOptions?.url;
+        if (prevUrl !== url) {
             this.destroyMonaco().then(() => this.initMonaco());
         } else {
-            wrapper!.getRuntimeConfig().content.languageId = languageId;
+            // TODO: we need to update the wrapper config
+            wrapper!.updateWrapperConfig();
+            wrapper!.updateEditorConfig();
+            /*
+            wrapper!.startEditor();
+            wrapper!.getRuntimeConfig().editorConfig.languageId = languageId;
             const monacoEditorWrapper = wrapper!.getMonacoEditorWrapper();
             monacoEditorWrapper.setMonarchTokensProvider(syntax);
             // eslint-disable-next-line dot-notation
@@ -65,6 +74,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             if (model && text !== model.getValue()) {
                 model.setValue(text);
             }
+*/
         }
     }
 
@@ -97,6 +107,8 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
     private async initMonaco() {
         const {
             className,
+            globalConfig,
+            /*
             text,
             syntax,
             languageId,
@@ -106,6 +118,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             workerType,
             theme,
             languageExtensionConfig,
+*/
             onTextChanged,
             onLoading,
             onLoad,
@@ -113,7 +126,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
 
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
-            this.wrapper = new MonacoEditorLanguageClientWrapper({
+            this.wrapper = new MonacoEditorLanguageClientWrapper();
+            this.wrapper.init(globalConfig);
+            /*
+            {
                 id: '42',
                 wrapperConfig: {
                     useVscodeConfig: false,
@@ -125,8 +141,9 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 },
                 theme: theme ?? 'vs-dark'
             });
-            const monacoEditorWrapper = this.wrapper.getMonacoEditorWrapper();
-
+*/
+            const runtimeConfig = this.wrapper.getRuntimeConfig();
+            /*
             monacoEditorWrapper.setMonarchTokensProvider(syntax);
             if (languageExtensionConfig) {
                 monacoEditorWrapper.setLanguageExtensionConfig(languageExtensionConfig);
@@ -147,7 +164,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 });
                 this.wrapper.setWorker(lsWorker);
             }
-
+*/
             this.isStarting = this.wrapper.startEditor(this.containerElement);
             await this.isStarting;
 
@@ -161,10 +178,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 if (model) {
                     this._subscription = model.onDidChangeContent(() => {
                         const modelText = model.getValue();
-                        onTextChanged(modelText, modelText !== text);
+                        onTextChanged(modelText, modelText !== runtimeConfig.editorConfig.code);
                     });
                     const currentValue = model.getValue();
-                    if (currentValue !== text) {
+                    if (currentValue !== runtimeConfig.editorConfig.code) {
                         onTextChanged(currentValue, true);
                     }
                 }

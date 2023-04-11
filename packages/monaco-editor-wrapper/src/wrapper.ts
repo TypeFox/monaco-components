@@ -147,7 +147,7 @@ export class MonacoEditorLanguageClientWrapper {
             } else {
                 this.runtimeConfig.wrapperConfig.monacoEditorConfig = {};
             }
-            this.monacoEditorWrapper.init(this.runtimeConfig.wrapperConfig.monacoEditorConfig);
+            this.monacoEditorWrapper.init(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig);
         }
     }
 
@@ -217,8 +217,7 @@ export class MonacoEditorLanguageClientWrapper {
         // dispose old instances (try both, no need for swap)
         this.disposeEditor();
         this.disposeDiffEditor();
-
-        this.applyConfig();
+        this.updateWrapperConfig();
 
         if (this.runtimeConfig.editorConfig.useDiffEditor) {
             this.createDiffEditor(container);
@@ -236,11 +235,15 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    private applyConfig(): void {
+    updateEditorConfig(): void {
+        // TODO: here language and text need to be updated
+    }
+
+    updateWrapperConfig(): void {
         if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
-            this.monacoVscodeApiWrapper.setup(this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig!);
+            this.monacoVscodeApiWrapper.updateWrapperConfig(this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig!);
         } else {
-            this.monacoEditorWrapper.setup(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig);
+            this.monacoEditorWrapper.updateWrapperConfig(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig!);
         }
     }
 
@@ -258,7 +261,7 @@ export class MonacoEditorLanguageClientWrapper {
 
     async restartLanguageClient(): Promise<string> {
         await this.disposeLanguageClient();
-        this.applyConfig();
+        this.updateWrapperConfig();
         return this.startLanguageClientConnection(this.runtimeConfig.languageClientConfig);
     }
 

@@ -23,11 +23,13 @@ export type MonacoEditorWrapperConfig = {
 
 export class MonacoEditorWrapper {
 
-    async init(_runtimeConfig: MonacoEditorWrapperConfig) {
-        console.log('Basic init of MonacoConfig was completed.');
+    async init(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {
+        this.updateWrapperConfig(editorConfig, runtimeConfig);
+
+        console.log('Init of MonacoConfig was completed.');
     }
 
-    async setup(editorConfig: EditorConfig, runtimeConfig?: MonacoEditorWrapperConfig) {
+    async updateWrapperConfig(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {
         // register own language first
         const extLang = runtimeConfig?.languageExtensionConfig;
         if (extLang) {
@@ -49,7 +51,6 @@ export class MonacoEditorWrapper {
         if (themeData) {
             editor.defineTheme(editorConfig.theme, themeData);
         }
-
         editor.setTheme(editorConfig.theme);
     }
 

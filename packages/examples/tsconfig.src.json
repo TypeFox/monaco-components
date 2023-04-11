@@ -12,9 +12,7 @@
     "path": "../monaco-editor-workers/tsconfig.src.json"
   }],
   "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "src/wrapperAdvanced.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx",
   ]
 }

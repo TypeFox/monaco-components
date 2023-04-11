@@ -11,9 +11,5 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx"
-  ],
-  "exclude": [
-    "src/wrapperAdvanced.ts",
-    "src/react*.tsx"
   ]
 }

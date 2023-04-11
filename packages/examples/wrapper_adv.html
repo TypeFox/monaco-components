@@ -14,70 +14,13 @@
 </head>
 
 <body>
-    <script type="module">
-        import { buildWorkerDefinition } from "../monaco-editor-workers/src/index.ts";
-        buildWorkerDefinition('../monaco-editor-workers/dist/workers', import.meta.url, false);
-        import "../monaco-editor-comp/src/indexAllLanguages.ts";
-    </script>
-    <div style="height: 33vh;">
-    <monaco-editor-comp enableInlineConfig useDiffEditor id="42"
-        wsHost="localhost" wsPort="3000" wsPath="sampleServer" useLanguageClient>
-        <script type="text/javascript">
-            function getMonacoDiffEditorOptions42() {
-                return {
-                    code: `This line is equal.
-This number is different 2022
-Misspelled!
-Same again.`,
-                    languageId: 'text/plain',
-                    modifiedCode: `This line is equal.
-This number is different 2002
-Misspeelled!
-Same again.`,
-                    modifiedLanguageId: 'text/plain'
-                };
-            }
-            </script>
-    </monaco-editor-comp>
+    <div style="height: 33vh;" id="monaco-editor-root-42">
     </div>
-    <div style="height: 33vh;">
-        <monaco-editor-comp enableInlineConfig useDiffEditor id="43"
-        code="This line is equal.This number is different 3022.Misspelled!Same again."
-        languageId="text/plain"
-        modifiedCode="This line is equal.This number is different 3002.Misspelled!Same again."
-        modifiedLanguageId="text/plain"
-        theme="vs-dark">
-            <script type="text/javascript">
-                function getMonacoDiffEditorOptions43() {
-                    return {
-                        lineNumbers: 'off',
-                        minimap: {
-                            enabled: true
-                        }
-                    };
-                }
-                </script>
-        </monaco-editor-comp>
+    <div style="height: 33vh;" id="monaco-editor-root-43">
     </div>
-    <div style="height: 33vh;">
-    <monaco-editor-comp enableInlineConfig id="44">
-        <script type="text/javascript">
-            function getMonacoEditorOptions44() {
-                    return {
-                        code: `function logMe() {
-    console.log('Hello monaco-editor-comp!');
-};`,
-                        languageId: 'javascript',
-                        theme: 'vs-dark',
-                        minimap: {
-                            enabled: false
-                        }
-                    }
-                }
-        </script>
-    </monaco-editor-comp>
+    <div style="height: 33vh;" id="monaco-editor-root-44">
     </div>
-    <script defer type="module" src="./src/wrapperAdvanced.ts"></script>
+    <script type="module" src="./src/wrapperAdvanced.ts"></script>
 </body>
 
 </html>

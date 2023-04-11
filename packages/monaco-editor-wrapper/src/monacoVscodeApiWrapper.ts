@@ -67,6 +67,7 @@ export class MonacoVscodeApiWrapper {
         const tokenClassificationService = activationConfig.enableTokenClassificationService ? getTokenClassificationServiceOverride() : {};
         let languageConfigurationService;
         let languagesService;
+
         // tokenClassificationService requires languagesService and languageConfigurationService
         if (activationConfig.enableTokenClassificationService) {
             languagesService = getLanguagesServiceOverride();
@@ -95,10 +96,6 @@ export class MonacoVscodeApiWrapper {
         });
         runtimeConfig.activationConfig = activationConfig;
 
-        console.log('Basic init of VscodeApiConfig was completed.');
-    }
-
-    async setup(runtimeConfig: MonacoVscodeApiWrapperConfig) {
         const extension = runtimeConfig.extension as IExtensionManifest;
         const { registerFile: registerExtensionFile } = registerExtension(extension);
         if (runtimeConfig.extensionFiles) {
@@ -114,13 +111,19 @@ export class MonacoVscodeApiWrapper {
         console.log(`Themes are loaded from: ${themesUrl}`);
         await loadAllDefaultThemes(themesUrl);
 
-        if (runtimeConfig.activationConfig.enableConfigurationService && runtimeConfig.userConfiguration) {
-            void vscodeUpdateUserConfiguration(runtimeConfig.userConfiguration);
-        }
-
         if (!runtimeConfig.activationConfig.enableKeybindingsService && extension.contributes?.keybindings) {
             console.warn('Keybindings are set, but the KeybindingsService was not enabled.');
             extension.contributes.keybindings = [];
+        }
+
+        this.updateWrapperConfig(runtimeConfig);
+
+        console.log('Init of VscodeApiConfig was completed.');
+    }
+
+    async updateWrapperConfig(runtimeConfig: MonacoVscodeApiWrapperConfig) {
+        if (runtimeConfig.activationConfig.enableConfigurationService && runtimeConfig.userConfiguration) {
+            void vscodeUpdateUserConfiguration(runtimeConfig.userConfiguration);
         }
     }
 
