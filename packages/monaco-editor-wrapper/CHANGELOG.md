@@ -2,6 +2,11 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [1.6.1] - 2023-03-23
+
+- Enable to update/restart the language client [#18](https://github.com/TypeFox/monaco-components/pull/18)
+- Add language client initialization options [#17](https://github.com/TypeFox/monaco-components/pull/17)
+
 ## [1.6.0] - 2022-12-21
 
 - Fix error in `disposeLanguageClient` preventing proper editor disposal
