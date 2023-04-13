@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.36.0",
+  "version": "0.37.0",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
@@ -57,6 +57,7 @@
     "dist",
     "src",
     "LICENSE",
+    "CHANGELOG.md",
     "README.md"
   ],
   "scripts": {
@@ -71,7 +72,7 @@
     "npm": "8.19.3"
   },
   "devDependencies": {
-    "monaco-editor": "0.36.0"
+    "monaco-editor": "0.37.0"
   },
   "repository": {
     "type": "git",
