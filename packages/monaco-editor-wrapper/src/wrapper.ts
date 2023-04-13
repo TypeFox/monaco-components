@@ -1,7 +1,6 @@
 // support all editor features
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { editor, Uri } from 'monaco-editor/esm/vs/editor/edcore.main.js';
+import 'monaco-editor/esm/vs/editor/edcore.main.js';
+import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 import { MonacoLanguageClient, MonacoServices } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
@@ -31,7 +30,7 @@ export type EditorConfig = {
     useDiffEditor: boolean;
     theme: string;
     automaticLayout: boolean;
-    codeModified?: string;
+    codeOriginal?: string;
     editorOptions?: editor.IStandaloneEditorConstructionOptions;
     diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
 }
@@ -45,8 +44,9 @@ export type LanguageClientConfig = {
     initializationOptions?: any;
 }
 
-export type GlobalConfig = {
+export type UserConfig = {
     id?: string;
+    htmlElement: HTMLElement;
     wrapperConfig: {
         useVscodeConfig: boolean;
         monacoVscodeApiConfig?: MonacoVscodeApiWrapperConfig;
@@ -58,6 +58,7 @@ export type GlobalConfig = {
 
 export type RuntimeConfig = {
     id: string;
+    htmlElement: HTMLElement;
     wrapperConfig: {
         useVscodeConfig: boolean;
         monacoVscodeApiConfig?: MonacoVscodeApiWrapperConfig;
@@ -77,57 +78,65 @@ export class MonacoEditorLanguageClientWrapper {
 
     private monacoEditorWrapper = new MonacoEditorWrapper();
     private monacoVscodeApiWrapper = new MonacoVscodeApiWrapper();
+
+    private userConfig: UserConfig;
     private runtimeConfig: RuntimeConfig;
 
-    init(config: GlobalConfig) {
-        if (config.editorConfig.useDiffEditor) {
-            if (!config.editorConfig.codeModified) {
+    init(userConfig: UserConfig): MonacoEditorLanguageClientWrapper {
+        this.userConfig = userConfig;
+        if (userConfig.editorConfig.useDiffEditor) {
+            if (!userConfig.editorConfig.codeOriginal) {
                 throw new Error('Use diff editor was used without a valid config.');
             }
         }
 
         // It is ensured that the runtime configuration always contains proper values
         this.runtimeConfig = {
-            id: config.id ?? Math.floor(Math.random() * 101).toString(),
+            id: userConfig.id ?? Math.floor(Math.random() * 101).toString(),
+            htmlElement: userConfig.htmlElement,
             wrapperConfig: {
-                useVscodeConfig: config.wrapperConfig.useVscodeConfig,
+                useVscodeConfig: userConfig.wrapperConfig.useVscodeConfig,
             },
             editorConfig: {
-                languageId: config.editorConfig.languageId,
-                code: config.editorConfig.code ?? '',
-                useDiffEditor: config.editorConfig.useDiffEditor === true,
-                theme: config.editorConfig.theme ?? 'vs-light',
-                automaticLayout: config.editorConfig.automaticLayout === true,
-                editorOptions: config.editorConfig.editorOptions ?? {},
-                diffEditorOptions: config.editorConfig.diffEditorOptions ?? {}
+                languageId: userConfig.editorConfig.languageId,
+                code: userConfig.editorConfig.code ?? '',
+                useDiffEditor: userConfig.editorConfig.useDiffEditor === true,
+                theme: userConfig.editorConfig.theme ?? 'vs-light',
+                automaticLayout: userConfig.editorConfig.automaticLayout === true,
+                editorOptions: userConfig.editorConfig.editorOptions ?? {
+                    automaticLayout: userConfig.editorConfig.automaticLayout === true
+                },
+                diffEditorOptions: userConfig.editorConfig.diffEditorOptions ?? {
+                    automaticLayout: userConfig.editorConfig.automaticLayout === true
+                }
             },
             languageClientConfig: {
-                enabled: config.languageClientConfig.enabled,
-                useWebSocket: config.languageClientConfig.useWebSocket === true,
+                enabled: userConfig.languageClientConfig.enabled,
+                useWebSocket: userConfig.languageClientConfig.useWebSocket === true,
             }
         };
-        if (config.editorConfig.codeModified) {
-            this.runtimeConfig.editorConfig.codeModified = config.editorConfig.codeModified;
+        if (userConfig.editorConfig.codeOriginal) {
+            this.runtimeConfig.editorConfig.codeOriginal = userConfig.editorConfig.codeOriginal;
         }
-        if (config.editorConfig.editorOptions) {
-            this.runtimeConfig.editorConfig.editorOptions = config.editorConfig.editorOptions;
+        if (userConfig.editorConfig.editorOptions) {
+            this.runtimeConfig.editorConfig.editorOptions = userConfig.editorConfig.editorOptions;
         }
-        if (config.editorConfig.diffEditorOptions) {
-            this.runtimeConfig.editorConfig.diffEditorOptions = config.editorConfig.diffEditorOptions;
+        if (userConfig.editorConfig.diffEditorOptions) {
+            this.runtimeConfig.editorConfig.diffEditorOptions = userConfig.editorConfig.diffEditorOptions;
         }
-        if (config.languageClientConfig.enabled) {
-            if (config.languageClientConfig.initializationOptions) {
-                this.runtimeConfig.languageClientConfig.initializationOptions = config.languageClientConfig.initializationOptions;
+        if (userConfig.languageClientConfig.enabled) {
+            if (userConfig.languageClientConfig.initializationOptions) {
+                this.runtimeConfig.languageClientConfig.initializationOptions = userConfig.languageClientConfig.initializationOptions;
             }
-            if (config.languageClientConfig.useWebSocket) {
-                if (config.languageClientConfig.webSocketConfigOptions) {
-                    this.runtimeConfig.languageClientConfig.webSocketConfigOptions = config.languageClientConfig.webSocketConfigOptions;
+            if (userConfig.languageClientConfig.useWebSocket) {
+                if (userConfig.languageClientConfig.webSocketConfigOptions) {
+                    this.runtimeConfig.languageClientConfig.webSocketConfigOptions = userConfig.languageClientConfig.webSocketConfigOptions;
                 } else {
                     throw new Error('webSocketConfigOptions were not provided. Aborting...');
                 }
             } else {
-                if (config.languageClientConfig.workerConfigOptions) {
-                    this.runtimeConfig.languageClientConfig.workerConfigOptions = config.languageClientConfig.workerConfigOptions;
+                if (userConfig.languageClientConfig.workerConfigOptions) {
+                    this.runtimeConfig.languageClientConfig.workerConfigOptions = userConfig.languageClientConfig.workerConfigOptions;
                 } else {
                     throw new Error('workerConfigOptions were not provided. Aborting...');
                 }
@@ -135,24 +144,26 @@ export class MonacoEditorLanguageClientWrapper {
         }
 
         if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
-            if (config.wrapperConfig.monacoVscodeApiConfig) {
-                this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig = config.wrapperConfig.monacoVscodeApiConfig;
-                this.monacoVscodeApiWrapper.init(config.wrapperConfig.monacoVscodeApiConfig);
+            if (userConfig.wrapperConfig.monacoVscodeApiConfig) {
+                this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig = userConfig.wrapperConfig.monacoVscodeApiConfig;
+                this.monacoVscodeApiWrapper.init(this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig);
             } else {
                 throw new Error('monacoVscodeApiConfig was not provided. Aborting...');
             }
         } else {
-            if (config.wrapperConfig.monacoEditorConfig) {
-                this.runtimeConfig.wrapperConfig.monacoEditorConfig = config.wrapperConfig.monacoEditorConfig;
+            if (userConfig.wrapperConfig.monacoEditorConfig) {
+                this.runtimeConfig.wrapperConfig.monacoEditorConfig = userConfig.wrapperConfig.monacoEditorConfig;
             } else {
                 this.runtimeConfig.wrapperConfig.monacoEditorConfig = {};
             }
             this.monacoEditorWrapper.init(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig);
         }
+
+        return this;
     }
 
-    getRuntimeConfig() {
-        return this.runtimeConfig;
+    getUserConfig() {
+        return this.userConfig;
     }
 
     getMonacoEditorWrapper() {
@@ -175,24 +186,30 @@ export class MonacoEditorLanguageClientWrapper {
         return this.languageClient;
     }
 
-    getMainCode(): string | undefined {
-        if (this.editor) {
-            return this.editor?.getValue();
+    getModel(original?: boolean): editor.ITextModel | undefined {
+        if (this.runtimeConfig.editorConfig.useDiffEditor) {
+            const model = this.diffEditor?.getModel();
+            return (original === true) ? model?.original : model?.modified;
         } else {
-            return this.diffEditor?.getOriginalEditor().getValue();
+            return this.editor?.getModel() ?? undefined;
         }
     }
 
-    getDiffCode(): string | undefined {
-        return this.diffEditor?.getModifiedEditor().getValue();
-    }
-
-    /**
-     * This methods updates the theme. If the given provide theme is not available this will not work.
-     * @param theme the theme name
-     */
-    updateTheme(theme: string) {
-        editor.setTheme(theme);
+    updateModel(modelUpdate: {
+        languageId: string;
+        code: string;
+        useDiffEditor: boolean;
+        codeOriginal?: string;
+    }) {
+        this.runtimeConfig.editorConfig.languageId = modelUpdate.languageId;
+        this.runtimeConfig.editorConfig.code = modelUpdate.code;
+        this.runtimeConfig.editorConfig.useDiffEditor = modelUpdate.useDiffEditor;
+        if (this.runtimeConfig.editorConfig.useDiffEditor) {
+            this.runtimeConfig.editorConfig.codeOriginal = modelUpdate.codeOriginal;
+            this.updateDiffEditorModel();
+        } else {
+            this.updateEditorModel();
+        }
     }
 
     isStarted(): boolean {
@@ -208,11 +225,8 @@ export class MonacoEditorLanguageClientWrapper {
         return true;
     }
 
-    startEditor(container?: HTMLElement): Promise<string> {
+    startEditor(): Promise<string> {
         console.log(`Starting monaco-editor (${this.runtimeConfig.id})`);
-        if (!container) {
-            return Promise.reject(new Error('No HTMLElement was provided.'));
-        }
 
         // dispose old instances (try both, no need for swap)
         this.disposeEditor();
@@ -220,9 +234,9 @@ export class MonacoEditorLanguageClientWrapper {
         this.updateWrapperConfig();
 
         if (this.runtimeConfig.editorConfig.useDiffEditor) {
-            this.createDiffEditor(container);
+            this.createDiffEditor(this.runtimeConfig.htmlElement);
         } else {
-            this.createEditor(container);
+            this.createEditor(this.runtimeConfig.htmlElement);
         }
 
         const lcc = this.runtimeConfig.languageClientConfig;
@@ -294,7 +308,7 @@ export class MonacoEditorLanguageClientWrapper {
         return status;
     }
 
-    private async disposeLanguageClient(): Promise<string> {
+    public async disposeLanguageClient(): Promise<string> {
         if (this.languageClient && this.languageClient.isRunning()) {
             return await this.languageClient.dispose()
                 .then(() => {
@@ -313,37 +327,45 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     private createEditor(container: HTMLElement): void {
-        const runtimeConfig = this.runtimeConfig;
-        const languageId = runtimeConfig.editorConfig.languageId;
-        const mainUri = Uri.parse(`inmemory:///model${runtimeConfig.id}.${languageId}`);
-        const model = editor.getModel(mainUri);
-        if (model === null || !runtimeConfig.editorConfig.editorOptions.model) {
-            runtimeConfig.editorConfig.editorOptions.model = editor.createModel(runtimeConfig.editorConfig.code, languageId, mainUri);
-        }
-        runtimeConfig.editorConfig.editorOptions.automaticLayout = runtimeConfig.editorConfig.automaticLayout;
+        this.updateEditorModel();
 
-        if (runtimeConfig.wrapperConfig.useVscodeConfig) {
-            this.editor = this.monacoVscodeApiWrapper.createEditor(container!, runtimeConfig.editorConfig.editorOptions);
+        if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
+            this.editor = this.monacoVscodeApiWrapper.createEditor(container!, this.runtimeConfig.editorConfig.editorOptions);
         } else {
-            this.editor = this.monacoEditorWrapper.createEditor(container, runtimeConfig.editorConfig.editorOptions);
+            this.editor = this.monacoEditorWrapper.createEditor(container, this.runtimeConfig.editorConfig.editorOptions);
         }
     }
 
-    private createDiffEditor(container: HTMLElement) {
-        const runtimeConfig = this.runtimeConfig;
-        runtimeConfig.editorConfig.diffEditorOptions.automaticLayout = runtimeConfig.editorConfig.automaticLayout;
+    private updateEditorModel() {
+        const languageId = this.runtimeConfig.editorConfig.languageId;
+        const id = this.runtimeConfig.id;
+        const mainUri = Uri.parse(`inmemory:///model${id}.${languageId}`);
+        let model = editor.getModel(mainUri);
+        if (model === null) {
+            model = editor.createModel(this.runtimeConfig.editorConfig.code, languageId, mainUri);
+        }
+        this.runtimeConfig.editorConfig.editorOptions!.model = model;
 
-        if (runtimeConfig.wrapperConfig.useVscodeConfig) {
-            this.diffEditor = this.monacoVscodeApiWrapper.createDiffEditor(container, runtimeConfig.editorConfig.diffEditorOptions);
+        this.editor?.setModel(model);
+    }
+
+    private createDiffEditor(container: HTMLElement) {
+        if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
+            this.diffEditor = this.monacoVscodeApiWrapper.createDiffEditor(container, this.runtimeConfig.editorConfig.diffEditorOptions);
         } else {
-            this.diffEditor = this.monacoEditorWrapper.createDiffEditor(container, runtimeConfig.editorConfig.diffEditorOptions);
+            this.diffEditor = this.monacoEditorWrapper.createDiffEditor(container, this.runtimeConfig.editorConfig.diffEditorOptions);
         }
 
-        const languageId = runtimeConfig.editorConfig.languageId;
-        const mainCode = runtimeConfig.editorConfig.code;
-        const modifiedCode = runtimeConfig.editorConfig.codeModified;
-        const mainUri = Uri.parse(`inmemory:///model${runtimeConfig.id}.${languageId}`);
-        const modifiedUri = Uri.parse(`inmemory:///modelDiff${runtimeConfig.id}.${languageId}`);
+        this.updateDiffEditorModel();
+    }
+
+    private updateDiffEditorModel() {
+        const languageId = this.runtimeConfig.editorConfig.languageId;
+        const mainCode = this.runtimeConfig.editorConfig.codeOriginal!;
+        const modifiedCode = this.runtimeConfig.editorConfig.code;
+        const id = this.runtimeConfig.id;
+        const mainUri = Uri.parse(`inmemory:///model${id}.${languageId}`);
+        const modifiedUri = Uri.parse(`inmemory:///modelDiff${id}.${languageId}`);
 
         let originalModel = editor.getModel(mainUri);
         if (originalModel === null) {
@@ -355,7 +377,7 @@ export class MonacoEditorLanguageClientWrapper {
             modifiedModel = editor.createModel(modifiedCode!, languageId, modifiedUri);
         }
 
-        this.diffEditor.setModel({
+        this.diffEditor?.setModel({
             original: originalModel,
             modified: modifiedModel
         });

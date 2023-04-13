@@ -13,7 +13,7 @@ import getThemeServiceOverride from 'vscode/service-override/theme';
 import getAudioCueServiceOverride from 'vscode/service-override/audioCue';
 // import getDebugServiceOverride from 'vscode/service-override/debug';
 import { createConfiguredEditor, createConfiguredDiffEditor } from 'vscode/monaco';
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { loadAllDefaultThemes } from './helpers/themeLocalHelper.js';
 
 export type MonacoVscodeApiActivtion = {
@@ -127,11 +127,11 @@ export class MonacoVscodeApiWrapper {
         }
     }
 
-    createEditor(container: HTMLElement, options?: monaco.editor.IStandaloneEditorConstructionOptions) {
+    createEditor(container: HTMLElement, options?: editor.IStandaloneEditorConstructionOptions) {
         return createConfiguredEditor(container!, options);
     }
 
-    createDiffEditor(container: HTMLElement, options?: monaco.editor.IStandaloneDiffEditorConstructionOptions) {
+    createDiffEditor(container: HTMLElement, options?: editor.IStandaloneDiffEditorConstructionOptions) {
         return createConfiguredDiffEditor(container!, options);
     }
 }

@@ -12,6 +12,7 @@ const startWrapper42 = () => {
         wrapperConfig: {
             useVscodeConfig: false
         },
+        htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
         languageClientConfig: {
             enabled: true,
             useWebSocket: true,
@@ -27,24 +28,25 @@ const startWrapper42 = () => {
             useDiffEditor: true,
             theme: 'vs-light',
             automaticLayout: true,
+            codeOriginal: `This line is equal.
+This number is different 2002
+Misspeelled!
+Same again.`,
             code: `This line is equal.
 This number is different 2022
 Misspelled!
-Same again.`,
-            codeModified: `This line is equal.
-This number is different 2002
-Misspeelled!
 Same again.`
         }
     });
 
-    wrapper42.startEditor(document.getElementById('monaco-editor-root-42') as HTMLElement)
+    wrapper42.startEditor()
         .catch((e: Error) => console.error(e));
 };
 
 const startWrapper43 = () => {
     wrapper43.init({
         id: '43',
+        htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
         wrapperConfig: {
             useVscodeConfig: false
         },
@@ -56,21 +58,22 @@ const startWrapper43 = () => {
             useDiffEditor: true,
             theme: 'vs-light',
             automaticLayout: true,
-            code: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
-            codeModified: 'This line is equal.\nThis number is different 3002.\nMisspelled!Same again.',
+            codeOriginal: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
+            code: 'This line is equal.\nThis number is different 3002.\nMisspelled!Same again.',
             diffEditorOptions: {
                 lineNumbers: 'off'
             }
         }
     });
 
-    wrapper43.startEditor(document.getElementById('monaco-editor-root-43') as HTMLElement)
+    wrapper43.startEditor()
         .catch((e: Error) => console.error(e));
 };
 
 const startWrapper44 = () => {
     wrapper44.init({
         id: '44',
+        htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
         wrapperConfig: {
             useVscodeConfig: false
         },
@@ -93,7 +96,7 @@ const startWrapper44 = () => {
         }
     });
 
-    wrapper44.startEditor(document.getElementById('monaco-editor-root-44') as HTMLElement)
+    wrapper44.startEditor()
         .catch((e: Error) => console.error(e));
 };
 
@@ -105,31 +108,33 @@ const sleepOne = (milliseconds: number) => {
     setTimeout(() => {
         alert(`Updating editors after ${milliseconds}ms`);
 
-        const config42 = wrapper42.getRuntimeConfig();
+        // TODO: Update model can only work on same editor
+        const config42 = wrapper42.getUserConfig();
         config42.editorConfig.languageId = 'javascript';
         config42.editorConfig.useDiffEditor = false;
         config42.editorConfig.code = `function logMe() {
+
     console.log('Hello swap editors!');
 };`;
-        wrapper42.startEditor(document.getElementById('monaco-editor-root-42') as HTMLElement)
+        wrapper42.startEditor()
             .catch((e: Error) => console.error(e));
 
-        const config43 = wrapper43.getRuntimeConfig();
-        config43.editorConfig.languageId = 'javascript';
-        config43.editorConfig.code = 'text 1234';
-        config43.editorConfig.codeModified = 'text 5678';
-        wrapper43.startEditor(document.getElementById('monaco-editor-root-43') as HTMLElement)
-            .catch((e: Error) => console.error(e));
+        wrapper43.updateModel({
+            useDiffEditor: true,
+            languageId: 'javascript',
+            code: 'text 5678',
+            codeOriginal: 'text 1234'
+        });
 
-        const config44 = wrapper44.getRuntimeConfig();
+        const config44 = wrapper44.getUserConfig();
         config44.editorConfig.languageId = 'text/plain';
         config44.editorConfig.useDiffEditor = true;
-        config44.editorConfig.code = 'oh la la la!';
-        config44.editorConfig.codeModified = 'oh lo lo lo!';
+        config44.editorConfig.codeOriginal = 'oh la la la!';
+        config44.editorConfig.code = 'oh lo lo lo!';
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
         config44.editorConfig.theme = 'vs-light';
-        wrapper44.startEditor(document.getElementById('monaco-editor-root-44') as HTMLElement)
+        wrapper44.startEditor()
             .catch((e: Error) => console.error(e));
     }, milliseconds);
 };
@@ -140,10 +145,10 @@ const sleepTwo = (milliseconds: number) => {
     setTimeout(() => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
-        const config44 = wrapper44.getRuntimeConfig();
+        const config44 = wrapper44.getUserConfig();
         config44.editorConfig.useDiffEditor = false;
         config44.editorConfig.theme = 'vs-dark';
-        wrapper44.startEditor(document.getElementById('monaco-editor-root-44') as HTMLElement)
+        wrapper44.startEditor()
             .catch((e: Error) => console.error(e));
     }, milliseconds);
 };

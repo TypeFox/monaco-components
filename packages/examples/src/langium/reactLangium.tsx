@@ -7,9 +7,9 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { createLangiumGlobalConfig } from './langiumWrapperConfig.js';
 
 const startEditor = async () => {
-    const langiumGlobalConfig = await createLangiumGlobalConfig();
+    const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('root')!);
     const comp = <MonacoEditorReactComp
-        globalConfig={langiumGlobalConfig}
+        userConfig={langiumGlobalConfig}
         style={{
             'paddingTop': '5px',
             'height': '80vh',

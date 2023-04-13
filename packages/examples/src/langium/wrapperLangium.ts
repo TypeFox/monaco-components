@@ -12,10 +12,10 @@ const startEditor = async () => {
         alert('Editor was already started!');
         return;
     }
-    const langiumGlobalConfig = await createLangiumGlobalConfig();
-    wrapper.init(langiumGlobalConfig);
-
-    wrapper.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
+    const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('monaco-editor-root') as HTMLElement);
+    wrapper
+        .init(langiumGlobalConfig)
+        .startEditor()
         .then((s: unknown) => {
             console.log(s);
 

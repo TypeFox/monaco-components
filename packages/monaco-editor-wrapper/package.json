@@ -95,15 +95,12 @@
   },
   "dependencies": {
     "@types/css-font-loading-module": "~0.0.8",
-    "monaco-editor": "0.36.1",
     "monaco-languageclient": "5.0.1",
     "vscode-ws-jsonrpc": "3.0.0",
-    "normalize-url": "~8.0.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@~1.76.6"
+    "normalize-url": "~8.0.0"
   },
   "devDependencies": {
-    "@types/glob-to-regexp": "~0.4.1",
-    "monaco-editor-workers": "0.36.0"
+    "@types/glob-to-regexp": "~0.4.1"
   },
   "repository": {
     "type": "git",

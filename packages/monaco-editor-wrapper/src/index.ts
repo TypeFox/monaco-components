@@ -18,7 +18,7 @@ import type {
     EditorConfig,
     WebSocketConfigOptions,
     WorkerConfigOptions,
-    GlobalConfig,
+    UserConfig,
     RuntimeConfig
 } from './wrapper.js';
 
@@ -32,7 +32,7 @@ export type {
     MonacoVscodeApiActivtion,
     WebSocketConfigOptions,
     WorkerConfigOptions,
-    GlobalConfig,
+    UserConfig,
     RuntimeConfig
 };
 

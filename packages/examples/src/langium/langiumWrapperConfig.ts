@@ -1,6 +1,6 @@
-import { GlobalConfig } from 'monaco-editor-wrapper';
+import { UserConfig } from 'monaco-editor-wrapper';
 
-export const createLangiumGlobalConfig = async (): Promise<GlobalConfig> => {
+export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promise<UserConfig> => {
     const exampleStatemachineUrl = new URL('./src/langium/example.statemachine', window.location.href).href;
     const responseStatemachine = await fetch(exampleStatemachineUrl);
     const code = await responseStatemachine.text();
@@ -16,6 +16,7 @@ export const createLangiumGlobalConfig = async (): Promise<GlobalConfig> => {
     console.log(`Langium worker URL: ${workerUrl}`);
 
     return {
+        htmlElement: htmlElement,
         wrapperConfig: {
             useVscodeConfig: true,
             monacoVscodeApiConfig: {

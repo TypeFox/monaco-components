@@ -4,7 +4,7 @@ export type {
     MonacoVscodeApiActivtion,
     WebSocketConfigOptions,
     WorkerConfigOptions,
-    GlobalConfig,
+    UserConfig,
     RuntimeConfig
 } from './index.js';
 

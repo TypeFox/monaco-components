@@ -4,9 +4,10 @@ buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/worke
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/allLanguages';
-import { GlobalConfig } from 'monaco-editor-wrapper';
+import { UserConfig } from 'monaco-editor-wrapper';
 
-const globalConfig: GlobalConfig = {
+const userConfig: UserConfig = {
+    htmlElement: document.getElementById('root')!,
     wrapperConfig: {
         useVscodeConfig: false,
         monacoEditorConfig: {
@@ -26,13 +27,18 @@ const globalConfig: GlobalConfig = {
     }
 };
 
+const onTextChanged = (text: string, isDirty: boolean) => {
+    console.log(`Dirty? ${isDirty} Content: ${text}`);
+};
+
 const comp = <MonacoEditorReactComp
-    globalConfig={globalConfig}
+    userConfig={userConfig}
     style={{
         'paddingTop': '5px',
         'height': '80vh',
         'width': '100%'
     }}
+    onTextChanged={onTextChanged}
 />;
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
