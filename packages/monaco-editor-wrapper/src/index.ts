@@ -6,10 +6,6 @@ import {
     MonacoEditorWrapper
 } from './monacoEditorWrapper.js';
 
-import type {
-    MonacoVscodeApiActivtion
-} from './monacoVscodeApiWrapper.js';
-
 import {
     MonacoVscodeApiWrapper
 } from './monacoVscodeApiWrapper.js';
@@ -29,7 +25,6 @@ import {
 export type {
     EditorConfig,
     MonacoLanguageExtensionConfig,
-    MonacoVscodeApiActivtion,
     WebSocketConfigOptions,
     WorkerConfigOptions,
     UserConfig,

@@ -15,10 +15,10 @@ const startEditor = async () => {
     const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('monaco-editor-root') as HTMLElement);
     wrapper
         .init(langiumGlobalConfig)
-        .startEditor()
-        .then((s: unknown) => {
-            console.log(s);
-
+        .then(() => {
+            wrapper.startEditor();
+        })
+        .then(() => {
             vscode.commands.getCommands().then((x) => {
                 console.log('Currently registered # of vscode commands: ' + x.length);
             });

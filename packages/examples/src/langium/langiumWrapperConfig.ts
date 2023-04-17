@@ -19,10 +19,15 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         htmlElement: htmlElement,
         wrapperConfig: {
             useVscodeConfig: true,
-            monacoVscodeApiConfig: {
-                activationConfig: {
-                    basePath: '../monaco-editor-wrapper'
+            serviceConfig: {
+                enableThemeService: true,
+                enableLanguagesService: true,
+                enableConfigurationService: true,
+                configurationServiceConfig: {
+                    defaultWorkspaceUri: '/tmp/'
                 },
+            },
+            monacoVscodeApiConfig: {
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',
@@ -60,7 +65,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 },
                 extensionFiles: extensionFiles,
                 userConfiguration: `{
-                "workbench.colorTheme": "Dark+ (Experimental)",
+                "workbench.colorTheme": "Default Dark+",
                 "editor.fontSize": 14,
                 "editor.lightbulb.enabled": true,
                 "editor.lineHeight": 20,

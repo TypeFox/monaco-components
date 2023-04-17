@@ -24,9 +24,14 @@ export type MonacoEditorWrapperConfig = {
 export class MonacoEditorWrapper {
 
     async init(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {
-        this.updateWrapperConfig(editorConfig, runtimeConfig);
-
-        console.log('Init of MonacoConfig was completed.');
+        return this.updateWrapperConfig(editorConfig, runtimeConfig)
+            .then(() => {
+                console.log('Init of MonacoConfig was completed.');
+                return Promise.resolve();
+            })
+            .catch(e => {
+                return Promise.reject(e);
+            });
     }
 
     async updateWrapperConfig(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {

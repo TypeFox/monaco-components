@@ -2,7 +2,7 @@
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
-import { MonacoLanguageClient, MonacoServices } from 'monaco-languageclient';
+import { InitializeServiceConfig, initServices, MonacoLanguageClient } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
@@ -48,6 +48,7 @@ export type UserConfig = {
     id?: string;
     htmlElement: HTMLElement;
     wrapperConfig: {
+        serviceConfig?: InitializeServiceConfig;
         useVscodeConfig: boolean;
         monacoVscodeApiConfig?: MonacoVscodeApiWrapperConfig;
         monacoEditorConfig?: MonacoEditorWrapperConfig;
@@ -60,6 +61,7 @@ export type RuntimeConfig = {
     id: string;
     htmlElement: HTMLElement;
     wrapperConfig: {
+        serviceConfig?: InitializeServiceConfig;
         useVscodeConfig: boolean;
         monacoVscodeApiConfig?: MonacoVscodeApiWrapperConfig;
         monacoEditorConfig?: MonacoEditorWrapperConfig;
@@ -82,7 +84,7 @@ export class MonacoEditorLanguageClientWrapper {
     private userConfig: UserConfig;
     private runtimeConfig: RuntimeConfig;
 
-    init(userConfig: UserConfig): MonacoEditorLanguageClientWrapper {
+    async init(userConfig: UserConfig) {
         this.userConfig = userConfig;
         if (userConfig.editorConfig.useDiffEditor) {
             if (!userConfig.editorConfig.codeOriginal) {
@@ -132,34 +134,37 @@ export class MonacoEditorLanguageClientWrapper {
                 if (userConfig.languageClientConfig.webSocketConfigOptions) {
                     this.runtimeConfig.languageClientConfig.webSocketConfigOptions = userConfig.languageClientConfig.webSocketConfigOptions;
                 } else {
-                    throw new Error('webSocketConfigOptions were not provided. Aborting...');
+                    return Promise.reject(new Error('webSocketConfigOptions were not provided. Aborting...'));
                 }
             } else {
                 if (userConfig.languageClientConfig.workerConfigOptions) {
                     this.runtimeConfig.languageClientConfig.workerConfigOptions = userConfig.languageClientConfig.workerConfigOptions;
                 } else {
-                    throw new Error('workerConfigOptions were not provided. Aborting...');
+                    return Promise.reject(new Error('workerConfigOptions were not provided. Aborting...'));
                 }
             }
         }
 
-        if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
-            if (userConfig.wrapperConfig.monacoVscodeApiConfig) {
-                this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig = userConfig.wrapperConfig.monacoVscodeApiConfig;
-                this.monacoVscodeApiWrapper.init(this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig);
-            } else {
-                throw new Error('monacoVscodeApiConfig was not provided. Aborting...');
-            }
-        } else {
-            if (userConfig.wrapperConfig.monacoEditorConfig) {
-                this.runtimeConfig.wrapperConfig.monacoEditorConfig = userConfig.wrapperConfig.monacoEditorConfig;
-            } else {
-                this.runtimeConfig.wrapperConfig.monacoEditorConfig = {};
-            }
-            this.monacoEditorWrapper.init(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig);
-        }
+        await initServices(userConfig.wrapperConfig.serviceConfig)
+            .then(() => {
+                if (this.runtimeConfig.wrapperConfig.useVscodeConfig) {
+                    if (userConfig.wrapperConfig.monacoVscodeApiConfig) {
+                        this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig = userConfig.wrapperConfig.monacoVscodeApiConfig;
+                        return this.monacoVscodeApiWrapper.init(this.runtimeConfig.wrapperConfig.monacoVscodeApiConfig);
+                    } else {
+                        return Promise.reject(new Error('monacoVscodeApiConfig was not provided. Aborting...'));
+                    }
+                } else {
+                    if (userConfig.wrapperConfig.monacoEditorConfig) {
+                        this.runtimeConfig.wrapperConfig.monacoEditorConfig = userConfig.wrapperConfig.monacoEditorConfig;
+                    } else {
+                        this.runtimeConfig.wrapperConfig.monacoEditorConfig = {};
+                    }
+                    return this.monacoEditorWrapper.init(this.runtimeConfig.editorConfig, this.runtimeConfig.wrapperConfig.monacoEditorConfig);
+                }
+            });
 
-        return this;
+        return Promise.resolve();
     }
 
     getUserConfig() {
@@ -241,8 +246,7 @@ export class MonacoEditorLanguageClientWrapper {
 
         const lcc = this.runtimeConfig.languageClientConfig;
         if (lcc.enabled) {
-            console.log('Enabling monaco-languageclient');
-            this.installMonaco();
+            console.log('Starting monaco-languageclient');
             return this.startLanguageClientConnection(lcc);
         } else {
             return Promise.resolve('All fine. monaco-languageclient is not used.');
@@ -389,18 +393,6 @@ export class MonacoEditorLanguageClientWrapper {
         }
         else {
             this.editor?.layout();
-        }
-    }
-
-    private installMonaco() {
-        // install Monaco language client services
-        try {
-            MonacoServices.get();
-        }
-        catch (e: unknown) {
-            // install only if services are not yet available (exception will happen only then)
-            MonacoServices.install();
-            console.log(`Component (${this.runtimeConfig.id}): Installed MonacoServices`);
         }
     }
 

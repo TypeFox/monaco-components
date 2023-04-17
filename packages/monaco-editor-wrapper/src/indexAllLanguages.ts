@@ -1,7 +1,6 @@
 export type {
     EditorConfig,
     MonacoLanguageExtensionConfig,
-    MonacoVscodeApiActivtion,
     WebSocketConfigOptions,
     WorkerConfigOptions,
     UserConfig,
