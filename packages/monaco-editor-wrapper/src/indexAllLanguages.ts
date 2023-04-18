@@ -1,15 +1,18 @@
 export type {
     EditorConfig,
-    MonacoLanguageExtensionConfig,
+    MonacoEditorWrapper,
+    DirectMonacoEditorWrapperConfig,
+    MonacoVscodeApiWrapperConfig,
+    VscodeUserConfiguration,
     WebSocketConfigOptions,
     WorkerConfigOptions,
-    UserConfig,
-    RuntimeConfig
+    LanguageClientConfig,
+    UserConfig
 } from './index.js';
 
 export {
     MonacoEditorLanguageClientWrapper,
-    MonacoEditorWrapper,
+    DirectMonacoEditorWrapper,
     MonacoVscodeApiWrapper
 } from './index.js';
 

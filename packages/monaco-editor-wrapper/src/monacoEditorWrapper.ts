@@ -1,5 +1,6 @@
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import { EditorConfig } from './wrapper.js';
+import { EditorConfig, MonacoEditorWrapper } from './wrapper.js';
+import { initServices } from 'monaco-languageclient';
 
 /**
  * This is derived from:
@@ -15,55 +16,57 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
-export type MonacoEditorWrapperConfig = {
+export type DirectMonacoEditorWrapperConfig = {
     languageExtensionConfig?: MonacoLanguageExtensionConfig;
     languageDef?: languages.IMonarchLanguage;
     themeData?: editor.IStandaloneThemeData;
 }
 
-export class MonacoEditorWrapper {
+export class DirectMonacoEditorWrapper implements MonacoEditorWrapper {
 
-    async init(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {
-        return this.updateWrapperConfig(editorConfig, runtimeConfig)
+    async init(restart: boolean, editorConfig: EditorConfig, wrapperConfig: DirectMonacoEditorWrapperConfig) {
+        restart ? await Promise.resolve() : await initServices({
+            enableModelEditorService: true,
+            modelEditorServiceConfig: {
+                useDefaultFunction: true
+            },
+            enableConfigurationService: true,
+            configurationServiceConfig: {
+                defaultWorkspaceUri: '/tmp/'
+            },
+        })
             .then(() => {
+                // register own language first
+                const extLang = wrapperConfig?.languageExtensionConfig;
+                if (extLang) {
+                    languages.register(extLang);
+                }
+
+                const languageRegistered = languages.getLanguages().filter(x => x.id === editorConfig.languageId);
+                if (languageRegistered.length === 0) {
+                    // this is only meaningful for languages supported by monaco out of the box
+                    languages.register({ id: editorConfig.languageId });
+                }
+
+                // apply monarch definitions
+                const tokenProvider = wrapperConfig?.languageDef;
+                if (tokenProvider) {
+                    languages.setMonarchTokensProvider(editorConfig.languageId, tokenProvider);
+                }
+                const themeData = wrapperConfig?.themeData;
+                if (themeData) {
+                    editor.defineTheme(editorConfig.theme, themeData);
+                }
+                editor.setTheme(editorConfig.theme);
+
                 console.log('Init of MonacoConfig was completed.');
                 return Promise.resolve();
-            })
-            .catch(e => {
-                return Promise.reject(e);
             });
     }
 
-    async updateWrapperConfig(editorConfig: EditorConfig, runtimeConfig: MonacoEditorWrapperConfig) {
-        // register own language first
-        const extLang = runtimeConfig?.languageExtensionConfig;
-        if (extLang) {
-            languages.register(extLang);
-        }
-
-        const languageRegistered = languages.getLanguages().filter(x => x.id === editorConfig.languageId);
-        if (languageRegistered.length === 0) {
-            // this is only meaningful for languages supported by monaco out of the box
-            languages.register({ id: editorConfig.languageId });
-        }
-
-        // apply monarch definitions
-        const tokenProvider = runtimeConfig?.languageDef;
-        if (tokenProvider) {
-            languages.setMonarchTokensProvider(editorConfig.languageId, tokenProvider);
-        }
-        const themeData = runtimeConfig?.themeData;
-        if (themeData) {
-            editor.defineTheme(editorConfig.theme, themeData);
-        }
-        editor.setTheme(editorConfig.theme);
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    async updateConfig(_options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
+        // nothing
     }
 
-    createEditor(container: HTMLElement, options?: editor.IStandaloneEditorConstructionOptions) {
-        return editor.create(container!, options);
-    }
-
-    createDiffEditor(container: HTMLElement, options?: editor.IStandaloneDiffEditorConstructionOptions) {
-        return editor.createDiffEditor(container!, options);
-    }
 }

@@ -1,8 +1,9 @@
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
-import * as vscode from 'vscode';
+// support all editor features
+import 'monaco-editor/esm/vs/editor/edcore.main.js';
+import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 const languageId = 'json';
@@ -25,7 +26,8 @@ const monacoEditorConfig = {
         enabled: true
     },
 };
-wrapper.init({
+
+const userConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         useVscodeConfig: false,
@@ -58,35 +60,30 @@ wrapper.init({
             secured: false
         }
     }
-});
+};
 
-function startEditor() {
+const startEditor = async () => {
     if (wrapper.isStarted()) {
         alert('Editor was already started!');
         return;
     }
-    configureCodeEditors();
 
-    toggleSwapDiffButton(true);
-    wrapper.startEditor()
-        .then((s: unknown) => {
-            console.log(s);
+    wrapper.start(userConfig)
+        .then(() => {
             logEditorInfo(wrapper);
-
-            vscode.commands.getCommands().then((x) => {
-                console.log('Currently registered # of vscode commands: ' + x.length);
-            });
         })
         .catch((e: Error) => console.error(e));
-}
+
+    configureCodeEditors();
+    toggleSwapDiffButton(true);
+};
 
 function configureCodeEditors() {
-    const runtimeConfig = wrapper.getUserConfig();
-    if (runtimeConfig.editorConfig.useDiffEditor) {
-        runtimeConfig.editorConfig.code = codeMain;
-        runtimeConfig.editorConfig.codeOriginal = codeOrg;
+    if (userConfig.editorConfig.useDiffEditor) {
+        userConfig.editorConfig.code = codeMain;
+        userConfig.editorConfig.codeOriginal = codeOrg;
     } else {
-        runtimeConfig.editorConfig.code = codeMain;
+        userConfig.editorConfig.code = codeMain;
     }
 }
 
@@ -100,14 +97,12 @@ function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
 }
 
 function swapEditors() {
-    const runtimeConfig = wrapper.getUserConfig();
-    runtimeConfig.editorConfig.useDiffEditor = !runtimeConfig.editorConfig.useDiffEditor;
-    saveMainCode(!runtimeConfig.editorConfig.useDiffEditor, false);
+    userConfig.editorConfig.useDiffEditor = !userConfig.editorConfig.useDiffEditor;
+    saveMainCode(!userConfig.editorConfig.useDiffEditor, false);
     configureCodeEditors();
 
-    wrapper.startEditor()
-        .then((s: string) => {
-            console.log(s);
+    wrapper.start(userConfig)
+        .then(() => {
             logEditorInfo(wrapper);
         })
         .catch((e: Error) => console.error(e));
@@ -116,7 +111,7 @@ function swapEditors() {
 async function disposeEditor() {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = wrapper.getUserConfig().editorConfig.useDiffEditor;
+    const useDiffEditor = userConfig.editorConfig.useDiffEditor;
     saveMainCode(useDiffEditor, !useDiffEditor);
     await wrapper.dispose()
         .then(() => {
@@ -133,9 +128,9 @@ function toggleSwapDiffButton(enabled: boolean) {
 }
 
 function logEditorInfo(client: MonacoEditorLanguageClientWrapper) {
-    console.log(`# of configured languages: ${monaco.languages.getLanguages().length}`);
+    console.log(`# of configured languages: ${languages.getLanguages().length}`);
     console.log(`Main code: ${client.getModel(true)!.getValue()}`);
-    if (wrapper.getUserConfig().editorConfig.useDiffEditor) {
+    if (userConfig.editorConfig.useDiffEditor) {
         console.log(`Modified code: ${client.getModel()!.getValue()}`);
     }
 }

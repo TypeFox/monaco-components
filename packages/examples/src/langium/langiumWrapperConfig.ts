@@ -19,15 +19,22 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         htmlElement: htmlElement,
         wrapperConfig: {
             useVscodeConfig: true,
-            serviceConfig: {
-                enableThemeService: true,
-                enableLanguagesService: true,
-                enableConfigurationService: true,
-                configurationServiceConfig: {
-                    defaultWorkspaceUri: '/tmp/'
-                },
-            },
             monacoVscodeApiConfig: {
+                serviceConfig: {
+                    enableThemeService: true,
+                    enableTextmateService: true,
+                    enableModelEditorService: true,
+                    modelEditorServiceConfig: {
+                        useDefaultFunction: true
+                    },
+                    enableConfigurationService: true,
+                    configurationServiceConfig: {
+                        defaultWorkspaceUri: '/tmp/'
+                    },
+                    enableKeybindingsService: true,
+                    enableLanguagesService: true,
+                    debugLogging: true
+                },
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',
@@ -64,14 +71,16 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                     }
                 },
                 extensionFiles: extensionFiles,
-                userConfiguration: `{
-                "workbench.colorTheme": "Default Dark+",
-                "editor.fontSize": 14,
-                "editor.lightbulb.enabled": true,
-                "editor.lineHeight": 20,
-                "editor.guides.bracketPairsHorizontal": "active",
-                "editor.lightbulb.enabled": true
-            }`
+                userConfiguration: {
+                    json: `{
+    "workbench.colorTheme": "Default Dark+ Experimental",
+    "editor.fontSize": 14,
+    "editor.lightbulb.enabled": true,
+    "editor.lineHeight": 20,
+    "editor.guides.bracketPairsHorizontal": "active",
+    "editor.lightbulb.enabled": true
+}`
+                }
             }
         },
         editorConfig: {

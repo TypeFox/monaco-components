@@ -95,9 +95,13 @@
   },
   "dependencies": {
     "@types/css-font-loading-module": "~0.0.8",
-    "monaco-languageclient": "5.1.0-next.0",
-    "vscode-ws-jsonrpc": "3.0.0",
     "normalize-url": "~8.0.0"
+  },
+  "peerDependencies": {
+    "monaco-editor": "~0.37.1",
+    "monaco-languageclient": "5.1.0-next.2",
+    "vscode": "npm:@codingame/monaco-vscode-api@~1.78.0",
+    "vscode-ws-jsonrpc": "3.0.0"
   },
   "devDependencies": {
     "@types/glob-to-regexp": "~0.4.1"
