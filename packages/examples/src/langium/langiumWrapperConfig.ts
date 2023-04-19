@@ -19,22 +19,22 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         htmlElement: htmlElement,
         wrapperConfig: {
             useVscodeConfig: true,
-            monacoVscodeApiConfig: {
-                serviceConfig: {
-                    enableThemeService: true,
-                    enableTextmateService: true,
-                    enableModelEditorService: true,
-                    modelEditorServiceConfig: {
-                        useDefaultFunction: true
-                    },
-                    enableConfigurationService: true,
-                    configurationServiceConfig: {
-                        defaultWorkspaceUri: '/tmp/'
-                    },
-                    enableKeybindingsService: true,
-                    enableLanguagesService: true,
-                    debugLogging: true
+            serviceConfig: {
+                enableThemeService: true,
+                enableTextmateService: true,
+                enableModelEditorService: true,
+                modelEditorServiceConfig: {
+                    useDefaultFunction: true
                 },
+                enableConfigurationService: true,
+                configurationServiceConfig: {
+                    defaultWorkspaceUri: '/tmp/'
+                },
+                enableKeybindingsService: true,
+                enableLanguagesService: true,
+                debugLogging: true
+            },
+            monacoVscodeApiConfig: {
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',
