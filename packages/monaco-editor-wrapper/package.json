@@ -35,14 +35,6 @@
     "./monaco-css": {
       "types": "./dist/generated/css.d.ts",
       "default": "./dist/generated/css.js"
-    },
-    "./themeRemoteHelper": {
-      "types": "./lib/helpers/themeRemoteHelper.d.ts",
-      "default": "./lib/helpers/themeRemoteHelper.js"
-    },
-    "./themeLocalHelper": {
-      "types": "./lib/helpers/themeLocalHelper.d.ts",
-      "default": "./lib/helpers/themeLocalHelper.js"
     }
   },
   "typesVersions": {
@@ -64,12 +56,6 @@
       ],
       "monaco-css": [
         "dist/helpers/css"
-      ],
-      "themeRemoteHelper": [
-        "./lib/helpers/themeRemoteHelper.d.ts"
-      ],
-      "themeLocalHelper": [
-        "./lib/helpers/themeLocalHelper.d.ts"
       ]
     }
   },
