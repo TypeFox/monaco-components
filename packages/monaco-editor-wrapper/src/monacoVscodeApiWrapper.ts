@@ -31,14 +31,8 @@ export class MonacoVscodeApiWrapper implements MonacoEditorWrapper {
             }
         }
 
-        return this.updateConfig(wrapperConfig.userConfiguration ?? {})
-            .then(() => {
-                console.log('Init of VscodeApiConfig was completed.');
-                return Promise.resolve();
-            })
-            .catch(e => {
-                return Promise.reject(e);
-            });
+        await this.updateConfig(wrapperConfig.userConfiguration ?? {});
+        console.log('Init of VscodeApiConfig was completed.');
     }
 
     async updateConfig(config: VscodeUserConfiguration) {

@@ -25,13 +25,16 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         this.containerElement = undefined;
     }
 
-    override componentDidMount() {
-        this.destroyMonaco().then(() => {
-            this.initMonaco();
-        });
+    override async componentDidMount() {
+        await this.handleReinit();
     }
 
-    override componentDidUpdate(prevProps: MonacoEditorProps) {
+    private async handleReinit() {
+        await this.destroyMonaco();
+        await this.initMonaco();
+    }
+
+    override async componentDidUpdate(prevProps: MonacoEditorProps) {
         const { className, userConfig } = this.props;
         const { wrapper } = this;
 
@@ -41,8 +44,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         const prevUrl = prevProps.userConfig.languageClientConfig.workerConfigOptions?.url;
         const url = userConfig.languageClientConfig.workerConfigOptions?.url;
         if (prevUrl !== url) {
-            this.destroyMonaco()
-                .then(() => this.initMonaco());
+            await this.handleReinit();
         } else {
             if (wrapper !== null) {
                 let restarted = false;
@@ -52,15 +54,13 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                     if (prevProps.userConfig.wrapperConfig.monacoVscodeApiConfig !==
                         userConfig.wrapperConfig.monacoVscodeApiConfig) {
                         restarted = true;
-                        this.destroyMonaco()
-                            .then(() => this.initMonaco());
+                        await this.handleReinit();
                     }
                 } else {
                     if (prevProps.userConfig.wrapperConfig.monacoEditorConfig !==
                         userConfig.wrapperConfig.monacoEditorConfig) {
                         restarted = true;
-                        this.destroyMonaco()
-                            .then(() => this.initMonaco());
+                        await this.handleReinit();
                     }
                 }
 

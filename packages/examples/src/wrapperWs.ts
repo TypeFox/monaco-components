@@ -3,8 +3,7 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers'
 
 // support all editor features
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
-import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import { disposeEditor, startEditor, swapEditors } from './common.js';
 
 const languageId = 'json';
 let codeMain = `{
@@ -15,7 +14,6 @@ const codeOrg = `{
     "$schema": "http://json.schemastore.org/coffeelint",
     "line_endings": {"value": "unix"}
 }`;
-const wrapper = new MonacoEditorLanguageClientWrapper();
 
 const monacoEditorConfig = {
     glyphMargin: true,
@@ -62,81 +60,18 @@ const userConfig = {
     }
 };
 
-const startEditor = async () => {
-    if (wrapper.isStarted()) {
-        alert('Editor was already started!');
-        return;
-    }
+try {
+    document.querySelector('#button-start')?.addEventListener('click', () => {
+        startEditor(userConfig, codeMain, codeOrg);
+    });
+    document.querySelector('#button-swap')?.addEventListener('click', () => {
+        swapEditors(userConfig, codeMain, codeOrg);
+    });
+    document.querySelector('#button-dispose')?.addEventListener('click', async () => {
+        codeMain = await disposeEditor(userConfig);
+    });
 
-    wrapper.start(userConfig)
-        .then(() => {
-            logEditorInfo(wrapper);
-        })
-        .catch((e: Error) => console.error(e));
-
-    configureCodeEditors();
-    toggleSwapDiffButton(true);
-};
-
-function configureCodeEditors() {
-    if (userConfig.editorConfig.useDiffEditor) {
-        userConfig.editorConfig.code = codeMain;
-        userConfig.editorConfig.codeOriginal = codeOrg;
-    } else {
-        userConfig.editorConfig.code = codeMain;
-    }
+    startEditor(userConfig, codeMain, codeOrg);
+} catch (e) {
+    console.error(e);
 }
-
-function saveMainCode(saveFromDiff: boolean, saveFromMain: boolean) {
-    if (saveFromDiff) {
-        codeMain = wrapper.getModel(true)!.getValue();
-    }
-    if (saveFromMain) {
-        codeMain = wrapper.getModel()!.getValue();
-    }
-}
-
-function swapEditors() {
-    userConfig.editorConfig.useDiffEditor = !userConfig.editorConfig.useDiffEditor;
-    saveMainCode(!userConfig.editorConfig.useDiffEditor, false);
-    configureCodeEditors();
-
-    wrapper.start(userConfig)
-        .then(() => {
-            logEditorInfo(wrapper);
-        })
-        .catch((e: Error) => console.error(e));
-}
-
-async function disposeEditor() {
-    wrapper.reportStatus();
-    toggleSwapDiffButton(false);
-    const useDiffEditor = userConfig.editorConfig.useDiffEditor;
-    saveMainCode(useDiffEditor, !useDiffEditor);
-    await wrapper.dispose()
-        .then(() => {
-            console.log(wrapper.reportStatus().join('\n'));
-        })
-        .catch((e: Error) => console.error(e));
-}
-
-function toggleSwapDiffButton(enabled: boolean) {
-    const button = document.getElementById('button-swap') as HTMLButtonElement;
-    if (button !== null) {
-        button.disabled = !enabled;
-    }
-}
-
-function logEditorInfo(client: MonacoEditorLanguageClientWrapper) {
-    console.log(`# of configured languages: ${languages.getLanguages().length}`);
-    console.log(`Main code: ${client.getModel(true)!.getValue()}`);
-    if (userConfig.editorConfig.useDiffEditor) {
-        console.log(`Modified code: ${client.getModel()!.getValue()}`);
-    }
-}
-
-document.querySelector('#button-start')?.addEventListener('click', startEditor);
-document.querySelector('#button-swap')?.addEventListener('click', swapEditors);
-document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
-
-startEditor();

@@ -13,25 +13,23 @@ const startEditor = async () => {
         return;
     }
     const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('monaco-editor-root') as HTMLElement);
-    wrapper.start(langiumGlobalConfig)
-        .then(() => {
-            vscode.commands.getCommands().then((x) => {
-                console.log('Currently registered # of vscode commands: ' + x.length);
-            });
-        })
-        .catch((e: Error) => console.error(e));
+    await wrapper.start(langiumGlobalConfig);
+    vscode.commands.getCommands().then((x) => {
+        console.log('Currently registered # of vscode commands: ' + x.length);
+    });
 };
 
 const disposeEditor = async () => {
     wrapper.reportStatus();
-    await wrapper.dispose()
-        .then(() => {
-            console.log(wrapper.reportStatus().join('\n'));
-        })
-        .catch((e: Error) => console.error(e));
+    await wrapper.dispose();
+    console.log(wrapper.reportStatus().join('\n'));
 };
 
-document.querySelector('#button-start')?.addEventListener('click', startEditor);
-document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
+try {
+    document.querySelector('#button-start')?.addEventListener('click', startEditor);
+    document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
 
-startEditor();
+    startEditor();
+} catch (e) {
+    console.error(e);
+}

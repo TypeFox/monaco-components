@@ -21,4 +21,8 @@ const startEditor = async () => {
     root.render(comp);
 };
 
-startEditor();
+try {
+    startEditor();
+} catch (e) {
+    console.error(e);
+}

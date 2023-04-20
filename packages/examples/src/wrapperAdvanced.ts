@@ -88,27 +88,21 @@ console.log('Hello monaco-editor-comp!');
     }
 };
 
-const startWrapper42 = () => {
-    wrapper42.start(wrapper42Config)
-        .then(() => console.log('wrapper42 was started.'))
-        .catch((e: Error) => console.error(e));
+const startWrapper42 = async () => {
+    await wrapper42.start(wrapper42Config);
+    console.log('wrapper42 was started.');
 };
 
-const startWrapper43 = () => {
-    wrapper43.start(wrapper43Config)
-        .then(() => console.log('wrapper43 was started.'))
-        .catch((e: Error) => console.error(e));
-};
+const startWrapper43 = async () => {
 
-const startWrapper44 = () => {
-    wrapper44.start(wrapper44Config)
-        .then(() => console.log('wrapper44 was started.'))
-        .catch((e: Error) => console.error(e));
+    await wrapper43.start(wrapper43Config);
+    console.log('wrapper43 was started.');
 };
+const startWrapper44 = async () => {
+    await wrapper44.start(wrapper44Config);
+    console.log('wrapper44 was started.');
 
-startWrapper42();
-startWrapper43();
-startWrapper44();
+};
 
 const sleepOne = (milliseconds: number) => {
     setTimeout(async () => {
@@ -121,15 +115,13 @@ const sleepOne = (milliseconds: number) => {
 
     console.log('Hello swap editors!');
 };`;
-        wrapper42.start(wrapper44Config)
-            .catch((e: Error) => console.error(e));
+        const w42Start = wrapper42.start(wrapper44Config);
 
-        await wrapper43.updateDiffModel({
+        const w43Start = wrapper43.updateDiffModel({
             languageId: 'javascript',
             code: 'text 5678',
             codeOriginal: 'text 1234'
-        })
-            .then(() => console.log('Updated diffmodel of wrapper43.'));
+        });
 
         wrapper44Config.editorConfig.languageId = 'text/plain';
         wrapper44Config.editorConfig.useDiffEditor = true;
@@ -138,23 +130,40 @@ const sleepOne = (milliseconds: number) => {
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
         wrapper44Config.editorConfig.theme = 'vs-light';
-        wrapper44.start(wrapper44Config)
-            .then(() => console.log('Restarted wrapper44.'))
-            .catch((e: Error) => console.error(e));
+        const w44Start = wrapper44.start(wrapper44Config);
+
+        await w42Start;
+        console.log('Restarted wrapper42.');
+        await w43Start;
+        console.log('Updated diffmodel of wrapper43.');
+        await w44Start;
+        console.log('Restarted wrapper44.');
     }, milliseconds);
 };
-// change the editors config, content or swap normal and diff editors after five seconds
-sleepOne(5000);
 
 const sleepTwo = (milliseconds: number) => {
-    setTimeout(() => {
+    setTimeout(async () => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
         wrapper44Config.editorConfig.useDiffEditor = false;
         wrapper44Config.editorConfig.theme = 'vs-dark';
-        wrapper44.start(wrapper44Config)
-            .then(() => console.log('Restarted wrapper44.'))
-            .catch((e: Error) => console.error(e));
+
+        await wrapper44.start(wrapper44Config);
+        console.log('Restarted wrapper44.');
     }, milliseconds);
 };
-sleepTwo(10000);
+
+try {
+    await startWrapper42();
+    await startWrapper43();
+    await startWrapper44();
+
+    // change the editors config, content or swap normal and diff editors after five seconds
+    sleepOne(5000);
+
+    // change last editor to regular mode
+    sleepTwo(10000);
+} catch (e) {
+    console.error(e);
+}
+

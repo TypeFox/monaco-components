@@ -89,7 +89,7 @@ export class MonacoEditorLanguageClientWrapper {
 
     async start(userConfig: UserConfig) {
         this.init(userConfig);
-        return this.startInternal();
+        await this.startInternal();
     }
 
     private init(userConfig: UserConfig) {
@@ -167,28 +167,23 @@ export class MonacoEditorLanguageClientWrapper {
         this.disposeDiffEditor();
 
         this.monacoEditorWrapper = this.useVscodeConfig ? new MonacoVscodeApiWrapper() : new DirectMonacoEditorWrapper();
-        await (this.wasStarted ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig))
-            .then(() => {
-                this.monacoEditorWrapper?.init(this.editorConfig, this.monacoConfig);
-            })
-            .then(() => {
-                let promise: Promise<void>;
-                if (this.editorConfig.useDiffEditor) {
-                    promise = this.createDiffEditor(this.htmlElement);
-                } else {
-                    promise = this.createEditor(this.htmlElement);
-                }
-                return promise.then(() => {
-                    this.wasStarted = true;
-                    const lcc = this.languageClientConfig;
-                    if (lcc.enabled) {
-                        console.log('Starting monaco-languageclient');
-                        return this.startLanguageClientConnection(lcc);
-                    } else {
-                        return Promise.resolve('All fine. monaco-languageclient is not used.');
-                    }
-                });
-            });
+        await (this.wasStarted ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
+        await this.monacoEditorWrapper?.init(this.editorConfig, this.monacoConfig);
+
+        if (this.editorConfig.useDiffEditor) {
+            await this.createDiffEditor(this.htmlElement);
+        } else {
+            await this.createEditor(this.htmlElement);
+        }
+
+        this.wasStarted = true;
+        const lcc = this.languageClientConfig;
+        if (lcc.enabled) {
+            console.log('Starting monaco-languageclient');
+            await this.startLanguageClientConnection(lcc);
+        } else {
+            await Promise.resolve('All fine. monaco-languageclient is not used.');
+        }
     }
 
     isStarted(): boolean {
@@ -254,22 +249,20 @@ export class MonacoEditorLanguageClientWrapper {
         return this.updateDiffEditorModel();
     }
 
-    updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): Promise<void> {
+    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): Promise<void> {
         if (this.monacoEditorWrapper) {
-            return this.monacoEditorWrapper.updateConfig(options)
-                .then(() => {
-                    if (this.useVscodeConfig) {
-                        this.editor?.updateOptions(options as editor.IEditorOptions & editor.IGlobalEditorOptions);
-                    }
-                });
+            await this.monacoEditorWrapper.updateConfig(options);
+            if (this.useVscodeConfig) {
+                this.editor?.updateOptions(options as editor.IEditorOptions & editor.IGlobalEditorOptions);
+            }
         } else {
             return Promise.reject('Update was called when editor wrapper was not correctly configured.');
         }
     }
 
-    async restartLanguageClient(): Promise<string> {
+    async restartLanguageClient(): Promise<void> {
         await this.disposeLanguageClient();
-        return this.startLanguageClientConnection(this.languageClientConfig);
+        await this.startLanguageClientConnection(this.languageClientConfig);
     }
 
     public reportStatus() {
@@ -282,37 +275,34 @@ export class MonacoEditorLanguageClientWrapper {
         return status;
     }
 
-    async dispose() {
+    async dispose(): Promise<void> {
         this.disposeEditor();
         this.disposeDiffEditor();
 
         if (this.languageClientConfig.enabled) {
-            return this.disposeLanguageClient()
-                .then(() => {
-                    this.monacoEditorWrapper = undefined;
-                    return Promise.resolve('Successfully completed dispose.');
-                });
+            await this.disposeLanguageClient();
+            this.monacoEditorWrapper = undefined;
+            await Promise.resolve('Monaco editor and languageclient completed disposed.');
         }
         else {
-            return Promise.resolve('Monaco editor has been disposed.');
+            await Promise.resolve('Monaco editor has been disposed.');
         }
     }
 
-    public async disposeLanguageClient(): Promise<string> {
+    public async disposeLanguageClient(): Promise<void> {
         if (this.languageClient && this.languageClient.isRunning()) {
-            return await this.languageClient.dispose()
-                .then(() => {
-                    this.worker?.terminate();
-                    this.worker = undefined;
-                    this.languageClient = undefined;
-                    return 'monaco-languageclient and monaco-editor were successfully disposed';
-                })
-                .catch((e: Error) => {
-                    return `Disposing the monaco-languageclient resulted in error: ${e}`;
-                });
+            try {
+                await this.languageClient.dispose();
+                this.worker?.terminate();
+                this.worker = undefined;
+                this.languageClient = undefined;
+                await Promise.resolve('monaco-languageclient and monaco-editor were successfully disposed.');
+            } catch (e) {
+                await Promise.reject(`Disposing the monaco-languageclient resulted in error: ${e}`);
+            }
         }
         else {
-            return Promise.reject('Unable to dispose monaco-languageclient: It is not yet started.');
+            await Promise.reject('Unable to dispose monaco-languageclient: It is not yet started.');
         }
     }
 
@@ -342,25 +332,20 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     private async createEditor(container: HTMLElement): Promise<void> {
-        return this.updateEditorModel(false)
-            .then(() => {
-                this.editor = createConfiguredEditor(container!, this.editorOptions);
-            });
+        await this.updateEditorModel(false);
+        this.editor = createConfiguredEditor(container!, this.editorOptions);
     }
 
     private async updateEditorModel(updateEditor: boolean): Promise<void> {
         this.modelRef?.dispose();
 
         const uri = Uri.parse(`/tmp/model${this.id}.${this.editorConfig.languageId}`);
-        return createModelReference(uri, this.editorConfig.code)
-            .then((m) => {
-                this.modelRef = m as unknown as IReference<ITextFileEditorModel>;
-                this.modelRef.object.setLanguageId(this.editorConfig.languageId);
-                this.editorOptions!.model = this.modelRef.object.textEditorModel;
-                if (updateEditor && this.editor) {
-                    this.editor.setModel(this.editorOptions!.model);
-                }
-            });
+        this.modelRef = await createModelReference(uri, this.editorConfig.code) as unknown as IReference<ITextFileEditorModel>;
+        this.modelRef.object.setLanguageId(this.editorConfig.languageId);
+        this.editorOptions!.model = this.modelRef.object.textEditorModel;
+        if (updateEditor && this.editor) {
+            this.editor.setModel(this.editorOptions!.model);
+        }
     }
 
     private createDiffEditor(container: HTMLElement) {
@@ -378,20 +363,19 @@ export class MonacoEditorLanguageClientWrapper {
         const promises = [];
         promises.push(createModelReference(uri, this.editorConfig.code));
         promises.push(createModelReference(uriOriginal, this.editorConfig.codeOriginal));
-        return Promise.all(promises)
-            .then((refs) => {
-                this.modelRef = refs[0] as unknown as IReference<ITextFileEditorModel>;
-                this.modelRef.object.setLanguageId(this.editorConfig.languageId);
-                this.modelOriginalRef = refs[1] as unknown as IReference<ITextFileEditorModel>;
-                this.modelOriginalRef.object.setLanguageId(this.editorConfig.languageId);
 
-                if (this.diffEditor && this.modelRef.object.textEditorModel !== null && this.modelOriginalRef.object.textEditorModel !== null) {
-                    this.diffEditor?.setModel({
-                        original: this.modelOriginalRef!.object!.textEditorModel,
-                        modified: this.modelRef!.object!.textEditorModel
-                    });
-                }
+        const refs = await Promise.all(promises);
+        this.modelRef = refs[0] as unknown as IReference<ITextFileEditorModel>;
+        this.modelRef.object.setLanguageId(this.editorConfig.languageId);
+        this.modelOriginalRef = refs[1] as unknown as IReference<ITextFileEditorModel>;
+        this.modelOriginalRef.object.setLanguageId(this.editorConfig.languageId);
+
+        if (this.diffEditor && this.modelRef.object.textEditorModel !== null && this.modelOriginalRef.object.textEditorModel !== null) {
+            this.diffEditor?.setModel({
+                original: this.modelOriginalRef!.object!.textEditorModel,
+                modified: this.modelRef!.object!.textEditorModel
             });
+        }
     }
 
     private startLanguageClientConnection(languageClientConfig: LanguageClientConfig): Promise<string> {
@@ -435,16 +419,14 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.languageClient = this.createLanguageClient(messageTransports);
         messageTransports.reader.onClose(() => this.languageClient?.stop());
-
-        await this.languageClient.start()
-            .then(() => {
-                const msg = 'monaco-languageclient was successfully started.';
-                resolve(msg);
-            })
-            .catch((e: Error) => {
-                const errorMsg = `monaco-languageclient start was unsuccessful: ${e.message}`;
-                reject(errorMsg);
-            });
+        try {
+            await this.languageClient.start();
+        } catch (e) {
+            const errorMsg = `monaco-languageclient start was unsuccessful: ${e}`;
+            reject(errorMsg);
+        }
+        const msg = 'monaco-languageclient was successfully started.';
+        resolve(msg);
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
