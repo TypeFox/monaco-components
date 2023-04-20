@@ -1,12 +1,9 @@
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
-// support all editor features
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
-import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 
-const languageId = 'typescript';
+import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
+
 const codeOrg = `function sayHello(): string {
     return "Hello";
 };`;
@@ -33,7 +30,7 @@ const userConfig = {
         enabled: false
     },
     editorConfig: {
-        languageId: languageId,
+        languageId: 'typescript',
         code: codeOrg,
         useDiffEditor: false,
         codeOriginal: codeMain,

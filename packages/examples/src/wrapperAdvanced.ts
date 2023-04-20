@@ -1,6 +1,13 @@
+// support all editor features
+import 'monaco-editor/esm/vs/editor/edcore.main.js';
+
+import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
+
+import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 
 const wrapper42 = new MonacoEditorLanguageClientWrapper();
 const wrapper43 = new MonacoEditorLanguageClientWrapper();
@@ -78,7 +85,7 @@ const wrapper44Config: UserConfig = {
         theme: 'vs-dark',
         automaticLayout: true,
         code: `function logMe() {
-console.log('Hello monaco-editor-comp!');
+    console.log('Hello monaco-editor-comp!');
 };`,
         editorOptions: {
             minimap: {
@@ -112,10 +119,9 @@ const sleepOne = (milliseconds: number) => {
         wrapper42Config.editorConfig.languageId = 'javascript';
         wrapper42Config.editorConfig.useDiffEditor = false;
         wrapper42Config.editorConfig.code = `function logMe() {
-
     console.log('Hello swap editors!');
 };`;
-        const w42Start = wrapper42.start(wrapper44Config);
+        const w42Start = wrapper42.start(wrapper42Config);
 
         const w43Start = wrapper43.updateDiffModel({
             languageId: 'javascript',

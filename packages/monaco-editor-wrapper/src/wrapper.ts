@@ -2,7 +2,7 @@
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference } from 'vscode/monaco';
-import { InitializeServiceConfig, initServices, MonacoLanguageClient } from 'monaco-languageclient';
+import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
@@ -78,7 +78,6 @@ export class MonacoEditorLanguageClientWrapper {
 
     private monacoEditorWrapper: DirectMonacoEditorWrapper | MonacoVscodeApiWrapper | undefined;
 
-    private wasStarted = false;
     private id: string;
     private htmlElement: HTMLElement;
     private useVscodeConfig: boolean;
@@ -167,7 +166,7 @@ export class MonacoEditorLanguageClientWrapper {
         this.disposeDiffEditor();
 
         this.monacoEditorWrapper = this.useVscodeConfig ? new MonacoVscodeApiWrapper() : new DirectMonacoEditorWrapper();
-        await (this.wasStarted ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
+        await (wasVscodeApiInitialized() ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
         await this.monacoEditorWrapper?.init(this.editorConfig, this.monacoConfig);
 
         if (this.editorConfig.useDiffEditor) {
@@ -176,7 +175,6 @@ export class MonacoEditorLanguageClientWrapper {
             await this.createEditor(this.htmlElement);
         }
 
-        this.wasStarted = true;
         const lcc = this.languageClientConfig;
         if (lcc.enabled) {
             console.log('Starting monaco-languageclient');

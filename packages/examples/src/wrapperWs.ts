@@ -1,8 +1,3 @@
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
-// support all editor features
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 
 const languageId = 'json';
