@@ -1,5 +1,6 @@
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import { EditorConfig, MonacoEditorWrapper } from './wrapper.js';
+import { MonacoEditorWrapper } from './wrapper.js';
+import { MonacoEditorBase } from './editor.js';
 
 /**
  * This is derived from:
@@ -15,45 +16,47 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
-export type DirectMonacoEditorWrapperConfig = {
+export type EditorClassicConfig = {
     languageExtensionConfig?: MonacoLanguageExtensionConfig;
     languageDef?: languages.IMonarchLanguage;
     themeData?: editor.IStandaloneThemeData;
 }
 
-export class DirectMonacoEditorWrapper implements MonacoEditorWrapper {
+export class EditorClassic extends MonacoEditorBase implements MonacoEditorWrapper {
 
-    async init(editorConfig: EditorConfig, wrapperConfig: DirectMonacoEditorWrapperConfig) {
+    async init() {
+        const wrapperConfig = this.monacoConfig as EditorClassicConfig;
+
         // register own language first
         const extLang = wrapperConfig?.languageExtensionConfig;
         if (extLang) {
             languages.register(extLang);
         }
 
-        const languageRegistered = languages.getLanguages().filter(x => x.id === editorConfig.languageId);
+        const languageRegistered = languages.getLanguages().filter(x => x.id === this.editorConfig.languageId);
         if (languageRegistered.length === 0) {
             // this is only meaningful for languages supported by monaco out of the box
-            languages.register({ id: editorConfig.languageId });
+            languages.register({
+                id: this.editorConfig.languageId
+            });
         }
 
         // apply monarch definitions
         const tokenProvider = wrapperConfig?.languageDef;
         if (tokenProvider) {
-            languages.setMonarchTokensProvider(editorConfig.languageId, tokenProvider);
+            languages.setMonarchTokensProvider(this.editorConfig.languageId, tokenProvider);
         }
         const themeData = wrapperConfig?.themeData;
         if (themeData) {
-            editor.defineTheme(editorConfig.theme, themeData);
+            editor.defineTheme(this.editorConfig.theme, themeData);
         }
-        editor.setTheme(editorConfig.theme);
+        editor.setTheme(this.editorConfig.theme);
 
         console.log('Init of MonacoConfig was completed.');
         return Promise.resolve();
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    async updateConfig(_options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
-        // nothing
+    async updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
+        this.editor?.updateOptions(options);
     }
-
 }

@@ -1,19 +1,19 @@
 import type {
-    DirectMonacoEditorWrapperConfig,
-} from './monacoEditorWrapper.js';
+    EditorClassicConfig,
+} from './editorClassic.js';
 
 import {
-    DirectMonacoEditorWrapper
-} from './monacoEditorWrapper.js';
+    EditorClassic
+} from './editorClassic.js';
 
 import type {
-    MonacoVscodeApiWrapperConfig,
+    EditorVscodeApiConfig,
     VscodeUserConfiguration
-} from './monacoVscodeApiWrapper.js';
+} from './editorVscodeApi.js';
 
 import {
-    MonacoVscodeApiWrapper
-} from './monacoVscodeApiWrapper.js';
+    EditorVscodeApi
+} from './editorVscodeApi.js';
 
 import type {
     EditorConfig,
@@ -31,8 +31,8 @@ import {
 export type {
     EditorConfig,
     MonacoEditorWrapper,
-    DirectMonacoEditorWrapperConfig,
-    MonacoVscodeApiWrapperConfig,
+    EditorClassicConfig,
+    EditorVscodeApiConfig,
     VscodeUserConfiguration,
     WebSocketConfigOptions,
     WorkerConfigOptions,
@@ -42,6 +42,6 @@ export type {
 
 export {
     MonacoEditorLanguageClientWrapper,
-    DirectMonacoEditorWrapper,
-    MonacoVscodeApiWrapper
+    EditorClassic,
+    EditorVscodeApi
 };

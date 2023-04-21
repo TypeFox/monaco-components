@@ -1,23 +1,23 @@
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest } from 'vscode/extensions';
-import { EditorConfig, MonacoEditorWrapper } from './wrapper.js';
+import { MonacoEditorWrapper } from './wrapper.js';
 import 'vscode/default-extensions/theme-defaults';
+import { MonacoEditorBase } from './editor.js';
 
 export type VscodeUserConfiguration = {
     json?: string;
 }
 
-export type MonacoVscodeApiWrapperConfig = {
+export type EditorVscodeApiConfig = {
     extension?: IExtensionManifest | object;
     extensionFiles?: Map<string, URL>;
     userConfiguration?: VscodeUserConfiguration;
 }
 
-export class MonacoVscodeApiWrapper implements MonacoEditorWrapper {
+export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWrapper {
 
-    async init(_editorConfig: EditorConfig, wrapperConfig: MonacoVscodeApiWrapperConfig) {
-        console.log(window.location.href);
-
+    async init() {
+        const wrapperConfig = this.monacoConfig as EditorVscodeApiConfig;
         if (wrapperConfig.extension) {
             const extension = wrapperConfig.extension as IExtensionManifest;
             const { registerFile: registerExtensionFile } = registerExtension(extension);
