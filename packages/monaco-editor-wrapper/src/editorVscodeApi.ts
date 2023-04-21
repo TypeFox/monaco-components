@@ -10,7 +10,7 @@ export type VscodeUserConfiguration = {
 
 export type EditorVscodeApiConfig = {
     extension?: IExtensionManifest | object;
-    extensionFiles?: Map<string, URL>;
+    extensionFilesOrContents?: Map<string, string | URL>;
     userConfiguration?: VscodeUserConfiguration;
 }
 
@@ -21,11 +21,16 @@ export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWra
         if (wrapperConfig.extension) {
             const extension = wrapperConfig.extension as IExtensionManifest;
             const { registerFile: registerExtensionFile } = registerExtension(extension);
-            if (wrapperConfig.extensionFiles) {
-                for (const entry of wrapperConfig.extensionFiles) {
+            if (wrapperConfig.extensionFilesOrContents) {
+                for (const entry of wrapperConfig.extensionFilesOrContents) {
                     registerExtensionFile(entry[0], async () => {
-                        const json = entry[1].href;
-                        return (await fetch(json)).text();
+                        const data = entry[1];
+                        if (data instanceof URL) {
+                            const json = data.href;
+                            return (await fetch(json)).text();
+                        } else {
+                            return data;
+                        }
                     });
                 }
             }

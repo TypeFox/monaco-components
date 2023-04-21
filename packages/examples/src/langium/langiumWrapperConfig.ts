@@ -5,11 +5,11 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     const responseStatemachine = await fetch(exampleStatemachineUrl);
     const code = await responseStatemachine.text();
 
-    const extensionFiles = new Map<string, URL>();
+    const extensionFilesOrContents = new Map<string, string | URL>();
     const statemachineLanguageConfig = new URL('../../../node_modules/langium-statemachine-dsl/language-configuration.json', window.location.href);
     const responseStatemachineTm = new URL('../../../node_modules/langium-statemachine-dsl/syntaxes/statemachine.tmLanguage.json', window.location.href);
-    extensionFiles.set('/statemachine-configuration.json', statemachineLanguageConfig);
-    extensionFiles.set('/statemachine-grammar.json', responseStatemachineTm);
+    extensionFilesOrContents.set('/statemachine-configuration.json', statemachineLanguageConfig);
+    extensionFilesOrContents.set('/statemachine-grammar.json', await (await fetch(responseStatemachineTm)).text());
 
     // Language Server preparation
     const workerUrl = new URL('./dist/worker/statemachineServerWorker.js', window.location.href);
@@ -70,7 +70,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                         }]
                     }
                 },
-                extensionFiles: extensionFiles,
+                extensionFilesOrContents: extensionFilesOrContents,
                 userConfiguration: {
                     json: `{
     "workbench.colorTheme": "Default Dark+ Experimental",
