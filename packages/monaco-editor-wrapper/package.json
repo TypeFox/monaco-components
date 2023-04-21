@@ -76,19 +76,15 @@
     "build": "npm run clean && npm run compile && npm run bundle"
   },
   "volta": {
-    "node": "18.15.0",
-    "npm": "9.6.3"
+    "node": "18.16.0",
+    "npm": "9.6.5"
   },
   "dependencies": {
-    "@types/css-font-loading-module": "~0.0.8",
     "normalize-url": "~8.0.0"
   },
   "peerDependencies": {
     "monaco-languageclient": "5.1.0-next.3",
     "vscode-ws-jsonrpc": "3.0.0"
-  },
-  "devDependencies": {
-    "@types/glob-to-regexp": "~0.4.1"
   },
   "repository": {
     "type": "git",
