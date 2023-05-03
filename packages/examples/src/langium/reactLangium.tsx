@@ -12,6 +12,7 @@ const startEditor = async () => {
         userConfig={langiumGlobalConfig}
         style={{
             'paddingTop': '5px',
+            'height': '80vh'
         }}
     />;
 

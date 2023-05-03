@@ -6,8 +6,9 @@ import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/allLanguages';
 import { UserConfig } from 'monaco-editor-wrapper';
 
+const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
-    htmlElement: document.getElementById('root')!,
+    htmlElement: rootElem,
     wrapperConfig: {
         useVscodeConfig: false,
         monacoEditorConfig: {
@@ -35,9 +36,10 @@ const comp = <MonacoEditorReactComp
     userConfig={userConfig}
     style={{
         'paddingTop': '5px',
+        'height': '80vh',
     }}
     onTextChanged={onTextChanged}
 />;
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(rootElem);
 root.render(comp);

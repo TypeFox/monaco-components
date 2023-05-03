@@ -28,5 +28,10 @@ export default defineConfig({
             }
         }
     },
+    resolve: {
+        alias: {
+            path: 'path-browserify'
+        }
+    },
     assetsInclude: ['**/*.wasm']
 });

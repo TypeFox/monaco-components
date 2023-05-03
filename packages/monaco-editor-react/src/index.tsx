@@ -123,11 +123,12 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
 
+            userConfig.htmlElement = this.containerElement;
             this.isStarting = this.wrapper.start(userConfig);
             await this.isStarting;
 
             onLoading && onLoading();
-            onLoad && this.isStarting.then(() => onLoad());
+            onLoad && this.isStarting?.then(() => onLoad());
 
             if (onTextChanged) {
                 const model = this.wrapper.getModel();
