@@ -36,7 +36,7 @@ const comp = <MonacoEditorReactComp
     userConfig={userConfig}
     style={{
         'paddingTop': '5px',
-        'height': '80vh',
+        'height': '80vh'
     }}
     onTextChanged={onTextChanged}
 />;
