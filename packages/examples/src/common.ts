@@ -4,9 +4,6 @@ import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
 export const wrapper = new MonacoEditorLanguageClientWrapper();
 
 export const startEditor = async (userConfig: UserConfig, codeMain: string, codeOrg?: string) => {

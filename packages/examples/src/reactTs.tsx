@@ -1,10 +1,10 @@
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/allLanguages';
 import { UserConfig } from 'monaco-editor-wrapper';
+
+import { buildWorkerDefinition } from 'monaco-editor-workers';
+buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {

@@ -1,8 +1,10 @@
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 
-import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
+
+import { buildWorkerDefinition } from 'monaco-editor-workers';
+buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const codeOrg = `function sayHello(): string {
     return "Hello";
@@ -11,7 +13,7 @@ let codeMain = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
 
-const monacoEditorConfig: editor.IStandaloneEditorConstructionOptions = {
+const monacoEditorConfig = {
     glyphMargin: true,
     guides: {
         bracketPairs: true

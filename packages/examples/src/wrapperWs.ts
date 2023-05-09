@@ -1,5 +1,8 @@
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 
+import { buildWorkerDefinition } from 'monaco-editor-workers';
+buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
+
 const languageId = 'json';
 let codeMain = `{
     "$schema": "http://json.schemastore.org/coffeelint",
