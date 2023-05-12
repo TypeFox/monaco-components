@@ -1,5 +1,3 @@
-// WA for toUrl / monacoRequire problem
-import './wa/assets.js';
 // support all editor features
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
