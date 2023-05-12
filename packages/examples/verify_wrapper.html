@@ -5,37 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify: Monaco Editor Wrapper: Diff</title>
+    <link rel="stylesheet" href="./libs/monaco-editor-wrapper/assets/style.css">
 </head>
 
 <body>
     <div id="monaco-editor-root" style="height: 100vh;"></div>
-
-    <script type="module">
-        //import langauges export to get the wrapper with all languages
-        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/indexAllLanguages.js';
-
-        import { buildWorkerDefinition } from "./libs/monaco-editor-workers/index.js";
-        buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
-
-        // helper functions for adding monaco styles with embedded codicon TTF
-        MonacoEditorLanguageClientWrapper.addMonacoStyles('monaco-editor-styles');
-
-        const client = new MonacoEditorLanguageClientWrapper(42);
-        const editorConfig = client.getEditorConfig();
-        editorConfig.setUseDiffEditor(true);
-
-        editorConfig.setMainLanguageId('javascript');
-        editorConfig.setMainCode(`function logOriginal() {
-    console.log('Hello original editor!');
-};`);
-        editorConfig.setDiffLanguageId('javascript');
-        editorConfig.setDiffCode(`function logModified() {
-    console.log('Hello modified editor!');
-};`);
-        editorConfig.setTheme('vs-dark');
-
-        client.startEditor(document.getElementById("monaco-editor-root"));
-    </script>
+    <script type="module" src="./src/verifyWrapper.js"></script>;
 </body>
 
 </html>

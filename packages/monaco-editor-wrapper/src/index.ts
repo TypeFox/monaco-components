@@ -1,29 +1,47 @@
 import type {
-    MonacoLanguageExtensionConfig
-} from './monacoConfig.js';
+    EditorClassicConfig,
+} from './editorClassic.js';
+
+import {
+    EditorClassic
+} from './editorClassic.js';
 
 import type {
-    LanguageDescription,
+    EditorVscodeApiConfig,
+    VscodeUserConfiguration
+} from './editorVscodeApi.js';
+
+import {
+    EditorVscodeApi
+} from './editorVscodeApi.js';
+
+import type {
+    EditorConfig,
     WebSocketConfigOptions,
-    WorkerConfigOptions
-} from './codeEditorConfig.js';
+    WorkerConfigOptions,
+    LanguageClientConfig,
+    UserConfig,
+    MonacoEditorWrapper
+} from './wrapper.js';
 
 import {
-    CodeEditorConfig,
-} from './codeEditorConfig.js';
-
-import {
-    MonacoEditorLanguageClientWrapper
-} from './monacoEditorLanguageClientWrapper.js';
+    MonacoEditorLanguageClientWrapper,
+} from './wrapper.js';
 
 export type {
-    LanguageDescription,
-    MonacoLanguageExtensionConfig,
+    EditorConfig,
+    MonacoEditorWrapper,
+    EditorClassicConfig,
+    EditorVscodeApiConfig,
+    VscodeUserConfiguration,
     WebSocketConfigOptions,
-    WorkerConfigOptions
+    WorkerConfigOptions,
+    LanguageClientConfig,
+    UserConfig
 };
 
 export {
-    CodeEditorConfig,
-    MonacoEditorLanguageClientWrapper
+    MonacoEditorLanguageClientWrapper,
+    EditorClassic,
+    EditorVscodeApi
 };

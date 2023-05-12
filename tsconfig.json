@@ -35,10 +35,12 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "jsx": "react",
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "allowJs": true
   },
   "include": [
     "**/src/**/*.ts",
+    "**/src/**/*.js",
     "**/test/**/*.ts",
     "**/src/**/*.tsx",
     "**/test/**/*.tsx",
@@ -47,7 +49,6 @@
   "exclude": [
     "**/node_modules/**/*",
     "**/dist/**/*",
-    "**/lib/**/*",
-    "**/build/**/*"
+    "**/lib/**/*"
   ]
 }

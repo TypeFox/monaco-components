@@ -1,13 +1,19 @@
 export type {
-    LanguageDescription,
-    MonacoLanguageExtensionConfig,
+    EditorConfig,
+    MonacoEditorWrapper,
+    EditorClassicConfig,
+    EditorVscodeApiConfig,
+    VscodeUserConfiguration,
     WebSocketConfigOptions,
-    WorkerConfigOptions
+    WorkerConfigOptions,
+    LanguageClientConfig,
+    UserConfig
 } from './index.js';
 
 export {
-    CodeEditorConfig,
-    MonacoEditorLanguageClientWrapper
+    MonacoEditorLanguageClientWrapper,
+    EditorClassic,
+    EditorVscodeApi
 } from './index.js';
 
 import './indexLanguagesOnly.js';

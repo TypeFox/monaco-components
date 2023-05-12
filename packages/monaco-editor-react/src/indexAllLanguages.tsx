@@ -4,9 +4,6 @@ export type {
 
 export {
     MonacoEditorReactComp,
-    addMonacoStyles,
-    monaco,
-    vscode
 } from './index.js';
 
 import 'monaco-editor-wrapper/languagesOnly';
