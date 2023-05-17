@@ -67,7 +67,6 @@
     "README.md"
   ],
   "scripts": {
-    "postinstall": "monaco-treemending",
     "clean": "npx shx rm -rf ./dist ./bundle ./src/generated ./resources *.tsbuildinfo",
     "handle:assets": "vite-node ./build/src/buildAssets.mts",
     "compile": "npm run handle:assets && tsc --build tsconfig.src.json",

@@ -12,7 +12,8 @@
     "build:workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "release:prepare": "npm i && npm run clean && npm run build"
+    "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
+    "reset:repo": "git clean -f -X -d"
   },
   "devDependencies": {
     "@types/node": "~18.16.3",
