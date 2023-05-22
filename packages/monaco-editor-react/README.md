@@ -1,8 +1,8 @@
 # React component for Monaco-Editor and Monaco Languageclient
 
-This packages provides a React component that wraps `monaco-editor`. It behaves in nearly the same way as the monaco editor, with the primary difference being that you interact with it through a React component.
+This packages provides a React component that it based on [monaco-editor-wrapper](../monaco-editor-wrapper/). It behaves in nearly the same way as the monaco editor, with the primary difference being that you interact with it through a React component.
 
-The `monaco-languageclient` can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
+The [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
 
 ## Getting Started
 
@@ -13,92 +13,69 @@ npm i
 npm run build
 ```
 
-Afterwards launch the Vite.js development mode:
+Aftwerwards, launch the Vite development server:
 
 ```bash
 npm run dev
 ```
 
-You find examples (manual human testing) in the root of the repository [index.html](../../index.html). They can be used once Vite is running.
+If you want to change dependent code in the examples, you have to watch code changes in parallel:
+
+```bash
+npm run watch
+```
+
+You find examples (manual human testing) here [index.html](./index.html). Vite serves them here: <http://localhost:20001>
 
 ## Usage
 
-You can import the monaco react component for easy use in an existing React project. Below you can see a quick example of a fully functional implementation for some TypeScript.
+You can import the monaco react component for easy use in an existing React project. Below you can see a quick example of a fully functional implementation for some TypeScript. The react component uses the same `UserConfig` approach which is then applied to `monaco-editor-wrapper`.
 
-```ts
-import { MonacoEditorReactComp, addMonacoStyles } from 'monaco-editor-react/allLanguages';
+```typescript
+import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/allLanguages';
+import { UserConfig } from 'monaco-editor-wrapper';
 
-const languageId = 'typescript';
-const codeMain = `function sayHello(): string {
+const userConfig: UserConfig = {
+    htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+    wrapperConfig: {
+        useVscodeConfig: false,
+    },
+    editorConfig: {
+        languageId: 'typescript',
+        useDiffEditor: false,
+        theme: 'vs-dark',
+        code: `function sayHello(): string {
     return "Hello";
-};`;
+};`
+    },
+    languageClientConfig: {
+        enabled: false
+    }
+};
 
 const comp = <MonacoEditorReactComp
-    languageId={languageId}
-    text={codeMain}
+    userConfig={userConfig}
     style={{
         'paddingTop': '5px',
-        'height': '100%',
-        'width': '100%'
+        'height': '80vh'
     }}
 />;
 ```
 
-You can also pass in custom syntax highlighting using the Monarch language. Here's an example for a simple statemachine language.
-
-```ts
-// helps to bring in Monaco from the react component, but not required
-import { monaco } from 'monaco-editor-react';
-
-const syntaxHighlighting = {
-  keywords: [
-      'actions', 'commands', 'end', 'events', 'initialState', 'state', 'statemachine'
-  ],
-  tokenizer: {
-      root: [
-          [/[a-z_$][\w$]*/, {
-              cases: {
-                  '@keywords': 'keyword',
-                  '@default': 'identifier'
-              }
-          }],
-          { include: '@whitespace' }
-      ],
-      comment: [
-          [/[^\/*]+/, 'comment'],
-          [/\/\*/, 'comment', '@push'],
-          ["\\*/", 'comment', '@pop'],
-          [/[\/*]/, 'comment']
-      ],
-      whitespace: [
-          [/[ \t\r\n]+/, 'white'],
-          [/\/\*/, 'comment', '@comment'],
-          [/\/\/.*$/, 'comment'],
-      ]
-  }
-} as monaco.languages.IMonarchLanguage;
-
-...
-
-<MonacoEditorReactComp
-    languaegId="statemachine"
-    text={codeMain}
-    syntax={syntaxHighlighting}>
-```
-
-## Bundled Usage
+### Bundled Usage
 
 For special cases where you might want the component to be processed in advance, so we also provide a pre-bundled version that you can reference instead. This can be helpful if you're working within some other framework besides React (Hugo for example).
 
 ```ts
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
-
-// use this utility funciton to add monaco-editor css/ttf when using the bundle
-addMonacoStyles('monaco-editor-styles');
-...
-
-const comp = <MonacoEditorReactComp languageId="statemachine" text={codeMain}/>
 ```
+
+## Examples
+
+These are the exmples specifically for `@typefox/monaco-editor-react` you find in the repository:
+
+- TypeScript editor worker using classical configuration [see](./packages/examples/react_ts.html)
+- Langium statemachine web worker using the exact same user configuration as [wrapper example](./packages/examples/wrapper_langium.html), [see](./packages/examples/react_langium.html)
 
 ## Invoking Custom Commands
 

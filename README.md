@@ -4,7 +4,7 @@ This repository started as Lit component for Monaco Editor, but it transformed i
 
 ## Packages
 
-There are four npm packages generated from this repository:
+There are three npm packages generated from this repository:
 
 - [Monaco Editor Wrapper](./packages/monaco-editor-wrapper/) + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers locally running (web worker) or remotely running (web socket).
 - [Monaco Editor React Component](./packages/monaco-editor-react/) Monaco Editor React Component enclosing the **Monaco Editor Wrapper**
@@ -19,16 +19,16 @@ npm i
 npm run build
 ```
 
-Afterwards launch the Vite development mode:
-
-```bash
-npm run watch
-```
-
-Independently run:
+Aftwerwards, launch the Vite development server:
 
 ```bash
 npm run dev
+```
+
+If you want to change dependent code in the examples, you have to watch code changes in parallel:
+
+```bash
+npm run watch
 ```
 
 You find examples (manual human testing) here [index.html](./index.html). They can be used once Vite is running.

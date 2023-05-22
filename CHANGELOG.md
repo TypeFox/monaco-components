@@ -1,8 +1,12 @@
 # CHANGELOG
 
-All notable changes for **monaco-editor-comp** are found here:
+All notable changes for **monaco-editor-wrapper** are found here:
 
-[monaco-editor-comp CHANGELOG](./packages/monaco-editor-comp/CHANGELOG.md)
+[monaco-editor-wrapper CHANGELOG](./packages/monaco-editor-wrapper/CHANGELOG.md)
+
+All notable changes for **@typefox/monaco-editor-react** are found here:
+
+[monaco-editor-react CHANGELOG](./packages/monaco-editor-react/CHANGELOG.md)
 
 All notable changes for **monaco-editor-workers** are found here:
 

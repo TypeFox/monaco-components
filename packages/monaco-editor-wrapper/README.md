@@ -1,6 +1,6 @@
 # Monaco Editor and Monaco Languageclient Wrapper
 
-This packages provides a wrapped `monaco-editor` with full basic language support and enhanced support via workers for special languages (e.g. TS, HTML). The `monaco-languageclient` can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
+This packages provides a wrapped `monaco-editor` with or without language support (main package export) or with full monaco-editor language support (basic and workers for special languages (e.g. TS, HTML) available via `allLanguages` export). The `monaco-languageclient` can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
 
 ## Getting Started
 
@@ -11,67 +11,70 @@ npm i
 npm run build
 ```
 
-Afterwards launch the Vite.js development mode:
+Aftwerwards, launch the Vite development server:
 
 ```bash
 npm run dev
 ```
 
-You find examples (manual human testing) in the root of the repository [index.html](../../index.html). They can be used once Vite is running.
+If you want to change dependent code in the examples, you have to watch code changes in parallel:
 
-## Usage examples
+```bash
+npm run watch
+```
 
-Monaco Editor with JavaScript language support in web worker
+You find examples (manual human testing) here [index.html](./index.html). Vite serves them here: <http://localhost:20001>
+
+## Configuration
+
+With release 2.0.0 the configuration approach is completely revised. The `UserConfig` now contains everything and is passed to the `start` function of the wrapper. Because [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) uses a VS Code extension like configuration approach, the `UserConfig` allows to configure monaco-editor the [classical way](./src/editorClassic.ts) or to use [monaco-vscode-api way](./src/editorVscodeApi.ts). Additinonally, [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) brings VS Code services to monaco-editor it usually does not have (Textmate Support, VS Code Theme Support, Keybindings, etc.).
+
+## Usage
+
+Monaco Editor with TypeScript language support in web worker and relying on regular monaco-editor configuration:
 
 ```typescript
+import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+
+import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
+
 // helper function for loading monaco-editor's own workers
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
-const client = new MonacoEditorLanguageClientWrapper();
-const editorConfig = client.getEditorConfig();
-editorConfig.setMainLanguageId('javascript');
-editorConfig.setMainCode(`function logMe() {
-    console.log('Hello monaco-editor-wrapper!');
-};`);
+// no top-level await
+const run = async () => {
+  const wrapper = new MonacoEditorLanguageClientWrapper();
 
-// assuming there is a div element named "monaco-editor-root"
-client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
-    .then((s: unknown) => console.log(s))
-    .catch((e: Error) => console.error(e));
+  // UserConfig is defined here: ./src/wrapper.ts#L45
+  const userConfig = {
+      htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+      // rely on regular monaco-editor configuration
+      wrapperConfig: {
+          useVscodeConfig: false
+      },
+      languageClientConfig: {
+          enabled: false
+      },
+      editorConfig: {
+          languageId: 'typescript',
+          code: `function sayHello(): string {
+    return "Hello";
+};`,
+          useDiffEditor: false,
+      }
+  };
+
+  await wrapper.start(userConfig);
+}
 ```
 
-Monaco Editor with language server running in a web worker:
+## Examples
 
-```typescript
-// helper function for loading monaco-editor's own workers
-import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
-import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+These are the exmples specifically for `monaco-editor-wrapper` you find in the repository:
 
-const client = new MonacoEditorLanguageClientWrapper();
-
-const editorConfig = client.getEditorConfig();
-editorConfig.setMainLanguageId('plaintext');
-editorConfig.setMainCode(`#ff0000 (red)
-#00ff00 (green)
-#0000ff (blue)`);
-
-// use monaco-languageclient with web worker
-editorConfig.setUseLanguageClient(true);
-editorConfig.setUseWebSocket(false);
-
-// load worker
-const workerURL = new URL('./dist/worker.ts', window.location.href).href;
-const lsWorker = new Worker(workerURL, {
-    type: 'classic',
-    name: 'LanguageServer'
-});
-client.setWorker(lsWorker);
-
-// assuming there is a div element named "monaco-editor-root"
-client.startEditor(document.getElementById('monaco-editor-root') as HTMLElement)
-    .then((s: unknown) => console.log(s))
-    .catch((e: Error) => console.error(e));
-```
+- TypeScript editor worker using classical configuration, [see](./packages/examples/wrapper_ts.html)
+- Language client & web socket language server example using monaco-vscode-api configuration [see](./packages/examples/wrapper_ws.html) It requires the server available [here](https://github.com/TypeFox/monaco-languageclient/tree/main#examples)
+- Multiple editors using with monaco-vscode-api configuration [see](./packages/examples/wrapper_adv.html)
+- Langium statemachine web worker using classical configuration [see](./packages/examples/wrapper_langium.html)
