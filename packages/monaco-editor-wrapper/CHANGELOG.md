@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [2.0.0] - 2023-05-2x
+
+- Move away from "property" based configuration. `UserConfig` drives the complete monaco-editor configuration
+
 ## [1.6.1] - 2023-03-23
 
 - Enable to update/restart the language client [#18](https://github.com/TypeFox/monaco-components/pull/18)

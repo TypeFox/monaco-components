@@ -10,7 +10,41 @@
 
 <body>
     <div id="monaco-editor-root" style="height: 100vh;"></div>
-    <script type="module" src="./src/verifyWrapper.js"></script>;
+    <script type="module">
+        //import langauges export to get the wrapper with all languages
+        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/index.js';
+        import { buildWorkerDefinition } from './libs/monaco-editor-workers/index.js';
+        buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
+
+        const wrapper = new MonacoEditorLanguageClientWrapper();
+        const startWrapper = async () => {
+            const wrapperConfig = {
+                htmlElement: document.getElementById('monaco-editor-root'),
+                wrapperConfig: {
+                    useVscodeConfig: false
+                },
+                languageClientConfig: {
+                    enabled: false
+                },
+                editorConfig: {
+                    languageId: 'javascript',
+                    useDiffEditor: true,
+                    theme: 'vs-dark',
+                    automaticLayout: true,
+                    codeOriginal: `function logOriginal() {
+    console.log('Hello original editor!');
+};`,
+            code: `function logModified() {
+    console.log('Hello modified editor!');
+};`
+                }
+            };
+            await wrapper.start(wrapperConfig);
+            console.log('wrapper was started.');
+        };
+
+        startWrapper();
+    </script>;
 </body>
 
 </html>
