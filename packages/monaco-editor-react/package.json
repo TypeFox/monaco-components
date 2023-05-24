@@ -1,6 +1,6 @@
 {
   "name": "@typefox/monaco-editor-react",
-  "version": "1.0.0-next.13",
+  "version": "1.0.0",
   "license": "MIT",
   "description": "React component for Monaco-Editor and Monaco Languageclient",
   "keywords": [
@@ -66,7 +66,7 @@
     "npm": "9.6.6"
   },
   "peerDependencies": {
-    "monaco-editor-wrapper": "2.0.0-next.6",
+    "monaco-editor-wrapper": "2.0.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0"
   },
