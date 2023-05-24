@@ -10,6 +10,8 @@ There are three npm packages generated from this repository:
 - [Monaco Editor React Component](./packages/monaco-editor-react/) Monaco Editor React Component enclosing the **Monaco Editor Wrapper**
 - [Monaco Editor Workers](./packages/monaco-editor-workers/) Bundles the editor and language workers of monaco as module and classic worker. It supplies a function that eases loading them in an application context.
 
+Additionally you find a private [examples packages](./packages/examples/) containing all examples that is served by vite (see next chapter).
+
 ## Getting Started
 
 If you have node.js LTS available, then from the root of the project run:
@@ -31,4 +33,4 @@ If you want to change dependent code in the examples, you have to watch code cha
 npm run watch
 ```
 
-You find examples (manual human testing) here [index.html](./index.html). They can be used once Vite is running.
+You find examples (manual human testing) here [index.html](./index.html). They can be used once Vite is running. You can reach it once started on <http://localhost:20001>.
