@@ -14,11 +14,7 @@ export default defineConfig({
         emptyOutDir: false,
         cssCodeSplit: false,
         rollupOptions: {
-            external: [
-                'monaco-editor-workers'
-            ],
             output: {
-                inlineDynamicImports: true,
                 name: 'monaco-editor-wrapper-languages',
                 exports: 'named',
                 sourcemap: false,

@@ -13,7 +13,8 @@ export default defineConfig({
                 react: path.resolve(__dirname, '/packages/examples/react.html'),
                 reactTs: path.resolve(__dirname, '/packages/examples/react_ts.html'),
                 workers: path.resolve(__dirname, '/packages/examples/workers.html'),
-                verifyWrapper: path.resolve(__dirname, '/packages/examples/verify_wrapper.html')
+                verifyWrapper: path.resolve(__dirname, '/packages/examples/verify_wrapper.html'),
+                verifyAlt: path.resolve(__dirname, '/packages/examples/verify_alt.html')
             }
         }
     },

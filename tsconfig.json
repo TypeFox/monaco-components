@@ -44,7 +44,8 @@
     "**/test/**/*.ts",
     "**/src/**/*.tsx",
     "**/test/**/*.tsx",
-    "packages/*/*.ts"
+    "packages/monaco-editor-wrapper/*.ts",
+    "packages/monaco-editor-react/*.ts"
   ],
   "exclude": [
     "**/node_modules/**/*",
