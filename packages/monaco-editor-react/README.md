@@ -1,10 +1,12 @@
 # React component for Monaco-Editor and Monaco Languageclient
 
-This packages provides a React component that it based on [monaco-editor-wrapper](../monaco-editor-wrapper/). It behaves in nearly the same way as the monaco editor, with the primary difference being that you interact with it through a React component.
+This packages provides a React component that it based on the [monaco-editor-wrapper](../monaco-editor-wrapper/). It behaves in nearly the same way as the monaco editor, with the primary difference being that you interact with it through a React component.
 
-The [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
+The [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process, or via the Language Server Protocol for the browser where the language server runs in a web worker.
 
 ## Getting Started
+
+We recommend using [Volta](https://volta.sh/) to ensure your node & npm are on known good versions.
 
 If you have node.js LTS available, then from the root of the project run:
 
@@ -13,23 +15,11 @@ npm i
 npm run build
 ```
 
-Aftwerwards, launch the Vite development server:
-
-```bash
-npm run dev
-```
-
-If you want to change dependent code in the examples, you have to watch code changes in parallel:
-
-```bash
-npm run watch
-```
-
-You find examples (manual human testing) here [index.html](./index.html). Vite serves them here: <http://localhost:20001>
+This will clean, compile and build a bundle of the monaco-editor-react component, which you can reference in your own projects.
 
 ## Usage
 
-You can import the monaco react component for easy use in an existing React project. Below you can see a quick example of a fully functional implementation for some TypeScript. The react component uses the same `UserConfig` approach which is then applied to `monaco-editor-wrapper`.
+You can import the monaco react component for easy use in an existing React project. Below you can see a quick example of a fully functional implementation in TypeScript. The react component uses the same `UserConfig` approach which is then applied to `monaco-editor-wrapper`.
 
 ```typescript
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
@@ -67,7 +57,7 @@ const comp = <MonacoEditorReactComp
 
 ### Bundled Usage
 
-For special cases where you might want the component to be processed in advance, so we also provide a pre-bundled version that you can reference instead. This can be helpful if you're working within some other framework besides React (Hugo for example).
+For special cases you might want the component to be processed in advance. For these cases we provide a pre-bundled version that you can reference instead, built using `npm run build:bundle`. This can be helpful if you're working within some other framework besides React (Hugo for example).
 
 ```ts
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
@@ -75,7 +65,7 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
 
 ## Examples
 
-These are the exmples specifically for `@typefox/monaco-editor-react` you find in the repository:
+These are the examples specifically for `@typefox/monaco-editor-react` that you can find in the repository:
 
 - TypeScript editor worker using classical configuration [see](./packages/examples/react_ts.html)
 - Langium statemachine web worker using the exact same user configuration as [wrapper example](./packages/examples/wrapper_langium.html), [see](./packages/examples/react_langium.html)
@@ -104,11 +94,11 @@ class MyComponent extends React.Component {
 }
 ```
 
-You can then access the `current` property of the ref to get a refernce to your component. This can then be used to invoke the executeCommands function present in the component.
+You can then access the `current` property of the ref to get a reference to your component. This can then be used to invoke the `executeCommands` function present in the component.
 
 ```ts
 this.myRef.current.executeCommand('myCustomCommand', args...);
 ```
 
-This will return an instance of `Thenable`, which should contain the returned data of executing your custom command. As you can imagine, this is incredibly helpful for getting internal access for specific language handilng, but without needing details about the internals of your language server to do it.
+This will return an instance of `Thenable`, which should contain the returned data of executing your custom command. As you can imagine, this is incredibly helpful for getting internal access for specific language handling, but without needing details about the internals of your language server to do it.
 
