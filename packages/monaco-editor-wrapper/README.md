@@ -4,6 +4,8 @@ This packages provides a wrapped `monaco-editor` with or without language suppor
 
 ## Getting Started
 
+We recommend using [Volta](https://volta.sh/) to ensure your node & npm are on known good versions.
+
 If you have node.js LTS available, then from the root of the project run:
 
 ```bash
@@ -11,23 +13,13 @@ npm i
 npm run build
 ```
 
-Aftwerwards, launch the Vite development server:
-
-```bash
-npm run dev
-```
-
-If you want to change dependent code in the examples, you have to watch code changes in parallel:
-
-```bash
-npm run watch
-```
-
-You find examples (manual human testing) here [index.html](./index.html). Vite serves them here: <http://localhost:20001>
+This will clean, compile and build a bundle of the `monaco-editor-wrapper`, which you can reference in your own projects. For examples, you can see the top-level [README](../../README.md#getting-started) with details on running a local dev instance.
 
 ## Configuration
 
-With release 2.0.0 the configuration approach is completely revised. The `UserConfig` now contains everything and is passed to the `start` function of the wrapper. Because [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) uses a VS Code extension like configuration approach, the `UserConfig` allows to configure monaco-editor the [classical way](./src/editorClassic.ts) or to use [monaco-vscode-api way](./src/editorVscodeApi.ts). Additinonally, [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) brings VS Code services to monaco-editor it usually does not have (Textmate Support, VS Code Theme Support, Keybindings, etc.).
+With release 2.0.0, the configuration approach is completely revised.
+
+The `UserConfig` now contains everything and is passed to the `start` function of the wrapper. Because [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) uses a VS Code extension like configuration approach, the `UserConfig` allows to configure monaco-editor the [classical way](./src/editorClassic.ts) or to use [monaco-vscode-api way](./src/editorVscodeApi.ts). Additionally, [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) brings VS Code services to monaco-editor it usually does not have (Textmate Support, VS Code Theme Support, Keybindings, etc.).
 
 ## Usage
 
@@ -72,7 +64,7 @@ const run = async () => {
 
 ## Examples
 
-These are the exmples specifically for `monaco-editor-wrapper` you find in the repository:
+These are the examples specifically for `monaco-editor-wrapper` you find in the repository:
 
 - TypeScript editor worker using classical configuration, [see](./packages/examples/wrapper_ts.html)
 - Language client & web socket language server example using monaco-vscode-api configuration [see](./packages/examples/wrapper_ws.html) It requires the server available [here](https://github.com/TypeFox/monaco-languageclient/tree/main#examples)
