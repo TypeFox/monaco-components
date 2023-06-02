@@ -3,22 +3,22 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@typefox/monaco-editor-react": "1.0.0-next.14",
+    "@typefox/monaco-editor-react": "~1.0.0",
     "http-server": "~14.1.1",
     "langium": "~1.2.0",
     "langium-statemachine-dsl": "~1.2.0",
-    "monaco-editor-wrapper": "2.0.0-next.7",
-    "monaco-editor-workers": "0.37.0",
+    "monaco-editor-wrapper": "~2.0.0",
+    "monaco-editor-workers": "~0.37.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "request-light": "~0.7.0",
     "vscode-uri": "~3.0.7",
     "vscode-languageclient": "~8.1.0",
     "vscode-languageserver": "~8.1.0",
-    "vscode-json-languageservice": "~5.3.4"
+    "vscode-json-languageservice": "~5.3.5"
   },
   "devDependencies": {
-    "@types/react": "~18.2.6",
+    "@types/react": "~18.2.8",
     "@types/react-dom": "~18.2.4"
   },
   "volta": {

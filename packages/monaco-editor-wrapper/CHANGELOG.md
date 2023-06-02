@@ -2,9 +2,21 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [2.0.0] - 2023-05-2x
+## [2.0.0] - 2023-06-02
 
 - Move away from "property" based configuration. `UserConfig` drives the complete monaco-editor configuration
+  - Use global configuration object that is passed to the wrapper on start
+  - The `monaco-editor-wrapper` and the new `@typefox/monaco-editor-react` component use the same configuration
+- The underlying monaco-editor can be configured in two ways now (wrapperConfig):
+  - Classical: As before, but with one config object
+  - Extension like: Using the extension based mechanism supplied by `monaco-vscode-api`
+- `monaco-languageclient` no longer exposes its own service. Now, we fully rely on services supplied by `monaco-vscode-api`
+  - This means even if you decide to configure monaco-editor the classical way, you still require some basic services. This configuration is made inside `MonacoEditorLanguageClientWrapper`. Potential serviceConfig supplied when using vscode-api extension config is taken into account and combined then.
+- Re-configuration without full editor restart:
+  - Updating the text model(s) is possible
+  - Updating the monaco-editor options is possible
+  - Restarting the languageclient is possible independently
+- Everything else requires a restart of the editor!
 
 ## [1.6.1] - 2023-03-23
 
