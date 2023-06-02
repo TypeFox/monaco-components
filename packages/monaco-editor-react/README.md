@@ -32,8 +32,11 @@ You find examples (manual human testing) here [index.html](./index.html). Vite s
 You can import the monaco react component for easy use in an existing React project. Below you can see a quick example of a fully functional implementation for some TypeScript. The react component uses the same `UserConfig` approach which is then applied to `monaco-editor-wrapper`.
 
 ```typescript
-import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/allLanguages';
+import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { UserConfig } from 'monaco-editor-wrapper';
+
+import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
 const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,

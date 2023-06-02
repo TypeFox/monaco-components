@@ -1,6 +1,6 @@
 # Monaco Editor and Monaco Languageclient Wrapper
 
-This packages provides a wrapped `monaco-editor` with or without language support (main package export) or with full monaco-editor language support (basic and workers for special languages (e.g. TS, HTML) available via `allLanguages` export). The `monaco-languageclient` can be activated to connect to a language server either via jsonrpc over a websocket to an exernal server process or via language server protocol for browser where the language server runs in a web worker.
+This packages provides a wrapped `monaco-editor` with or without language support (main package export). The `monaco-languageclient` can be activated to connect to a language server either via jsonrpc over a websocket to an external server process or via language server protocol for browser where the language server runs in a web worker.
 
 ## Getting Started
 
