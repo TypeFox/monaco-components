@@ -1,5 +1,8 @@
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 
+import 'vscode/default-extensions/theme-defaults';
+import 'vscode/default-extensions/json';
+
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
@@ -26,7 +29,13 @@ const monacoEditorConfig = {
 const userConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
+        useVscodeConfig: true,
+        serviceConfig: {
+            enableThemeService: true,
+            enableTextmateService: true,
+            enableLanguagesService: true,
+            debugLogging: true
+        },
         monacoEditorConfig: {
             languageExtensionConfig: {
                 id: 'json',

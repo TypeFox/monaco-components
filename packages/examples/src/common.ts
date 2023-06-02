@@ -1,8 +1,6 @@
 // support all editor features
 import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import 'vscode/default-extensions/theme-defaults';
-import 'vscode/default-extensions/json';
 import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 
 export const wrapper = new MonacoEditorLanguageClientWrapper();

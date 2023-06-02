@@ -13,9 +13,7 @@ const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
     htmlElement: rootElem,
     wrapperConfig: {
-        useVscodeConfig: false,
-        monacoEditorConfig: {
-        },
+        useVscodeConfig: false
     },
     editorConfig: {
         languageId: 'typescript',

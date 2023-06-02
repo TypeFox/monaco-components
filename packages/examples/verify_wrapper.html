@@ -11,8 +11,7 @@
 <body>
     <div id="monaco-editor-root" style="height: 100vh;"></div>
     <script type="module">
-        //import langauges export to get the wrapper with all languages
-        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/index.js';
+        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/mew.js';
         import { buildWorkerDefinition } from './libs/monaco-editor-workers/index.js';
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
 
@@ -34,7 +33,7 @@
                     codeOriginal: `function logOriginal() {
     console.log('Hello original editor!');
 };`,
-            code: `function logModified() {
+                    code: `function logModified() {
     console.log('Hello modified editor!');
 };`
                 }

@@ -8,14 +8,20 @@
 <body>
     <div id="container" style="min-height: 600px; max-width: 1024px; text-align: left;"></div>
     <script type="module" language="typescript">
-        import { buildWorkerDefinition } from "../monaco-editor-workers/src/index.ts";
-        buildWorkerDefinition('../monaco-editor-workers/dist/workers', import.meta.url, false);
+        import 'monaco-editor/esm/vs/editor/edcore.main.js';
+        import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
-        import * as monaco from 'monaco-editor';
+        import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
+        import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
-        monaco.editor.create(document.getElementById('container'), {
-            value: "function hello() {\n\talert('Hello world!');\n}",
-            language: 'javascript'
+        import { buildWorkerDefinition } from 'monaco-editor-workers';
+        buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
+
+        editor.create(document.getElementById('container'), {
+            value: `function hello() {
+    alert('Hello world!');
+}`,
+            language: 'typescript'
         });
     </script>
 </body>
