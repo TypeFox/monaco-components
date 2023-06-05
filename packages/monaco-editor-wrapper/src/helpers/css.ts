@@ -1,4 +1,4 @@
-export const getMonacoEditoCss = async () => {
+export const getMonacoEditorCss = async () => {
     const res = await fetch(new URL('../../bundle/assets/style.css', window.location.href).href);
     return res.text();
 };
@@ -6,6 +6,6 @@ export const getMonacoEditoCss = async () => {
 export const addMonacoStyles = async (idOfStyleElement: string) => {
     const style = document.createElement('style');
     style.id = idOfStyleElement;
-    style.innerHTML = await getMonacoEditoCss();
+    style.innerHTML = await getMonacoEditorCss();
     document.head.appendChild(style);
 };
