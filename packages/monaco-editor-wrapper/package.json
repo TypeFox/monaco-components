@@ -39,7 +39,7 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist ./bundle ./resources *.tsbuildinfo",
+    "clean": "shx rm -rf ./dist ./bundle ./resources *.tsbuildinfo",
     "handle:assets": "vite-node ./build/src/buildAssets.mts",
     "compile": "npm run handle:assets && tsc --build tsconfig.src.json",
     "bundle": "vite --config vite.bundle.config.ts build",

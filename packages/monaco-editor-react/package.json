@@ -40,7 +40,7 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "npx shx rm -rf ./dist *.tsbuildinfo",
+    "clean": "shx rm -rf ./dist *.tsbuildinfo",
     "compile": " tsc --build tsconfig.src.json",
     "build:bundle": "vite --config vite.bundle.config.ts build",
     "build": "npm run clean && npm run compile && npm run build:bundle"
