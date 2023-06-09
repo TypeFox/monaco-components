@@ -8,7 +8,6 @@
     "dev:debug": "vite --debug --force",
     "watch": "tsc --build tsconfig.build.json --watch --verbose",
     "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
-    "build:comp": "npm run build --workspace packages/monaco-editor-comp",
     "build:workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
     "test": "echo \"Error: no test specified\" && exit 1",

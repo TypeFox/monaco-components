@@ -5,7 +5,7 @@ const config = defineConfig({
     build: {
         lib: {
             entry: resolve(__dirname, './src/verifyPrepare.ts'),
-            name: 'mer',
+            name: 'mew',
             fileName: () => 'mew.js',
             formats: ['es']
         },
@@ -18,7 +18,7 @@ const config = defineConfig({
         },
         rollupOptions: {
             output: {
-                name: 'mer',
+                name: 'mew',
                 exports: 'named',
                 sourcemap: false,
                 assetFileNames: (assetInfo) => {

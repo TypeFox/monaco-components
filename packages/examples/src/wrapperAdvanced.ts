@@ -85,7 +85,7 @@ const wrapper44Config: UserConfig = {
         theme: 'vs-dark',
         automaticLayout: true,
         code: `function logMe() {
-    console.log('Hello monaco-editor-comp!');
+    console.log('Hello monaco-editor-wrapper!');
 };`,
         editorOptions: {
             minimap: {
