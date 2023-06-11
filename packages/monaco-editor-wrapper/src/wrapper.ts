@@ -32,12 +32,16 @@ export type EditorConfig = {
 }
 
 export type WebSocketStartOptions = {
+    /** Adds handle on starting of languageClient */
     onStart: () => void;
+    /** Reports Status Of Language Client */
     reportStatus?: boolean;
 }
 
 export type WebSocketStopOptions = {
+    /** Adds handle on stopping of languageClient */
     onStop: () => void;
+    /** Reports Status Of Language Client */
     reportStatus?: boolean;
 }
 
@@ -305,7 +309,7 @@ export class MonacoEditorLanguageClientWrapper {
             if(webSocketStopOptions) {
                 webSocketStopOptions.onStop();
             }
-            if(webSocketStopOptions?.reportStatus ){
+            if(webSocketStopOptions?.reportStatus){
                 console.log(this.reportStatus());
             }
         }));
