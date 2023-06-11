@@ -319,7 +319,7 @@ export class MonacoEditorLanguageClientWrapper {
                 if(webSocketStartOptions) {
                     webSocketStartOptions.onStart();
                 }
-                if(webSocketStartOptions?.reportStatus ){
+                if(webSocketStartOptions?.reportStatus){
                     console.log(this.reportStatus());
                 }
             });
