@@ -31,11 +31,23 @@ export type EditorConfig = {
     diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
 }
 
+export type WebSocketStartOptions = {
+    onStart: () => void;
+    reportStatus?: boolean;
+}
+
+export type WebSocketStopOptions = {
+    onStop: () => void;
+    reportStatus?: boolean;
+}
+
 export type LanguageClientConfig = {
     enabled: boolean;
     useWebSocket?: boolean;
     webSocketConfigOptions?: WebSocketConfigOptions;
     workerConfigOptions?: WorkerConfigOptions;
+    webSocketStartOptions?: WebSocketStartOptions;
+    webSocketStopOptions?: WebSocketStopOptions;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
 }
@@ -288,9 +300,25 @@ export class MonacoEditorLanguageClientWrapper {
         reject: (reason?: unknown) => void) {
 
         this.languageClient = this.createLanguageClient(messageTransports);
-        messageTransports.reader.onClose(() => this.languageClient?.stop());
+        messageTransports.reader.onClose(() => this.languageClient?.stop().then(()=>{
+            const { webSocketStopOptions } = this.languageClientConfig;
+            if(webSocketStopOptions) {
+                webSocketStopOptions.onStop();
+            }
+            if(webSocketStopOptions?.reportStatus ){
+                console.log(this.reportStatus());
+            }
+        }));
         try {
-            await this.languageClient.start();
+            await this.languageClient.start().then(()=>{
+                const { webSocketStartOptions } = this.languageClientConfig;
+                if(webSocketStartOptions) {
+                    webSocketStartOptions.onStart();
+                }
+                if(webSocketStartOptions?.reportStatus ){
+                    console.log(this.reportStatus());
+                }
+            });
         } catch (e) {
             const errorMsg = `monaco-languageclient start was unsuccessful: ${e}`;
             reject(errorMsg);
