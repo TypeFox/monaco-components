@@ -1,8 +1,7 @@
-import React, { CSSProperties } from 'react';
 import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
 import { IDisposable } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
+import React, { CSSProperties } from 'react';
 
 export type MonacoEditorProps = {
     style?: CSSProperties;

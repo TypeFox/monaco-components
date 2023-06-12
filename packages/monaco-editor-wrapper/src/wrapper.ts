@@ -1,5 +1,6 @@
-// support all editor features
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
+import 'monaco-editor/esm/vs/editor/editor.all.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';

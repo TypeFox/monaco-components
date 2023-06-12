@@ -1,12 +1,9 @@
-// support all editor features
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
-
+import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
-import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
-
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const wrapper42 = new MonacoEditorLanguageClientWrapper();

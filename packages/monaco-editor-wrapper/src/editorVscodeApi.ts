@@ -1,8 +1,8 @@
+import { MonacoEditorBase } from './editor.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest } from 'vscode/extensions';
-import { MonacoEditorWrapper } from './wrapper.js';
 import 'vscode/default-extensions/theme-defaults';
-import { MonacoEditorBase } from './editor.js';
+import { MonacoEditorWrapper } from './wrapper.js';
 
 export type VscodeUserConfiguration = {
     json?: string;

@@ -1,3 +1,6 @@
+import 'monaco-editor/esm/vs/editor/editor.all.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
+import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';

@@ -1,7 +1,5 @@
-// support all editor features
-import 'monaco-editor/esm/vs/editor/edcore.main.js';
-import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 export const wrapper = new MonacoEditorLanguageClientWrapper();
 

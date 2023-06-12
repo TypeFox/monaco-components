@@ -1,7 +1,6 @@
+import { MonacoEditorBase } from './editor.js';
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { MonacoEditorWrapper } from './wrapper.js';
-import { MonacoEditorBase } from './editor.js';
-
 /**
  * This is derived from:
  * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
