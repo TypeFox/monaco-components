@@ -1,6 +1,6 @@
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
-import { IReference } from 'vscode/service-override/modelEditor';
+import { IReference } from 'vscode/service-override/editor';
 import { EditorConfig, UserConfig } from './wrapper.js';
 import { EditorVscodeApiConfig } from './editorVscodeApi.js';
 import { EditorClassicConfig } from './editorClassic.js';

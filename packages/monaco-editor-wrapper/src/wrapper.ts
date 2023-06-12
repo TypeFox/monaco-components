@@ -110,12 +110,12 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
         // always set required services
-        this.serviceConfig.enableConfigurationService = true;
-        this.serviceConfig.enableModelEditorService = true;
-        this.serviceConfig.modelEditorServiceConfig = this.serviceConfig.modelEditorServiceConfig ?? {
-            useDefaultFunction: true
+        this.serviceConfig.enableModelService = true;
+        this.serviceConfig.configureEditorOrViewsServiceConfig = this.serviceConfig.configureEditorOrViewsServiceConfig ?? {
+            enableViewsService: false,
+            useDefaultOpenEditorFunction: true
         };
-        this.serviceConfig.configurationServiceConfig = this.serviceConfig.configurationServiceConfig ?? {
+        this.serviceConfig.configureConfigurationServiceConfig = this.serviceConfig.configureConfigurationServiceConfig ?? {
             defaultWorkspaceUri: '/tmp/'
         };
     }
