@@ -1,14 +1,11 @@
-import 'monaco-editor/esm/vs/editor/editor.all.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/accessibilityHelp/accessibilityHelp.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
+import { EditorVscodeApi, EditorVscodeApiConfig, VscodeUserConfiguration } from './editorVscodeApi.js';
+import { EditorClassic, EditorClassicConfig } from './editorClassic.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import normalizeUrl from 'normalize-url';
-import { EditorVscodeApi, EditorVscodeApiConfig, VscodeUserConfiguration } from './editorVscodeApi.js';
-import { EditorClassic, EditorClassicConfig } from './editorClassic.js';
 
 export type WebSocketConfigOptions = {
     secured: boolean;
@@ -110,8 +107,8 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
-        // always set required services
-        this.serviceConfig.enableModelService = true;
+        // always set required services if not configure
+        this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
         this.serviceConfig.configureEditorOrViewsServiceConfig = this.serviceConfig.configureEditorOrViewsServiceConfig ?? {
             enableViewsService: false,
             useDefaultOpenEditorFunction: true
