@@ -8,10 +8,8 @@ import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclie
 import normalizeUrl from 'normalize-url';
 
 export type WebSocketCallOptions  = {
-    /** Adds handle on starting of languageClient */
-    onStart: () => void;
-    /** Adds handle on stopping of languageClient */
-    onStop: () => void;
+    /** Adds handle on languageClient */
+    onCall: () => void;
     /** Reports Status Of Language Client */
     reportStatus?: boolean;
 }
@@ -21,7 +19,8 @@ export type WebSocketConfigOptions = {
     host: string;
     port: number;
     path: string;
-    webSocketCallOptions?: WebSocketCallOptions;
+    startOptions?: WebSocketCallOptions;
+    stopOptions?: WebSocketCallOptions;
 }
 
 export type WorkerConfigOptions = {
@@ -299,20 +298,20 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.languageClient = this.createLanguageClient(messageTransports);
         messageTransports.reader.onClose(() => this.languageClient?.stop().then(()=>{
-            const webSocketCallOptions  = this.languageClientConfig?.webSocketConfigOptions?.webSocketCallOptions;
-            if(webSocketCallOptions) {
-                webSocketCallOptions.onStop();
-                if(webSocketCallOptions?.reportStatus){
+            const stopOptions  = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
+            if(stopOptions) {
+                stopOptions.onCall();
+                if(stopOptions?.reportStatus){
                     console.log(this.reportStatus());
                 }
             }
         }));
         try {
             await this.languageClient.start().then(()=>{
-                const webSocketCallOptions  = this.languageClientConfig?.webSocketConfigOptions?.webSocketCallOptions;
-                if(webSocketCallOptions) {
-                    webSocketCallOptions.onStart();
-                    if(webSocketCallOptions?.reportStatus){
+                const startOptions  = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
+                if(startOptions) {
+                    startOptions.onCall();
+                    if(startOptions?.reportStatus){
                         console.log(this.reportStatus());
                     }
                 }
