@@ -4,6 +4,7 @@ import 'vscode/default-extensions/theme-defaults';
 import 'vscode/default-extensions/json';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const languageId = 'json';
@@ -62,7 +63,19 @@ const userConfig = {
             host: 'localhost',
             port: 3000,
             path: 'sampleServer',
-            secured: false
+            secured: false,
+            startOptions: {
+                onCall: () => {
+                    console.log('Connected to socket.');
+                },
+                reportStatus: true
+            },
+            stopOptions: {
+                onCall: () => {
+                    console.log('Disconnected from socket.');
+                },
+                reportStatus: true
+            }
         }
     }
 };
