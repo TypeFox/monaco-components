@@ -7,11 +7,21 @@ import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserve
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import normalizeUrl from 'normalize-url';
 
+export type WebSocketCallOptions  = {
+    /** Adds handle on starting of languageClient */
+    onStart: () => void;
+    /** Adds handle on stopping of languageClient */
+    onStop: () => void;
+    /** Reports Status Of Language Client */
+    reportStatus?: boolean;
+}
+
 export type WebSocketConfigOptions = {
     secured: boolean;
     host: string;
     port: number;
     path: string;
+    webSocketCallOptions?: WebSocketCallOptions;
 }
 
 export type WorkerConfigOptions = {
@@ -31,27 +41,11 @@ export type EditorConfig = {
     diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
 }
 
-export type WebSocketStartOptions = {
-    /** Adds handle on starting of languageClient */
-    onStart: () => void;
-    /** Reports Status Of Language Client */
-    reportStatus?: boolean;
-}
-
-export type WebSocketStopOptions = {
-    /** Adds handle on stopping of languageClient */
-    onStop: () => void;
-    /** Reports Status Of Language Client */
-    reportStatus?: boolean;
-}
-
 export type LanguageClientConfig = {
     enabled: boolean;
     useWebSocket?: boolean;
     webSocketConfigOptions?: WebSocketConfigOptions;
     workerConfigOptions?: WorkerConfigOptions;
-    webSocketStartOptions?: WebSocketStartOptions;
-    webSocketStopOptions?: WebSocketStopOptions;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
 }
@@ -305,22 +299,22 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.languageClient = this.createLanguageClient(messageTransports);
         messageTransports.reader.onClose(() => this.languageClient?.stop().then(()=>{
-            const { webSocketStopOptions } = this.languageClientConfig;
-            if(webSocketStopOptions) {
-                webSocketStopOptions.onStop();
-            }
-            if(webSocketStopOptions?.reportStatus){
-                console.log(this.reportStatus());
+            const webSocketCallOptions  = this.languageClientConfig?.webSocketConfigOptions?.webSocketCallOptions;
+            if(webSocketCallOptions) {
+                webSocketCallOptions.onStop();
+                if(webSocketCallOptions?.reportStatus){
+                    console.log(this.reportStatus());
+                }
             }
         }));
         try {
             await this.languageClient.start().then(()=>{
-                const { webSocketStartOptions } = this.languageClientConfig;
-                if(webSocketStartOptions) {
-                    webSocketStartOptions.onStart();
-                }
-                if(webSocketStartOptions?.reportStatus){
-                    console.log(this.reportStatus());
+                const webSocketCallOptions  = this.languageClientConfig?.webSocketConfigOptions?.webSocketCallOptions;
+                if(webSocketCallOptions) {
+                    webSocketCallOptions.onStart();
+                    if(webSocketCallOptions?.reportStatus){
+                        console.log(this.reportStatus());
+                    }
                 }
             });
         } catch (e) {
