@@ -301,7 +301,7 @@ export class MonacoEditorLanguageClientWrapper {
             const stopOptions  = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
             if(stopOptions) {
                 stopOptions.onCall();
-                if(stopOptions?.reportStatus){
+                if(stopOptions.reportStatus){
                     console.log(this.reportStatus());
                 }
             }
@@ -311,7 +311,7 @@ export class MonacoEditorLanguageClientWrapper {
                 const startOptions  = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
                 if(startOptions) {
                     startOptions.onCall();
-                    if(startOptions?.reportStatus){
+                    if(startOptions.reportStatus){
                         console.log(this.reportStatus());
                     }
                 }
