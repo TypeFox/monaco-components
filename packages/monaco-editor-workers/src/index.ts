@@ -31,7 +31,6 @@ export function buildWorkerDefinition(workerPath: string, basePath: string, useM
     }
     const monEnv = monWin.MonacoEnvironment as MonacoEnvironmentEnhanced;
     monEnv.workerOverrideGlobals = workerOverrideGlobals;
-    monEnv.baseUrl = 'tester';
 
     const getWorker = (_: string, label: string) => {
         console.log('getWorker: workerId: ' + _ + ' label: ' + label);
