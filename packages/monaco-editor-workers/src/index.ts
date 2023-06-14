@@ -1,13 +1,6 @@
-// copied Window & Environment definitions from monaco-editor/esm/vs/editor/editor.api.js to be able to remove dependencies
-interface Window {
-    MonacoEnvironment?: Environment;
-}
+import { Environment } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
-export interface Environment {
-    globalAPI?: boolean;
-    baseUrl?: string;
-    getWorker?(workerId: string, label: string): Promise<Worker> | Worker;
-    getWorkerUrl?(workerId: string, label: string): string;
+interface MonacoEnvironmentEnhanced extends Environment {
     workerOverrideGlobals: WorkerOverrideGlobals;
 }
 
@@ -30,9 +23,15 @@ export function buildWorkerDefinition(workerPath: string, basePath: string, useM
 
     if (!monWin.MonacoEnvironment) {
         monWin.MonacoEnvironment = {
-            workerOverrideGlobals: workerOverrideGlobals
-        };
+            workerOverrideGlobals: workerOverrideGlobals,
+            createTrustedTypesPolicy: (_policyName: string) => {
+                return undefined;
+            }
+        } as MonacoEnvironmentEnhanced;
     }
+    const monEnv = monWin.MonacoEnvironment as MonacoEnvironmentEnhanced;
+    monEnv.workerOverrideGlobals = workerOverrideGlobals;
+    monEnv.baseUrl = 'tester';
 
     const getWorker = (_: string, label: string) => {
         console.log('getWorker: workerId: ' + _ + ' label: ' + label);
@@ -67,5 +66,5 @@ export function buildWorkerDefinition(workerPath: string, basePath: string, useM
         }
     };
 
-    monWin.MonacoEnvironment.getWorker = getWorker;
+    monEnv.getWorker = getWorker;
 }

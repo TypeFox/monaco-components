@@ -2,9 +2,13 @@
 
 All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/package/monaco-editor-workers) are documented in this file.
 
+## [0.39.0] - 2023-06-14
+
+- Updated to [0.39.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.39.0).
+
 ## [0.38.0] - 2023-06-05
 
-- Updated to [0.38.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.38.0). Keep vite and rollup for bundling. Pure esbuild os an alternative.
+- Updated to [0.38.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.38.0). Keep vite and rollup for bundling. Pure esbuild as an alternative.
 
 ## [0.37.0] - 2023-04-13
 

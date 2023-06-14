@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-workers",
-  "version": "0.38.0",
+  "version": "0.39.0",
   "license": "MIT",
   "description": "Monaco Editor Worker Support Package",
   "keywords": [
@@ -71,8 +71,11 @@
     "node": "18.16.0",
     "npm": "9.6.6"
   },
-  "devDependencies": {
-    "monaco-editor": "0.38.0"
+  "dependencies": {
+    "monaco-editor": "~0.39.0"
+  },
+  "peerDependencies": {
+    "monaco-editor": "~0.39.0"
   },
   "repository": {
     "type": "git",
