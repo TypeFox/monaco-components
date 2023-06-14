@@ -5,6 +5,7 @@ All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/
 ## [0.39.0] - 2023-06-14
 
 - Updated to [0.39.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.39.0).
+- **Important**: `monaco-editor-workers` now depends on the correct `monaco-editor` version: This removes the duplication of types. Previously, this was only a devDependency.
 
 ## [0.38.0] - 2023-06-05
 
