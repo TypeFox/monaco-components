@@ -7,7 +7,7 @@ import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserve
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import normalizeUrl from 'normalize-url';
 
-export type WebSocketCallOptions  = {
+export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
     onCall: () => void;
     /** Reports Status Of Language Client */
@@ -27,7 +27,7 @@ export type WorkerConfigOptions = {
     url: URL;
     type: 'classic' | 'module';
     name?: string;
-}
+};
 
 export type EditorConfig = {
     languageId: string;
@@ -44,7 +44,7 @@ export type LanguageClientConfig = {
     enabled: boolean;
     useWebSocket?: boolean;
     webSocketConfigOptions?: WebSocketConfigOptions;
-    workerConfigOptions?: WorkerConfigOptions;
+    workerConfigOptions?: WorkerConfigOptions | Worker;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
 }
@@ -184,6 +184,10 @@ export class MonacoEditorLanguageClientWrapper {
         return this.editor?.getModel(original);
     }
 
+    getWorker(): Worker | undefined {
+        return this.worker;
+    }
+
     async updateModel(modelUpdate: {
         languageId: string;
         code: string;
@@ -207,8 +211,19 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    async restartLanguageClient(): Promise<void> {
-        await this.disposeLanguageClient();
+    /**
+     * Restart the languageclient with options to control worker handling
+     *
+     * @param updatedWorker Set a new worker here that should be used. keepWorker has no effect theb
+     * @param keepWorker Set to true if worker should not be disposed
+     */
+    async restartLanguageClient(updatedWorker?: Worker, keepWorker?: boolean): Promise<void> {
+        if (updatedWorker) {
+            await this.disposeLanguageClient(false);
+        } else {
+            await this.disposeLanguageClient(keepWorker);
+        }
+        this.worker = updatedWorker;
         await this.startLanguageClientConnection(this.languageClientConfig);
     }
 
@@ -227,7 +242,7 @@ export class MonacoEditorLanguageClientWrapper {
         this.editor?.disposeDiffEditor();
 
         if (this.languageClientConfig.enabled) {
-            await this.disposeLanguageClient();
+            await this.disposeLanguageClient(false);
             this.editor = undefined;
             await Promise.resolve('Monaco editor and languageclient completed disposed.');
         }
@@ -236,12 +251,14 @@ export class MonacoEditorLanguageClientWrapper {
         }
     }
 
-    public async disposeLanguageClient(): Promise<void> {
+    public async disposeLanguageClient(keepWorker?: boolean): Promise<void> {
         if (this.languageClient && this.languageClient.isRunning()) {
             try {
                 await this.languageClient.dispose();
-                this.worker?.terminate();
-                this.worker = undefined;
+                if (keepWorker === undefined || keepWorker === false) {
+                    this.worker?.terminate();
+                    this.worker = undefined;
+                }
                 this.languageClient = undefined;
                 await Promise.resolve('monaco-languageclient and monaco-editor were successfully disposed.');
             } catch (e) {
@@ -278,10 +295,15 @@ export class MonacoEditorLanguageClientWrapper {
             } else {
                 if (!this.worker) {
                     const workerConfigOptions = languageClientConfig.workerConfigOptions!;
-                    this.worker = new Worker(new URL(workerConfigOptions.url, window.location.href).href, {
-                        type: workerConfigOptions.type,
-                        name: workerConfigOptions.name,
-                    });
+                    if ((workerConfigOptions as WorkerConfigOptions).url) {
+                        const workerConfig = workerConfigOptions as WorkerConfigOptions;
+                        this.worker = new Worker(new URL(workerConfig.url, window.location.href).href, {
+                            type: workerConfig.type,
+                            name: workerConfig.name
+                        });
+                    } else {
+                        this.worker = workerConfigOptions as Worker;
+                    }
                 }
                 const messageTransports = {
                     reader: new BrowserMessageReader(this.worker),
@@ -297,21 +319,21 @@ export class MonacoEditorLanguageClientWrapper {
         reject: (reason?: unknown) => void) {
 
         this.languageClient = this.createLanguageClient(messageTransports);
-        messageTransports.reader.onClose(() => this.languageClient?.stop().then(()=>{
-            const stopOptions  = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
-            if(stopOptions) {
+        messageTransports.reader.onClose(() => this.languageClient?.stop().then(() => {
+            const stopOptions = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
+            if (stopOptions) {
                 stopOptions.onCall();
-                if(stopOptions.reportStatus){
+                if (stopOptions.reportStatus) {
                     console.log(this.reportStatus());
                 }
             }
         }));
         try {
-            await this.languageClient.start().then(()=>{
-                const startOptions  = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
-                if(startOptions) {
+            await this.languageClient.start().then(() => {
+                const startOptions = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
+                if (startOptions) {
                     startOptions.onCall();
-                    if(startOptions.reportStatus){
+                    if (startOptions.reportStatus) {
                         console.log(this.reportStatus());
                     }
                 }
