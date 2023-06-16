@@ -32,6 +32,9 @@ const userConfig = {
     wrapperConfig: {
         useVscodeConfig: true,
         serviceConfig: {
+            // enable quick access "F1" and add required keybindings service
+            enableQuickaccessService: true,
+            enableKeybindingsService: true,
             enableThemeService: true,
             enableTextmateService: true,
             enableLanguagesService: true,

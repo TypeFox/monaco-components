@@ -27,7 +27,6 @@ export const disposeEditor = async (userConfig: UserConfig) => {
     const codeMain = saveMainCode(useDiffEditor);
 
     await wrapper.dispose();
-    console.log(wrapper.reportStatus().join('\n'));
     return codeMain;
 };
 

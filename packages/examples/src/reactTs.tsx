@@ -13,7 +13,13 @@ const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
     htmlElement: rootElem,
     wrapperConfig: {
-        useVscodeConfig: false
+        useVscodeConfig: false,
+        serviceConfig: {
+            // enable quick access "F1" and add required keybindings service
+            enableQuickaccessService: true,
+            enableKeybindingsService: true,
+            debugLogging: true
+        }
     },
     editorConfig: {
         languageId: 'typescript',

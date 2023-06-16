@@ -117,6 +117,7 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
         // always set required services if not configure
+        this.serviceConfig.enableFilesService = this.serviceConfig.enableFilesService ?? true;
         this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
         this.serviceConfig.configureEditorOrViewsServiceConfig = this.serviceConfig.configureEditorOrViewsServiceConfig ?? {
             enableViewsService: false,
@@ -319,25 +320,26 @@ export class MonacoEditorLanguageClientWrapper {
         reject: (reason?: unknown) => void) {
 
         this.languageClient = this.createLanguageClient(messageTransports);
-        messageTransports.reader.onClose(() => this.languageClient?.stop().then(() => {
+        messageTransports.reader.onClose(async () => {
+            await this.languageClient?.stop();
             const stopOptions = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
             if (stopOptions) {
                 stopOptions.onCall();
                 if (stopOptions.reportStatus) {
-                    console.log(this.reportStatus());
+                    console.log(this.reportStatus().join('\n'));
                 }
             }
-        }));
+        });
+
         try {
-            await this.languageClient.start().then(() => {
-                const startOptions = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
-                if (startOptions) {
-                    startOptions.onCall();
-                    if (startOptions.reportStatus) {
-                        console.log(this.reportStatus());
-                    }
+            await this.languageClient.start();
+            const startOptions = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
+            if (startOptions) {
+                startOptions.onCall();
+                if (startOptions.reportStatus) {
+                    console.log(this.reportStatus().join('\n'));
                 }
-            });
+            }
         } catch (e) {
             const errorMsg = `monaco-languageclient start was unsuccessful: ${e}`;
             reject(errorMsg);

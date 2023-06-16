@@ -35,8 +35,10 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 configureConfigurationServiceConfig: {
                     defaultWorkspaceUri: '/tmp/'
                 },
-                enableKeybindingsService: true,
                 enableLanguagesService: true,
+                // enable quick access "F1" and add required keybindings service
+                enableQuickaccessService: true,
+                enableKeybindingsService: true,
                 debugLogging: true
             },
             monacoVscodeApiConfig: {

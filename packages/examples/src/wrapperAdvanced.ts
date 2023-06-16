@@ -3,7 +3,6 @@ import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
-
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const wrapper42 = new MonacoEditorLanguageClientWrapper();
@@ -14,7 +13,13 @@ const wrapper42Config: UserConfig = {
     id: '42',
     htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false
+        useVscodeConfig: false,
+        serviceConfig: {
+            // enable quick access "F1" and add required keybindings service
+            enableQuickaccessService: true,
+            enableKeybindingsService: true,
+            debugLogging: true
+        }
     },
     languageClientConfig: {
         enabled: true,
@@ -46,7 +51,13 @@ const wrapper43Config: UserConfig = {
     id: '43',
     htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false
+        useVscodeConfig: false,
+        serviceConfig: {
+            // enable quick access "F1" and add required keybindings service
+            enableQuickaccessService: true,
+            enableKeybindingsService: true,
+            debugLogging: true
+        }
     },
     languageClientConfig: {
         enabled: false,
@@ -71,7 +82,13 @@ const wrapper44Config: UserConfig = {
     id: '44',
     htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false
+        useVscodeConfig: false,
+        serviceConfig: {
+            // enable quick access "F1" and add required keybindings service
+            enableQuickaccessService: true,
+            enableKeybindingsService: true,
+            debugLogging: true
+        }
     },
     languageClientConfig: {
         enabled: false,
@@ -98,7 +115,6 @@ const startWrapper42 = async () => {
 };
 
 const startWrapper43 = async () => {
-
     await wrapper43.start(wrapper43Config);
     console.log('wrapper43 was started.');
 };
