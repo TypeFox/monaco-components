@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigOptions } from 'monaco-editor-wrapper';
 import { IDisposable } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
@@ -40,9 +40,27 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         if (prevProps.className !== className && this.containerElement) {
             this.containerElement.className = className ?? '';
         }
-        const prevUrl = prevProps.userConfig.languageClientConfig.workerConfigOptions?.url;
-        const url = userConfig.languageClientConfig.workerConfigOptions?.url;
-        if (prevUrl !== url) {
+
+        let mustReInit = false;
+        const prevWorkerOptions = prevProps.userConfig.languageClientConfig.workerConfigOptions;
+        const currentWorkerOptions = userConfig.languageClientConfig.workerConfigOptions;
+        const prevIsWorker = (prevWorkerOptions as Worker)?.postMessage !== undefined;
+        const currentIsWorker = (currentWorkerOptions as Worker)?.postMessage !== undefined;
+        const prevIsWorkerConfig = (prevWorkerOptions as WorkerConfigOptions)?.url !== undefined;
+        const currentIsWorkerConfig = (currentWorkerOptions as WorkerConfigOptions)?.url !== undefined;
+
+        // check if both are configs and the workers are both undefined
+        if (prevIsWorkerConfig && prevIsWorker === undefined && currentIsWorkerConfig && currentIsWorker === undefined) {
+            mustReInit = (prevWorkerOptions as WorkerConfigOptions).url !== (currentWorkerOptions as WorkerConfigOptions).url;
+        // check if both are workers and configs are both undefined
+        } else if (prevIsWorkerConfig === undefined && prevIsWorker && currentIsWorkerConfig === undefined && currentIsWorker) {
+            mustReInit = (prevWorkerOptions as Worker) !== (currentWorkerOptions as Worker);
+        // previous was worker and current config is not or the other way around
+        } else if (prevIsWorker && currentIsWorkerConfig || prevIsWorkerConfig && currentIsWorker) {
+            mustReInit = true;
+        }
+
+        if (mustReInit) {
             await this.handleReinit();
         } else {
             if (wrapper !== null) {

@@ -15,6 +15,11 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     const workerUrl = new URL('./dist/worker/statemachineServerWorker.js', window.location.href);
     console.log(`Langium worker URL: ${workerUrl}`);
 
+    const worker = new Worker(workerUrl, {
+        type: 'module',
+        name: 'Statemachine LS',
+    });
+
     return {
         htmlElement: htmlElement,
         wrapperConfig: {
@@ -73,7 +78,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 extensionFilesOrContents: extensionFilesOrContents,
                 userConfiguration: {
                     json: `{
-    "workbench.colorTheme": "Default Dark+ Experimental",
+    "workbench.colorTheme": "Default Dark Modern",
     "editor.fontSize": 14,
     "editor.lightbulb.enabled": true,
     "editor.lineHeight": 20,
@@ -93,11 +98,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         languageClientConfig: {
             enabled: true,
             useWebSocket: false,
-            workerConfigOptions: {
-                url: workerUrl,
-                type: 'module',
-                name: 'Statemachine LS',
-            }
+            workerConfigOptions: worker
         }
     };
 };
