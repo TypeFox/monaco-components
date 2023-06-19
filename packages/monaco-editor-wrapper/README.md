@@ -38,8 +38,6 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 // no top-level await
 const run = async () => {
   const wrapper = new MonacoEditorLanguageClientWrapper();
-
-  // UserConfig is defined here: ./src/wrapper.ts#L45
   const userConfig = {
       htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
       // rely on regular monaco-editor configuration
@@ -57,7 +55,6 @@ const run = async () => {
           useDiffEditor: false,
       }
   };
-
   await wrapper.start(userConfig);
 }
 ```
