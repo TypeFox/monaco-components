@@ -68,7 +68,7 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
 These are the examples specifically for `@typefox/monaco-editor-react` that you can find in the repository:
 
 - TypeScript editor worker using classical configuration [see](../examples/react_ts.html)
-- Langium statemachine web worker using the exact same user configuration as [wrapper example](../examples/wrapper_langium.html), [see](../examples/react_langium.html)
+- Langium statemachine web worker using the exact same user configuration as [wrapper example](../examples/wrapper_langium.html), [react example](../examples/react_langium.html)
 
 ## Invoking Custom Commands
 
