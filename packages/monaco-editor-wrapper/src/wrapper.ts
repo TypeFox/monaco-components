@@ -32,6 +32,7 @@ export type WorkerConfigOptions = {
 export type EditorConfig = {
     languageId: string;
     code: string;
+    uri?: string;
     useDiffEditor: boolean;
     theme: string;
     automaticLayout?: boolean;

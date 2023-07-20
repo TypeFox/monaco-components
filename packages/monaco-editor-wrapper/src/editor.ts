@@ -30,6 +30,7 @@ export class MonacoEditorBase {
         this.editorConfig = {
             languageId: userConfig.editorConfig.languageId,
             code: userConfig.editorConfig.code ?? '',
+            uri: userConfig.editorConfig.uri,
             codeOriginal: userConfig.editorConfig.codeOriginal ?? '',
             useDiffEditor: userConfig.editorConfig.useDiffEditor === true,
             theme: userConfig.editorConfig.theme ?? 'vs-light',
@@ -103,19 +104,29 @@ export class MonacoEditorBase {
     async updateModel(modelUpdate: {
         languageId: string;
         code: string;
+        uri?: string;
     }): Promise<void> {
         if (!this.editor) {
             return Promise.reject(new Error('You cannot update the editor model, because the regular editor is not configured.'));
         }
         this.editorConfig.languageId = modelUpdate.languageId;
         this.editorConfig.code = modelUpdate.code;
+        if (modelUpdate.uri) {
+            this.editorConfig.uri = modelUpdate.uri;
+        }
         await this.updateEditorModel(true);
     }
 
     private async updateEditorModel(updateEditor: boolean): Promise<void> {
         this.modelRef?.dispose();
 
-        const uri = Uri.parse(`/tmp/model${this.id}.${this.editorConfig.languageId}`);
+        let uri: Uri;
+        if (this.editorConfig.uri) {
+            uri = Uri.parse(this.editorConfig.uri);
+        } else {
+            uri = Uri.parse(`/tmp/model${this.id}.${this.editorConfig.languageId}`);
+        }
+
         this.modelRef = await createModelReference(uri, this.editorConfig.code) as unknown as IReference<ITextFileEditorModel>;
         this.modelRef.object.setLanguageId(this.editorConfig.languageId);
         this.editorOptions!.model = this.modelRef.object.textEditorModel;
