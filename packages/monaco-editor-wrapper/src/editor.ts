@@ -4,7 +4,7 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { EditorConfig, UserConfig } from './wrapper.js';
+import { EditorConfig, ModelUpdate, UserConfig } from './wrapper.js';
 import { EditorVscodeApiConfig } from './editorVscodeApi.js';
 import { EditorClassicConfig } from './editorClassic.js';
 
@@ -101,19 +101,23 @@ export class MonacoEditorBase {
         }
     }
 
-    async updateModel(modelUpdate: {
-        languageId: string;
-        code: string;
-        uri?: string;
-    }): Promise<void> {
+    async updateModel(modelUpdate: ModelUpdate): Promise<void> {
         if (!this.editor) {
             return Promise.reject(new Error('You cannot update the editor model, because the regular editor is not configured.'));
         }
-        this.editorConfig.languageId = modelUpdate.languageId;
-        this.editorConfig.code = modelUpdate.code;
-        if (modelUpdate.uri) {
+
+        if (modelUpdate.code != undefined) {
+            this.editorConfig.code = modelUpdate.code;
+        }
+
+        if (modelUpdate.languageId != undefined) {
+            this.editorConfig.languageId = modelUpdate.languageId;
+        }
+
+        if (modelUpdate.uri != undefined) {
             this.editorConfig.uri = modelUpdate.uri;
         }
+
         await this.updateEditorModel(true);
     }
 

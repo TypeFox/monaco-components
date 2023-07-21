@@ -63,6 +63,12 @@ export type UserConfig = {
     languageClientConfig: LanguageClientConfig;
 }
 
+export type ModelUpdate = {
+    languageId?: string;
+    code?: string;
+    uri?: string;
+}
+
 export interface MonacoEditorWrapper {
     init(): Promise<void>;
     updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
@@ -190,10 +196,7 @@ export class MonacoEditorLanguageClientWrapper {
         return this.worker;
     }
 
-    async updateModel(modelUpdate: {
-        languageId: string;
-        code: string;
-    }): Promise<void> {
+    async updateModel(modelUpdate: ModelUpdate): Promise<void> {
         await this.editor?.updateModel(modelUpdate);
     }
 
