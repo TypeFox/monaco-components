@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { ModelUpdate, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 
 export const wrapper = new MonacoEditorLanguageClientWrapper();
@@ -12,6 +12,14 @@ export const startEditor = async (userConfig: UserConfig, code: string, codeOrig
     toggleSwapDiffButton(true);
     await restartEditor(userConfig);
 };
+
+export const updateModel = async (modelUpdate: ModelUpdate) => {
+    if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().useDiffEditor) {
+        await wrapper?.updateDiffModel(modelUpdate);
+    } else {
+        await wrapper?.updateModel(modelUpdate);
+    }
+}
 
 export const swapEditors = async (userConfig: UserConfig, code: string, codeOriginal?: string) => {
     userConfig.editorConfig.useDiffEditor = !userConfig.editorConfig.useDiffEditor;

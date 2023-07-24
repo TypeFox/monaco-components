@@ -1,4 +1,4 @@
-import { disposeEditor, startEditor, swapEditors, wrapper } from './common.js';
+import { disposeEditor, startEditor, swapEditors, updateModel, wrapper } from './common.js';
 
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
@@ -7,12 +7,12 @@ import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { UserConfig } from 'monaco-editor-wrapper';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-const codeUri = "/tmp/hello.ts";
+const codeUri = '/tmp/hello.ts';
 let code = `function sayHello(): string {
     return "Hello";
 };`;
 
-const codeOriginalUri = "/tmp/goodbye.ts";
+const codeOriginalUri = '/tmp/goodbye.ts';
 let codeOriginal = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
@@ -63,16 +63,16 @@ try {
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
         if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
-            wrapper.updateModel({
+            updateModel({
                 code: codeOriginal,
                 uri: codeOriginalUri,
-                languageId: "typescript",
+                languageId: 'typescript',
             });
         }else {
-            wrapper.updateModel({
+            updateModel({
                 code: code,
                 uri: codeUri,
-                languageId: "typescript",
+                languageId: 'typescript',
             });
         }
     });

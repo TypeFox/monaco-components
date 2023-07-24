@@ -37,6 +37,7 @@ export type EditorConfig = {
     theme: string;
     automaticLayout?: boolean;
     codeOriginal?: string;
+    codeOriginalUri?: string;
     editorOptions?: editor.IStandaloneEditorConstructionOptions;
     diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
 }
@@ -67,6 +68,8 @@ export type ModelUpdate = {
     languageId?: string;
     code?: string;
     uri?: string;
+    codeOriginal?: string;
+    codeOriginalUri?: string;
 }
 
 export interface MonacoEditorWrapper {
@@ -200,11 +203,7 @@ export class MonacoEditorLanguageClientWrapper {
         await this.editor?.updateModel(modelUpdate);
     }
 
-    async updateDiffModel(modelUpdate: {
-        languageId: string;
-        code: string;
-        codeOriginal: string;
-    }): Promise<void> {
+    async updateDiffModel(modelUpdate: ModelUpdate): Promise<void> {
         await this.editor?.updateDiffModel(modelUpdate);
     }
 
