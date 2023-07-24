@@ -106,26 +106,7 @@ export class MonacoEditorBase {
             return Promise.reject(new Error('You cannot update the editor model, because the regular editor is not configured.'));
         }
 
-        if (modelUpdate.code !== undefined) {
-            this.editorConfig.code = modelUpdate.code;
-        }
-
-        if (modelUpdate.languageId !== undefined) {
-            this.editorConfig.languageId = modelUpdate.languageId;
-        }
-
-        if (modelUpdate.uri !== undefined) {
-            this.editorConfig.uri = modelUpdate.uri;
-        }
-
-        if (modelUpdate.codeOriginal !== undefined) {
-            this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
-        }
-
-        if (modelUpdate.codeOriginalUri !== undefined) {
-            this.editorConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
-        }
-
+        this.updateEditorConfig(modelUpdate);
         await this.updateEditorModel(true);
     }
 
@@ -146,26 +127,7 @@ export class MonacoEditorBase {
             return Promise.reject(new Error('You cannot update the diff editor models, because the diffEditor is not configured.'));
         }
 
-        if (modelUpdate.code !== undefined) {
-            this.editorConfig.code = modelUpdate.code;
-        }
-
-        if (modelUpdate.languageId !== undefined) {
-            this.editorConfig.languageId = modelUpdate.languageId;
-        }
-
-        if (modelUpdate.uri !== undefined) {
-            this.editorConfig.uri = modelUpdate.uri;
-        }
-
-        if (modelUpdate.codeOriginal !== undefined) {
-            this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
-        }
-
-        if (modelUpdate.codeOriginalUri !== undefined) {
-            this.editorConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
-        }
-
+        this.updateEditorConfig(modelUpdate);
         return this.updateDiffEditorModel();
     }
 
@@ -191,6 +153,28 @@ export class MonacoEditorBase {
                 original: this.modelOriginalRef!.object!.textEditorModel,
                 modified: this.modelRef!.object!.textEditorModel
             });
+        }
+    }
+
+    private updateEditorConfig(modelUpdate: ModelUpdate) {
+        if (modelUpdate.code !== undefined) {
+            this.editorConfig.code = modelUpdate.code;
+        }
+
+        if (modelUpdate.languageId !== undefined) {
+            this.editorConfig.languageId = modelUpdate.languageId;
+        }
+
+        if (modelUpdate.uri !== undefined) {
+            this.editorConfig.uri = modelUpdate.uri;
+        }
+
+        if (modelUpdate.codeOriginal !== undefined) {
+            this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
+        }
+
+        if (modelUpdate.codeOriginalUri !== undefined) {
+            this.editorConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
         }
     }
 
