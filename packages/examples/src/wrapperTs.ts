@@ -1,15 +1,19 @@
-import { disposeEditor, startEditor, swapEditors } from './common.js';
+import { disposeEditor, startEditor, swapEditors, updateModel, wrapper } from './common.js';
 
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+import { UserConfig } from 'monaco-editor-wrapper';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-const codeOrg = `function sayHello(): string {
+const codeUri = '/tmp/hello.ts';
+let code = `function sayHello(): string {
     return "Hello";
 };`;
-let codeMain = `function sayGoodbye(): string {
+
+const codeOriginalUri = '/tmp/goodbye.ts';
+let codeOriginal = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
 
@@ -23,7 +27,7 @@ const monacoEditorConfig = {
     }
 };
 
-const userConfig = {
+const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         useVscodeConfig: false,
@@ -39,9 +43,10 @@ const userConfig = {
     },
     editorConfig: {
         languageId: 'typescript',
-        code: codeOrg,
+        code: code,
+        uri: codeUri,
+        codeOriginal: codeOriginal,
         useDiffEditor: false,
-        codeOriginal: codeMain,
         editorOptions: monacoEditorConfig,
         diffEditorOptions: monacoEditorConfig,
         theme: 'vs-dark',
@@ -51,16 +56,35 @@ const userConfig = {
 
 try {
     document.querySelector('#button-start')?.addEventListener('click', () => {
-        startEditor(userConfig, codeMain, codeOrg);
+        startEditor(userConfig, code, codeOriginal);
     });
     document.querySelector('#button-swap')?.addEventListener('click', () => {
-        swapEditors(userConfig, codeMain, codeOrg);
+        swapEditors(userConfig, code, codeOriginal);
+    });
+    document.querySelector('#button-swap-code')?.addEventListener('click', () => {
+        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+            updateModel({
+                code: codeOriginal,
+                uri: codeOriginalUri,
+                languageId: 'typescript',
+            });
+        }else {
+            updateModel({
+                code: code,
+                uri: codeUri,
+                languageId: 'typescript',
+            });
+        }
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        codeMain = await disposeEditor(userConfig);
+        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+            code = await disposeEditor(userConfig);
+        }else {
+            codeOriginal = await disposeEditor(userConfig);
+        }
     });
 
-    startEditor(userConfig, codeMain, codeOrg);
+    startEditor(userConfig, code, codeOriginal);
 } catch (e) {
     console.error(e);
 }

@@ -21,6 +21,7 @@ import type {
     WorkerConfigOptions,
     LanguageClientConfig,
     UserConfig,
+    ModelUpdate,
     MonacoEditorWrapper
 } from './wrapper.js';
 
@@ -37,7 +38,8 @@ export type {
     WebSocketConfigOptions,
     WorkerConfigOptions,
     LanguageClientConfig,
-    UserConfig
+    UserConfig,
+    ModelUpdate
 };
 
 export {

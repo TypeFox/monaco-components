@@ -4,7 +4,7 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { EditorConfig, UserConfig } from './wrapper.js';
+import { EditorConfig, ModelUpdate, UserConfig } from './wrapper.js';
 import { EditorVscodeApiConfig } from './editorVscodeApi.js';
 import { EditorClassicConfig } from './editorClassic.js';
 
@@ -30,6 +30,7 @@ export class MonacoEditorBase {
         this.editorConfig = {
             languageId: userConfig.editorConfig.languageId,
             code: userConfig.editorConfig.code ?? '',
+            uri: userConfig.editorConfig.uri,
             codeOriginal: userConfig.editorConfig.codeOriginal ?? '',
             useDiffEditor: userConfig.editorConfig.useDiffEditor === true,
             theme: userConfig.editorConfig.theme ?? 'vs-light',
@@ -100,22 +101,19 @@ export class MonacoEditorBase {
         }
     }
 
-    async updateModel(modelUpdate: {
-        languageId: string;
-        code: string;
-    }): Promise<void> {
+    async updateModel(modelUpdate: ModelUpdate): Promise<void> {
         if (!this.editor) {
             return Promise.reject(new Error('You cannot update the editor model, because the regular editor is not configured.'));
         }
-        this.editorConfig.languageId = modelUpdate.languageId;
-        this.editorConfig.code = modelUpdate.code;
+
+        this.updateEditorConfig(modelUpdate);
         await this.updateEditorModel(true);
     }
 
     private async updateEditorModel(updateEditor: boolean): Promise<void> {
         this.modelRef?.dispose();
 
-        const uri = Uri.parse(`/tmp/model${this.id}.${this.editorConfig.languageId}`);
+        const uri: Uri = this.getEditorUri('code');
         this.modelRef = await createModelReference(uri, this.editorConfig.code) as unknown as IReference<ITextFileEditorModel>;
         this.modelRef.object.setLanguageId(this.editorConfig.languageId);
         this.editorOptions!.model = this.modelRef.object.textEditorModel;
@@ -124,17 +122,12 @@ export class MonacoEditorBase {
         }
     }
 
-    async updateDiffModel(modelUpdate: {
-        languageId: string;
-        code: string;
-        codeOriginal: string;
-    }): Promise<void> {
+    async updateDiffModel(modelUpdate: ModelUpdate): Promise<void> {
         if (!this.diffEditor) {
             return Promise.reject(new Error('You cannot update the diff editor models, because the diffEditor is not configured.'));
         }
-        this.editorConfig.languageId = modelUpdate.languageId;
-        this.editorConfig.code = modelUpdate.code;
-        this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
+
+        this.updateEditorConfig(modelUpdate);
         return this.updateDiffEditorModel();
     }
 
@@ -142,8 +135,8 @@ export class MonacoEditorBase {
         this.modelRef?.dispose();
         this.modelOriginalRef?.dispose();
 
-        const uri = Uri.parse(`/tmp/model${this.id}.${this.editorConfig.languageId}`);
-        const uriOriginal = Uri.parse(`/tmp/modelOriginal${this.id}.${this.editorConfig.languageId}`);
+        const uri: Uri = this.getEditorUri('code');
+        const uriOriginal: Uri = this.getEditorUri('codeOriginal');
 
         const promises = [];
         promises.push(createModelReference(uri, this.editorConfig.code));
@@ -160,6 +153,37 @@ export class MonacoEditorBase {
                 original: this.modelOriginalRef!.object!.textEditorModel,
                 modified: this.modelRef!.object!.textEditorModel
             });
+        }
+    }
+
+    private updateEditorConfig(modelUpdate: ModelUpdate) {
+        if (modelUpdate.code !== undefined) {
+            this.editorConfig.code = modelUpdate.code;
+        }
+
+        if (modelUpdate.languageId !== undefined) {
+            this.editorConfig.languageId = modelUpdate.languageId;
+        }
+
+        if (modelUpdate.uri !== undefined) {
+            this.editorConfig.uri = modelUpdate.uri;
+        }
+
+        if (modelUpdate.codeOriginal !== undefined) {
+            this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
+        }
+
+        if (modelUpdate.codeOriginalUri !== undefined) {
+            this.editorConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
+        }
+    }
+
+    getEditorUri(uriType: 'code' | 'codeOriginal') {
+        const uri = uriType === 'code' ? this.editorConfig.uri : this.editorConfig.codeOriginalUri;
+        if (uri) {
+            return Uri.parse(uri);
+        } else {
+            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${this.editorConfig.languageId}`);
         }
     }
 
