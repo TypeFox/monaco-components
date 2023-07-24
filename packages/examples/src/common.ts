@@ -19,7 +19,7 @@ export const updateModel = async (modelUpdate: ModelUpdate) => {
     } else {
         await wrapper?.updateModel(modelUpdate);
     }
-}
+};
 
 export const swapEditors = async (userConfig: UserConfig, code: string, codeOriginal?: string) => {
     userConfig.editorConfig.useDiffEditor = !userConfig.editorConfig.useDiffEditor;

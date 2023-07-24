@@ -132,7 +132,7 @@ export class MonacoEditorBase {
     private async updateEditorModel(updateEditor: boolean): Promise<void> {
         this.modelRef?.dispose();
 
-        let uri: Uri = this.getEditorUri('code');
+        const uri: Uri = this.getEditorUri('code');
         this.modelRef = await createModelReference(uri, this.editorConfig.code) as unknown as IReference<ITextFileEditorModel>;
         this.modelRef.object.setLanguageId(this.editorConfig.languageId);
         this.editorOptions!.model = this.modelRef.object.textEditorModel;
@@ -173,8 +173,8 @@ export class MonacoEditorBase {
         this.modelRef?.dispose();
         this.modelOriginalRef?.dispose();
 
-        let uri: Uri = this.getEditorUri('code');
-        let uriOriginal: Uri = this.getEditorUri('codeOriginal');
+        const uri: Uri = this.getEditorUri('code');
+        const uriOriginal: Uri = this.getEditorUri('codeOriginal');
 
         const promises = [];
         promises.push(createModelReference(uri, this.editorConfig.code));
