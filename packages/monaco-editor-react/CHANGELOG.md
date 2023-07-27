@@ -1,6 +1,10 @@
 # CHANGELOG
 
-All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/monaco-editor-react) are documented in this file.
+All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/@typefox/monaco-editor-react) are documented in this file.
+
+## [1.1.1] - 2023-07-27
+
+- Updated to `monaco-editor-wrapper` `2.1.1`
 
 ## [1.1.0] - 2023-06-16
 

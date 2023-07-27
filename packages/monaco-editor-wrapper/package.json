@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -46,7 +46,7 @@
     "build": "npm run clean && npm run compile && npm run bundle"
   },
   "volta": {
-    "node": "18.16.0",
+    "node": "18.17.0",
     "npm": "9.6.7"
   },
   "dependencies": {

@@ -2,6 +2,12 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [2.1.1] - 2023-07-27
+
+- Allow to pass a uri via editor config and model update [#29](https://github.com/TypeFox/monaco-components/pull/29)
+
+All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
+
 ## [2.1.0] - 2023-06-16
 
 - Make worker handling more flexible [#27](https://github.com/TypeFox/monaco-components/pull/27)

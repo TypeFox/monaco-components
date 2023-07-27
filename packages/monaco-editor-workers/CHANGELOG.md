@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-workers](https://www.npmjs.com/package/monaco-editor-workers) are documented in this file.
 
+## [0.40.0] - 2023-07-27
+
+- Updated to [0.40.0 release of monaco-editor](https://www.npmjs.com/package/monaco-editor/v/0.40.0).
+
 ## [0.39.1] - 2023-06-14
 
 - Bugfix: `MonacoEnvironment.baseUrl` was overridden by fixed value.
