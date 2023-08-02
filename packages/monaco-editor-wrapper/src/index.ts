@@ -1,13 +1,15 @@
+export * from './editor.js';
+
 import type {
-    EditorClassicConfig,
+    EditorAppConfigClassic,
 } from './editorClassic.js';
 
 import {
-    EditorClassic
+    EditorClassic,
 } from './editorClassic.js';
 
 import type {
-    EditorVscodeApiConfig,
+    EditorAppConfigVscodeApi,
     VscodeUserConfiguration
 } from './editorVscodeApi.js';
 
@@ -22,7 +24,8 @@ import type {
     LanguageClientConfig,
     UserConfig,
     ModelUpdate,
-    MonacoEditorWrapper
+    MonacoEditorWrapper,
+    WrapperConfig
 } from './wrapper.js';
 
 import {
@@ -32,8 +35,9 @@ import {
 export type {
     EditorConfig,
     MonacoEditorWrapper,
-    EditorClassicConfig,
-    EditorVscodeApiConfig,
+    WrapperConfig,
+    EditorAppConfigClassic,
+    EditorAppConfigVscodeApi,
     VscodeUserConfiguration,
     WebSocketConfigOptions,
     WorkerConfigOptions,

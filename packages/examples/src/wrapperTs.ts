@@ -30,7 +30,6 @@ const monacoEditorConfig = {
 const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,

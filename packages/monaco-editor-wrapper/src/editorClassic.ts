@@ -15,7 +15,8 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
-export type EditorClassicConfig = {
+export type EditorAppConfigClassic = {
+    editorAppType: 'classic';
     languageExtensionConfig?: MonacoLanguageExtensionConfig;
     languageDef?: languages.IMonarchLanguage;
     themeData?: editor.IStandaloneThemeData;
@@ -23,8 +24,14 @@ export type EditorClassicConfig = {
 
 export class EditorClassic extends MonacoEditorBase implements MonacoEditorWrapper {
 
+    static createEmptyConfig() {
+        return {
+            editorAppType: 'classic'
+        } as EditorAppConfigClassic;
+    }
+
     async init() {
-        const wrapperConfig = this.monacoConfig as EditorClassicConfig;
+        const wrapperConfig = this.editorAppConfig === undefined ? EditorClassic.createEmptyConfig() : this.editorAppConfig as EditorAppConfigClassic;
 
         // register own language first
         const extLang = wrapperConfig?.languageExtensionConfig;

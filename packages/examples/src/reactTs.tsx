@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
-import { UserConfig } from 'monaco-editor-wrapper';
+import { UserConfig, WrapperConfig } from 'monaco-editor-wrapper';
 
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
@@ -13,14 +13,13 @@ const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
     htmlElement: rootElem,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
-        }
-    },
+        },
+    } as WrapperConfig,
     editorConfig: {
         languageId: 'typescript',
         useDiffEditor: false,

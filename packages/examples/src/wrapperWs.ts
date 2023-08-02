@@ -4,6 +4,7 @@ import 'vscode/default-extensions/theme-defaults';
 import 'vscode/default-extensions/json';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+import { WrapperConfig } from 'monaco-editor-wrapper';
 
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
@@ -30,7 +31,6 @@ const monacoEditorConfig = {
 const userConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: true,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
@@ -40,7 +40,8 @@ const userConfig = {
             enableLanguagesService: true,
             debugLogging: true
         },
-        monacoEditorConfig: {
+        editorAppConfig: {
+            editorAppType: 'classic',
             languageExtensionConfig: {
                 id: 'json',
                 extensions: ['.json', '.jsonc'],
@@ -48,7 +49,7 @@ const userConfig = {
                 mimetypes: ['application/json']
             }
         }
-    },
+    } as WrapperConfig,
     editorConfig: {
         languageId: languageId,
         code: codeMain,

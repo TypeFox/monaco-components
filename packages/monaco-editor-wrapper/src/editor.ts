@@ -3,15 +3,15 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { EditorConfig, ModelUpdate, UserConfig } from './wrapper.js';
-import { EditorVscodeApiConfig } from './editorVscodeApi.js';
-import { EditorClassicConfig } from './editorClassic.js';
+import { EditorConfig, ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
+import { EditorAppConfigVscodeApi } from './editorVscodeApi.js';
+import { EditorAppConfigClassic } from './editorClassic.js';
 
 export class MonacoEditorBase {
 
     private id: string;
     protected editorConfig: EditorConfig;
-    protected monacoConfig: EditorVscodeApiConfig | EditorClassicConfig;
+    protected editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic | undefined;
 
     protected editor: editor.IStandaloneCodeEditor | undefined;
     protected diffEditor: editor.IStandaloneDiffEditor | undefined;
@@ -36,11 +36,7 @@ export class MonacoEditorBase {
             automaticLayout: userConfig.editorConfig.automaticLayout ?? true,
         };
 
-        if (userConfig.wrapperConfig.useVscodeConfig) {
-            this.monacoConfig = userConfig.wrapperConfig.monacoVscodeApiConfig ?? {};
-        } else {
-            this.monacoConfig = userConfig.wrapperConfig.monacoEditorConfig ?? {};
-        }
+        this.editorAppConfig = userConfig.wrapperConfig.editorAppConfig;
 
         this.editorOptions = this.editorConfig.editorOptions ?? {};
         this.editorOptions.automaticLayout = this.editorConfig.automaticLayout;
@@ -196,3 +192,6 @@ export class MonacoEditorBase {
 
 }
 
+export const isVscodeApi = (wrapperConfig: WrapperConfig) => {
+    return wrapperConfig.editorAppConfig?.editorAppType === 'vscodeApi';
+};

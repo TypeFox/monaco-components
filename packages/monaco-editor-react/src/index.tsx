@@ -67,18 +67,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 let restarted = false;
 
                 // we need to restart if the editor wrapper config changed
-                if (userConfig.wrapperConfig.useVscodeConfig) {
-                    if (prevProps.userConfig.wrapperConfig.monacoVscodeApiConfig !==
-                        userConfig.wrapperConfig.monacoVscodeApiConfig) {
-                        restarted = true;
-                        await this.handleReinit();
-                    }
-                } else {
-                    if (prevProps.userConfig.wrapperConfig.monacoEditorConfig !==
-                        userConfig.wrapperConfig.monacoEditorConfig) {
-                        restarted = true;
-                        await this.handleReinit();
-                    }
+                if (prevProps.userConfig.wrapperConfig.editorAppConfig !==
+                    userConfig.wrapperConfig.editorAppConfig) {
+                    restarted = true;
+                    await this.handleReinit();
                 }
 
                 if (!restarted) {

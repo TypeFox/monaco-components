@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { MonacoEditorLanguageClientWrapper, UserConfig, WrapperConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
@@ -13,14 +13,13 @@ const wrapper42Config: UserConfig = {
     id: '42',
     htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         }
-    },
+    } as WrapperConfig,
     languageClientConfig: {
         enabled: true,
         useWebSocket: true,
@@ -51,14 +50,13 @@ const wrapper43Config: UserConfig = {
     id: '43',
     htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         }
-    },
+    } as WrapperConfig,
     languageClientConfig: {
         enabled: false,
     },
@@ -82,14 +80,13 @@ const wrapper44Config: UserConfig = {
     id: '44',
     htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         }
-    },
+    } as WrapperConfig,
     languageClientConfig: {
         enabled: false,
     },

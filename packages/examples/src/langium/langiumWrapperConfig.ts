@@ -23,7 +23,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     return {
         htmlElement: htmlElement,
         wrapperConfig: {
-            useVscodeConfig: true,
             serviceConfig: {
                 enableThemeService: true,
                 enableTextmateService: true,
@@ -39,7 +38,8 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 enableKeybindingsService: true,
                 debugLogging: true
             },
-            monacoVscodeApiConfig: {
+            editorAppConfig: {
+                editorAppType: 'vscodeApi',
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',

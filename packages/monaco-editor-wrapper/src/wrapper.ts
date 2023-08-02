@@ -1,11 +1,12 @@
-import { EditorVscodeApi, EditorVscodeApiConfig, VscodeUserConfiguration } from './editorVscodeApi.js';
-import { EditorClassic, EditorClassicConfig } from './editorClassic.js';
+import { EditorVscodeApi, EditorAppConfigVscodeApi, VscodeUserConfiguration } from './editorVscodeApi.js';
+import { EditorClassic, EditorAppConfigClassic } from './editorClassic.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import { createUrl } from './utils.js';
+import { isVscodeApi } from './editor.js';
 
 export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
@@ -64,15 +65,15 @@ export type LanguageClientConfig = {
     initializationOptions?: any;
 }
 
+export type WrapperConfig = {
+    serviceConfig?: InitializeServiceConfig;
+    editorAppConfig?: EditorAppConfigVscodeApi | EditorAppConfigClassic;
+};
+
 export type UserConfig = {
     id?: string;
     htmlElement: HTMLElement;
-    wrapperConfig: {
-        useVscodeConfig: boolean;
-        serviceConfig?: InitializeServiceConfig;
-        monacoVscodeApiConfig?: EditorVscodeApiConfig;
-        monacoEditorConfig?: EditorClassicConfig;
-    },
+    wrapperConfig: WrapperConfig;
     editorConfig: EditorConfig;
     languageClientConfig: LanguageClientConfig;
 }
@@ -112,7 +113,7 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
-        this.useVscodeConfig = userConfig.wrapperConfig.useVscodeConfig;
+        this.useVscodeConfig = isVscodeApi(userConfig.wrapperConfig);
 
         this.languageClientConfig = {
             enabled: userConfig.languageClientConfig.enabled,

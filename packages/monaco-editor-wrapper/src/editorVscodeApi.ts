@@ -8,7 +8,8 @@ export type VscodeUserConfiguration = {
     json?: string;
 }
 
-export type EditorVscodeApiConfig = {
+export type EditorAppConfigVscodeApi = {
+    editorAppType: 'vscodeApi';
     extension?: IExtensionManifest | object;
     extensionFilesOrContents?: Map<string, string | URL>;
     userConfiguration?: VscodeUserConfiguration;
@@ -16,8 +17,15 @@ export type EditorVscodeApiConfig = {
 
 export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWrapper {
 
+    static createEmptyConfig() {
+        return {
+            editorAppType: 'vscodeApi'
+        } as EditorAppConfigVscodeApi;
+    }
+
     async init() {
-        const wrapperConfig = this.monacoConfig as EditorVscodeApiConfig;
+        const wrapperConfig = this.editorAppConfig === undefined ? EditorVscodeApi.createEmptyConfig() : this.editorAppConfig as EditorAppConfigVscodeApi;
+
         if (wrapperConfig.extension) {
             const extension = wrapperConfig.extension as IExtensionManifest;
             const { registerFileUrl } = registerExtension(extension, ExtensionHostKind.LocalProcess);
