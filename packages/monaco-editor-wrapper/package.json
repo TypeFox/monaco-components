@@ -50,8 +50,7 @@
     "npm": "9.6.7"
   },
   "dependencies": {
-    "monaco-languageclient": "~6.2.0",
-    "normalize-url": "~8.0.0"
+    "monaco-languageclient": "~6.2.0"
   },
   "peerDependencies": {
     "monaco-languageclient": "~6.2.0",

@@ -5,7 +5,7 @@ import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeA
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
-import normalizeUrl from 'normalize-url';
+import { createUrl } from './utils.js';
 
 export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
@@ -14,11 +14,18 @@ export type WebSocketCallOptions = {
     reportStatus?: boolean;
 }
 
+export type WebSocketUrl = {
+    secured: boolean;
+    host: string;
+    port?: number;
+    path?: string;
+}
+
 export type WebSocketConfigOptions = {
     secured: boolean;
     host: string;
-    port: number;
-    path: string;
+    port?: number;
+    path?: string;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
@@ -285,7 +292,7 @@ export class MonacoEditorLanguageClientWrapper {
 
         return new Promise((resolve, reject) => {
             if (languageClientConfig.useWebSocket) {
-                const url = this.createUrl(languageClientConfig.webSocketConfigOptions!);
+                const url = createUrl(languageClientConfig.webSocketConfigOptions!);
                 const webSocket = new WebSocket(url);
 
                 webSocket.onopen = () => {
@@ -374,8 +381,4 @@ export class MonacoEditorLanguageClientWrapper {
         });
     }
 
-    private createUrl(config: WebSocketConfigOptions) {
-        const protocol = config.secured ? 'wss' : 'ws';
-        return normalizeUrl(`${protocol}://${config.host}:${config.port}/${config.path}`);
-    }
 }

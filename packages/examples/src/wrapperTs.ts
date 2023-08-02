@@ -36,6 +36,9 @@ const userConfig: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
+        },
+        monacoEditorConfig: {
+
         }
     },
     languageClientConfig: {
@@ -68,7 +71,7 @@ try {
                 uri: codeOriginalUri,
                 languageId: 'typescript',
             });
-        }else {
+        } else {
             updateModel({
                 code: code,
                 uri: codeUri,
@@ -79,7 +82,7 @@ try {
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
         if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
             code = await disposeEditor(userConfig);
-        }else {
+        } else {
             codeOriginal = await disposeEditor(userConfig);
         }
     });
