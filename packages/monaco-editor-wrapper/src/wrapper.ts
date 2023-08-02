@@ -1,12 +1,12 @@
-import { EditorVscodeApi, EditorAppConfigVscodeApi, VscodeUserConfiguration } from './editorVscodeApi.js';
-import { EditorClassic, EditorAppConfigClassic } from './editorClassic.js';
+import { EditorAppVscodeApi, EditorAppConfigVscodeApi, VscodeUserConfiguration } from './editorVscodeApi.js';
+import { EditorAppClassic, EditorAppConfigClassic } from './editorClassic.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import { createUrl } from './utils.js';
-import { isVscodeApi } from './editor.js';
+import { isVscodeApiEditorApp } from './editor.js';
 
 export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
@@ -43,12 +43,12 @@ export type WorkerConfigOptions = {
     name?: string;
 };
 
-export type EditorConfig = {
+export type EditorContentConfig = {
     languageId: string;
     code: string;
-    uri?: string;
+    codeUri?: string;
     useDiffEditor: boolean;
-    theme: string;
+    theme?: string;
     automaticLayout?: boolean;
     codeOriginal?: string;
     codeOriginalUri?: string;
@@ -74,7 +74,7 @@ export type UserConfig = {
     id?: string;
     htmlElement: HTMLElement;
     wrapperConfig: WrapperConfig;
-    editorConfig: EditorConfig;
+    editorContentConfig: EditorContentConfig;
     languageClientConfig: LanguageClientConfig;
 }
 
@@ -87,6 +87,7 @@ export type ModelUpdate = {
 }
 
 export interface MonacoEditorWrapper {
+    getAppType(): string;
     init(): Promise<void>;
     updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
 }
@@ -96,24 +97,22 @@ export class MonacoEditorLanguageClientWrapper {
     private languageClient: MonacoLanguageClient | undefined;
     private worker: Worker | undefined;
 
-    private editor: EditorClassic | EditorVscodeApi | undefined;
+    private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
 
     private id: string;
     private htmlElement: HTMLElement;
-    private useVscodeConfig: boolean;
     private serviceConfig: InitializeServiceConfig;
     private languageClientConfig: LanguageClientConfig;
 
     private init(userConfig: UserConfig) {
-        if (userConfig.editorConfig.useDiffEditor) {
-            if (!userConfig.editorConfig.codeOriginal) {
+        if (userConfig.editorContentConfig.useDiffEditor) {
+            if (!userConfig.editorContentConfig.codeOriginal) {
                 throw new Error('Use diff editor was used without a valid config.');
             }
         }
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
-        this.useVscodeConfig = isVscodeApi(userConfig.wrapperConfig);
 
         this.languageClientConfig = {
             enabled: userConfig.languageClientConfig.enabled,
@@ -153,17 +152,17 @@ export class MonacoEditorLanguageClientWrapper {
         this.init(userConfig);
 
         // Always dispose old instances before start
-        this.editor?.disposeEditor();
-        this.editor?.disposeDiffEditor();
+        this.editorApp?.disposeEditor();
+        this.editorApp?.disposeDiffEditor();
 
-        if (this.useVscodeConfig) {
-            this.editor = new EditorVscodeApi(this.id, userConfig);
+        if (isVscodeApiEditorApp(userConfig.wrapperConfig)) {
+            this.editorApp = new EditorAppVscodeApi(this.id, userConfig);
         } else {
-            this.editor = new EditorClassic(this.id, userConfig);
+            this.editorApp = new EditorAppClassic(this.id, userConfig);
         }
         await (wasVscodeApiInitialized() ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
-        await this.editor?.init();
-        await this.editor.createEditors(this.htmlElement);
+        await this.editorApp?.init();
+        await this.editorApp.createEditors(this.htmlElement);
 
         const lcc = this.languageClientConfig;
         if (lcc.enabled) {
@@ -176,7 +175,7 @@ export class MonacoEditorLanguageClientWrapper {
 
     isStarted(): boolean {
         // fast-fail
-        if (!this.editor?.haveEditor()) {
+        if (!this.editorApp?.haveEditor()) {
             return false;
         }
 
@@ -186,16 +185,16 @@ export class MonacoEditorLanguageClientWrapper {
         return true;
     }
 
-    getMonacoEditorWrapper() {
-        return this.editor;
+    getMonacoEditorApp() {
+        return this.editorApp;
     }
 
     getEditor(): editor.IStandaloneCodeEditor | undefined {
-        return this.editor?.getEditor();
+        return this.editorApp?.getEditor();
     }
 
     getDiffEditor(): editor.IStandaloneDiffEditor | undefined {
-        return this.editor?.getDiffEditor();
+        return this.editorApp?.getDiffEditor();
     }
 
     getLanguageClient(): MonacoLanguageClient | undefined {
@@ -203,7 +202,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     getModel(original?: boolean): editor.ITextModel | undefined {
-        return this.editor?.getModel(original);
+        return this.editorApp?.getModel(original);
     }
 
     getWorker(): Worker | undefined {
@@ -211,16 +210,16 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     async updateModel(modelUpdate: ModelUpdate): Promise<void> {
-        await this.editor?.updateModel(modelUpdate);
+        await this.editorApp?.updateModel(modelUpdate);
     }
 
     async updateDiffModel(modelUpdate: ModelUpdate): Promise<void> {
-        await this.editor?.updateDiffModel(modelUpdate);
+        await this.editorApp?.updateDiffModel(modelUpdate);
     }
 
     async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): Promise<void> {
-        if (this.editor) {
-            await this.editor.updateConfig(options);
+        if (this.editorApp) {
+            await this.editorApp.updateConfig(options);
         } else {
             await Promise.reject('Update was called when editor wrapper was not correctly configured.');
         }
@@ -245,20 +244,20 @@ export class MonacoEditorLanguageClientWrapper {
     public reportStatus() {
         const status: string[] = [];
         status.push('Wrapper status:');
-        status.push(`Editor: ${this.editor?.getEditor()}`);
-        status.push(`DiffEditor: ${this.editor?.getDiffEditor()}`);
+        status.push(`Editor: ${this.editorApp?.getEditor()}`);
+        status.push(`DiffEditor: ${this.editorApp?.getDiffEditor()}`);
         status.push(`LanguageClient: ${this.languageClient}`);
         status.push(`Worker: ${this.worker}`);
         return status;
     }
 
     async dispose(): Promise<void> {
-        this.editor?.disposeEditor();
-        this.editor?.disposeDiffEditor();
+        this.editorApp?.disposeEditor();
+        this.editorApp?.disposeDiffEditor();
 
         if (this.languageClientConfig.enabled) {
             await this.disposeLanguageClient(false);
-            this.editor = undefined;
+            this.editorApp = undefined;
             await Promise.resolve('Monaco editor and languageclient completed disposed.');
         }
         else {
@@ -286,7 +285,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     updateLayout() {
-        this.editor?.updateLayout();
+        this.editorApp?.updateLayout();
     }
 
     private startLanguageClientConnection(languageClientConfig: LanguageClientConfig): Promise<string> {
@@ -367,7 +366,7 @@ export class MonacoEditorLanguageClientWrapper {
             name: 'Monaco Wrapper Language Client',
             clientOptions: {
                 // use a language id as a document selector
-                documentSelector: [this.editor!.getEditorConfig().languageId],
+                documentSelector: [this.editorApp!.getEditorConfig().languageId],
                 // disable the default error handler
                 errorHandler: {
                     error: () => ({ action: ErrorAction.Continue }),

@@ -74,16 +74,16 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 }
 
                 if (!restarted) {
-                    const options = userConfig.editorConfig.editorOptions;
-                    const prevOptions = prevProps.userConfig.editorConfig.editorOptions;
+                    const options = userConfig.editorContentConfig.editorOptions;
+                    const prevOptions = prevProps.userConfig.editorContentConfig.editorOptions;
                     if (options !== prevOptions) {
-                        wrapper.updateEditorOptions(userConfig.editorConfig.editorOptions ?? {});
+                        wrapper.updateEditorOptions(userConfig.editorContentConfig.editorOptions ?? {});
                     }
 
-                    const languageId = userConfig.editorConfig.languageId;
-                    const prevLanguageId = prevProps.userConfig.editorConfig.languageId;
-                    const code = userConfig.editorConfig.code;
-                    const prevCode = prevProps.userConfig.editorConfig.code;
+                    const languageId = userConfig.editorContentConfig.languageId;
+                    const prevLanguageId = prevProps.userConfig.editorContentConfig.languageId;
+                    const code = userConfig.editorContentConfig.code;
+                    const prevCode = prevProps.userConfig.editorContentConfig.code;
                     if (languageId !== prevLanguageId && code !== prevCode) {
                         this.wrapper.updateModel({
                             languageId: languageId,
@@ -144,7 +144,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 if (model) {
                     const verifyModelContent = () => {
                         const modelText = model.getValue();
-                        onTextChanged(modelText, modelText !== userConfig.editorConfig.code);
+                        onTextChanged(modelText, modelText !== userConfig.editorContentConfig.code);
                     };
 
                     this._subscription = model.onDidChangeContent(() => {

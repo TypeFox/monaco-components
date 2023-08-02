@@ -20,10 +20,9 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
     } as WrapperConfig,
-    editorConfig: {
+    editorContentConfig: {
         languageId: 'typescript',
         useDiffEditor: false,
-        automaticLayout: true,
         theme: 'vs-dark',
         code: `function sayHello(): string {
     return "Hello";

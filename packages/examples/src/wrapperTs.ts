@@ -40,16 +40,15 @@ const userConfig: UserConfig = {
     languageClientConfig: {
         enabled: false
     },
-    editorConfig: {
+    editorContentConfig: {
         languageId: 'typescript',
         code: code,
-        uri: codeUri,
+        codeUri: codeUri,
         codeOriginal: codeOriginal,
         useDiffEditor: false,
         editorOptions: monacoEditorConfig,
         diffEditorOptions: monacoEditorConfig,
-        theme: 'vs-dark',
-        automaticLayout: true
+        theme: 'vs-dark'
     }
 };
 
@@ -61,7 +60,7 @@ try {
         swapEditors(userConfig, code, codeOriginal);
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
-        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getEditorConfig().codeUri === codeUri) {
             updateModel({
                 code: codeOriginal,
                 uri: codeOriginalUri,
@@ -76,7 +75,7 @@ try {
         }
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getEditorConfig().codeUri === codeUri) {
             code = await disposeEditor(userConfig);
         } else {
             codeOriginal = await disposeEditor(userConfig);

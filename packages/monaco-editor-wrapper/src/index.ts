@@ -5,7 +5,7 @@ import type {
 } from './editorClassic.js';
 
 import {
-    EditorClassic,
+    EditorAppClassic,
 } from './editorClassic.js';
 
 import type {
@@ -14,11 +14,11 @@ import type {
 } from './editorVscodeApi.js';
 
 import {
-    EditorVscodeApi
+    EditorAppVscodeApi
 } from './editorVscodeApi.js';
 
 import type {
-    EditorConfig,
+    EditorContentConfig,
     WebSocketConfigOptions,
     WorkerConfigOptions,
     LanguageClientConfig,
@@ -33,7 +33,7 @@ import {
 } from './wrapper.js';
 
 export type {
-    EditorConfig,
+    EditorContentConfig,
     MonacoEditorWrapper,
     WrapperConfig,
     EditorAppConfigClassic,
@@ -48,8 +48,9 @@ export type {
 
 export {
     MonacoEditorLanguageClientWrapper,
-    EditorClassic,
-    EditorVscodeApi
+    EditorAppClassic,
+    EditorAppVscodeApi
 };
 
 export * from './helpers/css.js';
+export * from './utils.js';

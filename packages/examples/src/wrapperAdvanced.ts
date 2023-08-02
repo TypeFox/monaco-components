@@ -30,11 +30,9 @@ const wrapper42Config: UserConfig = {
             secured: false
         }
     },
-    editorConfig: {
+    editorContentConfig: {
         languageId: 'text/plain',
         useDiffEditor: true,
-        theme: 'vs-light',
-        automaticLayout: true,
         codeOriginal: `This line is equal.
 This number is different 2002
 Misspeelled!
@@ -60,11 +58,9 @@ const wrapper43Config: UserConfig = {
     languageClientConfig: {
         enabled: false,
     },
-    editorConfig: {
+    editorContentConfig: {
         languageId: 'text/plain',
         useDiffEditor: true,
-        theme: 'vs-light',
-        automaticLayout: true,
         codeOriginal: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
         code: 'This line is equal.\nThis number is different 3002.\nMisspelled!Same again.',
         editorOptions: {
@@ -90,11 +86,10 @@ const wrapper44Config: UserConfig = {
     languageClientConfig: {
         enabled: false,
     },
-    editorConfig: {
+    editorContentConfig: {
         languageId: 'javascript',
         useDiffEditor: false,
         theme: 'vs-dark',
-        automaticLayout: true,
         code: `function logMe() {
     console.log('Hello monaco-editor-wrapper!');
 };`,
@@ -126,9 +121,9 @@ const sleepOne = (milliseconds: number) => {
         alert(`Updating editors after ${milliseconds}ms`);
 
         // TODO: Update model can only work on same editor
-        wrapper42Config.editorConfig.languageId = 'javascript';
-        wrapper42Config.editorConfig.useDiffEditor = false;
-        wrapper42Config.editorConfig.code = `function logMe() {
+        wrapper42Config.editorContentConfig.languageId = 'javascript';
+        wrapper42Config.editorContentConfig.useDiffEditor = false;
+        wrapper42Config.editorContentConfig.code = `function logMe() {
     console.log('Hello swap editors!');
 };`;
         const w42Start = wrapper42.start(wrapper42Config);
@@ -139,13 +134,13 @@ const sleepOne = (milliseconds: number) => {
             codeOriginal: 'text 1234'
         });
 
-        wrapper44Config.editorConfig.languageId = 'text/plain';
-        wrapper44Config.editorConfig.useDiffEditor = true;
-        wrapper44Config.editorConfig.codeOriginal = 'oh la la la!';
-        wrapper44Config.editorConfig.code = 'oh lo lo lo!';
+        wrapper44Config.editorContentConfig.languageId = 'text/plain';
+        wrapper44Config.editorContentConfig.useDiffEditor = true;
+        wrapper44Config.editorContentConfig.codeOriginal = 'oh la la la!';
+        wrapper44Config.editorContentConfig.code = 'oh lo lo lo!';
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
-        wrapper44Config.editorConfig.theme = 'vs-light';
+        wrapper44Config.editorContentConfig.theme = 'vs-light';
         const w44Start = wrapper44.start(wrapper44Config);
 
         await w42Start;
@@ -161,8 +156,8 @@ const sleepTwo = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
-        wrapper44Config.editorConfig.useDiffEditor = false;
-        wrapper44Config.editorConfig.theme = 'vs-dark';
+        wrapper44Config.editorContentConfig.useDiffEditor = false;
+        wrapper44Config.editorContentConfig.theme = 'vs-dark';
 
         await wrapper44.start(wrapper44Config);
         console.log('Restarted wrapper44.');

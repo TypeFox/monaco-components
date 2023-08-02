@@ -1,4 +1,4 @@
-import { MonacoEditorBase } from './editor.js';
+import { EditorAppBase } from './editor.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import 'vscode/default-extensions/theme-defaults';
@@ -15,16 +15,22 @@ export type EditorAppConfigVscodeApi = {
     userConfiguration?: VscodeUserConfiguration;
 }
 
-export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWrapper {
+export class EditorAppVscodeApi extends EditorAppBase implements MonacoEditorWrapper {
+
+    static APP_TYPE = 'vscodeApi';
 
     static createEmptyConfig() {
         return {
-            editorAppType: 'vscodeApi'
+            editorAppType: EditorAppVscodeApi.APP_TYPE
         } as EditorAppConfigVscodeApi;
     }
 
+    getAppType() {
+        return EditorAppVscodeApi.APP_TYPE;
+    }
+
     async init() {
-        const wrapperConfig = this.editorAppConfig === undefined ? EditorVscodeApi.createEmptyConfig() : this.editorAppConfig as EditorAppConfigVscodeApi;
+        const wrapperConfig = this.editorAppConfig === undefined ? EditorAppVscodeApi.createEmptyConfig() : this.editorAppConfig as EditorAppConfigVscodeApi;
 
         if (wrapperConfig.extension) {
             const extension = wrapperConfig.extension as IExtensionManifest;

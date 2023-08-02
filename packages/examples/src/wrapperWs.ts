@@ -50,15 +50,14 @@ const userConfig = {
             }
         }
     } as WrapperConfig,
-    editorConfig: {
+    editorContentConfig: {
         languageId: languageId,
         code: codeMain,
         useDiffEditor: false,
         codeOriginal: codeOrg,
         editorOptions: monacoEditorConfig,
         diffEditorOptions: monacoEditorConfig,
-        theme: 'vs-dark',
-        automaticLayout: true
+        theme: 'vs-dark'
     },
     languageClientConfig: {
         enabled: true,

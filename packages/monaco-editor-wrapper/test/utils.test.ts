@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { createUrl } from '../src/utils.js';
+import { createUrl } from 'monaco-editor-wrapper';
 
 describe('createUrl', () => {
 

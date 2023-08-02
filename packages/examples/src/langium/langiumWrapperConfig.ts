@@ -78,12 +78,10 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 }
             }
         },
-        editorConfig: {
+        editorContentConfig: {
             languageId: 'statemachine',
             code: code,
-            useDiffEditor: false,
-            automaticLayout: true,
-            theme: 'vs-dark',
+            useDiffEditor: false
         },
         languageClientConfig: {
             enabled: true,

@@ -3,14 +3,14 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { EditorConfig, ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
+import { EditorContentConfig, ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
 import { EditorAppConfigVscodeApi } from './editorVscodeApi.js';
 import { EditorAppConfigClassic } from './editorClassic.js';
 
-export class MonacoEditorBase {
+export class EditorAppBase {
 
     private id: string;
-    protected editorConfig: EditorConfig;
+    protected editorContentConfig: EditorContentConfig;
     protected editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic | undefined;
 
     protected editor: editor.IStandaloneCodeEditor | undefined;
@@ -26,23 +26,28 @@ export class MonacoEditorBase {
         this.id = id;
         console.log(`Starting monaco-editor (${this.id})`);
 
-        this.editorConfig = {
-            languageId: userConfig.editorConfig.languageId,
-            code: userConfig.editorConfig.code ?? '',
-            uri: userConfig.editorConfig.uri,
-            codeOriginal: userConfig.editorConfig.codeOriginal ?? '',
-            useDiffEditor: userConfig.editorConfig.useDiffEditor === true,
-            theme: userConfig.editorConfig.theme ?? 'vs-light',
-            automaticLayout: userConfig.editorConfig.automaticLayout ?? true,
+        this.editorContentConfig = {
+            languageId: userConfig.editorContentConfig.languageId,
+            code: userConfig.editorContentConfig.code ?? '',
+            codeOriginal: userConfig.editorContentConfig.codeOriginal ?? '',
+            useDiffEditor: userConfig.editorContentConfig.useDiffEditor === true,
+            theme: userConfig.editorContentConfig.theme ?? 'vs-light',
+            automaticLayout: userConfig.editorContentConfig.automaticLayout ?? true,
         };
+        if (userConfig.editorContentConfig.codeUri) {
+            this.editorContentConfig.codeUri = userConfig.editorContentConfig.codeUri;
+        }
+        if (userConfig.editorContentConfig.codeOriginalUri) {
+            this.editorContentConfig.codeOriginalUri = userConfig.editorContentConfig.codeOriginalUri;
+        }
 
         this.editorAppConfig = userConfig.wrapperConfig.editorAppConfig;
 
-        this.editorOptions = this.editorConfig.editorOptions ?? {};
-        this.editorOptions.automaticLayout = this.editorConfig.automaticLayout;
+        this.editorOptions = this.editorContentConfig.editorOptions ?? {};
+        this.editorOptions.automaticLayout = this.editorContentConfig.automaticLayout;
 
-        this.diffEditorOptions = this.editorConfig.diffEditorOptions ?? {};
-        this.diffEditorOptions.automaticLayout = this.editorConfig.automaticLayout;
+        this.diffEditorOptions = this.editorContentConfig.diffEditorOptions ?? {};
+        this.diffEditorOptions.automaticLayout = this.editorContentConfig.automaticLayout;
     }
 
     haveEditor() {
@@ -58,12 +63,12 @@ export class MonacoEditorBase {
     }
 
     getEditorConfig() {
-        return this.editorConfig;
+        return this.editorContentConfig;
     }
 
     async createEditors(container: HTMLElement): Promise<void> {
-        if (this.editorConfig.useDiffEditor) {
-            this.diffEditor = createConfiguredDiffEditor(container!, this.editorConfig.diffEditorOptions);
+        if (this.editorContentConfig.useDiffEditor) {
+            this.diffEditor = createConfiguredDiffEditor(container!, this.editorContentConfig.diffEditorOptions);
             await this.updateDiffEditorModel();
         } else {
             await this.updateEditorModel(false);
@@ -89,7 +94,7 @@ export class MonacoEditorBase {
     }
 
     getModel(original?: boolean): editor.ITextModel | undefined {
-        if (this.editorConfig.useDiffEditor) {
+        if (this.editorContentConfig.useDiffEditor) {
             return ((original === true) ? this.modelOriginalRef?.object.textEditorModel : this.modelRef?.object.textEditorModel) ?? undefined;
         } else {
             return this.modelRef?.object.textEditorModel ?? undefined;
@@ -109,8 +114,8 @@ export class MonacoEditorBase {
         this.modelRef?.dispose();
 
         const uri: Uri = this.getEditorUri('code');
-        this.modelRef = await createModelReference(uri, this.editorConfig.code) as unknown as IReference<ITextFileEditorModel>;
-        this.modelRef.object.setLanguageId(this.editorConfig.languageId);
+        this.modelRef = await createModelReference(uri, this.editorContentConfig.code) as unknown as IReference<ITextFileEditorModel>;
+        this.modelRef.object.setLanguageId(this.editorContentConfig.languageId);
         this.editorOptions!.model = this.modelRef.object.textEditorModel;
         if (updateEditor && this.editor) {
             this.editor.setModel(this.editorOptions!.model);
@@ -134,14 +139,14 @@ export class MonacoEditorBase {
         const uriOriginal: Uri = this.getEditorUri('codeOriginal');
 
         const promises = [];
-        promises.push(createModelReference(uri, this.editorConfig.code));
-        promises.push(createModelReference(uriOriginal, this.editorConfig.codeOriginal));
+        promises.push(createModelReference(uri, this.editorContentConfig.code));
+        promises.push(createModelReference(uriOriginal, this.editorContentConfig.codeOriginal));
 
         const refs = await Promise.all(promises);
         this.modelRef = refs[0] as unknown as IReference<ITextFileEditorModel>;
-        this.modelRef.object.setLanguageId(this.editorConfig.languageId);
+        this.modelRef.object.setLanguageId(this.editorContentConfig.languageId);
         this.modelOriginalRef = refs[1] as unknown as IReference<ITextFileEditorModel>;
-        this.modelOriginalRef.object.setLanguageId(this.editorConfig.languageId);
+        this.modelOriginalRef.object.setLanguageId(this.editorContentConfig.languageId);
 
         if (this.diffEditor && this.modelRef.object.textEditorModel !== null && this.modelOriginalRef.object.textEditorModel !== null) {
             this.diffEditor?.setModel({
@@ -153,37 +158,37 @@ export class MonacoEditorBase {
 
     private updateEditorConfig(modelUpdate: ModelUpdate) {
         if (modelUpdate.code !== undefined) {
-            this.editorConfig.code = modelUpdate.code;
+            this.editorContentConfig.code = modelUpdate.code;
         }
 
         if (modelUpdate.languageId !== undefined) {
-            this.editorConfig.languageId = modelUpdate.languageId;
+            this.editorContentConfig.languageId = modelUpdate.languageId;
         }
 
         if (modelUpdate.uri !== undefined) {
-            this.editorConfig.uri = modelUpdate.uri;
+            this.editorContentConfig.codeUri = modelUpdate.uri;
         }
 
         if (modelUpdate.codeOriginal !== undefined) {
-            this.editorConfig.codeOriginal = modelUpdate.codeOriginal;
+            this.editorContentConfig.codeOriginal = modelUpdate.codeOriginal;
         }
 
         if (modelUpdate.codeOriginalUri !== undefined) {
-            this.editorConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
+            this.editorContentConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
         }
     }
 
     getEditorUri(uriType: 'code' | 'codeOriginal') {
-        const uri = uriType === 'code' ? this.editorConfig.uri : this.editorConfig.codeOriginalUri;
+        const uri = uriType === 'code' ? this.editorContentConfig.codeUri : this.editorContentConfig.codeOriginalUri;
         if (uri) {
             return Uri.parse(uri);
         } else {
-            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${this.editorConfig.languageId}`);
+            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${this.editorContentConfig.languageId}`);
         }
     }
 
     updateLayout() {
-        if (this.editorConfig.useDiffEditor) {
+        if (this.editorContentConfig.useDiffEditor) {
             this.diffEditor?.layout();
         } else {
             this.editor?.layout();
@@ -192,6 +197,6 @@ export class MonacoEditorBase {
 
 }
 
-export const isVscodeApi = (wrapperConfig: WrapperConfig) => {
+export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {
     return wrapperConfig.editorAppConfig?.editorAppType === 'vscodeApi';
 };
