@@ -30,6 +30,12 @@ export type WebSocketConfigOptions = {
     stopOptions?: WebSocketCallOptions;
 }
 
+export type WebSocketConfigOptionsUrl = {
+    url: string;
+    startOptions?: WebSocketCallOptions;
+    stopOptions?: WebSocketCallOptions;
+}
+
 export type WorkerConfigOptions = {
     url: URL;
     type: 'classic' | 'module';
@@ -52,7 +58,7 @@ export type EditorConfig = {
 export type LanguageClientConfig = {
     enabled: boolean;
     useWebSocket?: boolean;
-    webSocketConfigOptions?: WebSocketConfigOptions;
+    webSocketConfigOptions?: WebSocketConfigOptions | WebSocketConfigOptionsUrl;
     workerConfigOptions?: WorkerConfigOptions | Worker;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
