@@ -63,10 +63,7 @@ const userConfig = {
         enabled: true,
         useWebSocket: true,
         webSocketConfigOptions: {
-            host: 'localhost',
-            port: 3000,
-            path: 'sampleServer',
-            secured: false,
+            url: 'ws://localhost:3000/sampleServer',
             startOptions: {
                 onCall: () => {
                     console.log('Connected to socket.');

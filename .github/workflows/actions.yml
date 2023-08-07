@@ -22,9 +22,26 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18'
-    - name: Build
+    - name: Use Chrome
+      uses: nanasess/setup-chromedriver@v2
+      with:
+        chromedriver-version: '115.0.5790.170'
+    - name: Install
       shell: bash
       run: |
         npm ci
-        npm run build
+    - name: Lint
+      shell: bash
+      run: |
         npm run lint
+    - name: Build
+      shell: bash
+      run: |
+        npm run build
+    - name: Test
+      shell: bash
+      run: |
+        export DISPLAY=:99
+        chromedriver --url-base=/wd/hub &
+        sudo Xvfb -ac :99 -screen 0 1600x1200x24 > /dev/null 2>&1 &
+        npm run test
