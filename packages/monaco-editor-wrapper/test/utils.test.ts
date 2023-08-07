@@ -115,25 +115,10 @@ describe('createUrl', () => {
         expect(url).toBe('wss://www.testme.com');
     });
 
-    test('test createUrl: ws, normalize port 80', () => {
-        const url = createUrl({
-            url: 'ws://www.testme.com:80'
-        });
-
-        expect(url).toBe('ws://www.testme.com');
-    });
-
-    test('test createUrl: ws, normalize port 80, with path', () => {
-        const url = createUrl({
-            url: 'ws://www.testme.com:80/sampleServer'
-        });
-
-        expect(url).toBe('ws://www.testme.com/sampleServer');
-    });
-
     test('test createUrl: ws, not proper url', () => {
         expect(() => createUrl({
-            url: 'http://www.testme.com:80/sampleServer'
-        })).toThrowError('This is not a proper websocket url: http://www.testme.com:80/sampleServer');
+            url: 'http://www.testme.com:3000/sampleServer'
+        })).toThrowError('This is not a proper websocket url: http://www.testme.com:3000/sampleServer');
     });
+
 });

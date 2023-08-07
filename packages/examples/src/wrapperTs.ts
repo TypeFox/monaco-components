@@ -36,9 +36,6 @@ const userConfig: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
-        },
-        monacoEditorConfig: {
-
         }
     },
     languageClientConfig: {

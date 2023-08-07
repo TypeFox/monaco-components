@@ -7,7 +7,6 @@ export const createUrl = (config: WebSocketConfigOptions | WebSocketConfigOption
         if (!options.url.startsWith('ws://') && !options.url.startsWith('wss://')) {
             throw new Error(`This is not a proper websocket url: ${options.url}`);
         }
-        options.url = options.url.replace(':80', '');
         buildUrl = options.url;
     } else {
         const options = config as WebSocketConfigOptions;
