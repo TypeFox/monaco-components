@@ -1,6 +1,6 @@
 import { MonacoEditorBase } from './editor.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
-import { registerExtension, IExtensionManifest } from 'vscode/extensions';
+import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import 'vscode/default-extensions/theme-defaults';
 import { MonacoEditorWrapper } from './wrapper.js';
 
@@ -20,24 +20,20 @@ export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWra
         const wrapperConfig = this.monacoConfig as EditorVscodeApiConfig;
         if (wrapperConfig.extension) {
             const extension = wrapperConfig.extension as IExtensionManifest;
-            const { registerFile: registerExtensionFile } = registerExtension(extension);
+            const { registerFileUrl } = registerExtension(extension, ExtensionHostKind.LocalProcess);
             if (wrapperConfig.extensionFilesOrContents) {
                 for (const entry of wrapperConfig.extensionFilesOrContents) {
-                    registerExtensionFile(entry[0], async () => {
-                        const data = entry[1];
-                        if (data instanceof URL) {
-                            const json = data.href;
-                            return (await fetch(json)).text();
-                        } else {
-                            return data;
-                        }
-                    });
+                    registerFileUrl(entry[0], EditorAppVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }
 
         await this.updateConfig(wrapperConfig.userConfiguration ?? {});
         console.log('Init of VscodeApiConfig was completed.');
+    }
+
+    static verifyUrlorCreateDataUrl(input: string | URL) {
+        return (input instanceof URL) ? input.href : new URL(`data:text/plain;base64,${btoa(input)}`).href;
     }
 
     async updateConfig(config: VscodeUserConfiguration) {

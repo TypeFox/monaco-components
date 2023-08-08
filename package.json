@@ -15,23 +15,23 @@
     "reset:repo": "git clean -f -X -d"
   },
   "devDependencies": {
-    "@types/node": "~18.17.1",
+    "@types/node": "~18.17.3",
     "@types/shelljs": "~0.8.12",
-    "@types/vscode": "~1.79.1",
-    "@typescript-eslint/eslint-plugin": "~6.2.0",
-    "@typescript-eslint/parser": "~6.2.0",
+    "@types/vscode": "~1.80.0",
+    "@typescript-eslint/eslint-plugin": "~6.3.0",
+    "@typescript-eslint/parser": "~6.3.0",
     "@vitest/browser": "~0.34.1",
-    "eslint": "~8.45.0",
+    "eslint": "~8.46.0",
     "editorconfig": "~2.0.0",
     "path-browserify": "~1.0.1",
     "shx": "~0.3.4",
     "shelljs": "~0.8.5",
     "tslib": "~2.6.1",
     "typescript": "~5.1.6",
-    "vite": "~4.4.8",
+    "vite": "~4.4.9",
     "vite-node": "~0.34.1",
     "vitest": "~0.34.1",
-    "webdriverio": "~8.14.2"
+    "webdriverio": "~8.14.3"
   },
   "volta": {
     "node": "18.17.0",
