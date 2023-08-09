@@ -23,7 +23,7 @@ export class EditorVscodeApi extends MonacoEditorBase implements MonacoEditorWra
             const { registerFileUrl } = registerExtension(extension, ExtensionHostKind.LocalProcess);
             if (wrapperConfig.extensionFilesOrContents) {
                 for (const entry of wrapperConfig.extensionFilesOrContents) {
-                    registerFileUrl(entry[0], EditorAppVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
+                    registerFileUrl(entry[0], EditorVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }

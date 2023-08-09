@@ -8,7 +8,7 @@
     "langium": "~1.2.1",
     "langium-statemachine-dsl": "~1.2.0",
     "monaco-editor-wrapper": "2.2.0-next.1",
-    "monaco-editor-workers": "~0.40.0",
+    "monaco-editor-workers": "~0.41.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "request-light": "~0.7.0",
@@ -31,7 +31,7 @@
     "copy:prepare": "shx mkdir -p ./libs",
     "copy:workers": "shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy:all": "npm run copy:prepare && npm run copy:workers",
-    "build:worker": "vite-node ./build/buildWorker.mts -- --script iife ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./packages/examples/dist/worker/statemachineServerWorker.js",
+    "build:worker": "vite-node ./build/buildWorker.mts -- --script iife ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./dist/worker/statemachineServerWorker.js",
     "build:bundle:wrapper": "vite --config  vite.bundle-mew.ts build",
     "build": "npm run clean && npm run compile && npm run build:worker && npm run build:bundle:wrapper && npm run copy:all",
     "start": "http-server --port 20002 ./"

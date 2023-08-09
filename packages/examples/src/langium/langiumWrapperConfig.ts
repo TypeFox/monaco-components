@@ -63,15 +63,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                             language: 'statemachine',
                             scopeName: 'source.statemachine',
                             path: './statemachine-grammar.json'
-                        }],
-                        keybindings: [{
-                            key: 'ctrl+p',
-                            command: 'editor.action.quickCommand',
-                            when: 'editorTextFocus'
-                        }, {
-                            key: 'ctrl+shift+c',
-                            command: 'editor.action.commentLine',
-                            when: 'editorTextFocus'
                         }]
                     }
                 },
@@ -81,7 +72,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     "workbench.colorTheme": "Default Dark Modern",
     "editor.fontSize": 14,
     "editor.lightbulb.enabled": true,
-    "editor.lineHeight": 20,
     "editor.guides.bracketPairsHorizontal": "active",
     "editor.lightbulb.enabled": true
 }`
