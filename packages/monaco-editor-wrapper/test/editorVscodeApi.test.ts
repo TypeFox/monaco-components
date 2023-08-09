@@ -8,4 +8,10 @@ describe('Test EditorAppVscodeApi', () => {
         expect(EditorAppVscodeApi.verifyUrlorCreateDataUrl(url)).toBe(url.href);
     });
 
+    test('verifyUrlorCreateDataUrl: url', async () => {
+        const url = new URL('../../../node_modules/langium-statemachine-dsl/syntaxes/statemachine.tmLanguage.json', window.location.href);
+        const text = await (await fetch(url)).text();
+        expect(EditorAppVscodeApi.verifyUrlorCreateDataUrl(text)).toBe(`data:text/plain;base64,${btoa(text)}`);
+    });
+
 });

@@ -4,13 +4,14 @@ This repository started as a Lit component for Monaco Editor, but it has transfo
 
 ## Packages
 
-There are three npm packages generated from this repository:
+There are two npm packages generated from this repository:
 
 - [Monaco Editor Wrapper](./packages/monaco-editor-wrapper/) + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers locally running (web worker) or remotely running (web socket).
 - [Monaco Editor React Component](./packages/monaco-editor-react/): Monaco Editor React Component enclosing the **Monaco Editor Wrapper**
-- [Monaco Editor Workers](./packages/monaco-editor-workers/): Bundles the editor and language workers of monaco as module and classic worker. It supplies a function that eases loading them in an application context.
 
 Additionally you can find a private [examples packages](./packages/examples/) containing all examples that are served by Vite (see next chapter).
+
+Monaco Editor Workers has been moved to its own [repo](https://github.com/TypeFox/monaco-editor-workers).
 
 ## Getting Started
 

@@ -29,9 +29,9 @@
     "clean": "shx rm -rf ./dist ./libs *.tsbuildinfo",
     "compile": "tsc --build tsconfig.src.json",
     "copy:prepare": "shx mkdir -p ./libs",
-    "copy:workers": "shx cp -fr ../../packages/monaco-editor-workers/dist ./libs/monaco-editor-workers",
+    "copy:workers": "shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy:all": "npm run copy:prepare && npm run copy:workers",
-    "build:worker": "vite-node ../../build/buildWorker.mts -- --script iife ./node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./packages/examples/dist/worker/statemachineServerWorker.js",
+    "build:worker": "vite-node ./build/buildWorker.mts -- --script iife ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./packages/examples/dist/worker/statemachineServerWorker.js",
     "build:bundle:wrapper": "vite --config  vite.bundle-mew.ts build",
     "build": "npm run clean && npm run compile && npm run build:worker && npm run build:bundle:wrapper && npm run copy:all",
     "start": "http-server --port 20002 ./"

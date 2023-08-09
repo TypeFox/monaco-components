@@ -8,7 +8,6 @@
     "dev:debug": "vite --debug --force",
     "watch": "tsc --build tsconfig.build.json --watch --verbose",
     "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
-    "build:workers": "npm run build --workspace packages/monaco-editor-workers",
     "build": "npm run build --workspaces",
     "test": "vitest -c vitest.config.ts",
     "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
@@ -21,11 +20,11 @@
     "@typescript-eslint/eslint-plugin": "~6.3.0",
     "@typescript-eslint/parser": "~6.3.0",
     "@vitest/browser": "~0.34.1",
-    "eslint": "~8.46.0",
     "editorconfig": "~2.0.0",
+    "eslint": "~8.46.0",
     "path-browserify": "~1.0.1",
-    "shx": "~0.3.4",
     "shelljs": "~0.8.5",
+    "shx": "~0.3.4",
     "tslib": "~2.6.1",
     "typescript": "~5.1.6",
     "vite": "~4.4.9",
@@ -40,7 +39,6 @@
   "workspaces": [
     "packages/monaco-editor-wrapper",
     "packages/monaco-editor-react",
-    "packages/monaco-editor-workers",
     "packages/examples"
   ]
 }

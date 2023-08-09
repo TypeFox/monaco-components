@@ -7,7 +7,3 @@ All notable changes for **monaco-editor-wrapper** are found here:
 All notable changes for **@typefox/monaco-editor-react** are found here:
 
 [monaco-editor-react CHANGELOG](./packages/monaco-editor-react/CHANGELOG.md)
-
-All notable changes for **monaco-editor-workers** are found here:
-
-[monaco-editor-workers CHANGELOG](./packages/monaco-editor-workers/CHANGELOG.md)
