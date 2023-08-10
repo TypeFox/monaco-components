@@ -7,7 +7,11 @@ import { EditorContentConfig, ModelUpdate, UserConfig, WrapperConfig } from './w
 import { EditorAppConfigVscodeApi } from './editorVscodeApi.js';
 import { EditorAppConfigClassic } from './editorClassic.js';
 
-export class EditorAppBase {
+export type VscodeUserConfiguration = {
+    json?: string;
+}
+
+export abstract class EditorAppBase {
 
     private id: string;
     protected editorContentConfig: EditorContentConfig;
@@ -33,21 +37,16 @@ export class EditorAppBase {
             useDiffEditor: userConfig.editorContentConfig.useDiffEditor === true,
             theme: userConfig.editorContentConfig.theme ?? 'vs-light',
             automaticLayout: userConfig.editorContentConfig.automaticLayout ?? true,
+            codeUri: userConfig.editorContentConfig.codeUri ?? undefined,
+            codeOriginalUri: userConfig.editorContentConfig.codeOriginalUri ?? undefined
         };
-        if (userConfig.editorContentConfig.codeUri) {
-            this.editorContentConfig.codeUri = userConfig.editorContentConfig.codeUri;
-        }
-        if (userConfig.editorContentConfig.codeOriginalUri) {
-            this.editorContentConfig.codeOriginalUri = userConfig.editorContentConfig.codeOriginalUri;
-        }
-
         this.editorAppConfig = userConfig.wrapperConfig.editorAppConfig;
 
-        this.editorOptions = this.editorContentConfig.editorOptions ?? {};
-        this.editorOptions.automaticLayout = this.editorContentConfig.automaticLayout;
+        this.editorOptions = userConfig.editorContentConfig.editorOptions ?? {};
+        this.editorOptions.automaticLayout = userConfig.editorContentConfig.automaticLayout;
 
-        this.diffEditorOptions = this.editorContentConfig.diffEditorOptions ?? {};
-        this.diffEditorOptions.automaticLayout = this.editorContentConfig.automaticLayout;
+        this.diffEditorOptions = userConfig.editorContentConfig.diffEditorOptions ?? {};
+        this.diffEditorOptions.automaticLayout = userConfig.editorContentConfig.automaticLayout;
     }
 
     haveEditor() {
@@ -116,9 +115,9 @@ export class EditorAppBase {
         const uri: Uri = this.getEditorUri('code');
         this.modelRef = await createModelReference(uri, this.editorContentConfig.code) as unknown as IReference<ITextFileEditorModel>;
         this.modelRef.object.setLanguageId(this.editorContentConfig.languageId);
-        this.editorOptions!.model = this.modelRef.object.textEditorModel;
+        this.editorOptions.model = this.modelRef.object.textEditorModel;
         if (updateEditor && this.editor) {
-            this.editor.setModel(this.editorOptions!.model);
+            this.editor.setModel(this.editorOptions.model);
         }
     }
 
@@ -195,6 +194,9 @@ export class EditorAppBase {
         }
     }
 
+    abstract getAppType(): string;
+    abstract init(): Promise<void>;
+    abstract updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
 }
 
 export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {

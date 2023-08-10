@@ -1,12 +1,7 @@
-import { EditorAppBase } from './editor.js';
+import { EditorAppBase, VscodeUserConfiguration } from './editor.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import 'vscode/default-extensions/theme-defaults';
-import { MonacoEditorWrapper } from './wrapper.js';
-
-export type VscodeUserConfiguration = {
-    json?: string;
-}
 
 export type EditorAppConfigVscodeApi = {
     editorAppType: 'vscodeApi';
@@ -15,7 +10,7 @@ export type EditorAppConfigVscodeApi = {
     userConfiguration?: VscodeUserConfiguration;
 }
 
-export class EditorAppVscodeApi extends EditorAppBase implements MonacoEditorWrapper {
+export class EditorAppVscodeApi extends EditorAppBase {
 
     static APP_TYPE = 'vscodeApi';
 

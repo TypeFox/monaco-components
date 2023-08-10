@@ -1,6 +1,5 @@
 import { EditorAppBase } from './editor.js';
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import { MonacoEditorWrapper } from './wrapper.js';
 /**
  * This is derived from:
  * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
@@ -22,7 +21,7 @@ export type EditorAppConfigClassic = {
     themeData?: editor.IStandaloneThemeData;
 }
 
-export class EditorAppClassic extends EditorAppBase implements MonacoEditorWrapper {
+export class EditorAppClassic extends EditorAppBase {
 
     static APP_TYPE = 'classic';
 

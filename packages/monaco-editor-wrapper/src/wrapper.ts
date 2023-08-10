@@ -1,4 +1,4 @@
-import { EditorAppVscodeApi, EditorAppConfigVscodeApi, VscodeUserConfiguration } from './editorVscodeApi.js';
+import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorClassic.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
@@ -6,7 +6,7 @@ import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
 import { createUrl } from './utils.js';
-import { isVscodeApiEditorApp } from './editor.js';
+import { VscodeUserConfiguration, isVscodeApiEditorApp } from './editor.js';
 
 export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
@@ -86,12 +86,6 @@ export type ModelUpdate = {
     codeOriginalUri?: string;
 }
 
-export interface MonacoEditorWrapper {
-    getAppType(): string;
-    init(): Promise<void>;
-    updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
-}
-
 export class MonacoEditorLanguageClientWrapper {
 
     private languageClient: MonacoLanguageClient | undefined;
@@ -105,10 +99,8 @@ export class MonacoEditorLanguageClientWrapper {
     private languageClientConfig: LanguageClientConfig;
 
     private init(userConfig: UserConfig) {
-        if (userConfig.editorContentConfig.useDiffEditor) {
-            if (!userConfig.editorContentConfig.codeOriginal) {
-                throw new Error('Use diff editor was used without a valid config.');
-            }
+        if (userConfig.editorContentConfig.useDiffEditor && !userConfig.editorContentConfig.codeOriginal) {
+            throw new Error('Use diff editor was used without a valid config.');
         }
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
