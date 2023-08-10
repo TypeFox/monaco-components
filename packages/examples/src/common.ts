@@ -14,7 +14,7 @@ export const startEditor = async (userConfig: UserConfig, code: string, codeOrig
 };
 
 export const updateModel = async (modelUpdate: ModelUpdate) => {
-    if (wrapper.getMonacoEditorApp()?.getEditorConfig().useDiffEditor) {
+    if (wrapper.getMonacoEditorApp()?.getAppConfig().useDiffEditor) {
         await wrapper?.updateDiffModel(modelUpdate);
     } else {
         await wrapper?.updateModel(modelUpdate);
@@ -22,8 +22,8 @@ export const updateModel = async (modelUpdate: ModelUpdate) => {
 };
 
 export const swapEditors = async (userConfig: UserConfig, code: string, codeOriginal?: string) => {
-    userConfig.editorContentConfig.useDiffEditor = !userConfig.editorContentConfig.useDiffEditor;
-    saveMainCode(!userConfig.editorContentConfig.useDiffEditor);
+    userConfig.wrapperConfig.editorAppConfig.useDiffEditor = !userConfig.wrapperConfig.editorAppConfig.useDiffEditor;
+    saveMainCode(!userConfig.wrapperConfig.editorAppConfig.useDiffEditor);
     configureCodeEditors(userConfig, code, codeOriginal);
     await restartEditor(userConfig);
 };
@@ -31,7 +31,7 @@ export const swapEditors = async (userConfig: UserConfig, code: string, codeOrig
 export const disposeEditor = async (userConfig: UserConfig) => {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = userConfig.editorContentConfig.useDiffEditor;
+    const useDiffEditor = userConfig.wrapperConfig.editorAppConfig.useDiffEditor;
     const codeMain = saveMainCode(useDiffEditor);
 
     await wrapper.dispose();
@@ -44,11 +44,11 @@ const restartEditor = async (userConfig: UserConfig) => {
 };
 
 const configureCodeEditors = (userConfig: UserConfig, code: string, codeOriginal?: string) => {
-    if (userConfig.editorContentConfig.useDiffEditor) {
-        userConfig.editorContentConfig.code = code;
-        userConfig.editorContentConfig.codeOriginal = codeOriginal;
+    if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor) {
+        userConfig.wrapperConfig.editorAppConfig.code = code;
+        userConfig.wrapperConfig.editorAppConfig.codeOriginal = codeOriginal;
     } else {
-        userConfig.editorContentConfig.code = code;
+        userConfig.wrapperConfig.editorAppConfig.code = code;
     }
 };
 
@@ -70,7 +70,7 @@ const toggleSwapDiffButton = (enabled: boolean) => {
 const logEditorInfo = (userConfig: UserConfig) => {
     console.log(`# of configured languages: ${languages.getLanguages().length}`);
     console.log(`Main code: ${wrapper.getModel(true)!.getValue()}`);
-    if (userConfig.editorContentConfig.useDiffEditor) {
+    if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor) {
         console.log(`Modified code: ${wrapper.getModel()!.getValue()}`);
     }
 };

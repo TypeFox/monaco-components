@@ -26,21 +26,19 @@
                         enableQuickaccessService: true,
                         enableKeybindingsService: true,
                         debugLogging: true
-                    }
-                },
-                languageClientConfig: {
-                    enabled: false
-                },
-                editorContentConfig: {
-                    languageId: 'javascript',
-                    useDiffEditor: true,
-                    theme: 'vs-dark',
-                    codeOriginal: `function logOriginal() {
+                    },
+                    editorAppConfig: {
+                        editorAppType: 'classic',
+                        languageId: 'javascript',
+                        useDiffEditor: true,
+                        theme: 'vs-dark',
+                        codeOriginal: `function logOriginal() {
     console.log('Hello original editor!');
 };`,
-                    code: `function logModified() {
+                        code: `function logModified() {
     console.log('Hello modified editor!');
 };`
+                    }
                 }
             };
             await wrapper.start(wrapperConfig);

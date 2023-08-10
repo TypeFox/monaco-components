@@ -15,6 +15,8 @@ export type WebSocketCallOptions = {
     reportStatus?: boolean;
 }
 
+export type LanguageClientConfigType = 'WebSocket' | 'WebSocketUrl' | 'WorkerConfig' | 'Worker';
+
 export type WebSocketUrl = {
     secured: boolean;
     host: string;
@@ -23,6 +25,7 @@ export type WebSocketUrl = {
 }
 
 export type WebSocketConfigOptions = {
+    configType: 'WebSocket'
     secured: boolean;
     host: string;
     port?: number;
@@ -32,50 +35,40 @@ export type WebSocketConfigOptions = {
 }
 
 export type WebSocketConfigOptionsUrl = {
+    configType: 'WebSocketUrl'
     url: string;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
 
 export type WorkerConfigOptions = {
+    configType: 'WorkerConfig'
     url: URL;
     type: 'classic' | 'module';
     name?: string;
 };
 
-export type EditorContentConfig = {
-    languageId: string;
-    code: string;
-    codeUri?: string;
-    useDiffEditor: boolean;
-    theme?: string;
-    automaticLayout?: boolean;
-    codeOriginal?: string;
-    codeOriginalUri?: string;
-    editorOptions?: editor.IStandaloneEditorConstructionOptions;
-    diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
-}
+export type WorkerConfigDirect = {
+    configType: 'WorkerDirect';
+    worker: Worker;
+};
 
 export type LanguageClientConfig = {
-    enabled: boolean;
-    useWebSocket?: boolean;
-    webSocketConfigOptions?: WebSocketConfigOptions | WebSocketConfigOptionsUrl;
-    workerConfigOptions?: WorkerConfigOptions | Worker;
+    options: WebSocketConfigOptions | WebSocketConfigOptionsUrl | WorkerConfigOptions | WorkerConfigDirect;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
 }
 
 export type WrapperConfig = {
     serviceConfig?: InitializeServiceConfig;
-    editorAppConfig?: EditorAppConfigVscodeApi | EditorAppConfigClassic;
+    editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic;
 };
 
 export type UserConfig = {
     id?: string;
     htmlElement: HTMLElement;
     wrapperConfig: WrapperConfig;
-    editorContentConfig: EditorContentConfig;
-    languageClientConfig: LanguageClientConfig;
+    languageClientConfig?: LanguageClientConfig;
 }
 
 export type ModelUpdate = {
@@ -96,37 +89,18 @@ export class MonacoEditorLanguageClientWrapper {
     private id: string;
     private htmlElement: HTMLElement;
     private serviceConfig: InitializeServiceConfig;
-    private languageClientConfig: LanguageClientConfig;
+    private languageClientConfig?: LanguageClientConfig;
 
     private init(userConfig: UserConfig) {
-        if (userConfig.editorContentConfig.useDiffEditor && !userConfig.editorContentConfig.codeOriginal) {
+        if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
             throw new Error('Use diff editor was used without a valid config.');
         }
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
 
-        this.languageClientConfig = {
-            enabled: userConfig.languageClientConfig.enabled,
-            useWebSocket: userConfig.languageClientConfig.useWebSocket === true,
-        };
-        if (userConfig.languageClientConfig.enabled) {
-            if (userConfig.languageClientConfig.initializationOptions) {
-                this.languageClientConfig.initializationOptions = userConfig.languageClientConfig.initializationOptions;
-            }
-            if (userConfig.languageClientConfig.useWebSocket) {
-                if (userConfig.languageClientConfig.webSocketConfigOptions) {
-                    this.languageClientConfig.webSocketConfigOptions = userConfig.languageClientConfig.webSocketConfigOptions;
-                } else {
-                    throw new Error('webSocketConfigOptions were not provided. Aborting...');
-                }
-            } else {
-                if (userConfig.languageClientConfig.workerConfigOptions) {
-                    this.languageClientConfig.workerConfigOptions = userConfig.languageClientConfig.workerConfigOptions;
-                } else {
-                    throw new Error('workerConfigOptions were not provided. Aborting...');
-                }
-            }
+        if (userConfig.languageClientConfig) {
+            this.languageClientConfig = userConfig.languageClientConfig;
         }
 
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
@@ -156,10 +130,9 @@ export class MonacoEditorLanguageClientWrapper {
         await this.editorApp?.init();
         await this.editorApp.createEditors(this.htmlElement);
 
-        const lcc = this.languageClientConfig;
-        if (lcc.enabled) {
+        if (this.languageClientConfig) {
             console.log('Starting monaco-languageclient');
-            await this.startLanguageClientConnection(lcc);
+            await this.startLanguageClientConnection();
         } else {
             await Promise.resolve('All fine. monaco-languageclient is not used.');
         }
@@ -171,7 +144,7 @@ export class MonacoEditorLanguageClientWrapper {
             return false;
         }
 
-        if (this.languageClientConfig.enabled) {
+        if (this.languageClientConfig) {
             return this.languageClient !== undefined && this.languageClient.isRunning();
         }
         return true;
@@ -230,7 +203,12 @@ export class MonacoEditorLanguageClientWrapper {
             await this.disposeLanguageClient(keepWorker);
         }
         this.worker = updatedWorker;
-        await this.startLanguageClientConnection(this.languageClientConfig);
+        if (this.languageClientConfig) {
+            console.log('Re-Starting monaco-languageclient');
+            await this.startLanguageClientConnection();
+        } else {
+            await Promise.reject('Unable to restart languageclient. No configuration was provided.');
+        }
     }
 
     public reportStatus() {
@@ -247,7 +225,7 @@ export class MonacoEditorLanguageClientWrapper {
         this.editorApp?.disposeEditor();
         this.editorApp?.disposeDiffEditor();
 
-        if (this.languageClientConfig.enabled) {
+        if (this.languageClientConfig) {
             await this.disposeLanguageClient(false);
             this.editorApp = undefined;
             await Promise.resolve('Monaco editor and languageclient completed disposed.');
@@ -280,14 +258,15 @@ export class MonacoEditorLanguageClientWrapper {
         this.editorApp?.updateLayout();
     }
 
-    private startLanguageClientConnection(languageClientConfig: LanguageClientConfig): Promise<string> {
+    private startLanguageClientConnection(): Promise<string> {
         if (this.languageClient && this.languageClient.isRunning()) {
             return Promise.resolve('monaco-languageclient already running!');
         }
 
         return new Promise((resolve, reject) => {
-            if (languageClientConfig.useWebSocket) {
-                const url = createUrl(languageClientConfig.webSocketConfigOptions!);
+            const lcConfig = this.languageClientConfig?.options;
+            if (lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') {
+                const url = createUrl(lcConfig);
                 const webSocket = new WebSocket(url);
 
                 webSocket.onopen = () => {
@@ -300,15 +279,15 @@ export class MonacoEditorLanguageClientWrapper {
                 };
             } else {
                 if (!this.worker) {
-                    const workerConfigOptions = languageClientConfig.workerConfigOptions!;
-                    if ((workerConfigOptions as WorkerConfigOptions).url) {
-                        const workerConfig = workerConfigOptions as WorkerConfigOptions;
+                    if (lcConfig?.configType === 'WorkerConfig') {
+                        const workerConfig = lcConfig as WorkerConfigOptions;
                         this.worker = new Worker(new URL(workerConfig.url, window.location.href).href, {
                             type: workerConfig.type,
                             name: workerConfig.name
                         });
                     } else {
-                        this.worker = workerConfigOptions as Worker;
+                        const workerDirectConfig = lcConfig as WorkerConfigDirect;
+                        this.worker = workerDirectConfig.worker;
                     }
                 }
                 const messageTransports = {
@@ -325,10 +304,11 @@ export class MonacoEditorLanguageClientWrapper {
         reject: (reason?: unknown) => void) {
 
         this.languageClient = this.createLanguageClient(messageTransports);
+        const lcConfig = this.languageClientConfig?.options;
         messageTransports.reader.onClose(async () => {
             await this.languageClient?.stop();
-            const stopOptions = this.languageClientConfig?.webSocketConfigOptions?.stopOptions;
-            if (stopOptions) {
+            if ((lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') && lcConfig?.stopOptions) {
+                const stopOptions = lcConfig?.stopOptions;
                 stopOptions.onCall();
                 if (stopOptions.reportStatus) {
                     console.log(this.reportStatus().join('\n'));
@@ -338,8 +318,8 @@ export class MonacoEditorLanguageClientWrapper {
 
         try {
             await this.languageClient.start();
-            const startOptions = this.languageClientConfig?.webSocketConfigOptions?.startOptions;
-            if (startOptions) {
+            if ((lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') && lcConfig?.startOptions) {
+                const startOptions = lcConfig?.startOptions;
                 startOptions.onCall();
                 if (startOptions.reportStatus) {
                     console.log(this.reportStatus().join('\n'));
@@ -358,14 +338,14 @@ export class MonacoEditorLanguageClientWrapper {
             name: 'Monaco Wrapper Language Client',
             clientOptions: {
                 // use a language id as a document selector
-                documentSelector: [this.editorApp!.getEditorConfig().languageId],
+                documentSelector: [this.editorApp!.getAppConfig().languageId],
                 // disable the default error handler
                 errorHandler: {
                     error: () => ({ action: ErrorAction.Continue }),
                     closed: () => ({ action: CloseAction.DoNotRestart })
                 },
                 // allow to initialize the language client with user specific options
-                initializationOptions: this.languageClientConfig.initializationOptions
+                initializationOptions: this.languageClientConfig?.initializationOptions
             },
             // create a language client connection from the JSON RPC connection on demand
             connectionProvider: {

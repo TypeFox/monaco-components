@@ -1,43 +1,47 @@
-import { EditorAppBase, VscodeUserConfiguration } from './editor.js';
+import { EditorAppBase, EditorAppConfig, EditorAppType, VscodeUserConfiguration } from './editor.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import 'vscode/default-extensions/theme-defaults';
+import { UserConfig } from './wrapper.js';
 
-export type EditorAppConfigVscodeApi = {
+export type EditorAppConfigVscodeApi = EditorAppConfig & {
     editorAppType: 'vscodeApi';
     extension?: IExtensionManifest | object;
     extensionFilesOrContents?: Map<string, string | URL>;
     userConfiguration?: VscodeUserConfiguration;
-}
+};
 
 export class EditorAppVscodeApi extends EditorAppBase {
 
-    static APP_TYPE = 'vscodeApi';
-
-    static createEmptyConfig() {
-        return {
-            editorAppType: EditorAppVscodeApi.APP_TYPE
-        } as EditorAppConfigVscodeApi;
+    constructor(id: string, userConfig: UserConfig) {
+        super(id, userConfig);
+        const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigVscodeApi;
+        this.getAppConfig().userConfiguration = userInput.userConfiguration ?? undefined;
+        this.getAppConfig().extension = userInput.extension ?? undefined;
+        this.getAppConfig().extensionFilesOrContents = userInput.extensionFilesOrContents ?? undefined;
     }
 
-    getAppType() {
-        return EditorAppVscodeApi.APP_TYPE;
+    getAppType(): EditorAppType {
+        return 'vscodeApi';
+    }
+
+    getAppConfig(): EditorAppConfigVscodeApi {
+        return this.appConfig as EditorAppConfigVscodeApi;
     }
 
     async init() {
-        const wrapperConfig = this.editorAppConfig === undefined ? EditorAppVscodeApi.createEmptyConfig() : this.editorAppConfig as EditorAppConfigVscodeApi;
-
-        if (wrapperConfig.extension) {
-            const extension = wrapperConfig.extension as IExtensionManifest;
+        if (this.getAppConfig().extension) {
+            const extension = this.getAppConfig().extension as IExtensionManifest;
             const { registerFileUrl } = registerExtension(extension, ExtensionHostKind.LocalProcess);
-            if (wrapperConfig.extensionFilesOrContents) {
-                for (const entry of wrapperConfig.extensionFilesOrContents) {
-                    registerFileUrl(entry[0], EditorVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
+            const extensionFilesOrContents = this.getAppConfig().extensionFilesOrContents;
+            if (extensionFilesOrContents) {
+                for (const entry of extensionFilesOrContents) {
+                    registerFileUrl(entry[0], EditorAppVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }
 
-        await this.updateConfig(wrapperConfig.userConfiguration ?? {});
+        await this.updateConfig(this.getAppConfig().userConfiguration ?? {});
         console.log('Init of VscodeApiConfig was completed.');
     }
 

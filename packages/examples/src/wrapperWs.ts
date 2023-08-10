@@ -4,7 +4,7 @@ import 'vscode/default-extensions/theme-defaults';
 import 'vscode/default-extensions/json';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
-import { WrapperConfig } from 'monaco-editor-wrapper';
+import { UserConfig } from 'monaco-editor-wrapper';
 
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
@@ -28,7 +28,7 @@ const monacoEditorConfig = {
     },
 };
 
-const userConfig = {
+const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
@@ -42,6 +42,13 @@ const userConfig = {
         },
         editorAppConfig: {
             editorAppType: 'classic',
+            languageId: languageId,
+            code: codeMain,
+            useDiffEditor: false,
+            codeOriginal: codeOrg,
+            editorOptions: monacoEditorConfig,
+            diffEditorOptions: monacoEditorConfig,
+            theme: 'vs-dark',
             languageExtensionConfig: {
                 id: 'json',
                 extensions: ['.json', '.jsonc'],
@@ -49,20 +56,10 @@ const userConfig = {
                 mimetypes: ['application/json']
             }
         }
-    } as WrapperConfig,
-    editorContentConfig: {
-        languageId: languageId,
-        code: codeMain,
-        useDiffEditor: false,
-        codeOriginal: codeOrg,
-        editorOptions: monacoEditorConfig,
-        diffEditorOptions: monacoEditorConfig,
-        theme: 'vs-dark'
     },
     languageClientConfig: {
-        enabled: true,
-        useWebSocket: true,
-        webSocketConfigOptions: {
+        options: {
+            configType: 'WebSocketUrl',
             url: 'ws://localhost:3000/sampleServer',
             startOptions: {
                 onCall: () => {

@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigOptions } from 'monaco-editor-wrapper';
+import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
 import { IDisposable } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
@@ -42,19 +42,19 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         }
 
         let mustReInit = false;
-        const prevWorkerOptions = prevProps.userConfig.languageClientConfig.workerConfigOptions;
-        const currentWorkerOptions = userConfig.languageClientConfig.workerConfigOptions;
-        const prevIsWorker = (prevWorkerOptions as Worker)?.postMessage !== undefined;
-        const currentIsWorker = (currentWorkerOptions as Worker)?.postMessage !== undefined;
-        const prevIsWorkerConfig = (prevWorkerOptions as WorkerConfigOptions)?.url !== undefined;
-        const currentIsWorkerConfig = (currentWorkerOptions as WorkerConfigOptions)?.url !== undefined;
+        const prevWorkerOptions = prevProps.userConfig.languageClientConfig?.options;
+        const currentWorkerOptions = userConfig.languageClientConfig?.options;
+        const prevIsWorker = (prevWorkerOptions?.configType === 'WorkerDirect');
+        const currentIsWorker = (currentWorkerOptions?.configType === 'WorkerDirect');
+        const prevIsWorkerConfig = (prevWorkerOptions?.configType === 'WorkerConfig');
+        const currentIsWorkerConfig = (currentWorkerOptions?.configType === 'WorkerConfig');
 
         // check if both are configs and the workers are both undefined
         if (prevIsWorkerConfig && prevIsWorker === undefined && currentIsWorkerConfig && currentIsWorker === undefined) {
             mustReInit = (prevWorkerOptions as WorkerConfigOptions).url !== (currentWorkerOptions as WorkerConfigOptions).url;
         // check if both are workers and configs are both undefined
         } else if (prevIsWorkerConfig === undefined && prevIsWorker && currentIsWorkerConfig === undefined && currentIsWorker) {
-            mustReInit = (prevWorkerOptions as Worker) !== (currentWorkerOptions as Worker);
+            mustReInit = (prevWorkerOptions as WorkerConfigDirect).worker !== (currentWorkerOptions as WorkerConfigDirect).worker;
         // previous was worker and current config is not or the other way around
         } else if (prevIsWorker && currentIsWorkerConfig || prevIsWorkerConfig && currentIsWorker) {
             mustReInit = true;
@@ -74,16 +74,18 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 }
 
                 if (!restarted) {
-                    const options = userConfig.editorContentConfig.editorOptions;
-                    const prevOptions = prevProps.userConfig.editorContentConfig.editorOptions;
-                    if (options !== prevOptions) {
-                        wrapper.updateEditorOptions(userConfig.editorContentConfig.editorOptions ?? {});
+                    if (userConfig.wrapperConfig.editorAppConfig.editorAppType === 'classic') {
+                        const options = (userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
+                        const prevOptions = (prevProps.userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
+                        if (options !== prevOptions) {
+                            wrapper.updateEditorOptions((userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions ?? {});
+                        }
                     }
 
-                    const languageId = userConfig.editorContentConfig.languageId;
-                    const prevLanguageId = prevProps.userConfig.editorContentConfig.languageId;
-                    const code = userConfig.editorContentConfig.code;
-                    const prevCode = prevProps.userConfig.editorContentConfig.code;
+                    const languageId = userConfig.wrapperConfig.editorAppConfig.languageId;
+                    const prevLanguageId = prevProps.userConfig.wrapperConfig.editorAppConfig.languageId;
+                    const code = userConfig.wrapperConfig.editorAppConfig.code;
+                    const prevCode = prevProps.userConfig.wrapperConfig.editorAppConfig.code;
                     if (languageId !== prevLanguageId && code !== prevCode) {
                         this.wrapper.updateModel({
                             languageId: languageId,
@@ -144,7 +146,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 if (model) {
                     const verifyModelContent = () => {
                         const modelText = model.getValue();
-                        onTextChanged(modelText, modelText !== userConfig.editorContentConfig.code);
+                        onTextChanged(modelText, modelText !== userConfig.wrapperConfig.editorAppConfig.code);
                     };
 
                     this._subscription = model.onDidChangeContent(() => {

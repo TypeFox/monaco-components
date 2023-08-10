@@ -1,4 +1,4 @@
-import { MonacoEditorLanguageClientWrapper, UserConfig, WrapperConfig } from 'monaco-editor-wrapper';
+import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
@@ -18,29 +18,29 @@ const wrapper42Config: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
+        },
+        editorAppConfig: {
+            editorAppType: 'classic',
+            languageId: 'text/plain',
+            useDiffEditor: true,
+            codeOriginal: `This line is equal.
+This number is different 2002
+Misspeelled!
+Same again.`,
+            code: `This line is equal.
+This number is different 2022
+Misspelled!
+Same again.`
         }
-    } as WrapperConfig,
+    },
     languageClientConfig: {
-        enabled: true,
-        useWebSocket: true,
-        webSocketConfigOptions: {
+        options: {
+            configType: 'WebSocket',
             host: 'localhost',
             port: 3000,
             path: 'sampleServer',
             secured: false
         }
-    },
-    editorContentConfig: {
-        languageId: 'text/plain',
-        useDiffEditor: true,
-        codeOriginal: `This line is equal.
-This number is different 2002
-Misspeelled!
-Same again.`,
-        code: `This line is equal.
-This number is different 2022
-Misspelled!
-Same again.`
     }
 };
 
@@ -53,21 +53,19 @@ const wrapper43Config: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
-        }
-    } as WrapperConfig,
-    languageClientConfig: {
-        enabled: false,
-    },
-    editorContentConfig: {
-        languageId: 'text/plain',
-        useDiffEditor: true,
-        codeOriginal: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
-        code: 'This line is equal.\nThis number is different 3002.\nMisspelled!Same again.',
-        editorOptions: {
-            lineNumbers: 'off'
         },
-        diffEditorOptions: {
-            lineNumbers: 'off'
+        editorAppConfig: {
+            editorAppType: 'classic',
+            languageId: 'text/plain',
+            useDiffEditor: true,
+            codeOriginal: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
+            code: 'This line is equal.\nThis number is different 3002.\nMisspelled!Same again.',
+            editorOptions: {
+                lineNumbers: 'off'
+            },
+            diffEditorOptions: {
+                lineNumbers: 'off'
+            }
         }
     }
 };
@@ -81,21 +79,19 @@ const wrapper44Config: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
-        }
-    } as WrapperConfig,
-    languageClientConfig: {
-        enabled: false,
-    },
-    editorContentConfig: {
-        languageId: 'javascript',
-        useDiffEditor: false,
-        theme: 'vs-dark',
-        code: `function logMe() {
+        },
+        editorAppConfig: {
+            editorAppType: 'classic',
+            languageId: 'javascript',
+            useDiffEditor: false,
+            theme: 'vs-dark',
+            code: `function logMe() {
     console.log('Hello monaco-editor-wrapper!');
 };`,
-        editorOptions: {
-            minimap: {
-                enabled: true
+            editorOptions: {
+                minimap: {
+                    enabled: true
+                }
             }
         }
     }
@@ -120,10 +116,10 @@ const sleepOne = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating editors after ${milliseconds}ms`);
 
-        // TODO: Update model can only work on same editor
-        wrapper42Config.editorContentConfig.languageId = 'javascript';
-        wrapper42Config.editorContentConfig.useDiffEditor = false;
-        wrapper42Config.editorContentConfig.code = `function logMe() {
+        const appConfig42 = wrapper42Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
+        appConfig42.languageId = 'javascript';
+        appConfig42.useDiffEditor = false;
+        appConfig42.code = `function logMe() {
     console.log('Hello swap editors!');
 };`;
         const w42Start = wrapper42.start(wrapper42Config);
@@ -134,13 +130,14 @@ const sleepOne = (milliseconds: number) => {
             codeOriginal: 'text 1234'
         });
 
-        wrapper44Config.editorContentConfig.languageId = 'text/plain';
-        wrapper44Config.editorContentConfig.useDiffEditor = true;
-        wrapper44Config.editorContentConfig.codeOriginal = 'oh la la la!';
-        wrapper44Config.editorContentConfig.code = 'oh lo lo lo!';
+        const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
+        appConfig44.languageId = 'text/plain';
+        appConfig44.useDiffEditor = true;
+        appConfig44.codeOriginal = 'oh la la la!';
+        appConfig44.code = 'oh lo lo lo!';
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
-        wrapper44Config.editorContentConfig.theme = 'vs-light';
+        appConfig44.theme = 'vs-light';
         const w44Start = wrapper44.start(wrapper44Config);
 
         await w42Start;
@@ -156,8 +153,9 @@ const sleepTwo = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
-        wrapper44Config.editorContentConfig.useDiffEditor = false;
-        wrapper44Config.editorContentConfig.theme = 'vs-dark';
+        const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
+        appConfig44.useDiffEditor = false;
+        appConfig44.theme = 'vs-dark';
 
         await wrapper44.start(wrapper44Config);
         console.log('Restarted wrapper44.');

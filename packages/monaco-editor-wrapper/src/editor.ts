@@ -3,25 +3,33 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { EditorContentConfig, ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
-import { EditorAppConfigVscodeApi } from './editorVscodeApi.js';
-import { EditorAppConfigClassic } from './editorClassic.js';
+import { ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
 
 export type VscodeUserConfiguration = {
     json?: string;
 }
 
+export type EditorAppConfig = {
+    languageId: string;
+    code: string;
+    codeUri?: string;
+    useDiffEditor: boolean;
+    codeOriginal?: string;
+    codeOriginalUri?: string;
+}
+
+export type EditorAppType = 'vscodeApi' | 'classic';
+
 export abstract class EditorAppBase {
 
     private id: string;
-    protected editorContentConfig: EditorContentConfig;
-    protected editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic | undefined;
+    protected appConfig: EditorAppConfig;
 
     protected editor: editor.IStandaloneCodeEditor | undefined;
     protected diffEditor: editor.IStandaloneDiffEditor | undefined;
 
-    private editorOptions: editor.IStandaloneEditorConstructionOptions;
-    private diffEditorOptions: editor.IStandaloneDiffEditorConstructionOptions;
+    protected editorOptions: editor.IStandaloneEditorConstructionOptions;
+    protected diffEditorOptions: editor.IStandaloneDiffEditorConstructionOptions;
 
     private modelRef: IReference<ITextFileEditorModel> | undefined;
     private modelOriginalRef: IReference<ITextFileEditorModel> | undefined;
@@ -30,23 +38,15 @@ export abstract class EditorAppBase {
         this.id = id;
         console.log(`Starting monaco-editor (${this.id})`);
 
-        this.editorContentConfig = {
-            languageId: userConfig.editorContentConfig.languageId,
-            code: userConfig.editorContentConfig.code ?? '',
-            codeOriginal: userConfig.editorContentConfig.codeOriginal ?? '',
-            useDiffEditor: userConfig.editorContentConfig.useDiffEditor === true,
-            theme: userConfig.editorContentConfig.theme ?? 'vs-light',
-            automaticLayout: userConfig.editorContentConfig.automaticLayout ?? true,
-            codeUri: userConfig.editorContentConfig.codeUri ?? undefined,
-            codeOriginalUri: userConfig.editorContentConfig.codeOriginalUri ?? undefined
+        const userAppConfig = userConfig.wrapperConfig.editorAppConfig;
+        this.appConfig = {
+            languageId: userAppConfig.languageId,
+            code: userAppConfig.code ?? '',
+            codeOriginal: userAppConfig.codeOriginal ?? '',
+            useDiffEditor: userAppConfig.useDiffEditor === true,
+            codeUri: userAppConfig.codeUri ?? undefined,
+            codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
         };
-        this.editorAppConfig = userConfig.wrapperConfig.editorAppConfig;
-
-        this.editorOptions = userConfig.editorContentConfig.editorOptions ?? {};
-        this.editorOptions.automaticLayout = userConfig.editorContentConfig.automaticLayout;
-
-        this.diffEditorOptions = userConfig.editorContentConfig.diffEditorOptions ?? {};
-        this.diffEditorOptions.automaticLayout = userConfig.editorContentConfig.automaticLayout;
     }
 
     haveEditor() {
@@ -61,17 +61,13 @@ export abstract class EditorAppBase {
         return this.diffEditor;
     }
 
-    getEditorConfig() {
-        return this.editorContentConfig;
-    }
-
     async createEditors(container: HTMLElement): Promise<void> {
-        if (this.editorContentConfig.useDiffEditor) {
-            this.diffEditor = createConfiguredDiffEditor(container!, this.editorContentConfig.diffEditorOptions);
+        if (this.appConfig.useDiffEditor) {
+            this.diffEditor = createConfiguredDiffEditor(container!, this.diffEditorOptions);
             await this.updateDiffEditorModel();
         } else {
-            await this.updateEditorModel(false);
             this.editor = createConfiguredEditor(container!, this.editorOptions);
+            await this.updateEditorModel();
         }
     }
 
@@ -80,6 +76,7 @@ export abstract class EditorAppBase {
             this.modelRef?.dispose();
             this.editor.dispose();
             this.editor = undefined;
+
         }
     }
 
@@ -93,7 +90,7 @@ export abstract class EditorAppBase {
     }
 
     getModel(original?: boolean): editor.ITextModel | undefined {
-        if (this.editorContentConfig.useDiffEditor) {
+        if (this.appConfig.useDiffEditor) {
             return ((original === true) ? this.modelOriginalRef?.object.textEditorModel : this.modelRef?.object.textEditorModel) ?? undefined;
         } else {
             return this.modelRef?.object.textEditorModel ?? undefined;
@@ -106,18 +103,17 @@ export abstract class EditorAppBase {
         }
 
         this.updateEditorConfig(modelUpdate);
-        await this.updateEditorModel(true);
+        await this.updateEditorModel();
     }
 
-    private async updateEditorModel(updateEditor: boolean): Promise<void> {
+    private async updateEditorModel(): Promise<void> {
         this.modelRef?.dispose();
 
         const uri: Uri = this.getEditorUri('code');
-        this.modelRef = await createModelReference(uri, this.editorContentConfig.code) as unknown as IReference<ITextFileEditorModel>;
-        this.modelRef.object.setLanguageId(this.editorContentConfig.languageId);
-        this.editorOptions.model = this.modelRef.object.textEditorModel;
-        if (updateEditor && this.editor) {
-            this.editor.setModel(this.editorOptions.model);
+        this.modelRef = await createModelReference(uri, this.appConfig.code) as unknown as IReference<ITextFileEditorModel>;
+        this.modelRef.object.setLanguageId(this.appConfig.languageId);
+        if (this.editor) {
+            this.editor.setModel(this.modelRef.object.textEditorModel);
         }
     }
 
@@ -138,14 +134,14 @@ export abstract class EditorAppBase {
         const uriOriginal: Uri = this.getEditorUri('codeOriginal');
 
         const promises = [];
-        promises.push(createModelReference(uri, this.editorContentConfig.code));
-        promises.push(createModelReference(uriOriginal, this.editorContentConfig.codeOriginal));
+        promises.push(createModelReference(uri, this.appConfig.code));
+        promises.push(createModelReference(uriOriginal, this.appConfig.codeOriginal));
 
         const refs = await Promise.all(promises);
         this.modelRef = refs[0] as unknown as IReference<ITextFileEditorModel>;
-        this.modelRef.object.setLanguageId(this.editorContentConfig.languageId);
+        this.modelRef.object.setLanguageId(this.appConfig.languageId);
         this.modelOriginalRef = refs[1] as unknown as IReference<ITextFileEditorModel>;
-        this.modelOriginalRef.object.setLanguageId(this.editorContentConfig.languageId);
+        this.modelOriginalRef.object.setLanguageId(this.appConfig.languageId);
 
         if (this.diffEditor && this.modelRef.object.textEditorModel !== null && this.modelOriginalRef.object.textEditorModel !== null) {
             this.diffEditor?.setModel({
@@ -157,37 +153,37 @@ export abstract class EditorAppBase {
 
     private updateEditorConfig(modelUpdate: ModelUpdate) {
         if (modelUpdate.code !== undefined) {
-            this.editorContentConfig.code = modelUpdate.code;
+            this.appConfig.code = modelUpdate.code;
         }
 
         if (modelUpdate.languageId !== undefined) {
-            this.editorContentConfig.languageId = modelUpdate.languageId;
+            this.appConfig.languageId = modelUpdate.languageId;
         }
 
         if (modelUpdate.uri !== undefined) {
-            this.editorContentConfig.codeUri = modelUpdate.uri;
+            this.appConfig.codeUri = modelUpdate.uri;
         }
 
         if (modelUpdate.codeOriginal !== undefined) {
-            this.editorContentConfig.codeOriginal = modelUpdate.codeOriginal;
+            this.appConfig.codeOriginal = modelUpdate.codeOriginal;
         }
 
         if (modelUpdate.codeOriginalUri !== undefined) {
-            this.editorContentConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
+            this.appConfig.codeOriginalUri = modelUpdate.codeOriginalUri;
         }
     }
 
     getEditorUri(uriType: 'code' | 'codeOriginal') {
-        const uri = uriType === 'code' ? this.editorContentConfig.codeUri : this.editorContentConfig.codeOriginalUri;
+        const uri = uriType === 'code' ? this.appConfig.codeUri : this.appConfig.codeOriginalUri;
         if (uri) {
             return Uri.parse(uri);
         } else {
-            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${this.editorContentConfig.languageId}`);
+            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${this.appConfig.languageId}`);
         }
     }
 
     updateLayout() {
-        if (this.editorContentConfig.useDiffEditor) {
+        if (this.appConfig.useDiffEditor) {
             this.diffEditor?.layout();
         } else {
             this.editor?.layout();
@@ -197,6 +193,7 @@ export abstract class EditorAppBase {
     abstract getAppType(): string;
     abstract init(): Promise<void>;
     abstract updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
+    abstract getAppConfig(): EditorAppConfig;
 }
 
 export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {

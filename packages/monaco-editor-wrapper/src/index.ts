@@ -6,6 +6,8 @@ import {
 } from './editor.js';
 
 import type {
+    EditorAppConfig,
+    EditorAppType,
     VscodeUserConfiguration,
 } from './editor.js';
 
@@ -26,9 +28,10 @@ import {
 } from './editorVscodeApi.js';
 
 import type {
-    EditorContentConfig,
     WebSocketConfigOptions,
+    WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
+    WorkerConfigDirect,
     LanguageClientConfig,
     UserConfig,
     ModelUpdate,
@@ -40,13 +43,16 @@ import {
 } from './wrapper.js';
 
 export type {
-    EditorContentConfig,
     WrapperConfig,
+    EditorAppConfig,
+    EditorAppType,
     EditorAppConfigClassic,
     EditorAppConfigVscodeApi,
     VscodeUserConfiguration,
     WebSocketConfigOptions,
+    WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
+    WorkerConfigDirect,
     LanguageClientConfig,
     UserConfig,
     ModelUpdate

@@ -24,7 +24,8 @@ const monacoEditorConfig = {
     },
     lightbulb: {
         enabled: true
-    }
+    },
+    theme: 'vs-dark'
 };
 
 const userConfig: UserConfig = {
@@ -35,20 +36,17 @@ const userConfig: UserConfig = {
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
+        },
+        editorAppConfig: {
+            editorAppType: 'classic',
+            languageId: 'typescript',
+            code: code,
+            codeUri: codeUri,
+            codeOriginal: codeOriginal,
+            useDiffEditor: false,
+            editorOptions: monacoEditorConfig,
+            diffEditorOptions: monacoEditorConfig
         }
-    },
-    languageClientConfig: {
-        enabled: false
-    },
-    editorContentConfig: {
-        languageId: 'typescript',
-        code: code,
-        codeUri: codeUri,
-        codeOriginal: codeOriginal,
-        useDiffEditor: false,
-        editorOptions: monacoEditorConfig,
-        diffEditorOptions: monacoEditorConfig,
-        theme: 'vs-dark'
     }
 };
 
@@ -60,7 +58,7 @@ try {
         swapEditors(userConfig, code, codeOriginal);
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
-        if (wrapper.getMonacoEditorApp()?.getEditorConfig().codeUri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getAppConfig().codeUri === codeUri) {
             updateModel({
                 code: codeOriginal,
                 uri: codeOriginalUri,
@@ -75,7 +73,7 @@ try {
         }
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        if (wrapper.getMonacoEditorApp()?.getEditorConfig().codeUri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getAppConfig().codeUri === codeUri) {
             code = await disposeEditor(userConfig);
         } else {
             codeOriginal = await disposeEditor(userConfig);

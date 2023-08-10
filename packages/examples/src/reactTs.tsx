@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
-import { UserConfig, WrapperConfig } from 'monaco-editor-wrapper';
+import { UserConfig } from 'monaco-editor-wrapper';
 
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
@@ -19,17 +19,15 @@ const userConfig: UserConfig = {
             enableKeybindingsService: true,
             debugLogging: true
         },
-    } as WrapperConfig,
-    editorContentConfig: {
-        languageId: 'typescript',
-        useDiffEditor: false,
-        theme: 'vs-dark',
-        code: `function sayHello(): string {
+        editorAppConfig: {
+            editorAppType: 'classic',
+            languageId: 'typescript',
+            useDiffEditor: false,
+            theme: 'vs-dark',
+            code: `function sayHello(): string {
     return "Hello";
 };`
-    },
-    languageClientConfig: {
-        enabled: false
+        }
     }
 };
 

@@ -40,6 +40,9 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
             },
             editorAppConfig: {
                 editorAppType: 'vscodeApi',
+                languageId: 'statemachine',
+                code: code,
+                useDiffEditor: false,
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',
@@ -78,15 +81,11 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 }
             }
         },
-        editorContentConfig: {
-            languageId: 'statemachine',
-            code: code,
-            useDiffEditor: false
-        },
         languageClientConfig: {
-            enabled: true,
-            useWebSocket: false,
-            workerConfigOptions: worker
+            options: {
+                configType: 'WorkerDirect',
+                worker
+            }
         }
     };
 };
