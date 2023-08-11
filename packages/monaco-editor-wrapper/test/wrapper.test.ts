@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
+import { EditorAppClassic, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { createBaseConfig, createMonacoEditorDiv } from './helper.js';
@@ -21,8 +21,13 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
         createMonacoEditorDiv();
         const wrapper = new MonacoEditorLanguageClientWrapper();
         await wrapper.start(createBaseConfig('classic'));
-        expect((wrapper.getMonacoEditorApp()?.getAppConfig() as EditorAppConfigClassic).automaticLayout).toBeTruthy();
-        expect((wrapper.getMonacoEditorApp()?.getAppConfig() as EditorAppConfigClassic).theme).toBe('vs-light');
-        expect(wrapper.getMonacoEditorApp()?.getAppType()).toBe('classic');
+
+        const app = wrapper.getMonacoEditorApp() as EditorAppClassic;
+        expect(app).toBeDefined();
+        expect(app.getAppType()).toBe('classic');
+
+        const appConfig = app.getConfig();
+        expect(appConfig.automaticLayout).toBeTruthy();
+        expect(appConfig.theme).toBe('vs-light');
     });
 });

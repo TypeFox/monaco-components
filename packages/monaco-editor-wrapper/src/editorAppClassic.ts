@@ -1,4 +1,4 @@
-import { EditorAppBase, EditorAppConfig, EditorAppType } from './editor.js';
+import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { UserConfig } from './wrapper.js';
 /**
@@ -15,7 +15,7 @@ export type MonacoLanguageExtensionConfig = {
     mimetypes?: string[];
 }
 
-export type EditorAppConfigClassic = EditorAppConfig & {
+export type EditorAppConfigClassic = EditorAppBaseConfig & {
     editorAppType: 'classic';
     automaticLayout?: boolean;
     theme?: string;
@@ -26,15 +26,24 @@ export type EditorAppConfigClassic = EditorAppConfig & {
     themeData?: editor.IStandaloneThemeData;
 };
 
+/**
+ * The classic monaco-editor app uses the classic monaco-editor configuration.
+ */
 export class EditorAppClassic extends EditorAppBase {
 
+    private editorOptions: editor.IStandaloneEditorConstructionOptions;
+    private diffEditorOptions: editor.IStandaloneDiffEditorConstructionOptions;
+
+    private config: EditorAppConfigClassic;
+
     constructor(id: string, userConfig: UserConfig) {
-        super(id, userConfig);
+        super(id);
+        this.config = this.buildConfig(userConfig) as EditorAppConfigClassic;
         const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         // default to vs-light
-        this.getAppConfig().theme = userInput.theme ?? 'vs-light';
+        this.config.theme = userInput.theme ?? 'vs-light';
         // default to true
-        this.getAppConfig().automaticLayout = userInput.automaticLayout ?? true;
+        this.config.automaticLayout = userInput.automaticLayout ?? true;
 
         this.editorOptions = userInput.editorOptions ?? {};
         this.editorOptions.automaticLayout = userInput.automaticLayout ?? true;
@@ -42,50 +51,58 @@ export class EditorAppClassic extends EditorAppBase {
         this.diffEditorOptions = userInput.diffEditorOptions ?? {};
         this.diffEditorOptions.automaticLayout = userInput.automaticLayout ?? true;
 
-        this.getAppConfig().languageExtensionConfig = userInput.languageExtensionConfig ?? undefined;
-        this.getAppConfig().languageDef = userInput.languageDef ?? undefined;
-        this.getAppConfig().themeData = userInput.themeData ?? undefined;
+        this.config.languageExtensionConfig = userInput.languageExtensionConfig ?? undefined;
+        this.config.languageDef = userInput.languageDef ?? undefined;
+        this.config.themeData = userInput.themeData ?? undefined;
     }
 
     getAppType(): EditorAppType {
         return 'classic';
     }
 
-    getAppConfig(): EditorAppConfigClassic {
-        return this.appConfig as EditorAppConfigClassic;
+    getConfig(): EditorAppConfigClassic {
+        return this.config;
+    }
+
+    async createEditors(container: HTMLElement): Promise<void> {
+        if (this.config.useDiffEditor) {
+            await this.createDiffEditor(container, this.diffEditorOptions);
+        } else {
+            await this.createEditor(container, this.editorOptions);
+        }
     }
 
     async init() {
         // register own language first
-        const extLang = this.getAppConfig().languageExtensionConfig;
+        const extLang = this.config.languageExtensionConfig;
         if (extLang) {
             languages.register(extLang);
         }
 
-        const languageRegistered = languages.getLanguages().filter(x => x.id === this.appConfig.languageId);
+        const languageRegistered = languages.getLanguages().filter(x => x.id === this.config.languageId);
         if (languageRegistered.length === 0) {
             // this is only meaningful for languages supported by monaco out of the box
             languages.register({
-                id: this.appConfig.languageId
+                id: this.config.languageId
             });
         }
 
         // apply monarch definitions
-        const tokenProvider = this.getAppConfig().languageDef;
+        const tokenProvider = this.config.languageDef;
         if (tokenProvider) {
-            languages.setMonarchTokensProvider(this.appConfig.languageId, tokenProvider);
+            languages.setMonarchTokensProvider(this.config.languageId, tokenProvider);
         }
-        const themeData = this.getAppConfig().themeData;
+        const themeData = this.config.themeData;
         if (themeData) {
-            editor.defineTheme(this.getAppConfig().theme!, themeData);
+            editor.defineTheme(this.config.theme!, themeData);
         }
-        editor.setTheme(this.getAppConfig().theme!);
+        editor.setTheme(this.config.theme!);
 
         console.log('Init of MonacoConfig was completed.');
         return Promise.resolve();
     }
 
-    async updateConfig(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
-        this.editor?.updateOptions(options);
+    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
+        this.updateMonacoEditorOptions(options);
     }
 }

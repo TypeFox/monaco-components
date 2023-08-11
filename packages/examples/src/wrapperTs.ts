@@ -58,7 +58,7 @@ try {
         swapEditors(userConfig, code, codeOriginal);
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
-        if (wrapper.getMonacoEditorApp()?.getAppConfig().codeUri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
             updateModel({
                 code: codeOriginal,
                 uri: codeOriginalUri,
@@ -73,7 +73,7 @@ try {
         }
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        if (wrapper.getMonacoEditorApp()?.getAppConfig().codeUri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
             code = await disposeEditor(userConfig);
         } else {
             codeOriginal = await disposeEditor(userConfig);

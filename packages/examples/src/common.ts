@@ -14,7 +14,7 @@ export const startEditor = async (userConfig: UserConfig, code: string, codeOrig
 };
 
 export const updateModel = async (modelUpdate: ModelUpdate) => {
-    if (wrapper.getMonacoEditorApp()?.getAppConfig().useDiffEditor) {
+    if (wrapper.getMonacoEditorApp()?.getConfig().useDiffEditor) {
         await wrapper?.updateDiffModel(modelUpdate);
     } else {
         await wrapper?.updateModel(modelUpdate);

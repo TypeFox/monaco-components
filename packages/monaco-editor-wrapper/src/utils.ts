@@ -1,4 +1,4 @@
-import { WebSocketConfigOptions, WebSocketConfigOptionsUrl } from './wrapper.js';
+import { WebSocketConfigOptions, WebSocketConfigOptionsUrl } from './languageClientWrapper.js';
 
 export const createUrl = (config: WebSocketConfigOptions | WebSocketConfigOptionsUrl) => {
     let buildUrl = '';

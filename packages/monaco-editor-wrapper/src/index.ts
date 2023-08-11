@@ -1,38 +1,45 @@
-export * from './editor.js';
-
 import {
     EditorAppBase,
     isVscodeApiEditorApp
-} from './editor.js';
+} from './editorAppBase.js';
 
 import type {
-    EditorAppConfig,
+    EditorAppBaseConfig,
     EditorAppType,
     VscodeUserConfiguration,
-} from './editor.js';
+} from './editorAppBase.js';
 
 import type {
     EditorAppConfigClassic,
-} from './editorClassic.js';
+} from './editorAppClassic.js';
 
 import {
     EditorAppClassic,
-} from './editorClassic.js';
+} from './editorAppClassic.js';
 
 import type {
     EditorAppConfigVscodeApi,
-} from './editorVscodeApi.js';
+} from './editorAppVscodeApi.js';
 
 import {
     EditorAppVscodeApi
-} from './editorVscodeApi.js';
+} from './editorAppVscodeApi.js';
 
 import type {
+    WebSocketCallOptions,
+    LanguageClientConfigType,
     WebSocketConfigOptions,
     WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
     WorkerConfigDirect,
     LanguageClientConfig,
+} from './languageClientWrapper.js';
+
+import {
+    LanguageClientWrapper,
+} from './languageClientWrapper.js';
+
+import type {
     UserConfig,
     ModelUpdate,
     WrapperConfig
@@ -44,11 +51,13 @@ import {
 
 export type {
     WrapperConfig,
-    EditorAppConfig,
+    EditorAppBaseConfig,
     EditorAppType,
     EditorAppConfigClassic,
     EditorAppConfigVscodeApi,
     VscodeUserConfiguration,
+    WebSocketCallOptions,
+    LanguageClientConfigType,
     WebSocketConfigOptions,
     WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
@@ -60,6 +69,7 @@ export type {
 
 export {
     MonacoEditorLanguageClientWrapper,
+    LanguageClientWrapper,
     EditorAppBase,
     isVscodeApiEditorApp,
     EditorAppClassic,
