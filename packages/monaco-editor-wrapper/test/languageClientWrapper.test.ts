@@ -20,7 +20,7 @@ describe('Test LanguageClientWrapper', () => {
     test('Start: config', async () => {
         const languageClientConfig: LanguageClientConfig = {
             options: {
-                configType: 'WebSocketUrl',
+                $type: 'WebSocketUrl',
                 url: 'ws://localhost:3000/sampleServer'
             }
         };

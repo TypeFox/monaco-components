@@ -5,7 +5,7 @@ import 'vscode/default-extensions/theme-defaults';
 import { UserConfig } from './wrapper.js';
 
 export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
-    editorAppType: 'vscodeApi';
+    $type: 'vscodeApi';
     extension?: IExtensionManifest | object;
     extensionFilesOrContents?: Map<string, string | URL>;
     userConfiguration?: VscodeUserConfiguration;

@@ -20,7 +20,7 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: 'typescript',
             useDiffEditor: false,
             theme: 'vs-dark',

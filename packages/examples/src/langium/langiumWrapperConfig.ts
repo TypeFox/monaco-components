@@ -39,7 +39,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 debugLogging: true
             },
             editorAppConfig: {
-                editorAppType: 'vscodeApi',
+                $type: 'vscodeApi',
                 languageId: 'statemachine',
                 code: code,
                 useDiffEditor: false,
@@ -83,7 +83,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         },
         languageClientConfig: {
             options: {
-                configType: 'WorkerDirect',
+                $type: 'WorkerDirect',
                 worker
             }
         }

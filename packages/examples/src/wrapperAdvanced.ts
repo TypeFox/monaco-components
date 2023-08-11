@@ -20,7 +20,7 @@ const wrapper42Config: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: 'text/plain',
             useDiffEditor: true,
             codeOriginal: `This line is equal.
@@ -35,7 +35,7 @@ Same again.`
     },
     languageClientConfig: {
         options: {
-            configType: 'WebSocket',
+            $type: 'WebSocket',
             host: 'localhost',
             port: 3000,
             path: 'sampleServer',
@@ -55,7 +55,7 @@ const wrapper43Config: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: 'text/plain',
             useDiffEditor: true,
             codeOriginal: 'This line is equal.\nThis number is different 3022.\nMisspelled!Same again.',
@@ -81,7 +81,7 @@ const wrapper44Config: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: 'javascript',
             useDiffEditor: false,
             theme: 'vs-dark',

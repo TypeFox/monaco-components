@@ -16,7 +16,7 @@ export type MonacoLanguageExtensionConfig = {
 }
 
 export type EditorAppConfigClassic = EditorAppBaseConfig & {
-    editorAppType: 'classic';
+    $type: 'classic';
     automaticLayout?: boolean;
     theme?: string;
     editorOptions?: editor.IStandaloneEditorConstructionOptions;

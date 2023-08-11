@@ -16,7 +16,7 @@ export const createBaseConfig = (type: EditorAppType): UserConfig => {
 export const createWrapperConfig = (type: EditorAppType) => {
     return {
         editorAppConfig: {
-            editorAppType: type,
+            $type: type,
             languageId: 'typescript',
             code: '',
             useDiffEditor: false,

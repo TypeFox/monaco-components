@@ -21,7 +21,7 @@ export type WebSocketUrl = {
 }
 
 export type WebSocketConfigOptions = {
-    configType: 'WebSocket'
+    $type: 'WebSocket'
     secured: boolean;
     host: string;
     port?: number;
@@ -31,21 +31,21 @@ export type WebSocketConfigOptions = {
 }
 
 export type WebSocketConfigOptionsUrl = {
-    configType: 'WebSocketUrl'
+    $type: 'WebSocketUrl'
     url: string;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
 
 export type WorkerConfigOptions = {
-    configType: 'WorkerConfig'
+    $type: 'WorkerConfig'
     url: URL;
     type: 'classic' | 'module';
     name?: string;
 };
 
 export type WorkerConfigDirect = {
-    configType: 'WorkerDirect';
+    $type: 'WorkerDirect';
     worker: Worker;
 };
 
@@ -140,7 +140,7 @@ export class LanguageClientWrapper {
 
         return new Promise((resolve, reject) => {
             const lcConfig = this.languageClientConfig?.options;
-            if (lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') {
+            if (lcConfig?.$type === 'WebSocket' || lcConfig?.$type === 'WebSocketUrl') {
                 const url = createUrl(lcConfig);
                 const webSocket = new WebSocket(url);
 
@@ -154,7 +154,7 @@ export class LanguageClientWrapper {
                 };
             } else {
                 if (!this.worker) {
-                    if (lcConfig?.configType === 'WorkerConfig') {
+                    if (lcConfig?.$type === 'WorkerConfig') {
                         const workerConfig = lcConfig as WorkerConfigOptions;
                         this.worker = new Worker(new URL(workerConfig.url, window.location.href).href, {
                             type: workerConfig.type,
@@ -182,7 +182,7 @@ export class LanguageClientWrapper {
         const lcConfig = this.languageClientConfig?.options;
         messageTransports.reader.onClose(async () => {
             await this.languageClient?.stop();
-            if ((lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') && lcConfig?.stopOptions) {
+            if ((lcConfig?.$type === 'WebSocket' || lcConfig?.$type === 'WebSocketUrl') && lcConfig?.stopOptions) {
                 const stopOptions = lcConfig?.stopOptions;
                 stopOptions.onCall();
                 if (stopOptions.reportStatus) {
@@ -193,7 +193,7 @@ export class LanguageClientWrapper {
 
         try {
             await this.languageClient.start();
-            if ((lcConfig?.configType === 'WebSocket' || lcConfig?.configType === 'WebSocketUrl') && lcConfig?.startOptions) {
+            if ((lcConfig?.$type === 'WebSocket' || lcConfig?.$type === 'WebSocketUrl') && lcConfig?.startOptions) {
                 const startOptions = lcConfig?.startOptions;
                 startOptions.onCall();
                 if (startOptions.reportStatus) {

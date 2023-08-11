@@ -212,5 +212,5 @@ export abstract class EditorAppBase {
 }
 
 export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {
-    return wrapperConfig.editorAppConfig?.editorAppType === 'vscodeApi';
+    return wrapperConfig.editorAppConfig?.$type === 'vscodeApi';
 };

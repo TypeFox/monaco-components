@@ -41,7 +41,7 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: languageId,
             code: codeMain,
             useDiffEditor: false,
@@ -59,7 +59,7 @@ const userConfig: UserConfig = {
     },
     languageClientConfig: {
         options: {
-            configType: 'WebSocketUrl',
+            $type: 'WebSocketUrl',
             url: 'ws://localhost:3000/sampleServer',
             startOptions: {
                 onCall: () => {

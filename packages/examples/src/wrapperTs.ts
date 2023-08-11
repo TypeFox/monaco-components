@@ -38,7 +38,7 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            editorAppType: 'classic',
+            $type: 'classic',
             languageId: 'typescript',
             code: code,
             codeUri: codeUri,

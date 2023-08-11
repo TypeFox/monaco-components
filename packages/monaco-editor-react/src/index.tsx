@@ -44,10 +44,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         let mustReInit = false;
         const prevWorkerOptions = prevProps.userConfig.languageClientConfig?.options;
         const currentWorkerOptions = userConfig.languageClientConfig?.options;
-        const prevIsWorker = (prevWorkerOptions?.configType === 'WorkerDirect');
-        const currentIsWorker = (currentWorkerOptions?.configType === 'WorkerDirect');
-        const prevIsWorkerConfig = (prevWorkerOptions?.configType === 'WorkerConfig');
-        const currentIsWorkerConfig = (currentWorkerOptions?.configType === 'WorkerConfig');
+        const prevIsWorker = (prevWorkerOptions?.$type === 'WorkerDirect');
+        const currentIsWorker = (currentWorkerOptions?.$type === 'WorkerDirect');
+        const prevIsWorkerConfig = (prevWorkerOptions?.$type === 'WorkerConfig');
+        const currentIsWorkerConfig = (currentWorkerOptions?.$type === 'WorkerConfig');
 
         // check if both are configs and the workers are both undefined
         if (prevIsWorkerConfig && prevIsWorker === undefined && currentIsWorkerConfig && currentIsWorker === undefined) {
@@ -74,7 +74,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 }
 
                 if (!restarted) {
-                    if (userConfig.wrapperConfig.editorAppConfig.editorAppType === 'classic') {
+                    if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
                         const options = (userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
                         const prevOptions = (prevProps.userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
                         if (options !== prevOptions) {
