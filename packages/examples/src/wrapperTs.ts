@@ -24,33 +24,29 @@ const monacoEditorConfig = {
     },
     lightbulb: {
         enabled: true
-    }
+    },
+    theme: 'vs-dark'
 };
 
 const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
+        },
+        editorAppConfig: {
+            $type: 'classic',
+            languageId: 'typescript',
+            code: code,
+            codeUri: codeUri,
+            codeOriginal: codeOriginal,
+            useDiffEditor: false,
+            editorOptions: monacoEditorConfig,
+            diffEditorOptions: monacoEditorConfig
         }
-    },
-    languageClientConfig: {
-        enabled: false
-    },
-    editorConfig: {
-        languageId: 'typescript',
-        code: code,
-        uri: codeUri,
-        codeOriginal: codeOriginal,
-        useDiffEditor: false,
-        editorOptions: monacoEditorConfig,
-        diffEditorOptions: monacoEditorConfig,
-        theme: 'vs-dark',
-        automaticLayout: true
     }
 };
 
@@ -62,7 +58,7 @@ try {
         swapEditors(userConfig, code, codeOriginal);
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
-        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
             updateModel({
                 code: codeOriginal,
                 uri: codeOriginalUri,
@@ -77,7 +73,7 @@ try {
         }
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        if (wrapper.getMonacoEditorWrapper()?.getEditorConfig().uri === codeUri) {
+        if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
             code = await disposeEditor(userConfig);
         } else {
             codeOriginal = await disposeEditor(userConfig);

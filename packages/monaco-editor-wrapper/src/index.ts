@@ -1,28 +1,48 @@
+import {
+    EditorAppBase,
+    isVscodeApiEditorApp
+} from './editorAppBase.js';
+
 import type {
-    EditorClassicConfig,
-} from './editorClassic.js';
+    EditorAppBaseConfig,
+    EditorAppType,
+    VscodeUserConfiguration,
+} from './editorAppBase.js';
+
+import type {
+    EditorAppConfigClassic,
+} from './editorAppClassic.js';
 
 import {
-    EditorClassic
-} from './editorClassic.js';
+    EditorAppClassic,
+} from './editorAppClassic.js';
 
 import type {
-    EditorVscodeApiConfig,
-    VscodeUserConfiguration
-} from './editorVscodeApi.js';
+    EditorAppConfigVscodeApi,
+} from './editorAppVscodeApi.js';
 
 import {
-    EditorVscodeApi
-} from './editorVscodeApi.js';
+    EditorAppVscodeApi
+} from './editorAppVscodeApi.js';
 
 import type {
-    EditorConfig,
+    WebSocketCallOptions,
+    LanguageClientConfigType,
     WebSocketConfigOptions,
+    WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
+    WorkerConfigDirect,
     LanguageClientConfig,
+} from './languageClientWrapper.js';
+
+import {
+    LanguageClientWrapper,
+} from './languageClientWrapper.js';
+
+import type {
     UserConfig,
     ModelUpdate,
-    MonacoEditorWrapper
+    WrapperConfig
 } from './wrapper.js';
 
 import {
@@ -30,13 +50,18 @@ import {
 } from './wrapper.js';
 
 export type {
-    EditorConfig,
-    MonacoEditorWrapper,
-    EditorClassicConfig,
-    EditorVscodeApiConfig,
+    WrapperConfig,
+    EditorAppBaseConfig,
+    EditorAppType,
+    EditorAppConfigClassic,
+    EditorAppConfigVscodeApi,
     VscodeUserConfiguration,
+    WebSocketCallOptions,
+    LanguageClientConfigType,
     WebSocketConfigOptions,
+    WebSocketConfigOptionsUrl,
     WorkerConfigOptions,
+    WorkerConfigDirect,
     LanguageClientConfig,
     UserConfig,
     ModelUpdate
@@ -44,8 +69,12 @@ export type {
 
 export {
     MonacoEditorLanguageClientWrapper,
-    EditorClassic,
-    EditorVscodeApi
+    LanguageClientWrapper,
+    EditorAppBase,
+    isVscodeApiEditorApp,
+    EditorAppClassic,
+    EditorAppVscodeApi
 };
 
 export * from './helpers/css.js';
+export * from './utils.js';

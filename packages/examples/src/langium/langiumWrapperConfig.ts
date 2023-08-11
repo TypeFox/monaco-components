@@ -23,7 +23,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     return {
         htmlElement: htmlElement,
         wrapperConfig: {
-            useVscodeConfig: true,
             serviceConfig: {
                 enableThemeService: true,
                 enableTextmateService: true,
@@ -39,7 +38,11 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 enableKeybindingsService: true,
                 debugLogging: true
             },
-            monacoVscodeApiConfig: {
+            editorAppConfig: {
+                $type: 'vscodeApi',
+                languageId: 'statemachine',
+                code: code,
+                useDiffEditor: false,
                 extension: {
                     name: 'langium-example',
                     publisher: 'monaco-languageclient-project',
@@ -78,17 +81,11 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 }
             }
         },
-        editorConfig: {
-            languageId: 'statemachine',
-            code: code,
-            useDiffEditor: false,
-            automaticLayout: true,
-            theme: 'vs-dark',
-        },
         languageClientConfig: {
-            enabled: true,
-            useWebSocket: false,
-            workerConfigOptions: worker
+            options: {
+                $type: 'WorkerDirect',
+                worker
+            }
         }
     };
 };

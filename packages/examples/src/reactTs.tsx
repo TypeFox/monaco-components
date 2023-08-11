@@ -13,25 +13,21 @@ const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
     htmlElement: rootElem,
     wrapperConfig: {
-        useVscodeConfig: false,
         serviceConfig: {
             // enable quick access "F1" and add required keybindings service
             enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
-        }
-    },
-    editorConfig: {
-        languageId: 'typescript',
-        useDiffEditor: false,
-        automaticLayout: true,
-        theme: 'vs-dark',
-        code: `function sayHello(): string {
+        },
+        editorAppConfig: {
+            $type: 'classic',
+            languageId: 'typescript',
+            useDiffEditor: false,
+            theme: 'vs-dark',
+            code: `function sayHello(): string {
     return "Hello";
 };`
-    },
-    languageClientConfig: {
-        enabled: false
+        }
     }
 };
 
