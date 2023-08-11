@@ -16,7 +16,7 @@
   "devDependencies": {
     "@types/node": "~18.17.3",
     "@types/shelljs": "~0.8.12",
-    "@types/vscode": "~1.80.0",
+    "@types/vscode": "~1.81.0",
     "@typescript-eslint/eslint-plugin": "~6.3.0",
     "@typescript-eslint/parser": "~6.3.0",
     "@vitest/browser": "~0.34.1",
