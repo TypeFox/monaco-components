@@ -28,4 +28,28 @@ describe('Test LanguageClientWrapper', () => {
         expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
     });
 
+    test('Only bad worker url', async () => {
+        const prom = new Promise((_resolve, reject) => {
+            const worker = new Worker('aBogusUrl');
+
+            worker.onerror = () => {
+                reject('error');
+            };
+        });
+        await expect(prom).rejects.toEqual('error');
+    });
+
+    test('Start: bad worker url', async () => {
+        const languageClientConfig: LanguageClientConfig = {
+            options: {
+                $type: 'WorkerConfig',
+                url: new URL('http://localhost:63315'),
+                type: 'classic'
+            }
+        };
+        const languageClientWrapper = new LanguageClientWrapper(languageClientConfig);
+        expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
+        await expect(languageClientWrapper.start()).rejects.toBe('languageClientWrapper (unnamed): Illegal worker configuration detected. Potentially the url is wrong.');
+    });
+
 });
