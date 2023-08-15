@@ -2,7 +2,7 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [2.2.0] - 2023-08-1x
+## [3.0.0] - 2023-08-1x
 
 - Improve naming and improve api usage [#31](https://github.com/TypeFox/monaco-components/pull/31)
 - createUrl now allows web socket urls without port and path [#30](https://github.com/TypeFox/monaco-components/pull/30)

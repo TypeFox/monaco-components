@@ -6,12 +6,12 @@ This repository started as a Lit component for Monaco Editor, but it has transfo
 
 There are two npm packages generated from this repository:
 
-- [Monaco Editor Wrapper](./packages/monaco-editor-wrapper/) + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers locally running (web worker) or remotely running (web socket).
-- [Monaco Editor React Component](./packages/monaco-editor-react/): Monaco Editor React Component enclosing the **Monaco Editor Wrapper**
+- [Monaco Editor Wrapper](./packages/monaco-editor-wrapper/README.md) + Language Client: Wrapped [monaco-editor](https://github.com/microsoft/monaco-editor) with the capability to plug-in [monaco-languageclient](https://github.com/TypeFox/monaco-languageclient) to connect to languages servers locally running (web worker) or remotely running (web socket).
+- [Monaco Editor React Component](./packages/monaco-editor-react/README.md): Monaco Editor React Component enclosing the **Monaco Editor Wrapper**
 
 Additionally you can find a private [examples packages](./packages/examples/) containing all examples that are served by Vite (see next chapter).
 
-Monaco Editor Workers has been moved to its own [repo](https://github.com/TypeFox/monaco-editor-workers).
+**Important**: Monaco Editor Workers has been moved to its own [repo](https://github.com/TypeFox/monaco-editor-workers).
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ Afterwards, launch the Vite development server:
 npm run dev
 ```
 
-If you want to change dependent code in the examples, you have to watch code changes in parallel:
+If you want to change dependent code in the examples (`monaco-editor-wrapper` and `@typefox/monaco-editor-react`), you have to watch code changes in parallel:
 
 ```bash
 npm run watch

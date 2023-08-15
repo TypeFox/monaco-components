@@ -29,21 +29,18 @@ import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
 const userConfig: UserConfig = {
-    htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
-    wrapperConfig: {
-        useVscodeConfig: false,
-    },
-    editorConfig: {
-        languageId: 'typescript',
-        useDiffEditor: false,
-        theme: 'vs-dark',
-        code: `function sayHello(): string {
+  htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+  wrapperConfig: {
+    editorAppConfig: {
+      $type: 'classic',
+      languageId: 'typescript',
+      code: `function sayHello(): string {
     return "Hello";
-};`
-    },
-    languageClientConfig: {
-        enabled: false
+};`,
+      useDiffEditor: false,
+      theme: 'vs-dark'
     }
+  }
 };
 
 const comp = <MonacoEditorReactComp

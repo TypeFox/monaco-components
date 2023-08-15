@@ -16,10 +16,10 @@ npm run build
 This will clean, compile and build a bundle of the `monaco-editor-wrapper`, which you can reference in your own projects. For examples, you can see the top-level [README](../../README.md#getting-started) with details on running a local dev instance.
 
 ## Configuration
-
+s
 With release 2.0.0, the configuration approach is completely revised.
 
-The `UserConfig` now contains everything and is passed to the `start` function of the wrapper. Because [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) uses a VS Code extension like configuration approach, the `UserConfig` allows to configure monaco-editor the [classical way](./src/editorClassic.ts) or to use [monaco-vscode-api way](./src/editorVscodeApi.ts). Additionally, [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) brings VS Code services to monaco-editor it usually does not have (Textmate Support, VS Code Theme Support, Keybindings, etc.). The wrapper initializes the following services when you use monaco-vscode-api: *files*, *model*, *editor* and *configuration*.
+The `UserConfig` now contains everything and is passed to the `start` function of the wrapper. Because [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) uses a VS Code extension like configuration approach, the `UserConfig` allows to configure monaco-editor the [classical way](./src/editorAppClassic.ts) or to use [monaco-vscode-api way](./src/editorAppVscodeApi.ts). Additionally, [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) brings VS Code services to monaco-editor it usually does not have (Textmate Support, VS Code Theme Support, Keybindings, etc.). The wrapper initializes the following services from monaco-vscode-api independent of the editor mode: *model*, *editor* and *configuration*.
 
 ## Usage
 
@@ -39,21 +39,18 @@ buildWorkerDefinition('./node_modules/monaco-editor-workers/dist/workers', impor
 const run = async () => {
   const wrapper = new MonacoEditorLanguageClientWrapper();
   const userConfig = {
-      htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
-      // rely on regular monaco-editor configuration
-      wrapperConfig: {
-          useVscodeConfig: false
-      },
-      languageClientConfig: {
-          enabled: false
-      },
-      editorConfig: {
-          languageId: 'typescript',
-          code: `function sayHello(): string {
+    htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+    // rely on regular monaco-editor configuration
+    wrapperConfig: {
+      editorAppConfig: {
+        $type: 'classic',
+        languageId: 'typescript',
+        code: `function sayHello(): string {
     return "Hello";
 };`,
-          useDiffEditor: false,
+        useDiffEditor: false,
       }
+    }
   };
   await wrapper.start(userConfig);
 }

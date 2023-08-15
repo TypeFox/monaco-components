@@ -1,7 +1,7 @@
 import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
-import { InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
+import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
 import { VscodeUserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 
@@ -37,8 +37,9 @@ export class MonacoEditorLanguageClientWrapper {
 
     private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
     private languageClientWrapper: LanguageClientWrapper;
+    private serviceConfig: InitializeServiceConfig;
 
-    private init(userConfig: UserConfig) {
+    private async init(userConfig: UserConfig) {
         if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
             throw new Error('Use diff editor was used without a valid config.');
         }
@@ -46,11 +47,23 @@ export class MonacoEditorLanguageClientWrapper {
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
 
-        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig, userConfig.wrapperConfig.serviceConfig);
+        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig);
+
+        this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
+
+        // always set required services if not configure
+        this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
+        this.serviceConfig.configureEditorOrViewsServiceConfig = this.serviceConfig.configureEditorOrViewsServiceConfig ?? {
+        };
+        this.serviceConfig.configureConfigurationServiceConfig = this.serviceConfig.configureConfigurationServiceConfig ?? {
+            defaultWorkspaceUri: '/tmp/'
+        };
+
+        await (wasVscodeApiInitialized() ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
     }
 
     async start(userConfig: UserConfig) {
-        this.init(userConfig);
+        await this.init(userConfig);
 
         // Always dispose old instances before start
         this.editorApp?.disposeEditor();
@@ -61,7 +74,7 @@ export class MonacoEditorLanguageClientWrapper {
         } else {
             this.editorApp = new EditorAppClassic(this.id, userConfig);
         }
-        await this.languageClientWrapper.init(this.editorApp.getConfig().languageId);
+        this.languageClientWrapper.init(this.editorApp.getConfig().languageId);
         console.log(`Starting monaco-editor (${this.id})`);
 
         await this.editorApp?.init();

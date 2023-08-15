@@ -1,4 +1,4 @@
-import { InitializeServiceConfig, initServices, MonacoLanguageClient, wasVscodeApiInitialized } from 'monaco-languageclient';
+import { MonacoLanguageClient } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
@@ -57,25 +57,15 @@ export type LanguageClientConfig = {
 
 export class LanguageClientWrapper {
 
-    private serviceConfig: InitializeServiceConfig;
     private languageClient: MonacoLanguageClient | undefined;
     private languageClientConfig?: LanguageClientConfig;
     private worker: Worker | undefined;
     private languageId: string | undefined;
 
-    constructor(languageClientConfig?: LanguageClientConfig, serviceConfig?: InitializeServiceConfig) {
+    constructor(languageClientConfig?: LanguageClientConfig) {
         if (languageClientConfig) {
             this.languageClientConfig = languageClientConfig;
         }
-        this.serviceConfig = serviceConfig ?? {};
-
-        // always set required services if not configure
-        this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
-        this.serviceConfig.configureEditorOrViewsServiceConfig = this.serviceConfig.configureEditorOrViewsServiceConfig ?? {
-        };
-        this.serviceConfig.configureConfigurationServiceConfig = this.serviceConfig.configureConfigurationServiceConfig ?? {
-            defaultWorkspaceUri: '/tmp/'
-        };
     }
 
     haveLanguageClient(): boolean {
@@ -98,9 +88,8 @@ export class LanguageClientWrapper {
         return this.languageClient !== undefined && this.languageClient?.isRunning();
     }
 
-    async init(languageId: string) {
+    init(languageId: string) {
         this.languageId = languageId;
-        await (wasVscodeApiInitialized() ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
     }
 
     async start() {
