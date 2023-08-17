@@ -14,8 +14,6 @@ const userConfig: UserConfig = {
     htmlElement: rootElem,
     wrapperConfig: {
         serviceConfig: {
-            // enable quick access "F1" and add required keybindings service
-            enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         },

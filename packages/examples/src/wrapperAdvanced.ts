@@ -14,8 +14,6 @@ const wrapper42Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            // enable quick access "F1" and add required keybindings service
-            enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         },
@@ -49,8 +47,6 @@ const wrapper43Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            // enable quick access "F1" and add required keybindings service
-            enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         },
@@ -75,8 +71,6 @@ const wrapper44Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            // enable quick access "F1" and add required keybindings service
-            enableQuickaccessService: true,
             enableKeybindingsService: true,
             debugLogging: true
         },

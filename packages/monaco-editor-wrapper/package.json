@@ -46,14 +46,14 @@
     "build": "npm run clean && npm run compile && npm run bundle"
   },
   "volta": {
-    "node": "18.17.0",
+    "node": "18.17.1",
     "npm": "9.6.7"
   },
   "dependencies": {
-    "monaco-languageclient": "~6.4.0"
+    "monaco-languageclient": "~6.4.1"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~6.4.0",
+    "monaco-languageclient": "~6.4.1",
     "vscode-ws-jsonrpc": "~3.0.0"
   },
   "repository": {

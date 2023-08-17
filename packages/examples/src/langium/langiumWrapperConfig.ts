@@ -27,14 +27,12 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 enableThemeService: true,
                 enableTextmateService: true,
                 enableModelService: true,
-                configureEditorOrViewsServiceConfig: {
+                configureEditorOrViewsService: {
                 },
-                configureConfigurationServiceConfig: {
+                configureConfigurationService: {
                     defaultWorkspaceUri: '/tmp/'
                 },
                 enableLanguagesService: true,
-                // enable quick access "F1" and add required keybindings service
-                enableQuickaccessService: true,
                 enableKeybindingsService: true,
                 debugLogging: true
             },

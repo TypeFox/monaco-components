@@ -32,8 +32,6 @@ const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            // enable quick access "F1" and add required keybindings service
-            enableQuickaccessService: true,
             enableKeybindingsService: true,
             enableThemeService: true,
             enableTextmateService: true,
