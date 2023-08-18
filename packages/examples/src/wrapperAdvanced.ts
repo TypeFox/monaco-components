@@ -1,4 +1,4 @@
-import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
@@ -34,6 +34,7 @@ Same again.`
     languageClientConfig: {
         options: {
             $type: 'WebSocket',
+            name: 'wrapper42 language client',
             host: 'localhost',
             port: 3000,
             path: 'sampleServer',
@@ -110,6 +111,7 @@ const sleepOne = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating editors after ${milliseconds}ms`);
 
+        wrapper42Config.languageClientConfig = undefined;
         const appConfig42 = wrapper42Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig42.languageId = 'javascript';
         appConfig42.useDiffEditor = false;
@@ -157,9 +159,13 @@ const sleepTwo = (milliseconds: number) => {
 };
 
 try {
-    await startWrapper42();
     await startWrapper43();
     await startWrapper44();
+    try {
+        await startWrapper42();
+    } catch (e) {
+        console.log(`Catched expected connection error: ${(e as LanguageClientError).message}`);
+    }
 
     // change the editors config, content or swap normal and diff editors after five seconds
     sleepOne(5000);

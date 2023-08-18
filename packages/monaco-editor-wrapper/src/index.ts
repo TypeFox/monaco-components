@@ -33,6 +33,7 @@ import type {
     WorkerConfigOptions,
     WorkerConfigDirect,
     LanguageClientConfig,
+    LanguageClientError
 } from './languageClientWrapper.js';
 
 import {
@@ -63,6 +64,7 @@ export type {
     WorkerConfigOptions,
     WorkerConfigDirect,
     LanguageClientConfig,
+    LanguageClientError,
     UserConfig,
     ModelUpdate
 };

@@ -11,16 +11,20 @@ export type WebSocketCallOptions = {
     reportStatus?: boolean;
 }
 
+export type LanguageClientConfigBase = {
+    name?: string;
+}
+
 export type LanguageClientConfigType = 'WebSocket' | 'WebSocketUrl' | 'WorkerConfig' | 'Worker';
 
-export type WebSocketUrl = {
+export type WebSocketUrl = LanguageClientConfigBase & {
     secured: boolean;
     host: string;
     port?: number;
     path?: string;
 }
 
-export type WebSocketConfigOptions = {
+export type WebSocketConfigOptions = LanguageClientConfigBase & {
     $type: 'WebSocket'
     secured: boolean;
     host: string;
@@ -30,21 +34,20 @@ export type WebSocketConfigOptions = {
     stopOptions?: WebSocketCallOptions;
 }
 
-export type WebSocketConfigOptionsUrl = {
+export type WebSocketConfigOptionsUrl = LanguageClientConfigBase & {
     $type: 'WebSocketUrl'
     url: string;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
 
-export type WorkerConfigOptions = {
+export type WorkerConfigOptions = LanguageClientConfigBase & {
     $type: 'WorkerConfig'
     url: URL;
     type: 'classic' | 'module';
-    name?: string;
 };
 
-export type WorkerConfigDirect = {
+export type WorkerConfigDirect = LanguageClientConfigBase & {
     $type: 'WorkerDirect';
     worker: Worker;
 };
@@ -55,16 +58,23 @@ export type LanguageClientConfig = {
     initializationOptions?: any;
 }
 
+export type LanguageClientError = {
+    message: string;
+    error: Error | string;
+};
+
 export class LanguageClientWrapper {
 
     private languageClient: MonacoLanguageClient | undefined;
     private languageClientConfig?: LanguageClientConfig;
     private worker: Worker | undefined;
     private languageId: string | undefined;
+    private name;
 
     constructor(languageClientConfig?: LanguageClientConfig) {
         if (languageClientConfig) {
             this.languageClientConfig = languageClientConfig;
+            this.name = this.languageClientConfig.options.name ?? 'unnamed';
         }
     }
 
@@ -94,10 +104,13 @@ export class LanguageClientWrapper {
 
     async start() {
         if (this.languageClientConfig) {
-            console.log('Starting monaco-languageclient');
-            await this.startLanguageClientConnection();
+            return this.startLanguageClientConnection();
         } else {
-            await Promise.reject('Unable to start monaco-languageclient. No configuration was provided.');
+            const languageClientError: LanguageClientError = {
+                message: `languageClientWrapper (${this.name}): Unable to start monaco-languageclient. No configuration was provided.`,
+                error: 'No error was provided.'
+            };
+            return Promise.reject(languageClientError);
         }
     }
 
@@ -118,7 +131,11 @@ export class LanguageClientWrapper {
             console.log('Re-Starting monaco-languageclient');
             await this.startLanguageClientConnection();
         } else {
-            await Promise.reject('Unable to restart languageclient. No configuration was provided.');
+            const languageClientError: LanguageClientError = {
+                message: `languageClientWrapper (${this.name}): Unable to restart languageclient. No configuration was provided.`,
+                error: 'No error was provided.'
+            };
+            await Promise.reject(languageClientError);
         }
     }
 
@@ -141,6 +158,13 @@ export class LanguageClientWrapper {
                     };
                     this.handleLanguageClientStart(messageTransports, resolve, reject);
                 };
+                webSocket.onerror = (ev: Event) => {
+                    const languageClientError: LanguageClientError = {
+                        message: `languageClientWrapper (${this.name}): Websocket connection failed.`,
+                        error: (ev as ErrorEvent).error ?? 'No error was provided.'
+                    };
+                    reject(languageClientError);
+                };
             } else {
                 if (!this.worker) {
                     if (lcConfig?.$type === 'WorkerConfig') {
@@ -149,6 +173,14 @@ export class LanguageClientWrapper {
                             type: workerConfig.type,
                             name: workerConfig.name
                         });
+
+                        this.worker.onerror = (ev) => {
+                            const languageClientError: LanguageClientError = {
+                                message: `languageClientWrapper (${this.name}): Illegal worker configuration detected. Potentially the url is wrong.`,
+                                error: ev.error ?? 'No error was provided.'
+                            };
+                            reject(languageClientError);
+                        };
                     } else {
                         const workerDirectConfig = lcConfig as WorkerConfigDirect;
                         this.worker = workerDirectConfig.worker;
@@ -190,11 +222,13 @@ export class LanguageClientWrapper {
                 }
             }
         } catch (e) {
-            const errorMsg = `monaco-languageclient start was unsuccessful: ${e}`;
-            reject(errorMsg);
+            const languageClientError: LanguageClientError = {
+                message: `languageClientWrapper (${this.name}): Start was unsuccessful.`,
+                error: (e as Error) ?? 'No error was provided.'
+            };
+            reject(languageClientError);
         }
-        const msg = 'monaco-languageclient was successfully started.';
-        resolve(msg);
+        resolve(`languageClientWrapper (${this.name}): Start was successfully.`);
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
@@ -231,19 +265,27 @@ export class LanguageClientWrapper {
                 this.languageClient = undefined;
                 await Promise.resolve('monaco-languageclient and monaco-editor were successfully disposed.');
             } catch (e) {
-                await Promise.reject(`Disposing the monaco-languageclient resulted in error: ${e}`);
+                const languageClientError: LanguageClientError = {
+                    message: `languageClientWrapper (${this.name}): Disposing the monaco-languageclient resulted in error.`,
+                    error: (e as Error) ?? 'No error was provided.'
+                };
+                await Promise.reject(languageClientError);
             }
         }
         else {
-            await Promise.reject('Unable to dispose monaco-languageclient: It is not yet started.');
+            const languageClientError: LanguageClientError = {
+                message: `languageClientWrapper (${this.name}): Unable to dispose monaco-languageclient: It is not yet started.`,
+                error: 'No error was provided.'
+            };
+            await Promise.reject(languageClientError);
         }
     }
 
     reportStatus() {
         const status: string[] = [];
         status.push('LanguageClientWrapper status:');
-        status.push(`LanguageClient: ${this.getLanguageClient()}`);
-        status.push(`Worker: ${this.getWorker()}`);
+        status.push(`LanguageClient: ${this.getLanguageClient()} `);
+        status.push(`Worker: ${this.getWorker()} `);
         return status;
     }
 }
