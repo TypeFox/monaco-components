@@ -10,25 +10,44 @@ describe('Test LanguageClientWrapper', () => {
         expect(languageClientWrapper.isStarted()).toBeFalsy();
     });
 
-    test('Start: no config', async () => {
+    test('Constructor: no config', async () => {
         const languageClientWrapper = new LanguageClientWrapper();
         expect(async () => {
             await languageClientWrapper.start();
-        }).rejects.toEqual('Unable to start monaco-languageclient. No configuration was provided.');
+        }).rejects.toEqual({
+            message: 'languageClientWrapper (undefined): Unable to start monaco-languageclient. No configuration was provided.',
+            error: 'No error was provided.'
+        });
     });
 
-    test('Start: config', async () => {
+    test('Constructor: config', async () => {
         const languageClientConfig: LanguageClientConfig = {
             options: {
                 $type: 'WebSocketUrl',
-                url: 'ws://localhost:3000/sampleServer'
+                url: 'ws://localhost:12345/Tester'
             }
         };
         const languageClientWrapper = new LanguageClientWrapper(languageClientConfig);
         expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
     });
 
-    test('Only bad worker url', async () => {
+    test('Start: unreachable url', async () => {
+        const languageClientConfig: LanguageClientConfig = {
+            options: {
+                $type: 'WebSocketUrl',
+                url: 'ws://localhost:12345/Tester',
+                name: 'test-unreachable'
+            }
+        };
+        const languageClientWrapper = new LanguageClientWrapper(languageClientConfig);
+        expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
+        await expect(languageClientWrapper.start()).rejects.toEqual({
+            message: 'languageClientWrapper (test-unreachable): Websocket connection failed.',
+            error: 'No error was provided.'
+        });
+    });
+
+    test('Only unreachable worker url', async () => {
         const prom = new Promise((_resolve, reject) => {
             const worker = new Worker('aBogusUrl');
 
@@ -39,7 +58,7 @@ describe('Test LanguageClientWrapper', () => {
         await expect(prom).rejects.toEqual('error');
     });
 
-    test('Start: bad worker url', async () => {
+    test('Start: unreachable worker url', async () => {
         const languageClientConfig: LanguageClientConfig = {
             options: {
                 $type: 'WorkerConfig',
@@ -49,7 +68,10 @@ describe('Test LanguageClientWrapper', () => {
         };
         const languageClientWrapper = new LanguageClientWrapper(languageClientConfig);
         expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
-        await expect(languageClientWrapper.start()).rejects.toBe('languageClientWrapper (unnamed): Illegal worker configuration detected. Potentially the url is wrong.');
+        await expect(languageClientWrapper.start()).rejects.toEqual({
+            message: 'languageClientWrapper (unnamed): Illegal worker configuration detected. Potentially the url is wrong.',
+            error: 'No error was provided.'
+        });
     });
 
 });

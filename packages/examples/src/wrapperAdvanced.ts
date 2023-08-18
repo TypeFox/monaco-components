@@ -1,4 +1,4 @@
-import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 
@@ -164,7 +164,7 @@ try {
     try {
         await startWrapper42();
     } catch (e) {
-        console.log(`Catched expected exception: ${e}`);
+        console.log(`Catched expected connection error: ${(e as LanguageClientError).message}`);
     }
 
     // change the editors config, content or swap normal and diff editors after five seconds
