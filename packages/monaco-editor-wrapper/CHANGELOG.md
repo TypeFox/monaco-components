@@ -2,11 +2,12 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [3.0.0] - 2023-08-1x
+## [3.0.0] - 2023-08-2x
 
 - Improve naming and improve api usage [#31](https://github.com/TypeFox/monaco-components/pull/31)
 - createUrl now allows web socket urls without port and path [#30](https://github.com/TypeFox/monaco-components/pull/30)
 - Updated to `monaco-languageclient` `6.4.1` using `monaco-vscode-api` `1.81.1` and `monaco-editor` `0.41.0`
+- languageClientWrapper: Reject start with unreachable web socket or web worker url [#34](https://github.com/TypeFox/monaco-components/pull/34)
 
 ## [2.1.1] - 2023-07-27
 
