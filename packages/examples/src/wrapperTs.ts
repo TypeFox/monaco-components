@@ -25,7 +25,8 @@ const monacoEditorConfig = {
     lightbulb: {
         enabled: true
     },
-    theme: 'vs-dark'
+    theme: 'vs-dark',
+    renderSideBySide: false
 };
 
 const userConfig: UserConfig = {
