@@ -5,15 +5,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify: Monaco Editor Wrapper: Diff</title>
+    <!--
     <link rel="stylesheet" href="./libs/monaco-editor-wrapper/assets/style.css">
+    -->
 </head>
 
 <body>
     <div id="monaco-editor-root" style="height: 100vh;"></div>
     <script type="module">
-        import { MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/mew.js';
+        import { addMonacoStyles, MonacoEditorLanguageClientWrapper } from './libs/monaco-editor-wrapper/mew.js';
+
         import { buildWorkerDefinition } from './libs/monaco-editor-workers/index.js';
         buildWorkerDefinition('./libs/monaco-editor-workers/workers', import.meta.url, false);
+
+        // alternatively use the stylesheet link from the head
+        addMonacoStyles('monaco-styles-helper');
 
         const wrapper = new MonacoEditorLanguageClientWrapper();
         const startWrapper = async () => {

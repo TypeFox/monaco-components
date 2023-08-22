@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "3.0.0-next.1",
+  "version": "3.0.0-next.2",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -19,6 +19,10 @@
     "./bundle": {
       "types": "./dist/index.d.ts",
       "default": "./bundle/index.js"
+    },
+    "./styles": {
+      "types": "./styles/index.d.ts",
+      "default": "./styles/index.js"
     }
   },
   "typesVersions": {
@@ -28,6 +32,9 @@
       ],
       "bundle": [
         "dist/index"
+      ],
+      "styles": [
+        "styles/css"
       ]
     }
   },
@@ -35,14 +42,15 @@
     "dist",
     "bundle",
     "src",
+    "styles",
     "LICENSE",
     "README.md"
   ],
   "scripts": {
     "clean": "shx rm -rf ./dist ./bundle ./resources *.tsbuildinfo",
-    "handle:assets": "vite-node ./build/src/buildAssets.mts",
-    "compile": "npm run handle:assets && tsc --build tsconfig.src.json",
-    "bundle": "vite --config vite.bundle.config.ts build",
+    "process:assets": "vite-node ./build/src/buildAssets.mts",
+    "compile": "tsc --build tsconfig.src.json",
+    "bundle": "vite --config vite.bundle.config.ts build && npm run process:assets",
     "build": "npm run clean && npm run compile && npm run bundle"
   },
   "volta": {
@@ -50,10 +58,10 @@
     "npm": "9.6.7"
   },
   "dependencies": {
-    "monaco-languageclient": "~6.4.2"
+    "monaco-languageclient": "~6.4.3"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~6.4.2",
+    "monaco-languageclient": "~6.4.3",
     "vscode-ws-jsonrpc": "~3.0.0"
   },
   "repository": {

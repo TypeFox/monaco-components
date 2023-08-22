@@ -78,5 +78,4 @@ export {
     EditorAppVscodeApi
 };
 
-export * from './helpers/css.js';
 export * from './utils.js';

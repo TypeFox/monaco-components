@@ -3,6 +3,7 @@ import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import 'vscode/default-extensions/theme-defaults';
 import { UserConfig } from './wrapper.js';
+import { verifyUrlorCreateDataUrl } from './utils.js';
 
 export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     $type: 'vscodeApi';
@@ -50,17 +51,13 @@ export class EditorAppVscodeApi extends EditorAppBase {
             const extensionFilesOrContents = this.config.extensionFilesOrContents;
             if (extensionFilesOrContents) {
                 for (const entry of extensionFilesOrContents) {
-                    registerFileUrl(entry[0], EditorAppVscodeApi.verifyUrlorCreateDataUrl(entry[1]));
+                    registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }
 
         await this.updateEditorOptions(this.config.userConfiguration ?? {});
         console.log('Init of VscodeApiConfig was completed.');
-    }
-
-    static verifyUrlorCreateDataUrl(input: string | URL) {
-        return (input instanceof URL) ? input.href : new URL(`data:text/plain;base64,${btoa(input)}`).href;
     }
 
     async updateEditorOptions(config: VscodeUserConfiguration) {
