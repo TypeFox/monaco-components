@@ -65,6 +65,7 @@ module.exports = {
         '@typescript-eslint/no-misused-new': 'error',               // no constructors for interfaces or new for classes
         '@typescript-eslint/no-namespace': 'off',                   // disallow the use of custom TypeScript modules and namespaces
         '@typescript-eslint/no-non-null-assertion': 'off',          // allow ! operator
+        "@typescript-eslint/parameter-properties": "error",         // no property definitions in class constructors
         '@typescript-eslint/no-unused-vars': ['error', {            // disallow Unused Variables
             'argsIgnorePattern': '^_'
         }],
