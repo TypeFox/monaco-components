@@ -1,11 +1,11 @@
-node_modules
-
-lib
-dist
 bundle
-
+dist
+lib
+node_modules
 *.tsbuildinfo
-*.tgz
 
-packages/monaco-editor-wrapper/src/generated
+# exclude generated file
+packages/monaco-editor-wrapper/styles/css.js
+
+# exclude libs used for bundle verification
 packages/examples/libs
