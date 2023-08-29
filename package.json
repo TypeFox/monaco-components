@@ -11,7 +11,8 @@
     "build": "npm run build --workspaces",
     "test": "vitest -c vitest.config.ts",
     "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
-    "reset:repo": "git clean -f -X -d"
+    "reset:repo": "git clean -f -X -d",
+    "start:example:server:python": "npm run start:server:python --workspace packages/examples"
   },
   "devDependencies": {
     "@types/node": "~18.17.5",
