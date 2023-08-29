@@ -47,8 +47,6 @@ export class MonacoEditorLanguageClientWrapper {
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
 
-        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig);
-
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
         // always set required services if not configure
@@ -58,8 +56,18 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig.configureConfigurationService = this.serviceConfig.configureConfigurationService ?? {
             defaultWorkspaceUri: '/tmp/'
         };
+        if (wasVscodeApiInitialized()){
+            if(this.serviceConfig.debugLogging){
+                console.log('No service init on restart');
+            }
+        } else {
+            if(this.serviceConfig.debugLogging){
+                console.log('Init Services');
+            }
+            await initServices(this.serviceConfig);
+        }
 
-        await (wasVscodeApiInitialized() ? Promise.resolve('No service init on restart') : initServices(this.serviceConfig));
+        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig);
     }
 
     async start(userConfig: UserConfig) {
