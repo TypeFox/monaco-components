@@ -1,6 +1,6 @@
 import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { editor } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor } from 'monaco-editor';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
 import { VscodeUserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
@@ -66,8 +66,7 @@ export class MonacoEditorLanguageClientWrapper {
         await this.init(userConfig);
 
         // Always dispose old instances before start
-        this.editorApp?.disposeEditor();
-        this.editorApp?.disposeDiffEditor();
+        this.editorApp?.disposeApp();
 
         if (isVscodeApiEditorApp(userConfig.wrapperConfig)) {
             this.editorApp = new EditorAppVscodeApi(this.id, userConfig);
@@ -146,8 +145,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     async dispose(): Promise<void> {
-        this.editorApp?.disposeEditor();
-        this.editorApp?.disposeDiffEditor();
+        this.editorApp?.disposeApp();
 
         if (this.languageClientWrapper.haveLanguageClient()) {
             await this.languageClientWrapper.disposeLanguageClient(false);

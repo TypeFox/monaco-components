@@ -1,5 +1,5 @@
 import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
-import { IDisposable } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { IDisposable } from 'monaco-editor';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
 
@@ -52,10 +52,10 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         // check if both are configs and the workers are both undefined
         if (prevIsWorkerConfig && prevIsWorker === undefined && currentIsWorkerConfig && currentIsWorker === undefined) {
             mustReInit = (prevWorkerOptions as WorkerConfigOptions).url !== (currentWorkerOptions as WorkerConfigOptions).url;
-        // check if both are workers and configs are both undefined
+            // check if both are workers and configs are both undefined
         } else if (prevIsWorkerConfig === undefined && prevIsWorker && currentIsWorkerConfig === undefined && currentIsWorker) {
             mustReInit = (prevWorkerOptions as WorkerConfigDirect).worker !== (currentWorkerOptions as WorkerConfigDirect).worker;
-        // previous was worker and current config is not or the other way around
+            // previous was worker and current config is not or the other way around
         } else if (prevIsWorker && currentIsWorkerConfig || prevIsWorkerConfig && currentIsWorker) {
             mustReInit = true;
         }

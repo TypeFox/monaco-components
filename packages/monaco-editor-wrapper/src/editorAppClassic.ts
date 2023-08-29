@@ -1,5 +1,5 @@
 import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
-import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor, languages } from 'monaco-editor';
 import { UserConfig } from './wrapper.js';
 /**
  * This is derived from:
@@ -104,5 +104,10 @@ export class EditorAppClassic extends EditorAppBase {
 
     async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
         this.updateMonacoEditorOptions(options);
+    }
+
+    disposeApp(): void {
+        this.disposeEditor();
+        this.disposeDiffEditor();
     }
 }

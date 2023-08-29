@@ -3,11 +3,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@typefox/monaco-editor-react": "2.0.0-next.2",
+    "@typefox/monaco-editor-react": "2.0.0",
     "http-server": "~14.1.1",
     "langium": "~2.0.0",
     "langium-statemachine-dsl": "~2.0.0",
-    "monaco-editor-wrapper": "3.0.0-next.2",
+    "monaco-editor-wrapper": "3.0.0",
     "monaco-editor-workers": "~0.41.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",

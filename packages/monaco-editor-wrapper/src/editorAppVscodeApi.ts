@@ -4,6 +4,7 @@ import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode
 import 'vscode/default-extensions/theme-defaults';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
+import { IDisposable } from 'monaco-editor';
 
 export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     $type: 'vscodeApi';
@@ -12,12 +13,19 @@ export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     userConfiguration?: VscodeUserConfiguration;
 };
 
+type ExtensionResult = {
+    id: string;
+    registerFileUrl: (path: string, url: string) => IDisposable;
+    dispose(): Promise<void>;
+};
+
 /**
  * The vscode-apo monaco-editor app uses vscode user and extension configuration for monaco-editor.
  */
 export class EditorAppVscodeApi extends EditorAppBase {
 
     private config: EditorAppConfigVscodeApi;
+    private extensionResult: ExtensionResult;
 
     constructor(id: string, userConfig: UserConfig) {
         super(id);
@@ -47,11 +55,11 @@ export class EditorAppVscodeApi extends EditorAppBase {
     async init() {
         if (this.config.extension) {
             const extension = this.config.extension as IExtensionManifest;
-            const { registerFileUrl } = registerExtension(extension, ExtensionHostKind.LocalProcess);
+            this.extensionResult = registerExtension(extension, ExtensionHostKind.LocalProcess);
             const extensionFilesOrContents = this.config.extensionFilesOrContents;
             if (extensionFilesOrContents) {
                 for (const entry of extensionFilesOrContents) {
-                    registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
+                    this.extensionResult.registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }
@@ -66,4 +74,9 @@ export class EditorAppVscodeApi extends EditorAppBase {
         }
     }
 
+    disposeApp(): void {
+        this.disposeEditor();
+        this.disposeDiffEditor();
+        this.extensionResult.dispose();
+    }
 }

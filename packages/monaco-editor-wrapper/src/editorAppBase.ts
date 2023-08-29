@@ -1,6 +1,4 @@
-import 'monaco-editor/esm/vs/editor/editor.all.js';
-import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShowKeyboard.js';
-import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
 import { ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
@@ -43,7 +41,7 @@ export abstract class EditorAppBase {
         this.id = id;
     }
 
-    buildConfig(userConfig: UserConfig) {
+    protected buildConfig(userConfig: UserConfig) {
         const userAppConfig = userConfig.wrapperConfig.editorAppConfig;
         return {
             languageId: userAppConfig.languageId,
@@ -77,16 +75,15 @@ export abstract class EditorAppBase {
         await this.updateDiffEditorModel();
     }
 
-    disposeEditor() {
+    protected disposeEditor() {
         if (this.editor) {
             this.modelRef?.dispose();
             this.editor.dispose();
             this.editor = undefined;
-
         }
     }
 
-    disposeDiffEditor() {
+    protected disposeDiffEditor() {
         if (this.diffEditor) {
             this.modelRef?.dispose();
             this.modelOriginalRef?.dispose();
@@ -209,6 +206,7 @@ export abstract class EditorAppBase {
     abstract createEditors(container: HTMLElement): Promise<void>;
     abstract updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
     abstract getConfig(): EditorAppConfigClassic | EditorAppConfigVscodeApi;
+    abstract disposeApp(): void;
 }
 
 export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {

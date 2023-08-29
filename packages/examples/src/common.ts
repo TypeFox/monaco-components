@@ -1,5 +1,5 @@
 import { ModelUpdate, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
-import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { languages } from 'monaco-editor';
 
 export const wrapper = new MonacoEditorLanguageClientWrapper();
 
