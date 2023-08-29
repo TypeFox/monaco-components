@@ -16,6 +16,8 @@ export type EditorAppBaseConfig = {
     useDiffEditor: boolean;
     codeOriginal?: string;
     codeOriginalUri?: string;
+    domReadOnly?: boolean;
+    readOnly?: boolean;
 }
 
 export type EditorAppType = 'vscodeApi' | 'classic';
@@ -50,6 +52,8 @@ export abstract class EditorAppBase {
             useDiffEditor: userAppConfig.useDiffEditor === true,
             codeUri: userAppConfig.codeUri ?? undefined,
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
+            readOnly: userAppConfig.readOnly ?? false,
+            domReadOnly: userAppConfig.domReadOnly ?? false,
         };
     }
 
