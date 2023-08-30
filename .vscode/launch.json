@@ -5,9 +5,27 @@
     "version": "0.2.0",
     "configurations": [
       {
+        "name": "Launch JSON LS",
+        "type": "node",
+        "request": "launch",
+        "args": ["${workspaceRoot}/packages/examples/src/servers/json-server.ts"],
+        "runtimeArgs": ["--nolazy", "--loader", "ts-node/esm"],
+        "cwd": "${workspaceRoot}/packages/examples",
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "Launch Python LS",
+        "type": "node",
+        "request": "launch",
+        "args": ["${workspaceRoot}/packages/examples/src/servers/python-server.ts"],
+        "runtimeArgs": ["--nolazy", "--loader", "ts-node/esm"],
+        "cwd": "${workspaceRoot}/packages/examples",
+        "internalConsoleOptions": "openOnSessionStart"
+      },
+      {
+        "name": "Chrome",
         "type": "chrome",
         "request": "launch",
-        "name": "Launch Chrome (All packages)",
         "url": "http://localhost:20001",
         "webRoot": "${workspaceFolder}"
       }
