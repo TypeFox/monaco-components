@@ -1,0 +1,39 @@
+{
+  "name": "kotlin-language-server",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "express": "~4.18.2",
+    "monaco-editor-workers": "~0.41.0",
+    "monaco-languageclient": "~6.4.4",
+    "request-light": "~0.7.0",
+    "vscode-json-languageservice": "~5.3.5",
+    "vscode-languageserver": "~8.1.0",
+    "vscode-ws-jsonrpc": "~3.0.0",
+    "ws": "~8.13.0"
+  },
+  "devDependencies": {
+    "@types/ws": "~8.5.5",
+    "@types/express": "~4.17.17",
+    "@types/react": "~18.2.20",
+    "@types/react-dom": "~18.2.7",
+    "ts-node": "~10.9.1",
+    "vscode-languageserver-types": "~3.17.3"
+  },
+  "volta": {
+    "node": "18.17.1",
+    "npm": "9.6.7"
+  },
+  "scripts": {
+    "clean": "shx rm -rf ./dist ./libs *.tsbuildinfo",
+    "compile": "tsc --build tsconfig.src.json",
+    "copy:prepare": "shx mkdir -p ./libs",
+    "copy:workers": "shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
+    "copy:all": "npm run copy:prepare && npm run copy:workers",
+    "build:worker": "vite-node ./build/buildWorker.mts -- --script iife ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./dist/worker/statemachineServerWorker.js",
+    "build:bundle:wrapper": "vite --config  vite.bundle-mew.ts build",
+    "build": "npm run clean && npm run compile && npm run build:worker && npm run build:bundle:wrapper && npm run copy:all",
+    "start": "http-server --port 20002 ./",
+    "start:server": "node --loader ts-node/esm src/server.ts"
+  }
+}

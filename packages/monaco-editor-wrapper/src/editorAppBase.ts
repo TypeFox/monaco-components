@@ -185,7 +185,9 @@ export abstract class EditorAppBase {
         if (uri) {
             return Uri.parse(uri);
         } else {
-            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
+            // .${config.languageId} in case of full language names like 'kotlin' cause issues
+            // return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
+            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.kt`);
         }
     }
 
