@@ -1,12 +1,13 @@
 import { MonacoLanguageClient } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
-import { CloseAction, ErrorAction, MessageTransports } from 'vscode-languageclient/lib/common/client.js';
+import { CloseAction, ErrorAction, MessageTransports, State } from 'vscode-languageclient/lib/common/client.js';
 import { createUrl } from './utils.js';
+import { $ConfigurationOptions } from 'vscode-languageclient/lib/common/configuration.js';
 
 export type WebSocketCallOptions = {
     /** Adds handle on languageClient */
-    onCall: () => void;
+    onCall: (languageClient?: MonacoLanguageClient) => void;
     /** Reports Status Of Language Client */
     reportStatus?: boolean;
 }
@@ -30,6 +31,7 @@ export type WebSocketConfigOptions = LanguageClientConfigBase & {
     host: string;
     port?: number;
     path?: string;
+    extraParams?: Record<string, string | number | Array<string|number>>;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
@@ -56,6 +58,7 @@ export type LanguageClientConfig = {
     options: WebSocketConfigOptions | WebSocketConfigOptionsUrl | WorkerConfigOptions | WorkerConfigDirect;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initializationOptions?: any;
+    configurationOptions?: $ConfigurationOptions
 }
 
 export type LanguageClientError = {
@@ -205,7 +208,7 @@ export class LanguageClientWrapper {
             await this.languageClient?.stop();
             if ((lcConfig?.$type === 'WebSocket' || lcConfig?.$type === 'WebSocketUrl') && lcConfig?.stopOptions) {
                 const stopOptions = lcConfig?.stopOptions;
-                stopOptions.onCall();
+                stopOptions.onCall(this.getLanguageClient());
                 if (stopOptions.reportStatus) {
                     console.log(this.reportStatus().join('\n'));
                 }
@@ -216,7 +219,7 @@ export class LanguageClientWrapper {
             await this.languageClient.start();
             if ((lcConfig?.$type === 'WebSocket' || lcConfig?.$type === 'WebSocketUrl') && lcConfig?.startOptions) {
                 const startOptions = lcConfig?.startOptions;
-                startOptions.onCall();
+                startOptions.onCall(this.getLanguageClient());
                 if (startOptions.reportStatus) {
                     console.log(this.reportStatus().join('\n'));
                 }
@@ -228,12 +231,12 @@ export class LanguageClientWrapper {
             };
             reject(languageClientError);
         }
-        resolve(`languageClientWrapper (${this.name}): Start was successfully.`);
+        resolve(`languageClientWrapper (${this.name}): Started successfully.`);
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
         return new MonacoLanguageClient({
-            name: 'Monaco Wrapper Language Client',
+            name: this.languageClientConfig?.options.name ?? 'Monaco Wrapper Language Client',
             clientOptions: {
                 // use a language id as a document selector
                 documentSelector: [this.languageId!],
@@ -243,7 +246,9 @@ export class LanguageClientWrapper {
                     closed: () => ({ action: CloseAction.DoNotRestart })
                 },
                 // allow to initialize the language client with user specific options
-                initializationOptions: this.languageClientConfig?.initializationOptions
+                initializationOptions: this.languageClientConfig?.initializationOptions,
+
+                ...(this.languageClientConfig?.configurationOptions ?? {})
             },
             // create a language client connection from the JSON RPC connection on demand
             connectionProvider: {
@@ -283,9 +288,9 @@ export class LanguageClientWrapper {
 
     reportStatus() {
         const status: string[] = [];
+        const languageClient = this.getLanguageClient();
         status.push('LanguageClientWrapper status:');
-        status.push(`LanguageClient: ${this.getLanguageClient()} `);
-        status.push(`Worker: ${this.getWorker()} `);
+        status.push(`LanguageClient: ${languageClient?.name ?? 'Language Client'} is in a '${State[languageClient?.state ?? 1]}' state`);
         return status;
     }
 }
