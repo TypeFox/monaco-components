@@ -8,7 +8,6 @@ export type MonacoEditorProps = {
     className?: string;
     userConfig: UserConfig,
     onTextChanged?: (text: string, isDirty: boolean) => void;
-    onLoading?: () => void;
     onLoad?: () => void;
 }
 
@@ -127,7 +126,6 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             className,
             userConfig,
             onTextChanged,
-            onLoading,
             onLoad,
         } = this.props;
 
@@ -138,8 +136,8 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             this.isStarting = this.wrapper.start(userConfig);
             await this.isStarting;
 
-            onLoading && onLoading();
-            onLoad && this.isStarting?.then(() => onLoad());
+            // once awaiting isStarting is done onLoad is called if available
+            onLoad && onLoad();
 
             if (onTextChanged) {
                 const model = this.wrapper.getModel();
