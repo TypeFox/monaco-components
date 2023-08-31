@@ -5,6 +5,7 @@
         { "path": "packages/monaco-editor-wrapper/tsconfig.test.json" },
         { "path": "packages/monaco-editor-wrapper/build/tsconfig.src.json" },
         { "path": "packages/monaco-editor-react/tsconfig.src.json" },
+        { "path": "packages/monaco-editor-react/tsconfig.test.json" },
         { "path": "packages/examples/tsconfig.src.json" }
     ]
  }

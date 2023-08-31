@@ -11,7 +11,7 @@ export type VscodeUserConfiguration = {
 
 export type EditorAppBaseConfig = {
     languageId: string;
-    code: string;
+    code?: string;
     codeUri?: string;
     useDiffEditor: boolean;
     codeOriginal?: string;
