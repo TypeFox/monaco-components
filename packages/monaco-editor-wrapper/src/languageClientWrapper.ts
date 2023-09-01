@@ -31,7 +31,7 @@ export type WebSocketConfigOptions = LanguageClientConfigBase & {
     host: string;
     port?: number;
     path?: string;
-    extraParams?: Record<string, string | number | Array<string|number>>;
+    extraParams?: Record<string, string | number | Array<string | number>>;
     startOptions?: WebSocketCallOptions;
     stopOptions?: WebSocketCallOptions;
 }
@@ -120,7 +120,7 @@ export class LanguageClientWrapper {
     /**
      * Restart the languageclient with options to control worker handling
      *
-     * @param updatedWorker Set a new worker here that should be used. keepWorker has no effect theb
+     * @param updatedWorker Set a new worker here that should be used. keepWorker has no effect then, as we want to dispose of the prior workers
      * @param keepWorker Set to true if worker should not be disposed
      */
     async restartLanguageClient(updatedWorker?: Worker, keepWorker?: boolean): Promise<void> {
@@ -260,13 +260,16 @@ export class LanguageClientWrapper {
     }
 
     public async disposeLanguageClient(keepWorker?: boolean): Promise<void> {
+        // terminate worker first
+        if (keepWorker === undefined || keepWorker === false) {
+            this.worker?.terminate();
+            this.worker = undefined;
+        }
+
+        // then attempt to dispose the LC
         if (this.languageClient && this.languageClient.isRunning()) {
             try {
                 await this.languageClient.dispose();
-                if (keepWorker === undefined || keepWorker === false) {
-                    this.worker?.terminate();
-                    this.worker = undefined;
-                }
                 this.languageClient = undefined;
                 await Promise.resolve('monaco-languageclient and monaco-editor were successfully disposed.');
             } catch (e) {
