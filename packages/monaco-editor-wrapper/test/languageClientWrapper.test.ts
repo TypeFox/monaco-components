@@ -20,6 +20,40 @@ describe('Test LanguageClientWrapper', () => {
         });
     });
 
+    test('Dispose: direct worker is cleaned up afterwards', async () => {
+
+        /**
+         * Helper to generate a quick worker from a function blob
+         */
+        function createWorkerFromFunction(fn: () => void): Worker {
+            return new Worker(URL.createObjectURL(
+                new Blob([`(${fn.toString()})()`], { type: 'application/javascript' })
+            ));
+        }
+
+        // create a web worker to pass to the wrapper
+        const worker = createWorkerFromFunction(() => {
+            console.info('Hello');
+        });
+
+        // setup the wrapper
+        const languageClientWrapper = new LanguageClientWrapper({
+            options: {
+                $type: 'WorkerDirect',
+                worker
+            }
+        });
+
+        // start up & verify (don't wait for start to finish, just roll past it, we only care about the worker)
+        languageClientWrapper.start();
+        expect(languageClientWrapper.getWorker()).toBeTruthy();
+
+        // dispose & verify
+        languageClientWrapper.disposeLanguageClient();
+        expect(languageClientWrapper.getWorker()).toBeUndefined();
+        // no further way to verify post-terminate, but the worker should be disposed once no longer present
+    });
+
     test('Constructor: config', async () => {
         const languageClientConfig: LanguageClientConfig = {
             options: {
