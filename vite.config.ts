@@ -7,11 +7,13 @@ export default defineConfig({
         target: 'esnext',
         rollupOptions: {
             input: {
+                wrapperStatemachine: resolve(__dirname, '/packages/examples/wrapper_statemachine.html'),
                 wrapperLangium: resolve(__dirname, '/packages/examples/wrapper_langium.html'),
                 wrapperTs: resolve(__dirname, '/packages/examples/wrapper_ts.html'),
                 wrapperWebSocket: resolve(__dirname, '/packages/examples/wrapper_ws.html'),
                 wrapperAdvanced: resolve(__dirname, '/packages/examples/wrapper_adv.html'),
-                react: resolve(__dirname, '/packages/examples/react.html'),
+                reactPython: resolve(__dirname, '/packages/examples/react_python.html'),
+                reactStatemachine: resolve(__dirname, '/packages/examples/react_statemachine.html'),
                 reactTs: resolve(__dirname, '/packages/examples/react_ts.html'),
                 workers: resolve(__dirname, '/packages/examples/workers.html'),
                 verifyWrapper: resolve(__dirname, '/packages/examples/verify_wrapper.html'),

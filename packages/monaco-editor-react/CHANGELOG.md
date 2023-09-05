@@ -2,9 +2,13 @@
 
 All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/@typefox/monaco-editor-react) are documented in this file.
 
+## [2.0.1] - 2023-09-0x
+
+- Updated to `monaco-editor-wrapper` `3.0.1`
+
 ## [2.0.0] - 2023-08-31
 
-- Updated to `monaco-editor-wrapper` `2.0.0`
+- Updated to `monaco-editor-wrapper` `3.0.0`
 - Removed `onLoading` as the current implemetation made no difference to `onLoad`
 
 ## [1.1.1] - 2023-07-27

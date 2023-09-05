@@ -60,7 +60,8 @@ const run = async () => {
 
 These are the examples specifically for `monaco-editor-wrapper` you find in the repository:
 
-- TypeScript editor worker using classical configuration, [see](./packages/examples/wrapper_ts.html)
-- Language client & web socket language server example using monaco-vscode-api configuration [see](./packages/examples/wrapper_ws.html) It requires the server available [here](https://github.com/TypeFox/monaco-languageclient/tree/main#examples)
-- Multiple editors using with monaco-vscode-api configuration [see](./packages/examples/wrapper_adv.html)
-- Langium statemachine web worker using classical configuration [see](./packages/examples/wrapper_langium.html)
+- TypeScript editor worker using classical configuration, [see](../examples/wrapper_ts.html)
+- Language client & web socket language server example using vscode-api configuration [see](../examples/wrapper_ws.html) It requires the json language server to run. Use `start:server:json` from [here](../examples/package.json)
+- Multiple editors using classical configuration [see](../examples/wrapper_adv.html)
+- Langium statemachine language client and web worker based language server using vscode-api configuration [see](../examples/wrapper_statemachine.html)
+- Langium grammar language client and web worker based language server using vscode-api configuration [see](../examples/wrapper_langium.html)

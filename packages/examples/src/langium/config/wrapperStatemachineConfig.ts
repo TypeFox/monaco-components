@@ -1,7 +1,7 @@
 import { UserConfig } from 'monaco-editor-wrapper';
 
 export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promise<UserConfig> => {
-    const exampleStatemachineUrl = new URL('./src/langium/example.statemachine', window.location.href).href;
+    const exampleStatemachineUrl = new URL('./src/langium/content/example.statemachine', window.location.href).href;
     const responseStatemachine = await fetch(exampleStatemachineUrl);
     const code = await responseStatemachine.text();
 
@@ -71,8 +71,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 userConfiguration: {
                     json: `{
     "workbench.colorTheme": "Default Dark Modern",
-    "editor.fontSize": 14,
-    "editor.lightbulb.enabled": true,
     "editor.guides.bracketPairsHorizontal": "active",
     "editor.lightbulb.enabled": true
 }`

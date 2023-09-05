@@ -51,17 +51,15 @@ export class MonacoEditorLanguageClientWrapper {
 
         // always set required services if not configure
         this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
-        this.serviceConfig.configureEditorOrViewsService = this.serviceConfig.configureEditorOrViewsService ?? {
-        };
         this.serviceConfig.configureConfigurationService = this.serviceConfig.configureConfigurationService ?? {
             defaultWorkspaceUri: '/tmp/'
         };
-        if (wasVscodeApiInitialized()){
-            if(this.serviceConfig.debugLogging){
+        if (wasVscodeApiInitialized()) {
+            if (this.serviceConfig.debugLogging) {
                 console.log('No service init on restart');
             }
         } else {
-            if(this.serviceConfig.debugLogging){
+            if (this.serviceConfig.debugLogging) {
                 console.log('Init Services');
             }
             await initServices(this.serviceConfig);

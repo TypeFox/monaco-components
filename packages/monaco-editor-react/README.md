@@ -65,7 +65,8 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
 These are the examples specifically for `@typefox/monaco-editor-react` that you can find in the repository:
 
 - TypeScript editor worker using classical configuration [see](../examples/react_ts.html)
-- Langium statemachine web worker using the exact same user configuration as [wrapper example](../examples/wrapper_langium.html), [react example](../examples/react_langium.html)
+- Langium statemachine language client and web worker based language server using the exact same user configuration as [wrapper statemachine](../examples/wrapper_statemachine.html), [see](../examples/react_statemachine.html)
+-Langium grammar language client and web worker based language server using vscode-api configuration [see](../examples/react_langium.html)
 
 ## Invoking Custom Commands
 
@@ -98,4 +99,3 @@ this.myRef.current.executeCommand('myCustomCommand', args...);
 ```
 
 This will return an instance of `Thenable`, which should contain the returned data of executing your custom command. As you can imagine, this is incredibly helpful for getting internal access for specific language handling, but without needing details about the internals of your language server to do it.
-

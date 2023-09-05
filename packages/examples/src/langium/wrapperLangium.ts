@@ -1,43 +1,101 @@
-import * as vscode from 'vscode';
-import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-import { createLangiumGlobalConfig } from './langiumWrapperConfig.js';
+/* --------------------------------------------------------------------------------------------
+ * Copyright (c) 2018-2022 TypeFox GmbH (http://www.typefox.io). All rights reserved.
+ * Licensed under the MIT License. See License.txt in the project root for license information.
+ * ------------------------------------------------------------------------------------------ */
 
+import 'vscode/default-extensions/theme-defaults';
+import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
-buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-const wrapper = new MonacoEditorLanguageClientWrapper();
-const wrapper2 = new MonacoEditorLanguageClientWrapper();
+export const setupLangiumClient = async (): Promise<UserConfig> => {
+    const exampleLangiumUrl = new URL('./src/langium/content/example.langium', window.location.href).href;
+    const responseLangium = await fetch(exampleLangiumUrl);
+    const code = await responseLangium.text();
 
-const startEditor = async () => {
-    if (wrapper.isStarted() && wrapper2.isStarted()) {
-        alert('Editor was already started!');
-        return;
-    }
-    const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('monaco-editor-root') as HTMLElement);
-    await wrapper.start(langiumGlobalConfig);
-    const langiumGlobalConfig2 = await createLangiumGlobalConfig(document.getElementById('monaco-editor-root2') as HTMLElement);
-    await wrapper2.start(langiumGlobalConfig2);
+    const extensionFilesOrContents = new Map<string, string | URL>();
+    const langiumLanguageConfig = new URL('./src/langium/config/langium.configuration.json', window.location.href);
+    const langiumTextmateGrammar = new URL('./src/langium/config/langium.tmLanguage.json', window.location.href);
+    // test both url and string content
+    extensionFilesOrContents.set('/langium-configuration.json', langiumLanguageConfig);
+    extensionFilesOrContents.set('/langium-grammar.json', await (await fetch(langiumTextmateGrammar)).text());
 
-    vscode.commands.getCommands().then((x) => {
-        console.log('Currently registered # of vscode commands: ' + x.length);
+    // Language Server preparation
+    const workerUrl = new URL('./src/servers/langium-server.ts', window.location.href);
+    console.log(`Langium worker URL: ${workerUrl}`);
+
+    const worker = new Worker(workerUrl, {
+        type: 'module',
+        name: 'Langium LS',
     });
+
+    return {
+        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+        wrapperConfig: {
+            serviceConfig: {
+                enableThemeService: true,
+                enableTextmateService: true,
+                enableModelService: true,
+                configureEditorOrViewsService: {
+                },
+                configureConfigurationService: {
+                    defaultWorkspaceUri: '/tmp/'
+                },
+                enableLanguagesService: true,
+                enableKeybindingsService: true,
+                debugLogging: true
+            },
+            editorAppConfig: {
+                $type: 'vscodeApi',
+                languageId: 'langium',
+                code: code,
+                useDiffEditor: false,
+                extension: {
+                    name: 'langium-example',
+                    publisher: 'monaco-editor-wrapper-examples',
+                    version: '1.0.0',
+                    engines: {
+                        vscode: '*'
+                    },
+                    contributes: {
+                        languages: [{
+                            id: 'langium',
+                            extensions: ['.langium'],
+                            aliases: ['langium', 'LANGIUM'],
+                            configuration: './langium-configuration.json'
+                        }],
+                        grammars: [{
+                            language: 'langium',
+                            scopeName: 'source.langium',
+                            path: './langium-grammar.json'
+                        }]
+                    }
+                },
+                extensionFilesOrContents: extensionFilesOrContents,
+                userConfiguration: {
+                    json: `{
+    "workbench.colorTheme": "Default Dark Modern",
+    "editor.guides.bracketPairsHorizontal": "active",
+    "editor.lightbulb.enabled": true
+}`
+                }
+            }
+        },
+        languageClientConfig: {
+            options: {
+                $type: 'WorkerDirect',
+                worker
+            }
+        }
+    };
 };
 
-const disposeEditor = async () => {
-    wrapper.reportStatus();
-    await wrapper.dispose();
-    console.log(wrapper.reportStatus().join('\n'));
-
-    wrapper2.reportStatus();
-    await wrapper2.dispose();
-    console.log(wrapper2.reportStatus().join('\n'));
+export const startLangiumClient = async () => {
+    try {
+        buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/', new URL('', window.location.href).href, false);
+        const config = await setupLangiumClient();
+        const wrapper = new MonacoEditorLanguageClientWrapper();
+        wrapper.start(config);
+    } catch (e) {
+        console.log(e);
+    }
 };
-
-try {
-    document.querySelector('#button-start')?.addEventListener('click', startEditor);
-    document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
-
-    startEditor();
-} catch (e) {
-    console.error(e);
-}

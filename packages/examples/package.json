@@ -7,7 +7,7 @@
     "http-server": "~14.1.1",
     "langium": "~2.0.1",
     "langium-statemachine-dsl": "~2.0.0",
-    "monaco-languageclient-examples": "~6.4.5",
+    "monaco-languageclient-examples": "~6.4.6",
     "monaco-editor-wrapper": "3.0.0",
     "monaco-editor-workers": "~0.41.0",
     "react": "~18.2.0",
