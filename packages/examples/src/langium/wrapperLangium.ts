@@ -106,6 +106,10 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
 
     return {
         htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+        loggerConfig: {
+            enabled: true,
+            debugEnabled: true
+        },
         wrapperConfig: {
             serviceConfig: {
                 enableModelService: true,

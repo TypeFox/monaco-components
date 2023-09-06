@@ -1,9 +1,10 @@
-import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
-import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { editor } from 'monaco-editor';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
+import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
+import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { VscodeUserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
+import { Logger, LoggerConfig } from './logger.js';
 
 export type WrapperConfig = {
     serviceConfig?: InitializeServiceConfig;
@@ -13,6 +14,7 @@ export type WrapperConfig = {
 export type UserConfig = {
     id?: string;
     htmlElement: HTMLElement;
+    loggerConfig?: LoggerConfig;
     wrapperConfig: WrapperConfig;
     languageClientConfig?: LanguageClientConfig;
 }
@@ -38,6 +40,7 @@ export class MonacoEditorLanguageClientWrapper {
     private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
     private languageClientWrapper: LanguageClientWrapper;
     private serviceConfig: InitializeServiceConfig;
+    private logger: Logger;
 
     private async init(userConfig: UserConfig) {
         if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
@@ -46,7 +49,7 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.htmlElement = userConfig.htmlElement;
-
+        this.logger = new Logger(userConfig.loggerConfig);
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
         // always set required services if not configure
@@ -54,18 +57,18 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig.configureConfigurationService = this.serviceConfig.configureConfigurationService ?? {
             defaultWorkspaceUri: '/tmp/'
         };
+
+        // overrule debug log flag
+        this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
+
         if (wasVscodeApiInitialized()) {
-            if (this.serviceConfig.debugLogging) {
-                console.log('No service init on restart');
-            }
+            this.logger.debug('No service init on restart', this.serviceConfig.debugLogging);
         } else {
-            if (this.serviceConfig.debugLogging) {
-                console.log('Init Services');
-            }
+            this.logger.debug('Init Services', this.serviceConfig.debugLogging);
             await initServices(this.serviceConfig);
         }
 
-        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig);
+        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig, this.logger);
     }
 
     async start(userConfig: UserConfig) {
@@ -75,12 +78,12 @@ export class MonacoEditorLanguageClientWrapper {
         this.editorApp?.disposeApp();
 
         if (isVscodeApiEditorApp(userConfig.wrapperConfig)) {
-            this.editorApp = new EditorAppVscodeApi(this.id, userConfig);
+            this.editorApp = new EditorAppVscodeApi(this.id, userConfig, this.logger);
         } else {
-            this.editorApp = new EditorAppClassic(this.id, userConfig);
+            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
         }
         this.languageClientWrapper.init(this.editorApp.getConfig().languageId);
-        console.log(`Starting monaco-editor (${this.id})`);
+        this.logger.info(`Starting monaco-editor (${this.id})`);
 
         await this.editorApp?.init();
         await this.editorApp.createEditors(this.htmlElement);

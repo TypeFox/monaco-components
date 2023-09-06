@@ -1,6 +1,7 @@
 import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { editor, languages } from 'monaco-editor';
 import { UserConfig } from './wrapper.js';
+import { Logger } from './logger.js';
 /**
  * This is derived from:
  * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
@@ -33,11 +34,12 @@ export class EditorAppClassic extends EditorAppBase {
 
     private editorOptions: editor.IStandaloneEditorConstructionOptions;
     private diffEditorOptions: editor.IStandaloneDiffEditorConstructionOptions;
-
     private config: EditorAppConfigClassic;
+    private logger: Logger | undefined;
 
-    constructor(id: string, userConfig: UserConfig) {
+    constructor(id: string, userConfig: UserConfig, logger?: Logger) {
         super(id);
+        this.logger = logger;
         this.config = this.buildConfig(userConfig) as EditorAppConfigClassic;
         const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         // default to vs-light
@@ -98,7 +100,7 @@ export class EditorAppClassic extends EditorAppBase {
         }
         editor.setTheme(this.config.theme!);
 
-        console.log('Init of MonacoConfig was completed.');
+        this.logger?.info('Init of MonacoConfig was completed.');
         return Promise.resolve();
     }
 

@@ -5,6 +5,7 @@ import 'vscode/default-extensions/theme-defaults';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
 import { IDisposable } from 'monaco-editor';
+import { Logger } from './logger.js';
 
 export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     $type: 'vscodeApi';
@@ -26,9 +27,11 @@ export class EditorAppVscodeApi extends EditorAppBase {
 
     private config: EditorAppConfigVscodeApi;
     private extensionResult: ExtensionResult;
+    private logger: Logger | undefined;
 
-    constructor(id: string, userConfig: UserConfig) {
+    constructor(id: string, userConfig: UserConfig, logger?: Logger) {
         super(id);
+        this.logger = logger;
         this.config = this.buildConfig(userConfig) as EditorAppConfigVscodeApi;
         const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigVscodeApi;
         this.config.userConfiguration = userInput.userConfiguration ?? undefined;
@@ -65,7 +68,7 @@ export class EditorAppVscodeApi extends EditorAppBase {
         }
 
         await this.updateEditorOptions(this.config.userConfiguration ?? {});
-        console.log('Init of VscodeApiConfig was completed.');
+        this.logger?.info('Init of VscodeApiConfig was completed.');
     }
 
     async updateEditorOptions(config: VscodeUserConfiguration) {
