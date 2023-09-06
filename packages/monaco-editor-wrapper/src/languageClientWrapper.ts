@@ -147,7 +147,7 @@ export class LanguageClientWrapper {
 
     private startLanguageClientConnection(): Promise<void> {
         if (this.languageClient && this.languageClient.isRunning()) {
-            this.logger?.info('monaco-languageclient already running!')
+            this.logger?.info('monaco-languageclient already running!');
             return Promise.resolve();
         }
 
@@ -235,7 +235,7 @@ export class LanguageClientWrapper {
             };
             reject(languageClientError);
         }
-        this.logger?.info(`languageClientWrapper (${this.name}): Started successfully.`)
+        this.logger?.info(`languageClientWrapper (${this.name}): Started successfully.`);
         resolve();
     }
 
