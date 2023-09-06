@@ -6,11 +6,14 @@
 import 'vscode/default-extensions/theme-defaults';
 import { MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+import { LangiumMonarchContent } from './config/langium.monarch.js';
 
-export const setupLangiumClient = async (): Promise<UserConfig> => {
-    const exampleLangiumUrl = new URL('./src/langium/content/example.langium', window.location.href).href;
-    const responseLangium = await fetch(exampleLangiumUrl);
-    const code = await responseLangium.text();
+buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/', new URL('', window.location.href).href, false);
+
+let wrapper: MonacoEditorLanguageClientWrapper | undefined;
+
+export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
+    const code = await getTextContent(new URL('./src/langium/content/example.langium', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
     const langiumLanguageConfig = new URL('./src/langium/config/langium.configuration.json', window.location.href);
@@ -89,13 +92,113 @@ export const setupLangiumClient = async (): Promise<UserConfig> => {
     };
 };
 
-export const startLangiumClient = async () => {
+export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
+    const code = await getTextContent(new URL('./src/langium/content/example.langium', window.location.href));
+
+    // Language Server preparation
+    const workerUrl = new URL('./src/servers/langium-server.ts', window.location.href);
+    console.log(`Langium worker URL: ${workerUrl}`);
+
+    const worker = new Worker(workerUrl, {
+        type: 'module',
+        name: 'Langium LS',
+    });
+
+    return {
+        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
+        wrapperConfig: {
+            serviceConfig: {
+                enableModelService: true,
+                configureEditorOrViewsService: {
+                },
+                configureConfigurationService: {
+                    defaultWorkspaceUri: '/tmp/'
+                },
+                enableLanguagesService: true,
+                enableKeybindingsService: true,
+                debugLogging: true
+            },
+            editorAppConfig: {
+                $type: 'classic',
+                languageId: 'langium',
+                code: code,
+                useDiffEditor: false,
+                editorOptions: {
+                    glyphMargin: true,
+                    guides: {
+                        bracketPairs: true
+                    },
+                    lightbulb: {
+                        enabled: true
+                    },
+                    theme: 'vs-dark',
+                    'semanticHighlighting.enabled': true
+                },
+                languageExtensionConfig: { id: 'langium' },
+                languageDef: LangiumMonarchContent
+            }
+        },
+        languageClientConfig: {
+            options: {
+                $type: 'WorkerDirect',
+                worker
+            }
+        }
+    };
+};
+
+const getTextContent = async (url: URL) => {
+    const response = await fetch(url.href);
+    return response.text();
+};
+
+try {
+    document.querySelector('#button-start-classic')?.addEventListener('click', async () => {
+        await startLangiumClientClassic();
+    });
+    document.querySelector('#button-start-vscode-api')?.addEventListener('click', async () => {
+        await startLangiumClientVscodeApi();
+    });
+    document.querySelector('#button-dispose')?.addEventListener('click', async () => {
+        await disposeEditor();
+    });
+} catch (e) {
+    console.error(e);
+}
+
+export const startLangiumClientVscodeApi = async () => {
     try {
-        buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/', new URL('', window.location.href).href, false);
-        const config = await setupLangiumClient();
-        const wrapper = new MonacoEditorLanguageClientWrapper();
+        if (checkStarted()) return;
+        const config = await setupLangiumClientVscodeApi();
+        wrapper = new MonacoEditorLanguageClientWrapper();
         wrapper.start(config);
     } catch (e) {
         console.log(e);
     }
+};
+
+export const startLangiumClientClassic = async () => {
+    try {
+        if (checkStarted()) return;
+        const config = await setupLangiumClientClassic();
+        wrapper = new MonacoEditorLanguageClientWrapper();
+        wrapper.start(config);
+    } catch (e) {
+        console.log(e);
+    }
+};
+
+const checkStarted = () => {
+    if (wrapper?.isStarted()) {
+        alert('Editor was already started!');
+        return true;
+    }
+    return false;
+};
+
+export const disposeEditor = async () => {
+    if (!wrapper) return;
+    wrapper.reportStatus();
+    await wrapper.dispose();
+    wrapper = undefined;
 };

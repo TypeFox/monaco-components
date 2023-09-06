@@ -73,9 +73,9 @@ try {
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
         if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
-            code = await disposeEditor(userConfig);
+            code = await disposeEditor(userConfig.wrapperConfig.editorAppConfig.useDiffEditor);
         } else {
-            codeOriginal = await disposeEditor(userConfig);
+            codeOriginal = await disposeEditor(userConfig.wrapperConfig.editorAppConfig.useDiffEditor);
         }
     });
 

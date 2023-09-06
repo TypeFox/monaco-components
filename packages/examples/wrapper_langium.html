@@ -2,18 +2,20 @@
 <html lang="en">
 
 <head>
-    <title>Client & Langium Grammar DSL Web Worker Language Server Example</title>
+    <title>Langium Grammar DSL Language Client & Server (Worker)</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </head>
 
 <body>
-    <h2>Client & Langium Grammar DSL Web Worker Language Server Example</h2>
-    <div id="monaco-editor-root" style="height:80vh;border:1px solid grey"></div>
-    <script type="module">
-        import { startLangiumClient } from "./src/langium/langiumClient.ts";
-        startLangiumClient();
-    </script>
+    <h2>Langium Grammar DSL Language Client & Server (Worker)</h2>
+    <div style="padding: 0px 5px 5px 0px">
+        <button type="button" id="button-start-classic">Start Classic</button>
+        <button type="button" id="button-start-vscode-api">Start VscodeApi</button>
+        <button type="button" id="button-dispose">Dispose</button>
+    </div>
+    <div id="monaco-editor-root" style="height: 80vh; border: 1px solid grey"></div>
+    <script type="module" src="./src/langium/wrapperLangium.ts"></script>;
 </body>
 
 </html>

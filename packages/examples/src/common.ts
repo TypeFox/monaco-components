@@ -28,10 +28,9 @@ export const swapEditors = async (userConfig: UserConfig, code: string, codeOrig
     await restartEditor(userConfig);
 };
 
-export const disposeEditor = async (userConfig: UserConfig) => {
+export const disposeEditor = async (useDiffEditor: boolean) => {
     wrapper.reportStatus();
     toggleSwapDiffButton(false);
-    const useDiffEditor = userConfig.wrapperConfig.editorAppConfig.useDiffEditor;
     const codeMain = saveMainCode(useDiffEditor);
 
     await wrapper.dispose();

@@ -83,7 +83,7 @@ try {
         swapEditors(userConfig, codeMain, codeOrg);
     });
     document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-        codeMain = await disposeEditor(userConfig);
+        codeMain = await disposeEditor(userConfig.wrapperConfig.editorAppConfig.useDiffEditor);
     });
 
     startEditor(userConfig, codeMain, codeOrg);
