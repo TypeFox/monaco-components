@@ -73,3 +73,8 @@ const logEditorInfo = (userConfig: UserConfig) => {
         console.log(`Modified code: ${wrapper.getModel()!.getValue()}`);
     }
 };
+
+export const getTextContent = async (url: URL) => {
+    const response = await fetch(url.href);
+    return response.text();
+};

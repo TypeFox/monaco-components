@@ -15,7 +15,10 @@
         <button type="button" id="button-dispose">Dispose</button>
     </div>
     <div id="monaco-editor-root" style="height: 80vh; border: 1px solid grey"></div>
-    <script type="module" src="./src/langium/wrapperLangium.ts"></script>;
+    <script type="module">
+        import { run } from './src/langium/wrapperLangium.ts';
+        run();
+    </script>;
 </body>
 
 </html>

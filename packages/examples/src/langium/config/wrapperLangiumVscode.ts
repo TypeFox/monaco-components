@@ -1,20 +1,20 @@
 import { UserConfig } from 'monaco-editor-wrapper';
-import { loadStatemachinWorker } from '../wrapperStatemachine.js';
 import { getTextContent } from '../../common.js';
+import { loadLangiumWorker } from '../wrapperLangium.js';
 
-export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promise<UserConfig> => {
-    const code = await getTextContent(new URL('./src/langium/content/example.statemachine', window.location.href));
+export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
+    const code = await getTextContent(new URL('./src/langium/content/example.langium', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
-    const statemachineLanguageConfig = new URL('../../../node_modules/langium-statemachine-dsl/language-configuration.json', window.location.href);
-    const responseStatemachineTm = new URL('../../../node_modules/langium-statemachine-dsl/syntaxes/statemachine.tmLanguage.json', window.location.href);
-    extensionFilesOrContents.set('/statemachine-configuration.json', statemachineLanguageConfig);
-    extensionFilesOrContents.set('/statemachine-grammar.json', responseStatemachineTm);
+    const langiumLanguageConfig = new URL('./src/langium/config/langium.configuration.json', window.location.href);
+    const langiumTextmateGrammar = await getTextContent(new URL('./src/langium/config/langium.tmLanguage.json', window.location.href));
+    // test both url and string content
+    extensionFilesOrContents.set('/langium-configuration.json', langiumLanguageConfig);
+    extensionFilesOrContents.set('/langium-grammar.json', langiumTextmateGrammar);
 
-    const stateMachineWorker = loadStatemachinWorker();
-
+    const langiumWorker = loadLangiumWorker();
     return {
-        htmlElement: htmlElement,
+        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
         wrapperConfig: {
             serviceConfig: {
                 enableThemeService: true,
@@ -31,32 +31,27 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
             },
             editorAppConfig: {
                 $type: 'vscodeApi',
-                languageId: 'statemachine',
+                languageId: 'langium',
                 code: code,
                 useDiffEditor: false,
                 extension: {
                     name: 'langium-example',
-                    publisher: 'monaco-languageclient-project',
+                    publisher: 'monaco-editor-wrapper-examples',
                     version: '1.0.0',
                     engines: {
                         vscode: '*'
                     },
                     contributes: {
                         languages: [{
-                            id: 'statemachine',
-                            extensions: [
-                                '.statemachine'
-                            ],
-                            aliases: [
-                                'statemachine',
-                                'Statemachine'
-                            ],
-                            configuration: './statemachine-configuration.json'
+                            id: 'langium',
+                            extensions: ['.langium'],
+                            aliases: ['langium', 'LANGIUM'],
+                            configuration: './langium-configuration.json'
                         }],
                         grammars: [{
-                            language: 'statemachine',
-                            scopeName: 'source.statemachine',
-                            path: './statemachine-grammar.json'
+                            language: 'langium',
+                            scopeName: 'source.langium',
+                            path: './langium-grammar.json'
                         }]
                     }
                 },
@@ -73,7 +68,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         languageClientConfig: {
             options: {
                 $type: 'WorkerDirect',
-                worker: stateMachineWorker
+                worker: langiumWorker
             }
         }
     };

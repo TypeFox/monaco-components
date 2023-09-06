@@ -41,3 +41,14 @@ try {
 } catch (e) {
     console.error(e);
 }
+
+export const loadStatemachinWorker = () => {
+    // Language Server preparation
+    const workerUrl = new URL('./dist/worker/statemachineServerWorker.js', window.location.href);
+    console.log(`Langium worker URL: ${workerUrl}`);
+
+    return new Worker(workerUrl, {
+        type: 'module',
+        name: 'Statemachine LS',
+    });
+};
