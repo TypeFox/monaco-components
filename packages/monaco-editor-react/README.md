@@ -66,7 +66,7 @@ These are the examples specifically for `@typefox/monaco-editor-react` that you 
 
 - TypeScript editor worker using classical configuration [see](../examples/react_ts.html)
 - Langium statemachine language client and web worker based language server using the exact same user configuration as [wrapper statemachine](../examples/wrapper_statemachine.html), [see](../examples/react_statemachine.html)
--Langium grammar language client and web worker based language server using vscode-api configuration [see](../examples/react_langium.html)
+- Langium grammar language client and web worker based language server using vscode-api configuration [see](../examples/react_langium.html)
 
 ## Invoking Custom Commands
 

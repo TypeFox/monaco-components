@@ -2,7 +2,7 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [3.0.1] - 2023-09-0x
+## [3.0.1] - 2023-09-07
 
 - Introduce `logger.ts` which allows to centrally enable / disable console logging of the library
 - Updated to `monaco-languageclient` `6.4.6` using `monaco-vscode-api` `1.81.7`

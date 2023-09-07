@@ -1,14 +1,14 @@
 {
   "name": "monaco-editor-wrapper-examples",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@typefox/monaco-editor-react": "2.0.0",
+    "@typefox/monaco-editor-react": "~2.0.1",
     "http-server": "~14.1.1",
-    "langium": "~2.0.1",
+    "langium": "~2.0.2",
     "langium-statemachine-dsl": "~2.0.0",
     "monaco-languageclient-examples": "~6.4.6",
-    "monaco-editor-wrapper": "3.0.0",
     "monaco-editor-workers": "~0.41.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
@@ -19,7 +19,7 @@
     "vscode-json-languageservice": "~5.3.6"
   },
   "devDependencies": {
-    "@types/react": "~18.2.20",
+    "@types/react": "~18.2.21",
     "@types/react-dom": "~18.2.7",
     "ts-node": "~10.9.1"
   },
