@@ -3,8 +3,9 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import { buildWorkerDefinition } from 'monaco-editor-workers';
 import 'vscode/default-extensions/theme-defaults';
+import { updateUserConfiguration } from 'vscode/service-override/configuration';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { setupLangiumClientVscodeApi } from './config/wrapperLangiumVscode.js';
 import { setupLangiumClientClassic } from './config/wrapperLangiumClassic.js';
@@ -45,7 +46,10 @@ export const startLangiumClientClassic = async () => {
         if (checkStarted()) return;
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
-        wrapper.start(config);
+        await wrapper.start(config);
+        updateUserConfiguration(`{
+            "editor.semanticHighlighting.enabled": true
+        }`);
     } catch (e) {
         console.log(e);
     }
