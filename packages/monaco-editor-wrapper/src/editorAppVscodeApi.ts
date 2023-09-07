@@ -49,9 +49,9 @@ export class EditorAppVscodeApi extends EditorAppBase {
 
     async createEditors(container: HTMLElement): Promise<void> {
         if (this.config.useDiffEditor) {
-            await this.createDiffEditor(container, this.getConfig());
+            await this.createDiffEditor(container);
         } else {
-            await this.createEditor(container, this.getConfig());
+            await this.createEditor(container);
         }
     }
 

@@ -1,6 +1,6 @@
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
-import { LangiumMonarchContent } from './langium.monarch.js';
+import { LangiumMonarchContent, LangiumTheme } from './langium.monarch.js';
 import { loadLangiumWorker } from '../wrapperLangium.js';
 
 export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
@@ -31,18 +31,12 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
                 code: code,
                 useDiffEditor: false,
                 editorOptions: {
-                    glyphMargin: true,
-                    guides: {
-                        bracketPairs: true
-                    },
-                    lightbulb: {
-                        enabled: true
-                    },
-                    theme: 'vs-dark',
-                    'semanticHighlighting.enabled': true
+                    'semanticHighlighting.enabled': 'configuredByTheme'
                 },
                 languageExtensionConfig: { id: 'langium' },
-                languageDef: LangiumMonarchContent
+                languageDef: LangiumMonarchContent,
+                themeData: LangiumTheme,
+                theme: 'langium-theme'
             }
         },
         languageClientConfig: {

@@ -1,3 +1,5 @@
+import { editor } from 'monaco-editor';
+
 export const LangiumMonarchContent = {
     keywords: [
         'bigint',
@@ -85,3 +87,17 @@ export const LangiumMonarchContent = {
         ],
     },
 };
+
+export const LangiumTheme = {
+    base: 'vs-dark',
+    inherit: true,
+    rules: [],
+    colors: {},
+    semanticHighlighting: true,
+    semanticTokenColors: {
+        newOperator: '#d4d4d4#',
+        stringLiteral: '#ce9178',
+        customLiteral: '#D4D4D4',
+        numberLiteral: '#b5cea8'
+    }
+} as editor.IStandaloneThemeData;
