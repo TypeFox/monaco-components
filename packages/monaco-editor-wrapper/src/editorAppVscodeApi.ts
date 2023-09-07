@@ -1,6 +1,5 @@
 import type * as vscode from 'vscode';
-import { EditorAppBase, EditorAppBaseConfig, EditorAppType, VscodeUserConfiguration } from './editorAppBase.js';
-import { updateUserConfiguration } from 'vscode/service-override/configuration';
+import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
@@ -11,7 +10,6 @@ export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     $type: 'vscodeApi';
     extension?: IExtensionManifest | object;
     extensionFilesOrContents?: Map<string, string | URL>;
-    userConfiguration?: VscodeUserConfiguration;
 };
 
 export type RegisterExtensionResult = {
@@ -76,14 +74,8 @@ export class EditorAppVscodeApi extends EditorAppBase {
             }
         }
 
-        await this.updateEditorOptions(this.config.userConfiguration ?? {});
+        await this.updateUserConfiguration(this.config.userConfiguration ?? {});
         this.logger?.info('Init of VscodeApiConfig was completed.');
-    }
-
-    async updateEditorOptions(config: VscodeUserConfiguration) {
-        if (config.json) {
-            return updateUserConfiguration(config.json);
-        }
     }
 
     disposeApp(): void {

@@ -2,7 +2,7 @@ import { editor } from 'monaco-editor';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
 import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { VscodeUserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
+import { UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 import { Logger, LoggerConfig } from './logger.js';
 
@@ -67,7 +67,6 @@ export class MonacoEditorLanguageClientWrapper {
             this.logger.debug('Init Services', this.serviceConfig.debugLogging);
             await initServices(this.serviceConfig);
         }
-
         this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig, this.logger);
     }
 
@@ -137,11 +136,15 @@ export class MonacoEditorLanguageClientWrapper {
         await this.editorApp?.updateDiffModel(modelUpdate);
     }
 
-    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): Promise<void> {
-        if (this.editorApp) {
-            await this.editorApp.updateEditorOptions(options);
+    updateUserConfiguration(config: UserConfiguration) {
+        return this.editorApp?.updateUserConfiguration(config);
+    }
+
+    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions): Promise<void> {
+        if (this.editorApp && this.editorApp.getAppType() === 'classic') {
+            await (this.editorApp as EditorAppClassic).updateMonacoEditorOptions(options);
         } else {
-            await Promise.reject('Update was called when editor wrapper was not correctly configured.');
+            await Promise.reject('updateEditorOptions was called where editorApp is not of appType classic.');
         }
     }
 
