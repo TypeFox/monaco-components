@@ -21,7 +21,7 @@ export type EditorAppBaseConfig = {
 export type EditorAppType = 'vscodeApi' | 'classic';
 
 export type UserConfiguration = {
-    json?: string;
+    json: string;
 }
 
 /**

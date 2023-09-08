@@ -108,7 +108,8 @@ export class EditorAppClassic extends EditorAppBase {
         }
         editor.setTheme(this.config.theme!);
 
-        await this.updateUserConfiguration(this.config.userConfiguration ?? {});
+        // buildConfig ensures userConfiguration is available
+        await this.updateUserConfiguration(this.config.userConfiguration!);
         this.logger?.info('Init of MonacoConfig was completed.');
     }
 

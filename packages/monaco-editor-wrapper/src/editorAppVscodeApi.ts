@@ -74,7 +74,8 @@ export class EditorAppVscodeApi extends EditorAppBase {
             }
         }
 
-        await this.updateUserConfiguration(this.config.userConfiguration ?? {});
+        // buildConfig ensures userConfiguration is available
+        await this.updateUserConfiguration(this.config.userConfiguration!);
         this.logger?.info('Init of VscodeApiConfig was completed.');
     }
 
