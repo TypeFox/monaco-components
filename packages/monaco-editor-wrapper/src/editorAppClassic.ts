@@ -57,12 +57,11 @@ export class EditorAppClassic extends EditorAppBase {
         this.config.languageDef = userInput.languageDef ?? undefined;
         this.config.themeData = userInput.themeData ?? undefined;
 
-        if (userInput.editorOptions?.['semanticHighlighting.enabled'] === true) {
-            if (this.config.userConfiguration?.json) {
-                const parsedUserConfig = JSON.parse(this.config.userConfiguration.json);
-                parsedUserConfig['editor.semanticHighlighting.enabled'] = true;
-                this.config.userConfiguration.json = JSON.stringify(parsedUserConfig);
-            }
+        // buildConfig ensures userConfiguration is available
+        if (userInput.editorOptions?.['semanticHighlighting.enabled'] !== undefined) {
+            const parsedUserConfig = JSON.parse(this.config.userConfiguration!.json);
+            parsedUserConfig['editor.semanticHighlighting.enabled'] = userInput.editorOptions?.['semanticHighlighting.enabled'];
+            this.config.userConfiguration!.json = JSON.stringify(parsedUserConfig);
         }
     }
 
