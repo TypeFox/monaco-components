@@ -19,6 +19,8 @@ import {
 
 import type {
     EditorAppConfigVscodeApi,
+    RegisterExtensionResult,
+    RegisterLocalProcessExtensionResult,
 } from './editorAppVscodeApi.js';
 
 import {
@@ -64,6 +66,8 @@ export type {
     EditorAppType,
     EditorAppConfigClassic,
     EditorAppConfigVscodeApi,
+    RegisterExtensionResult,
+    RegisterLocalProcessExtensionResult,
     VscodeUserConfiguration,
     WebSocketCallOptions,
     LanguageClientConfigType,
