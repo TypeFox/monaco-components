@@ -1,4 +1,4 @@
-import { EditorAppClassic, EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
+import { EditorAppClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions, isAppConfigDifferent } from 'monaco-editor-wrapper';
 import { IDisposable } from 'monaco-editor';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
@@ -63,37 +63,23 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             await this.handleReinit();
         } else {
             if (wrapper !== null) {
-                let restarted = false;
+                const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
+                const config = userConfig.wrapperConfig.editorAppConfig;
+                const appConfigDifferent = isAppConfigDifferent(prevConfig, config, false, false);
 
                 // we need to restart if the editor wrapper config changed
-                if (prevProps.userConfig.wrapperConfig.editorAppConfig !==
-                    userConfig.wrapperConfig.editorAppConfig) {
-                    restarted = true;
+                if (appConfigDifferent) {
                     await this.handleReinit();
-                }
+                } else {
+                    // the function now ensure a model update is only required if something else than the code changed
+                    this.wrapper.updateModel(userConfig.wrapperConfig.editorAppConfig);
 
-                if (!restarted) {
-                    const appConfig = userConfig.wrapperConfig.editorAppConfig;
-                    if (appConfig.$type === 'classic') {
-                        const options = (appConfig as EditorAppConfigClassic).editorOptions;
-                        const prevOptions = (prevProps.userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
-                        if (options !== prevOptions && options !== undefined) {
-                            (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(options);
+                    if (prevConfig.$type === 'classic' && config.$type === 'classic') {
+                        if (prevConfig.editorOptions !== config.editorOptions) {
+                            (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(config.editorOptions ?? {});
                         }
                     }
-
-                    const languageId = appConfig.languageId;
-                    const code = appConfig.code;
-                    const prevLanguageId = prevProps.userConfig.wrapperConfig.editorAppConfig.languageId;
-                    const prevCode = prevProps.userConfig.wrapperConfig.editorAppConfig.code;
-                    if (languageId !== prevLanguageId && code !== prevCode) {
-                        this.wrapper.updateModel({
-                            languageId: languageId,
-                            code: code
-                        });
-                    }
                 }
-
             }
         }
     }
