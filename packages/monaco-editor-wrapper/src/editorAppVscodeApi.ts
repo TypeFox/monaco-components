@@ -1,7 +1,7 @@
+import type * as vscode from 'vscode';
 import { EditorAppBase, EditorAppBaseConfig, EditorAppType, VscodeUserConfiguration } from './editorAppBase.js';
 import { updateUserConfiguration } from 'vscode/service-override/configuration';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
-import 'vscode/default-extensions/theme-defaults';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
 import { IDisposable } from 'monaco-editor';
@@ -14,10 +14,15 @@ export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     userConfiguration?: VscodeUserConfiguration;
 };
 
-type ExtensionResult = {
+export type RegisterExtensionResult = {
     id: string;
     registerFileUrl: (path: string, url: string) => IDisposable;
     dispose(): Promise<void>;
+}
+
+export type RegisterLocalProcessExtensionResult = RegisterExtensionResult & {
+    getApi(): Promise<typeof vscode>;
+    setAsDefaultApi(): Promise<void>;
 };
 
 /**
@@ -26,7 +31,7 @@ type ExtensionResult = {
 export class EditorAppVscodeApi extends EditorAppBase {
 
     private config: EditorAppConfigVscodeApi;
-    private extensionResult: ExtensionResult;
+    private extensionRegisterResult: RegisterLocalProcessExtensionResult | RegisterExtensionResult | undefined;
     private logger: Logger | undefined;
 
     constructor(id: string, userConfig: UserConfig, logger?: Logger) {
@@ -47,6 +52,10 @@ export class EditorAppVscodeApi extends EditorAppBase {
         return this.config;
     }
 
+    getExtensionRegisterResult() {
+        return this.extensionRegisterResult;
+    }
+
     async createEditors(container: HTMLElement): Promise<void> {
         if (this.config.useDiffEditor) {
             await this.createDiffEditor(container);
@@ -58,11 +67,11 @@ export class EditorAppVscodeApi extends EditorAppBase {
     async init() {
         if (this.config.extension) {
             const extension = this.config.extension as IExtensionManifest;
-            this.extensionResult = registerExtension(extension, ExtensionHostKind.LocalProcess);
+            this.extensionRegisterResult = registerExtension(extension, ExtensionHostKind.LocalProcess);
             const extensionFilesOrContents = this.config.extensionFilesOrContents;
             if (extensionFilesOrContents) {
                 for (const entry of extensionFilesOrContents) {
-                    this.extensionResult.registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
+                    this.extensionRegisterResult.registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
         }
@@ -80,6 +89,6 @@ export class EditorAppVscodeApi extends EditorAppBase {
     disposeApp(): void {
         this.disposeEditor();
         this.disposeDiffEditor();
-        this.extensionResult.dispose();
+        this.extensionRegisterResult?.dispose();
     }
 }
