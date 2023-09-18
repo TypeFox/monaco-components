@@ -140,14 +140,6 @@ export class MonacoEditorLanguageClientWrapper {
         return this.editorApp?.updateUserConfiguration(config);
     }
 
-    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions): Promise<void> {
-        if (this.editorApp && this.editorApp.getAppType() === 'classic') {
-            await (this.editorApp as EditorAppClassic).updateMonacoEditorOptions(options);
-        } else {
-            await Promise.reject('updateEditorOptions was called where editorApp is not of appType classic.');
-        }
-    }
-
     public reportStatus() {
         const status: string[] = [];
         status.push('Wrapper status:');

@@ -1,7 +1,7 @@
 import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { updateUserConfiguration } from 'vscode/service-override/configuration';
+import { updateUserConfiguration as vscodeUpdateUserConfiguratio } from 'vscode/service-override/configuration';
 import { ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
 import { EditorAppConfigClassic } from './editorAppClassic.js';
 import { EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
@@ -47,7 +47,7 @@ export abstract class EditorAppBase {
 
     protected buildConfig(userConfig: UserConfig): EditorAppBaseConfig {
         const userAppConfig = userConfig.wrapperConfig.editorAppConfig;
-        const config = {
+        return {
             languageId: userAppConfig.languageId,
             code: userAppConfig.code ?? '',
             codeOriginal: userAppConfig.codeOriginal ?? '',
@@ -60,7 +60,6 @@ export abstract class EditorAppBase {
                 json: '{}'
             }
         };
-        return config;
     }
 
     haveEditor() {
@@ -209,7 +208,7 @@ export abstract class EditorAppBase {
 
     async updateUserConfiguration(config: UserConfiguration) {
         if (config.json) {
-            return updateUserConfiguration(config.json);
+            return vscodeUpdateUserConfiguratio(config.json);
         }
         return Promise.reject(new Error('Supplied config is undefined'));
     }
