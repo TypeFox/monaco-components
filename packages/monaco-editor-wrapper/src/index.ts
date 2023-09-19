@@ -6,7 +6,7 @@ import {
 import type {
     EditorAppBaseConfig,
     EditorAppType,
-    VscodeUserConfiguration,
+    UserConfiguration,
 } from './editorAppBase.js';
 
 import type {
@@ -68,7 +68,7 @@ export type {
     EditorAppConfigVscodeApi,
     RegisterExtensionResult,
     RegisterLocalProcessExtensionResult,
-    VscodeUserConfiguration,
+    UserConfiguration,
     WebSocketCallOptions,
     LanguageClientConfigType,
     WebSocketConfigOptions,

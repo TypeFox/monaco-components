@@ -1,4 +1,4 @@
-import { EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
+import { EditorAppClassic, EditorAppConfigClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
 import { IDisposable } from 'monaco-editor';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
@@ -73,17 +73,18 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
                 }
 
                 if (!restarted) {
-                    if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
-                        const options = (userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
+                    const appConfig = userConfig.wrapperConfig.editorAppConfig;
+                    if (appConfig.$type === 'classic') {
+                        const options = (appConfig as EditorAppConfigClassic).editorOptions;
                         const prevOptions = (prevProps.userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions;
-                        if (options !== prevOptions) {
-                            wrapper.updateEditorOptions((userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic).editorOptions ?? {});
+                        if (options !== prevOptions && options !== undefined) {
+                            (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(options);
                         }
                     }
 
-                    const languageId = userConfig.wrapperConfig.editorAppConfig.languageId;
+                    const languageId = appConfig.languageId;
+                    const code = appConfig.code;
                     const prevLanguageId = prevProps.userConfig.wrapperConfig.editorAppConfig.languageId;
-                    const code = userConfig.wrapperConfig.editorAppConfig.code;
                     const prevCode = prevProps.userConfig.wrapperConfig.editorAppConfig.code;
                     if (languageId !== prevLanguageId && code !== prevCode) {
                         this.wrapper.updateModel({

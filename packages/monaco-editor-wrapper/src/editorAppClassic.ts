@@ -56,6 +56,13 @@ export class EditorAppClassic extends EditorAppBase {
         this.config.languageExtensionConfig = userInput.languageExtensionConfig ?? undefined;
         this.config.languageDef = userInput.languageDef ?? undefined;
         this.config.themeData = userInput.themeData ?? undefined;
+
+        // buildConfig ensures userConfiguration is available
+        if (userInput.editorOptions?.['semanticHighlighting.enabled'] !== undefined) {
+            const parsedUserConfig = JSON.parse(this.config.userConfiguration!.json);
+            parsedUserConfig['editor.semanticHighlighting.enabled'] = userInput.editorOptions?.['semanticHighlighting.enabled'];
+            this.config.userConfiguration!.json = JSON.stringify(parsedUserConfig);
+        }
     }
 
     getAppType(): EditorAppType {
@@ -100,12 +107,13 @@ export class EditorAppClassic extends EditorAppBase {
         }
         editor.setTheme(this.config.theme!);
 
+        // buildConfig ensures userConfiguration is available
+        await this.updateUserConfiguration(this.config.userConfiguration!);
         this.logger?.info('Init of MonacoConfig was completed.');
-        return Promise.resolve();
     }
 
-    async updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
-        this.updateMonacoEditorOptions(options);
+    updateMonacoEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
+        this.getEditor()?.updateOptions(options);
     }
 
     disposeApp(): void {

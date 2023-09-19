@@ -1,13 +1,10 @@
 import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
+import { updateUserConfiguration as vscodeUpdateUserConfiguratio } from 'vscode/service-override/configuration';
 import { ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
 import { EditorAppConfigClassic } from './editorAppClassic.js';
 import { EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
-
-export type VscodeUserConfiguration = {
-    json?: string;
-}
 
 export type EditorAppBaseConfig = {
     languageId: string;
@@ -18,9 +15,14 @@ export type EditorAppBaseConfig = {
     codeOriginalUri?: string;
     domReadOnly?: boolean;
     readOnly?: boolean;
+    userConfiguration?: UserConfiguration;
 }
 
 export type EditorAppType = 'vscodeApi' | 'classic';
+
+export type UserConfiguration = {
+    json: string;
+}
 
 /**
  * This is the base class for both Monaco Ediotor Apps:
@@ -43,7 +45,7 @@ export abstract class EditorAppBase {
         this.id = id;
     }
 
-    protected buildConfig(userConfig: UserConfig) {
+    protected buildConfig(userConfig: UserConfig): EditorAppBaseConfig {
         const userAppConfig = userConfig.wrapperConfig.editorAppConfig;
         return {
             languageId: userAppConfig.languageId,
@@ -54,6 +56,9 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
+            userConfiguration: userAppConfig.userConfiguration ?? {
+                json: '{}'
+            }
         };
     }
 
@@ -201,14 +206,16 @@ export abstract class EditorAppBase {
         }
     }
 
-    updateMonacoEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
-        this.editor?.updateOptions(options);
+    async updateUserConfiguration(config: UserConfiguration) {
+        if (config.json) {
+            return vscodeUpdateUserConfiguratio(config.json);
+        }
+        return Promise.reject(new Error('Supplied config is undefined'));
     }
 
     abstract getAppType(): string;
     abstract init(): Promise<void>;
     abstract createEditors(container: HTMLElement): Promise<void>;
-    abstract updateEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions | VscodeUserConfiguration): void;
     abstract getConfig(): EditorAppConfigClassic | EditorAppConfigVscodeApi;
     abstract disposeApp(): void;
 }
