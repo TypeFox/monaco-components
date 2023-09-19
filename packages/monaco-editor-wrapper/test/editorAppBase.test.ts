@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { isAppConfigDifferent, isVscodeApiEditorApp, isModelUpdateRequired, EditorAppClassic, ModelUpdateType } from 'monaco-editor-wrapper';
+import { isAppConfigDifferent, isVscodeApiEditorApp, isModelUpdateRequired, EditorAppClassic, ModelUpdateType, EditorAppConfigVscodeApi } from 'monaco-editor-wrapper';
 import { createBaseConfig, createEditorAppConfig, createWrapperConfig } from './helper.js';
 
 describe('Test EditorAppBase', () => {
@@ -52,7 +52,7 @@ describe('Test EditorAppBase', () => {
         expect(modelUpdateType).toBe(ModelUpdateType.model);
     });
 
-    test('isModelUpdateRequired', () => {
+    test('isAppConfigDifferent: classic', () => {
         const orgConfig = createEditorAppConfig('classic');
         const config = createEditorAppConfig('classic');
         expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeFalsy();
@@ -60,6 +60,30 @@ describe('Test EditorAppBase', () => {
         config.code = 'test';
         expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeFalsy();
         expect(isAppConfigDifferent(orgConfig, config, true, false)).toBeTruthy();
+
+        config.code = '';
+        config.useDiffEditor = true;
+        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
+    });
+
+    test('isAppConfigDifferent: vscodeApi', () => {
+        const orgConfig = createEditorAppConfig('vscodeApi') as EditorAppConfigVscodeApi;
+        const config = createEditorAppConfig('vscodeApi') as EditorAppConfigVscodeApi;
+        expect(isAppConfigDifferent(orgConfig, config, false, true)).toBeFalsy();
+
+        config.code = 'test';
+        expect(isAppConfigDifferent(orgConfig, config, true, false)).toBeTruthy();
+
+        config.code = '';
+        config.extension = {
+            name: 'Tester',
+            publisher: 'Tester',
+            version: '1.0.0',
+            engines: {
+                vscode: '*'
+            }
+        };
+        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
     });
 
 });

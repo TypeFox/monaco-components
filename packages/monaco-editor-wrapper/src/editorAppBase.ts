@@ -229,16 +229,19 @@ export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {
 };
 
 export const isCodeUpdateRequired = (config: EditorAppBaseConfig, modelUpdate: ModelUpdate) => {
-    let updateRequired = modelUpdate.code !== undefined && modelUpdate.code !== config.code;
-    updateRequired = updateRequired || modelUpdate.codeOriginal !== config.codeOriginal;
+    const updateRequired = (modelUpdate.code !== undefined && modelUpdate.code !== config.code) || modelUpdate.codeOriginal !== config.codeOriginal;
     return updateRequired ? ModelUpdateType.code : ModelUpdateType.none;
 };
 
 export const isModelUpdateRequired = (config: EditorAppBaseConfig, modelUpdate: ModelUpdate): ModelUpdateType => {
     const codeUpdate = isCodeUpdateRequired(config, modelUpdate);
-    let updateRequired = modelUpdate.languageId !== config.languageId;
-    updateRequired = updateRequired || modelUpdate.codeUri !== config.codeUri;
-    updateRequired = updateRequired || modelUpdate.codeOriginalUri !== config.codeOriginalUri;
+
+    type ModelUpdateKeys = keyof typeof modelUpdate;
+    const propsModelUpdate = ['languageId', 'codeUri', 'codeOriginalUri'];
+    const propCompare = (name: string) => {
+        return config[name as ModelUpdateKeys] !== modelUpdate[name as ModelUpdateKeys];
+    };
+    const updateRequired = propsModelUpdate.some(propCompare);
     return updateRequired ? ModelUpdateType.model : codeUpdate;
 };
 
@@ -251,29 +254,30 @@ export enum ModelUpdateType {
 export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorAppConfigVscodeApi,
     config: EditorAppConfigClassic | EditorAppConfigVscodeApi, includeModelData: boolean, includeEditorOptions: boolean): boolean => {
 
-    // this is done by hand, ModelUpdate is only considered if flag is set
     let different = includeModelData ? isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none : false;
     if (orgConfig.$type === config.$type) {
+
+        type ClassicKeys = keyof typeof orgConfig;
+        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
+        const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
+
+        const propCompareClassic = (name: string) => {
+            return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
+        };
+
+        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extension', 'extensionFilesOrContents'];
+        type VscodeApiKeys = keyof typeof orgConfig;
+        const propCompareVscodeApi = (name: string) => {
+            return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];
+        };
+
         if (orgConfig.$type === 'classic' && config.$type === 'classic') {
-            different = different || orgConfig.automaticLayout !== config.automaticLayout;
-            different = different || orgConfig.domReadOnly !== config.domReadOnly;
-            if (includeEditorOptions === true) {
-                different = different || orgConfig.diffEditorOptions !== config.diffEditorOptions;
-                different = different || orgConfig.editorOptions !== config.editorOptions;
+            different = different || propsClassic.some(propCompareClassic);
+            if (includeEditorOptions) {
+                different = different || propsClassicEditorOptions.some(propCompareClassic);
             }
-            different = different || orgConfig.languageDef !== config.languageDef;
-            different = different || orgConfig.languageExtensionConfig !== config.languageExtensionConfig;
-            different = different || orgConfig.readOnly !== config.readOnly;
-            different = different || orgConfig.theme !== config.theme;
-            different = different || orgConfig.themeData !== config.themeData;
-            different = different || orgConfig.useDiffEditor !== config.useDiffEditor;
         } else if (orgConfig.$type === 'vscodeApi' && config.$type === 'vscodeApi') {
-            different = different || orgConfig.domReadOnly !== config.domReadOnly;
-            different = different || orgConfig.extension !== config.extension;
-            different = different || orgConfig.extensionFilesOrContents !== config.extensionFilesOrContents;
-            different = different || orgConfig.readOnly !== config.readOnly;
-            different = different || orgConfig.useDiffEditor !== config.useDiffEditor;
-            different = different || orgConfig.userConfiguration !== config.userConfiguration;
+            different = different || propsVscode.some(propCompareVscodeApi);
         }
     } else {
         throw new Error('Provided configurations are not of the same type.');
