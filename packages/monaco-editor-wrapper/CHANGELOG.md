@@ -2,6 +2,12 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.1.0] - 2023-09-19
+
+- Make the extension register result accessible [#48](https://github.com/TypeFox/monaco-components/pull/48)
+- Improve configuration change detection [#47](https://github.com/TypeFox/monaco-components/pull/47)
+- semantic highlighting works with classic editor [#45](https://github.com/TypeFox/monaco-components/pull/45)
+
 ## [3.0.1] - 2023-09-07
 
 - Introduce `logger.ts` which allows to centrally enable / disable console logging of the library

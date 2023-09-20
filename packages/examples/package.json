@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@typefox/monaco-editor-react": "~2.0.1",
+    "@typefox/monaco-editor-react": "2.1.0-next.0",
     "http-server": "~14.1.1",
     "langium": "~2.0.2",
     "langium-statemachine-dsl": "~2.0.0",
