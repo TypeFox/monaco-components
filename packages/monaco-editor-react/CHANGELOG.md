@@ -5,6 +5,7 @@ All notable changes to npm module [@typefox/monaco-editor-react](https://www.npm
 ## [2.1.0] - 2023-09-19
 
 - Improve configuration change detection [#47](https://github.com/TypeFox/monaco-components/pull/47)
+- semantic highlighting works with classic editor [#45](https://github.com/TypeFox/monaco-components/pull/45)
 - Updated to `monaco-editor-wrapper` `3.1.0`
 
 ## [2.0.1] - 2023-09-07
