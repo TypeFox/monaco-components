@@ -2,7 +2,7 @@ import { editor } from 'monaco-editor';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
 import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
+import { ModelUpdate, UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 import { Logger, LoggerConfig } from './logger.js';
 
@@ -17,14 +17,6 @@ export type UserConfig = {
     loggerConfig?: LoggerConfig;
     wrapperConfig: WrapperConfig;
     languageClientConfig?: LanguageClientConfig;
-}
-
-export type ModelUpdate = {
-    languageId?: string;
-    code?: string;
-    uri?: string;
-    codeOriginal?: string;
-    codeOriginalUri?: string;
 }
 
 /**

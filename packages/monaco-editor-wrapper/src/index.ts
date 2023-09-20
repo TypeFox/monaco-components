@@ -1,11 +1,16 @@
 import {
     EditorAppBase,
-    isVscodeApiEditorApp
+    isVscodeApiEditorApp,
+    isCodeUpdateRequired,
+    isModelUpdateRequired,
+    isAppConfigDifferent,
+    ModelUpdateType
 } from './editorAppBase.js';
 
 import type {
     EditorAppBaseConfig,
     EditorAppType,
+    ModelUpdate,
     UserConfiguration,
 } from './editorAppBase.js';
 
@@ -44,7 +49,6 @@ import {
 
 import type {
     UserConfig,
-    ModelUpdate,
     WrapperConfig
 } from './wrapper.js';
 
@@ -87,6 +91,10 @@ export {
     LanguageClientWrapper,
     EditorAppBase,
     isVscodeApiEditorApp,
+    isCodeUpdateRequired,
+    isModelUpdateRequired,
+    isAppConfigDifferent,
+    ModelUpdateType,
     EditorAppClassic,
     EditorAppVscodeApi,
     Logger

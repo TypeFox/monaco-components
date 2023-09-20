@@ -60,13 +60,13 @@ try {
         if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
             updateModel({
                 code: codeOriginal,
-                uri: codeOriginalUri,
+                codeUri: codeOriginalUri,
                 languageId: 'typescript',
             });
         } else {
             updateModel({
                 code: code,
-                uri: codeUri,
+                codeUri: codeUri,
                 languageId: 'typescript',
             });
         }

@@ -15,11 +15,15 @@ export const createBaseConfig = (type: EditorAppType): UserConfig => {
 
 export const createWrapperConfig = (type: EditorAppType) => {
     return {
-        editorAppConfig: {
-            $type: type,
-            languageId: 'typescript',
-            code: '',
-            useDiffEditor: false,
-        }
+        editorAppConfig: createEditorAppConfig(type)
+    };
+};
+
+export const createEditorAppConfig = (type: EditorAppType) => {
+    return {
+        $type: type,
+        languageId: 'typescript',
+        code: '',
+        useDiffEditor: false,
     };
 };

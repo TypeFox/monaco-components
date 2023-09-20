@@ -1,18 +1,21 @@
 import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from 'vscode/service-override/editor';
-import { updateUserConfiguration as vscodeUpdateUserConfiguratio } from 'vscode/service-override/configuration';
-import { ModelUpdate, UserConfig, WrapperConfig } from './wrapper.js';
+import { UserConfig, WrapperConfig } from './wrapper.js';
+import { updateUserConfiguration as vscodeUpdateUserConfiguration } from 'vscode/service-override/configuration';
 import { EditorAppConfigClassic } from './editorAppClassic.js';
 import { EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 
-export type EditorAppBaseConfig = {
+export type ModelUpdate = {
     languageId: string;
-    code: string;
+    code?: string;
     codeUri?: string;
-    useDiffEditor: boolean;
     codeOriginal?: string;
     codeOriginalUri?: string;
+}
+
+export type EditorAppBaseConfig = ModelUpdate & {
+    useDiffEditor: boolean;
     domReadOnly?: boolean;
     readOnly?: boolean;
     userConfiguration?: UserConfiguration;
@@ -114,8 +117,21 @@ export abstract class EditorAppBase {
             return Promise.reject(new Error('You cannot update the editor model, because the regular editor is not configured.'));
         }
 
-        this.updateAppConfig(modelUpdate);
-        await this.updateEditorModel();
+        const modelUpdateType = isModelUpdateRequired(this.getConfig(), modelUpdate);
+
+        if (modelUpdateType === ModelUpdateType.code) {
+            this.updateAppConfig(modelUpdate);
+            if (this.getConfig().useDiffEditor) {
+                this.diffEditor?.getModifiedEditor().setValue(modelUpdate.code ?? '');
+                this.diffEditor?.getOriginalEditor().setValue(modelUpdate.codeOriginal ?? '');
+            } else {
+                this.editor.setValue(modelUpdate.code ?? '');
+            }
+        } else if (modelUpdateType === ModelUpdateType.model) {
+            this.updateAppConfig(modelUpdate);
+            await this.updateEditorModel();
+        }
+        return Promise.resolve();
     }
 
     private async updateEditorModel(): Promise<void> {
@@ -134,9 +150,11 @@ export abstract class EditorAppBase {
         if (!this.diffEditor) {
             return Promise.reject(new Error('You cannot update the diff editor models, because the diffEditor is not configured.'));
         }
-
-        this.updateAppConfig(modelUpdate);
-        return this.updateDiffEditorModel();
+        if (isModelUpdateRequired(this.getConfig(), modelUpdate)) {
+            this.updateAppConfig(modelUpdate);
+            await this.updateDiffEditorModel();
+        }
+        return Promise.resolve();
     }
 
     private async updateDiffEditorModel(): Promise<void> {
@@ -167,25 +185,11 @@ export abstract class EditorAppBase {
 
     private updateAppConfig(modelUpdate: ModelUpdate) {
         const config = this.getConfig();
-        if (modelUpdate.code !== undefined) {
-            config.code = modelUpdate.code;
-        }
-
-        if (modelUpdate.languageId !== undefined) {
-            config.languageId = modelUpdate.languageId;
-        }
-
-        if (modelUpdate.uri !== undefined) {
-            config.codeUri = modelUpdate.uri;
-        }
-
-        if (modelUpdate.codeOriginal !== undefined) {
-            config.codeOriginal = modelUpdate.codeOriginal;
-        }
-
-        if (modelUpdate.codeOriginalUri !== undefined) {
-            config.codeOriginalUri = modelUpdate.codeOriginalUri;
-        }
+        config.languageId = modelUpdate.languageId;
+        config.code = modelUpdate.code;
+        config.codeUri = modelUpdate.codeUri;
+        config.codeOriginal = modelUpdate.codeOriginal;
+        config.codeOriginalUri = modelUpdate.codeOriginalUri;
     }
 
     getEditorUri(uriType: 'code' | 'codeOriginal') {
@@ -208,7 +212,7 @@ export abstract class EditorAppBase {
 
     async updateUserConfiguration(config: UserConfiguration) {
         if (config.json) {
-            return vscodeUpdateUserConfiguratio(config.json);
+            return vscodeUpdateUserConfiguration(config.json);
         }
         return Promise.reject(new Error('Supplied config is undefined'));
     }
@@ -222,4 +226,61 @@ export abstract class EditorAppBase {
 
 export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {
     return wrapperConfig.editorAppConfig?.$type === 'vscodeApi';
+};
+
+export const isCodeUpdateRequired = (config: EditorAppBaseConfig, modelUpdate: ModelUpdate) => {
+    const updateRequired = (modelUpdate.code !== undefined && modelUpdate.code !== config.code) || modelUpdate.codeOriginal !== config.codeOriginal;
+    return updateRequired ? ModelUpdateType.code : ModelUpdateType.none;
+};
+
+export const isModelUpdateRequired = (config: EditorAppBaseConfig, modelUpdate: ModelUpdate): ModelUpdateType => {
+    const codeUpdate = isCodeUpdateRequired(config, modelUpdate);
+
+    type ModelUpdateKeys = keyof typeof modelUpdate;
+    const propsModelUpdate = ['languageId', 'codeUri', 'codeOriginalUri'];
+    const propCompare = (name: string) => {
+        return config[name as ModelUpdateKeys] !== modelUpdate[name as ModelUpdateKeys];
+    };
+    const updateRequired = propsModelUpdate.some(propCompare);
+    return updateRequired ? ModelUpdateType.model : codeUpdate;
+};
+
+export enum ModelUpdateType {
+    none,
+    code,
+    model
+}
+
+export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorAppConfigVscodeApi,
+    config: EditorAppConfigClassic | EditorAppConfigVscodeApi, includeModelData: boolean, includeEditorOptions: boolean): boolean => {
+
+    let different = includeModelData ? isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none : false;
+    if (orgConfig.$type === config.$type) {
+
+        type ClassicKeys = keyof typeof orgConfig;
+        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
+        const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
+
+        const propCompareClassic = (name: string) => {
+            return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
+        };
+
+        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extension', 'extensionFilesOrContents'];
+        type VscodeApiKeys = keyof typeof orgConfig;
+        const propCompareVscodeApi = (name: string) => {
+            return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];
+        };
+
+        if (orgConfig.$type === 'classic' && config.$type === 'classic') {
+            different = different || propsClassic.some(propCompareClassic);
+            if (includeEditorOptions) {
+                different = different || propsClassicEditorOptions.some(propCompareClassic);
+            }
+        } else if (orgConfig.$type === 'vscodeApi' && config.$type === 'vscodeApi') {
+            different = different || propsVscode.some(propCompareVscodeApi);
+        }
+    } else {
+        throw new Error('Provided configurations are not of the same type.');
+    }
+    return different;
 };
