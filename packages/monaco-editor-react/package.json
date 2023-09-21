@@ -40,7 +40,7 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "shx rm -rf ./dist *.tsbuildinfo",
+    "clean": "shx rm -rf ./dist ./bundle *.tsbuildinfo",
     "compile": " tsc --build tsconfig.src.json",
     "build:bundle": "vite --config vite.bundle.config.ts build",
     "build": "npm run clean && npm run compile && npm run build:bundle"
@@ -60,7 +60,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TypeFox/monaco-components",
+    "url": "git+https://github.com/TypeFox/monaco-components.git",
     "directory": "packages/monaco-editor-react"
   },
   "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-react/README.md",

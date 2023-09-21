@@ -47,7 +47,7 @@
     "README.md"
   ],
   "scripts": {
-    "clean": "shx rm -rf ./dist ./bundle ./resources *.tsbuildinfo",
+    "clean": "shx rm -rf ./dist ./bundle *.tsbuildinfo",
     "process:assets": "vite-node ./build/src/buildAssets.mts",
     "compile": "tsc --build tsconfig.src.json",
     "bundle": "vite --config vite.bundle.config.ts build && npm run process:assets",
@@ -66,7 +66,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/TypeFox/monaco-components",
+    "url": "git+https://github.com/TypeFox/monaco-components.git",
     "directory": "packages/monaco-editor-wrapper"
   },
   "homepage": "https://github.com/TypeFox/monaco-components/blob/main/packages/monaco-editor-wrapper/README.md",

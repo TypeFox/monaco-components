@@ -11,7 +11,7 @@ export default defineConfig({
         },
         outDir: 'bundle',
         assetsDir: 'bundle/assets',
-        emptyOutDir: false,
+        emptyOutDir: true,
         cssCodeSplit: false,
         rollupOptions: {
             output: {
