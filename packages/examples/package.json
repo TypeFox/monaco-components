@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@typefox/monaco-editor-react": "2.1.0-next.0",
+    "@typefox/monaco-editor-react": "~2.1.0",
     "http-server": "~14.1.1",
     "langium": "~2.0.2",
     "langium-statemachine-dsl": "~2.0.0",
@@ -24,8 +24,8 @@
     "ts-node": "~10.9.1"
   },
   "volta": {
-    "node": "18.17.1",
-    "npm": "9.6.7"
+    "node": "18.18.0",
+    "npm": "9.8.1"
   },
   "scripts": {
     "clean": "shx rm -rf ./dist ./libs *.tsbuildinfo",
