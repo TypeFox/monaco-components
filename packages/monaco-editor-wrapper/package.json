@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "3.1.0",
+  "version": "3.2.0-next.0",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -58,10 +58,11 @@
     "npm": "9.8.1"
   },
   "dependencies": {
-    "monaco-languageclient": "~6.4.6"
+    "@codingame/monaco-vscode-configuration-service-override": "1.82.2",
+    "monaco-languageclient": "6.5.0-next.2"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~6.4.6",
+    "monaco-languageclient": "6.5.0-next.2",
     "vscode-ws-jsonrpc": "~3.0.0"
   },
   "repository": {

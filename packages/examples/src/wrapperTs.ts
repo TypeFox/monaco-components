@@ -1,18 +1,18 @@
-import { disposeEditor, startEditor, swapEditors, updateModel, wrapper } from './common.js';
-
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
-
-import { buildWorkerDefinition } from 'monaco-editor-workers';
+import { disposeEditor, startEditor, swapEditors, updateModel, wrapper } from './common.js';
 import { UserConfig } from 'monaco-editor-wrapper';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
-const codeUri = '/tmp/hello.ts';
+const codeUri = '/workspace/hello.ts';
 let code = `function sayHello(): string {
     return "Hello";
 };`;
 
-const codeOriginalUri = '/tmp/goodbye.ts';
+const codeOriginalUri = '/workspace/goodbye.ts';
 let codeOriginal = `function sayGoodbye(): string {
     return "Goodbye";
 };`;
@@ -33,7 +33,9 @@ const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            enableKeybindingsService: true,
+            userServices: {
+                ...getKeybindingsServiceOverride()
+            },
             debugLogging: true
         },
         editorAppConfig: {

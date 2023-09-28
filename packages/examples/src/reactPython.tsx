@@ -1,11 +1,13 @@
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { whenReady as whenReadyPython } from  '@codingame/monaco-vscode-python-default-extension';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { UserConfig } from 'monaco-editor-wrapper';
-
-import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
-import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
-
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { Uri, commands } from 'vscode';
 import { MonacoLanguageClient } from 'monaco-languageclient';
@@ -48,19 +50,18 @@ const userConfig: UserConfig = {
             workspaceFolder: {
                 index: 0,
                 name: 'workspace',
-                uri: Uri.parse('/tmp/')
+                uri: Uri.parse('/workspace/')
             },
         },
     },
     wrapperConfig: {
-        serviceConfig: {enableModelService: true,
-            enableThemeService: true,
-            enableTextmateService: true,
-            configureConfigurationService: {
-                defaultWorkspaceUri: '/tmp/'
+        serviceConfig: {
+            userServices: {
+                ...getThemeServiceOverride(),
+                ...getTextmateServiceOverride(),
+                ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                ...getKeybindingsServiceOverride()
             },
-            enableLanguagesService: true,
-            // enableKeybindingsService: true,
             debugLogging: true
         },
         editorAppConfig: {
@@ -97,9 +98,10 @@ const userConfig: UserConfig = {
                 }
             },
             languageId: 'python',
-            codeUri: '/tmp/python.py',
+            codeUri: '/workspace/python.py',
             userConfiguration: {
-                json: JSON.stringify({'workbench.colorTheme': 'Default Dark Modern'})
+                json: JSON.stringify({'workbench.colorTheme': 'Default Dark Modern'}),
+                awaitReadiness: [whenReadyTheme, whenReadyPython]
             },
             useDiffEditor: false,
             code: code,

@@ -12,7 +12,10 @@
     <button type="button" id="button-dispose">Dispose</button>
     <div id="monaco-editor-root" style="height: 40vh;"></div>
     <div id="monaco-editor-root2" style="height: 40vh;"></div>
-    <script type="module" src="./src/langium/wrapperStatemachine.ts"></script>
+    <script type="module">
+        import { run } from './src/langium/wrapperStatemachine.ts';
+        run();
+    </script>
 </body>
 
 </html>

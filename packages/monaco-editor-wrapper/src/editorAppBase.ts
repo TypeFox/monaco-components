@@ -24,7 +24,8 @@ export type EditorAppBaseConfig = ModelUpdate & {
 export type EditorAppType = 'vscodeApi' | 'classic';
 
 export type UserConfiguration = {
-    json: string;
+    json?: string;
+    awaitReadiness?: Array<() => Promise<void>>
 }
 
 /**
@@ -59,9 +60,7 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
-            userConfiguration: userAppConfig.userConfiguration ?? {
-                json: '{}'
-            }
+            userConfiguration: userAppConfig.userConfiguration ?? {}
         };
     }
 
@@ -198,7 +197,7 @@ export abstract class EditorAppBase {
         if (uri) {
             return Uri.parse(uri);
         } else {
-            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
+            return Uri.parse(`/workspace/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
         }
     }
 
@@ -214,7 +213,7 @@ export abstract class EditorAppBase {
         if (config.json) {
             return vscodeUpdateUserConfiguration(config.json);
         }
-        return Promise.reject(new Error('Supplied config is undefined'));
+        return Promise.resolve();
     }
 
     abstract getAppType(): string;

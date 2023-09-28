@@ -33,14 +33,14 @@ const disposeEditor = async () => {
     console.log(wrapper2.reportStatus().join('\n'));
 };
 
-try {
-    document.querySelector('#button-start')?.addEventListener('click', startEditor);
-    document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
-
-    startEditor();
-} catch (e) {
-    console.error(e);
-}
+export const run = async () => {
+    try {
+        document.querySelector('#button-start')?.addEventListener('click', startEditor);
+        document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
+    } catch (e) {
+        console.error(e);
+    }
+};
 
 export const loadStatemachinWorker = () => {
     // Language Server preparation

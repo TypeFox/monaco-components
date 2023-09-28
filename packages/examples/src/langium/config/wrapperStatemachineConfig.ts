@@ -1,3 +1,11 @@
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { Uri } from 'vscode';
+import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { loadStatemachinWorker } from '../wrapperStatemachine.js';
 import { getTextContent } from '../../common.js';
@@ -17,16 +25,13 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
         htmlElement: htmlElement,
         wrapperConfig: {
             serviceConfig: {
-                enableThemeService: true,
-                enableTextmateService: true,
-                enableModelService: true,
-                configureEditorOrViewsService: {
+                userServices: {
+                    ...getThemeServiceOverride(),
+                    ...getTextmateServiceOverride(),
+                    ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                    ...getEditorServiceOverride(useOpenEditorStub),
+                    ...getKeybindingsServiceOverride()
                 },
-                configureConfigurationService: {
-                    defaultWorkspaceUri: '/tmp/'
-                },
-                enableLanguagesService: true,
-                enableKeybindingsService: true,
                 debugLogging: true
             },
             editorAppConfig: {
@@ -35,8 +40,8 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 code: code,
                 useDiffEditor: false,
                 extension: {
-                    name: 'langium-example',
-                    publisher: 'monaco-languageclient-project',
+                    name: 'statemachine-example',
+                    publisher: 'monaco-editor-wrapper-examples',
                     version: '1.0.0',
                     engines: {
                         vscode: '*'
@@ -44,13 +49,8 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                     contributes: {
                         languages: [{
                             id: 'statemachine',
-                            extensions: [
-                                '.statemachine'
-                            ],
-                            aliases: [
-                                'statemachine',
-                                'Statemachine'
-                            ],
+                            extensions: ['.statemachine'],
+                            aliases: ['statemachine', 'Statemachine'],
                             configuration: './statemachine-configuration.json'
                         }],
                         grammars: [{
@@ -62,11 +62,12 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 },
                 extensionFilesOrContents: extensionFilesOrContents,
                 userConfiguration: {
-                    json: `{
-    "workbench.colorTheme": "Default Dark Modern",
-    "editor.guides.bracketPairsHorizontal": "active",
-    "editor.lightbulb.enabled": true
-}`
+                    json: JSON.stringify({
+                        'workbench.colorTheme': 'Default Dark Modern',
+                        'editor.guides.bracketPairsHorizontal': 'active',
+                        'editor.lightbulb.enabled': true
+                    }),
+                    awaitReadiness: [whenReady]
                 }
             }
         },

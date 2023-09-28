@@ -1,10 +1,11 @@
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { whenReady as whenReadyJson } from '@codingame/monaco-vscode-json-default-extension';
 import { disposeEditor, startEditor, swapEditors } from './common.js';
-
-import 'vscode/default-extensions/theme-defaults';
-import 'vscode/default-extensions/json';
-
-import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { UserConfig } from 'monaco-editor-wrapper';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
 
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
@@ -32,10 +33,11 @@ const userConfig: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            enableKeybindingsService: true,
-            enableThemeService: true,
-            enableTextmateService: true,
-            enableLanguagesService: true,
+            userServices: {
+                ...getThemeServiceOverride(),
+                ...getTextmateServiceOverride(),
+                ...getKeybindingsServiceOverride(),
+            },
             debugLogging: true
         },
         editorAppConfig: {
@@ -52,6 +54,9 @@ const userConfig: UserConfig = {
                 extensions: ['.json', '.jsonc'],
                 aliases: ['JSON', 'json'],
                 mimetypes: ['application/json']
+            },
+            userConfiguration: {
+                awaitReadiness: [whenReadyTheme, whenReadyJson]
             }
         }
     },

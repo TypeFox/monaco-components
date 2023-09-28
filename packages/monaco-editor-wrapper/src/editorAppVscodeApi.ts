@@ -14,11 +14,15 @@ export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
 
 export type RegisterExtensionResult = {
     id: string;
-    registerFileUrl: (path: string, url: string) => IDisposable;
     dispose(): Promise<void>;
+    whenReady(): Promise<void>;
 }
 
-export type RegisterLocalProcessExtensionResult = RegisterExtensionResult & {
+interface RegisterLocalExtensionResult extends RegisterExtensionResult {
+    registerFileUrl: (path: string, url: string) => IDisposable;
+}
+
+export type RegisterLocalProcessExtensionResult = RegisterLocalExtensionResult & {
     getApi(): Promise<typeof vscode>;
     setAsDefaultApi(): Promise<void>;
 };
@@ -63,15 +67,25 @@ export class EditorAppVscodeApi extends EditorAppBase {
     }
 
     async init() {
+        if (this.config.userConfiguration?.awaitReadiness) {
+            const allPromises: Array<Promise<void>> = [];
+            for (const awaitReadiness of this.config.userConfiguration.awaitReadiness) {
+                allPromises.push(awaitReadiness());
+            }
+            await Promise.all(allPromises);
+        }
+
         if (this.config.extension) {
             const extension = this.config.extension as IExtensionManifest;
             this.extensionRegisterResult = registerExtension(extension, ExtensionHostKind.LocalProcess);
             const extensionFilesOrContents = this.config.extensionFilesOrContents;
-            if (extensionFilesOrContents) {
+
+            if (extensionFilesOrContents && Object.hasOwn(this.extensionRegisterResult, 'registerFileUrl')) {
                 for (const entry of extensionFilesOrContents) {
-                    this.extensionRegisterResult.registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
+                    (this.extensionRegisterResult as RegisterLocalExtensionResult).registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
                 }
             }
+            await this.extensionRegisterResult.whenReady();
         }
 
         // buildConfig ensures userConfiguration is available

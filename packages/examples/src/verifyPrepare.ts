@@ -1,4 +1,5 @@
+import '@codingame/monaco-vscode-theme-defaults-default-extension';
+import '@codingame/monaco-vscode-javascript-default-extension';
+import '@codingame/monaco-vscode-json-default-extension';
 export * from 'monaco-editor-wrapper';
 export * from 'monaco-editor-wrapper/styles';
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
-import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';

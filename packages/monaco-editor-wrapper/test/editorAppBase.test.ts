@@ -25,7 +25,7 @@ describe('Test EditorAppBase', () => {
         expect(app.getConfig().codeOriginalUri).toBeUndefined();
         expect(app.getConfig().readOnly).toBeFalsy();
         expect(app.getConfig().domReadOnly).toBeFalsy();
-        expect(app.getConfig().userConfiguration?.json).toEqual('{}');
+        expect(app.getConfig().userConfiguration?.json).toBeUndefined();
     });
 
     test('config userConfiguration', () => {

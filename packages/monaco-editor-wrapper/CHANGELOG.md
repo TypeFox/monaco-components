@@ -2,6 +2,11 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.2.0] - 2023-09-2x
+
+- Updated to `monaco-languageclient@6.5.0`. Service init now relies on specific imports from `monaco-vscode-api`or user defined services
+  - Bundle sizes and content are reduced as unneeded dynamic imports are no longer contained.
+
 ## [3.1.0] - 2023-09-21
 
 - Make the extension register result accessible [#48](https://github.com/TypeFox/monaco-components/pull/48)

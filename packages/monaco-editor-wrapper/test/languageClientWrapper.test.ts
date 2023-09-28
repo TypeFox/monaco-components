@@ -96,7 +96,7 @@ describe('Test LanguageClientWrapper', () => {
         const languageClientConfig: LanguageClientConfig = {
             options: {
                 $type: 'WorkerConfig',
-                url: new URL('http://localhost:63315'),
+                url: new URL('http://localhost:5173'),
                 type: 'classic'
             }
         };
