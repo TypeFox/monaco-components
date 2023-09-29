@@ -4,8 +4,13 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
 
 ## [3.2.0] - 2023-09-29
 
-- Updated to `monaco-languageclient@6.5.0`. Service init now relies on specific imports from `monaco-vscode-api`or user defined services
+- Updated to `monaco-languageclient@6.5.0`. Service init now relies on specific imports from `monaco-vscode-api` or user defined services.
   - Bundle sizes and content are reduced as unneeded dynamic imports are no longer contained.
+  - Only keep user services in`initServices`. It requires to specifically import and use services provided by [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api#monaco-standalone-services)
+    - All *enable...* and *configure* type parameters have been removed from `monaco-languagclient`
+    - languages and model services are always added by `monaco-languagclient`
+    - layout, environment, extension, files and quickAccess servies are always added by `monaco-vscode-api`
+    - Additional services need to be added to the package dependencies and imported and configured as shown in the [examples](https://github.com/TypeFox/monaco-languageclient#examples)
 
 ## [3.1.0] - 2023-09-21
 

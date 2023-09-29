@@ -1,4 +1,5 @@
 {
+  "name": "monaco-components",
   "type": "module",
   "private": true,
   "scripts": {
