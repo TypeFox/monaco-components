@@ -3,7 +3,7 @@ import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
 import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
-import { whenReady as whenReadyPython } from  '@codingame/monaco-vscode-python-default-extension';
+import { whenReady as whenReadyPython } from '@codingame/monaco-vscode-python-default-extension';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
