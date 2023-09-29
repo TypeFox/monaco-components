@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.2.1] - 2023-09-29
+
+- Fixed `awaitExtensionReadiness` was not added to the base configuration during init.
+
 ## [3.2.0] - 2023-09-29
 
 - Updated to `monaco-languageclient@6.5.0`. Service init now relies on specific imports from `monaco-vscode-api` or user defined services.

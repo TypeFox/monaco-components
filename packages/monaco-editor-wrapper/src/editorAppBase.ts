@@ -60,7 +60,8 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
-            userConfiguration: userAppConfig.userConfiguration ?? {}
+            userConfiguration: userAppConfig.userConfiguration ?? undefined,
+            awaitExtensionReadiness: userAppConfig.awaitExtensionReadiness ?? undefined
         };
     }
 
@@ -268,14 +269,14 @@ export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorA
     if (orgConfig.$type === config.$type) {
 
         type ClassicKeys = keyof typeof orgConfig;
-        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
+        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
         const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
 
         const propCompareClassic = (name: string) => {
             return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
         };
 
-        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extensions'];
+        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'extensions'];
         type VscodeApiKeys = keyof typeof orgConfig;
         const propCompareVscodeApi = (name: string) => {
             return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];

@@ -45,7 +45,6 @@ export class EditorAppVscodeApi extends EditorAppBase {
         this.logger = logger;
         this.config = this.buildConfig(userConfig) as EditorAppConfigVscodeApi;
         const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigVscodeApi;
-        this.config.userConfiguration = userInput.userConfiguration ?? undefined;
         this.config.extensions = userInput.extensions ?? undefined;
     }
 
