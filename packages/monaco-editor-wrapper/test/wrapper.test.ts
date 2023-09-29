@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest';
 import { EditorAppClassic, MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-
-import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { createBaseConfig, createMonacoEditorDiv } from './helper.js';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 describe('Test MonacoEditorLanguageClientWrapper', () => {

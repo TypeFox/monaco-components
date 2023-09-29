@@ -20,19 +20,13 @@ const config = defineConfig({
             output: {
                 name: 'mew',
                 exports: 'named',
-                sourcemap: false,
+                sourcemap: true,
                 assetFileNames: (assetInfo) => {
                     return `assets/${assetInfo.name}`;
                 }
             }
         }
-    },
-    resolve: {
-        alias: {
-            path: 'path-browserify'
-        }
-    },
-    assetsInclude: ['**/*.wasm']
+    }
 });
 
 export default config;

@@ -1,8 +1,8 @@
-import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
-import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
-
+import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const wrapper42 = new MonacoEditorLanguageClientWrapper();
@@ -14,7 +14,9 @@ const wrapper42Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            enableKeybindingsService: true,
+            userServices: {
+                ...getKeybindingsServiceOverride()
+            },
             debugLogging: true
         },
         editorAppConfig: {
@@ -48,7 +50,9 @@ const wrapper43Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            enableKeybindingsService: true,
+            userServices: {
+                ...getKeybindingsServiceOverride()
+            },
             debugLogging: true
         },
         editorAppConfig: {
@@ -72,7 +76,9 @@ const wrapper44Config: UserConfig = {
     htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
-            enableKeybindingsService: true,
+            userServices: {
+                ...getKeybindingsServiceOverride()
+            },
             debugLogging: true
         },
         editorAppConfig: {

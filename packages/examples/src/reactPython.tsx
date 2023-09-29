@@ -1,11 +1,13 @@
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { whenReady as whenReadyPython } from '@codingame/monaco-vscode-python-default-extension';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { UserConfig } from 'monaco-editor-wrapper';
-
-import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
-import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
-
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { Uri, commands } from 'vscode';
 import { MonacoLanguageClient } from 'monaco-languageclient';
@@ -48,56 +50,58 @@ const userConfig: UserConfig = {
             workspaceFolder: {
                 index: 0,
                 name: 'workspace',
-                uri: Uri.parse('/tmp/')
+                uri: Uri.parse('/workspace/')
             },
         },
     },
     wrapperConfig: {
-        serviceConfig: {enableModelService: true,
-            enableThemeService: true,
-            enableTextmateService: true,
-            configureConfigurationService: {
-                defaultWorkspaceUri: '/tmp/'
+        serviceConfig: {
+            userServices: {
+                ...getThemeServiceOverride(),
+                ...getTextmateServiceOverride(),
+                ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                ...getKeybindingsServiceOverride()
             },
-            enableLanguagesService: true,
-            // enableKeybindingsService: true,
             debugLogging: true
         },
         editorAppConfig: {
             $type: 'vscodeApi',
-            extension:{
-                name: 'python-client',
-                publisher: 'monaco-languageclient-project',
-                version: '1.0.0',
-                engines: {
-                    vscode: '^1.81.5'
-                },
-                contributes: {
-                    languages: [{
-                        id: 'python',
-                        extensions: ['.py', 'pyi'],
-                        aliases: ['python'],
-                        mimetypes: ['application/python'],
-                    }],
-                    commands: [{
-                        command: 'pyright.restartserver',
-                        title: 'Pyright: Restart Server',
-                        category: 'Pyright'
-                    },
-                    {
-                        command: 'pyright.organizeimports',
-                        title: 'Pyright: Organize Imports',
-                        category: 'Pyright'
-                    }],
-                    keybindings: [{
-                        key: 'ctrl+k',
-                        command: 'pyright.restartserver',
-                        when: 'editorTextFocus'
-                    }]
-                }
-            },
             languageId: 'python',
-            codeUri: '/tmp/python.py',
+            codeUri: '/workspace/python.py',
+            awaitExtensionReadiness: [whenReadyThemes, whenReadyPython],
+            extensions: [{
+                config: {
+                    name: 'python-client',
+                    publisher: 'monaco-languageclient-project',
+                    version: '1.0.0',
+                    engines: {
+                        vscode: '^1.81.5'
+                    },
+                    contributes: {
+                        languages: [{
+                            id: 'python',
+                            extensions: ['.py', 'pyi'],
+                            aliases: ['python'],
+                            mimetypes: ['application/python'],
+                        }],
+                        commands: [{
+                            command: 'pyright.restartserver',
+                            title: 'Pyright: Restart Server',
+                            category: 'Pyright'
+                        },
+                        {
+                            command: 'pyright.organizeimports',
+                            title: 'Pyright: Organize Imports',
+                            category: 'Pyright'
+                        }],
+                        keybindings: [{
+                            key: 'ctrl+k',
+                            command: 'pyright.restartserver',
+                            when: 'editorTextFocus'
+                        }]
+                    }
+                }
+            }],
             userConfiguration: {
                 json: JSON.stringify({'workbench.colorTheme': 'Default Dark Modern'})
             },

@@ -1,12 +1,12 @@
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 import ReactDOM from 'react-dom/client';
 import React, { useState } from 'react';
 import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { UserConfig } from 'monaco-editor-wrapper';
-
-import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
-import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
-
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+
 buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const EditorDemo: React.FC = () => {
@@ -18,7 +18,9 @@ const EditorDemo: React.FC = () => {
         htmlElement: rootElem,
         wrapperConfig: {
             serviceConfig: {
-                enableKeybindingsService: true,
+                userServices: {
+                    ...getKeybindingsServiceOverride()
+                },
                 debugLogging: true
             },
             editorAppConfig: {

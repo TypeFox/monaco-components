@@ -18,13 +18,14 @@ export type EditorAppBaseConfig = ModelUpdate & {
     useDiffEditor: boolean;
     domReadOnly?: boolean;
     readOnly?: boolean;
+    awaitExtensionReadiness?: Array<() => Promise<void>>
     userConfiguration?: UserConfiguration;
 }
 
 export type EditorAppType = 'vscodeApi' | 'classic';
 
 export type UserConfiguration = {
-    json: string;
+    json?: string;
 }
 
 /**
@@ -59,9 +60,7 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
-            userConfiguration: userAppConfig.userConfiguration ?? {
-                json: '{}'
-            }
+            userConfiguration: userAppConfig.userConfiguration ?? {}
         };
     }
 
@@ -198,7 +197,7 @@ export abstract class EditorAppBase {
         if (uri) {
             return Uri.parse(uri);
         } else {
-            return Uri.parse(`/tmp/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
+            return Uri.parse(`/workspace/model${uriType === 'codeOriginal' ? 'Original' : ''}${this.id}.${config.languageId}`);
         }
     }
 
@@ -210,11 +209,22 @@ export abstract class EditorAppBase {
         }
     }
 
-    async updateUserConfiguration(config: UserConfiguration) {
-        if (config.json) {
+    async awaitReadiness(awaitExtensionReadiness?: Array<() => Promise<void>>) {
+        if (awaitExtensionReadiness) {
+            const allPromises: Array<Promise<void>> = [];
+            for (const awaitReadiness of awaitExtensionReadiness) {
+                allPromises.push(awaitReadiness());
+            }
+            return Promise.all(allPromises);
+        }
+        return Promise.resolve();
+    }
+
+    async updateUserConfiguration(config?: UserConfiguration) {
+        if (config?.json) {
             return vscodeUpdateUserConfiguration(config.json);
         }
-        return Promise.reject(new Error('Supplied config is undefined'));
+        return Promise.resolve();
     }
 
     abstract getAppType(): string;
@@ -265,7 +275,7 @@ export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorA
             return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
         };
 
-        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extension', 'extensionFilesOrContents'];
+        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extensions'];
         type VscodeApiKeys = keyof typeof orgConfig;
         const propCompareVscodeApi = (name: string) => {
             return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];

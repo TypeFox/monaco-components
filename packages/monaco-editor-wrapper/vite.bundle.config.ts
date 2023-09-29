@@ -17,17 +17,11 @@ export default defineConfig({
             output: {
                 name: 'monaco-editor-wrapper',
                 exports: 'named',
-                sourcemap: false,
+                sourcemap: true,
                 assetFileNames: (assetInfo) => {
                     return `assets/${assetInfo.name}`;
                 }
             }
         }
-    },
-    resolve: {
-        alias: {
-            path: 'path-browserify'
-        }
-    },
-    assetsInclude: ['**/*.wasm']
+    }
 });

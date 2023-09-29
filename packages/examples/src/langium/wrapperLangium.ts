@@ -3,11 +3,10 @@
  * Licensed under the MIT License. See License.txt in the project root for license information.
  * ------------------------------------------------------------------------------------------ */
 
-import 'vscode/default-extensions/theme-defaults';
-import { buildWorkerDefinition } from 'monaco-editor-workers';
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
 import { setupLangiumClientVscodeApi } from './config/wrapperLangiumVscode.js';
 import { setupLangiumClientClassic } from './config/wrapperLangiumClassic.js';
+import { buildWorkerDefinition } from 'monaco-editor-workers';
 
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/', new URL('', window.location.href).href, false);
 
@@ -15,15 +14,9 @@ let wrapper: MonacoEditorLanguageClientWrapper | undefined;
 
 export const run = async () => {
     try {
-        document.querySelector('#button-start-classic')?.addEventListener('click', async () => {
-            await startLangiumClientClassic();
-        });
-        document.querySelector('#button-start-vscode-api')?.addEventListener('click', async () => {
-            await startLangiumClientVscodeApi();
-        });
-        document.querySelector('#button-dispose')?.addEventListener('click', async () => {
-            await disposeEditor();
-        });
+        document.querySelector('#button-start-classic')?.addEventListener('click', startLangiumClientClassic);
+        document.querySelector('#button-start-vscode-api')?.addEventListener('click', startLangiumClientVscodeApi);
+        document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
     } catch (e) {
         console.error(e);
     }

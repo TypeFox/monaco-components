@@ -1,5 +1,7 @@
 import { editor } from 'monaco-editor';
-import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
+import { Uri } from 'vscode';
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
 import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { ModelUpdate, UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
@@ -45,10 +47,15 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
         // always set required services if not configure
-        this.serviceConfig.enableModelService = this.serviceConfig.enableModelService ?? true;
-        this.serviceConfig.configureConfigurationService = this.serviceConfig.configureConfigurationService ?? {
-            defaultWorkspaceUri: '/tmp/'
-        };
+        this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
+        const configureService = this.serviceConfig.userServices.configure;
+
+        if (!configureService) {
+            const mlcDefautServices = {
+                ...getConfigurationServiceOverride(Uri.file('/workspace'))
+            };
+            mergeServices(mlcDefautServices, this.serviceConfig.userServices);
+        }
 
         // overrule debug log flag
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());

@@ -1,3 +1,11 @@
+import { Uri } from 'vscode';
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
 import { loadLangiumWorker } from '../wrapperLangium.js';
@@ -17,16 +25,13 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
         htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
         wrapperConfig: {
             serviceConfig: {
-                enableThemeService: true,
-                enableTextmateService: true,
-                enableModelService: true,
-                configureEditorOrViewsService: {
+                userServices: {
+                    ...getThemeServiceOverride(),
+                    ...getTextmateServiceOverride(),
+                    ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                    ...getEditorServiceOverride(useOpenEditorStub),
+                    ...getKeybindingsServiceOverride()
                 },
-                configureConfigurationService: {
-                    defaultWorkspaceUri: '/tmp/'
-                },
-                enableLanguagesService: true,
-                enableKeybindingsService: true,
                 debugLogging: true
             },
             editorAppConfig: {
@@ -34,34 +39,38 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
                 languageId: 'langium',
                 code: code,
                 useDiffEditor: false,
-                extension: {
-                    name: 'langium-example',
-                    publisher: 'monaco-editor-wrapper-examples',
-                    version: '1.0.0',
-                    engines: {
-                        vscode: '*'
+                // Ensure all required extensions are loaded before setting up the language extension
+                awaitExtensionReadiness: [whenReadyThemes],
+                extensions: [{
+                    config: {
+                        name: 'langium-example',
+                        publisher: 'monaco-editor-wrapper-examples',
+                        version: '1.0.0',
+                        engines: {
+                            vscode: '*'
+                        },
+                        contributes: {
+                            languages: [{
+                                id: 'langium',
+                                extensions: ['.langium'],
+                                aliases: ['langium', 'LANGIUM'],
+                                configuration: './langium-configuration.json'
+                            }],
+                            grammars: [{
+                                language: 'langium',
+                                scopeName: 'source.langium',
+                                path: './langium-grammar.json'
+                            }]
+                        }
                     },
-                    contributes: {
-                        languages: [{
-                            id: 'langium',
-                            extensions: ['.langium'],
-                            aliases: ['langium', 'LANGIUM'],
-                            configuration: './langium-configuration.json'
-                        }],
-                        grammars: [{
-                            language: 'langium',
-                            scopeName: 'source.langium',
-                            path: './langium-grammar.json'
-                        }]
-                    }
-                },
-                extensionFilesOrContents: extensionFilesOrContents,
+                    filesOrContents: extensionFilesOrContents
+                }],
                 userConfiguration: {
-                    json: `{
-    "workbench.colorTheme": "Default Dark Modern",
-    "editor.guides.bracketPairsHorizontal": "active",
-    "editor.lightbulb.enabled": true
-}`
+                    json: JSON.stringify({
+                        'workbench.colorTheme': 'Default Dark Modern',
+                        'editor.guides.bracketPairsHorizontal': 'active',
+                        'editor.lightbulb.enabled': true
+                    })
                 }
             }
         },

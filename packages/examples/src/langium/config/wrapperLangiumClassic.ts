@@ -1,3 +1,8 @@
+import { Uri } from 'vscode';
+import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
+import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
+import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
+import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
 import { LangiumMonarchContent, LangiumTheme } from './langium.monarch.js';
@@ -15,14 +20,11 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
         },
         wrapperConfig: {
             serviceConfig: {
-                enableModelService: true,
-                configureEditorOrViewsService: {
+                userServices: {
+                    ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                    ...getEditorServiceOverride(useOpenEditorStub),
+                    ...getKeybindingsServiceOverride()
                 },
-                configureConfigurationService: {
-                    defaultWorkspaceUri: '/tmp/'
-                },
-                enableLanguagesService: true,
-                enableKeybindingsService: true,
                 debugLogging: true
             },
             editorAppConfig: {
@@ -41,7 +43,6 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
                 userConfiguration: {
                     // or configure the semantic highlighting like this:
                     // `{ json: "editor.semanticHighlighting.enabled": true }`
-                    json: '{}'
                 }
             }
         },
