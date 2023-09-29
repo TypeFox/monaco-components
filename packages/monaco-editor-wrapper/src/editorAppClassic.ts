@@ -82,6 +82,9 @@ export class EditorAppClassic extends EditorAppBase {
     }
 
     async init() {
+        // await all extenson that should be ready beforehand
+        await this.awaitReadiness(this.config.userConfiguration);
+
         // register own language first
         const extLang = this.config.languageExtensionConfig;
         if (extLang) {

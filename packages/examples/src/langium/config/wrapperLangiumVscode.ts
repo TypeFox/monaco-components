@@ -39,28 +39,30 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
                 languageId: 'langium',
                 code: code,
                 useDiffEditor: false,
-                extension: {
-                    name: 'langium-example',
-                    publisher: 'monaco-editor-wrapper-examples',
-                    version: '1.0.0',
-                    engines: {
-                        vscode: '*'
+                extensions: [{
+                    config: {
+                        name: 'langium-example',
+                        publisher: 'monaco-editor-wrapper-examples',
+                        version: '1.0.0',
+                        engines: {
+                            vscode: '*'
+                        },
+                        contributes: {
+                            languages: [{
+                                id: 'langium',
+                                extensions: ['.langium'],
+                                aliases: ['langium', 'LANGIUM'],
+                                configuration: './langium-configuration.json'
+                            }],
+                            grammars: [{
+                                language: 'langium',
+                                scopeName: 'source.langium',
+                                path: './langium-grammar.json'
+                            }]
+                        }
                     },
-                    contributes: {
-                        languages: [{
-                            id: 'langium',
-                            extensions: ['.langium'],
-                            aliases: ['langium', 'LANGIUM'],
-                            configuration: './langium-configuration.json'
-                        }],
-                        grammars: [{
-                            language: 'langium',
-                            scopeName: 'source.langium',
-                            path: './langium-grammar.json'
-                        }]
-                    }
-                },
-                extensionFilesOrContents: extensionFilesOrContents,
+                    filesOrContents: extensionFilesOrContents
+                }],
                 userConfiguration: {
                     json: JSON.stringify({
                         'workbench.colorTheme': 'Default Dark Modern',

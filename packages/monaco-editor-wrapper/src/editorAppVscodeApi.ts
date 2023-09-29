@@ -6,10 +6,14 @@ import { verifyUrlorCreateDataUrl } from './utils.js';
 import { IDisposable } from 'monaco-editor';
 import { Logger } from './logger.js';
 
+export type ExtensionConfig = {
+    config: IExtensionManifest | object;
+    filesOrContents?: Map<string, string | URL>;
+};
+
 export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
     $type: 'vscodeApi';
-    extension?: IExtensionManifest | object;
-    extensionFilesOrContents?: Map<string, string | URL>;
+    extensions?: ExtensionConfig[];
 };
 
 export type RegisterExtensionResult = {
@@ -42,8 +46,7 @@ export class EditorAppVscodeApi extends EditorAppBase {
         this.config = this.buildConfig(userConfig) as EditorAppConfigVscodeApi;
         const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigVscodeApi;
         this.config.userConfiguration = userInput.userConfiguration ?? undefined;
-        this.config.extension = userInput.extension ?? undefined;
-        this.config.extensionFilesOrContents = userInput.extensionFilesOrContents ?? undefined;
+        this.config.extensions = userInput.extensions ?? undefined;
     }
 
     getAppType(): EditorAppType {
@@ -67,29 +70,25 @@ export class EditorAppVscodeApi extends EditorAppBase {
     }
 
     async init() {
-        if (this.config.userConfiguration?.awaitReadiness) {
+        // await all extenson that should be ready beforehand
+        await this.awaitReadiness(this.config.userConfiguration);
+
+        if (this.config.extensions) {
             const allPromises: Array<Promise<void>> = [];
-            for (const awaitReadiness of this.config.userConfiguration.awaitReadiness) {
-                allPromises.push(awaitReadiness());
+            for (const extensionConfig of this.config.extensions) {
+                this.extensionRegisterResult = registerExtension(extensionConfig.config as IExtensionManifest, ExtensionHostKind.LocalProcess);
+                if (extensionConfig.filesOrContents && Object.hasOwn(this.extensionRegisterResult, 'registerFileUrl')) {
+                    for (const entry of extensionConfig.filesOrContents) {
+                        (this.extensionRegisterResult as RegisterLocalExtensionResult).registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
+                    }
+                }
+                allPromises.push(this.extensionRegisterResult.whenReady());
             }
             await Promise.all(allPromises);
         }
 
-        if (this.config.extension) {
-            const extension = this.config.extension as IExtensionManifest;
-            this.extensionRegisterResult = registerExtension(extension, ExtensionHostKind.LocalProcess);
-            const extensionFilesOrContents = this.config.extensionFilesOrContents;
-
-            if (extensionFilesOrContents && Object.hasOwn(this.extensionRegisterResult, 'registerFileUrl')) {
-                for (const entry of extensionFilesOrContents) {
-                    (this.extensionRegisterResult as RegisterLocalExtensionResult).registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
-                }
-            }
-            await this.extensionRegisterResult.whenReady();
-        }
-
         // buildConfig ensures userConfiguration is available
-        await this.updateUserConfiguration(this.config.userConfiguration!);
+        await this.updateUserConfiguration(this.config.userConfiguration);
         this.logger?.info('Init of VscodeApiConfig was completed.');
     }
 

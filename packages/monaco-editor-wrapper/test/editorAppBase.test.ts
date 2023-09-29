@@ -75,14 +75,16 @@ describe('Test EditorAppBase', () => {
         expect(isAppConfigDifferent(orgConfig, config, true, false)).toBeTruthy();
 
         config.code = '';
-        config.extension = {
-            name: 'Tester',
-            publisher: 'Tester',
-            version: '1.0.0',
-            engines: {
-                vscode: '*'
+        config.extensions = [{
+            config: {
+                name: 'Tester',
+                publisher: 'Tester',
+                version: '1.0.0',
+                engines: {
+                    vscode: '*'
+                }
             }
-        };
+        }];
         expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
     });
 

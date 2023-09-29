@@ -39,28 +39,30 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 languageId: 'statemachine',
                 code: code,
                 useDiffEditor: false,
-                extension: {
-                    name: 'statemachine-example',
-                    publisher: 'monaco-editor-wrapper-examples',
-                    version: '1.0.0',
-                    engines: {
-                        vscode: '*'
+                extensions: [{
+                    config: {
+                        name: 'statemachine-example',
+                        publisher: 'monaco-editor-wrapper-examples',
+                        version: '1.0.0',
+                        engines: {
+                            vscode: '*'
+                        },
+                        contributes: {
+                            languages: [{
+                                id: 'statemachine',
+                                extensions: ['.statemachine'],
+                                aliases: ['statemachine', 'Statemachine'],
+                                configuration: './statemachine-configuration.json'
+                            }],
+                            grammars: [{
+                                language: 'statemachine',
+                                scopeName: 'source.statemachine',
+                                path: './statemachine-grammar.json'
+                            }]
+                        }
                     },
-                    contributes: {
-                        languages: [{
-                            id: 'statemachine',
-                            extensions: ['.statemachine'],
-                            aliases: ['statemachine', 'Statemachine'],
-                            configuration: './statemachine-configuration.json'
-                        }],
-                        grammars: [{
-                            language: 'statemachine',
-                            scopeName: 'source.statemachine',
-                            path: './statemachine-grammar.json'
-                        }]
-                    }
-                },
-                extensionFilesOrContents: extensionFilesOrContents,
+                    filesOrContents: extensionFilesOrContents
+                }],
                 userConfiguration: {
                     json: JSON.stringify({
                         'workbench.colorTheme': 'Default Dark Modern',

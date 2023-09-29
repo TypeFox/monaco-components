@@ -209,8 +209,19 @@ export abstract class EditorAppBase {
         }
     }
 
-    async updateUserConfiguration(config: UserConfiguration) {
-        if (config.json) {
+    async awaitReadiness(config?: UserConfiguration) {
+        if (config?.awaitReadiness) {
+            const allPromises: Array<Promise<void>> = [];
+            for (const awaitReadiness of config.awaitReadiness) {
+                allPromises.push(awaitReadiness());
+            }
+            return Promise.all(allPromises);
+        }
+        return Promise.resolve();
+    }
+
+    async updateUserConfiguration(config?: UserConfiguration) {
+        if (config?.json) {
             return vscodeUpdateUserConfiguration(config.json);
         }
         return Promise.resolve();
@@ -264,7 +275,7 @@ export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorA
             return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
         };
 
-        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extension', 'extensionFilesOrContents'];
+        const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'userConfiguration', 'extensions'];
         type VscodeApiKeys = keyof typeof orgConfig;
         const propCompareVscodeApi = (name: string) => {
             return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];

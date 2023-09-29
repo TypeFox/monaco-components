@@ -66,37 +66,39 @@ const userConfig: UserConfig = {
         },
         editorAppConfig: {
             $type: 'vscodeApi',
-            extension:{
-                name: 'python-client',
-                publisher: 'monaco-languageclient-project',
-                version: '1.0.0',
-                engines: {
-                    vscode: '^1.81.5'
-                },
-                contributes: {
-                    languages: [{
-                        id: 'python',
-                        extensions: ['.py', 'pyi'],
-                        aliases: ['python'],
-                        mimetypes: ['application/python'],
-                    }],
-                    commands: [{
-                        command: 'pyright.restartserver',
-                        title: 'Pyright: Restart Server',
-                        category: 'Pyright'
+            extensions: [{
+                config: {
+                    name: 'python-client',
+                    publisher: 'monaco-languageclient-project',
+                    version: '1.0.0',
+                    engines: {
+                        vscode: '^1.81.5'
                     },
-                    {
-                        command: 'pyright.organizeimports',
-                        title: 'Pyright: Organize Imports',
-                        category: 'Pyright'
-                    }],
-                    keybindings: [{
-                        key: 'ctrl+k',
-                        command: 'pyright.restartserver',
-                        when: 'editorTextFocus'
-                    }]
+                    contributes: {
+                        languages: [{
+                            id: 'python',
+                            extensions: ['.py', 'pyi'],
+                            aliases: ['python'],
+                            mimetypes: ['application/python'],
+                        }],
+                        commands: [{
+                            command: 'pyright.restartserver',
+                            title: 'Pyright: Restart Server',
+                            category: 'Pyright'
+                        },
+                        {
+                            command: 'pyright.organizeimports',
+                            title: 'Pyright: Organize Imports',
+                            category: 'Pyright'
+                        }],
+                        keybindings: [{
+                            key: 'ctrl+k',
+                            command: 'pyright.restartserver',
+                            when: 'editorTextFocus'
+                        }]
+                    }
                 }
-            },
+            }],
             languageId: 'python',
             codeUri: '/workspace/python.py',
             userConfiguration: {
