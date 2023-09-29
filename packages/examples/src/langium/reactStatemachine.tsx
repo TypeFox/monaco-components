@@ -7,7 +7,7 @@ import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const startEditor = async () => {
-    const langiumGlobalConfig = await createLangiumGlobalConfig(document.getElementById('root')!);
+    const langiumGlobalConfig = await createLangiumGlobalConfig();
     const comp = <MonacoEditorReactComp
         userConfig={langiumGlobalConfig}
         style={{

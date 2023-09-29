@@ -15,7 +15,6 @@ export type WrapperConfig = {
 
 export type UserConfig = {
     id?: string;
-    htmlElement: HTMLElement;
     loggerConfig?: LoggerConfig;
     wrapperConfig: WrapperConfig;
     languageClientConfig?: LanguageClientConfig;
@@ -29,7 +28,6 @@ export type UserConfig = {
 export class MonacoEditorLanguageClientWrapper {
 
     private id: string;
-    private htmlElement: HTMLElement;
 
     private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
     private languageClientWrapper: LanguageClientWrapper;
@@ -42,7 +40,6 @@ export class MonacoEditorLanguageClientWrapper {
         }
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
-        this.htmlElement = userConfig.htmlElement;
         this.logger = new Logger(userConfig.loggerConfig);
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
 
@@ -69,7 +66,10 @@ export class MonacoEditorLanguageClientWrapper {
         this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig, this.logger);
     }
 
-    async start(userConfig: UserConfig) {
+    async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {
+        if (!htmlElement) {
+            throw new Error('No HTMLElement provided for monaco-editor.');
+        }
         await this.init(userConfig);
 
         // Always dispose old instances before start
@@ -84,7 +84,7 @@ export class MonacoEditorLanguageClientWrapper {
         this.logger.info(`Starting monaco-editor (${this.id})`);
 
         await this.editorApp?.init();
-        await this.editorApp.createEditors(this.htmlElement);
+        await this.editorApp.createEditors(htmlElement);
 
         if (this.languageClientWrapper.haveLanguageClientConfig()) {
             await this.languageClientWrapper.start();

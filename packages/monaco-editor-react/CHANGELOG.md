@@ -5,6 +5,8 @@ All notable changes to npm module [@typefox/monaco-editor-react](https://www.npm
 ## [2.2.0] - 2023-09-29
 
 - Updated to `monaco-editor-wrapper` `3.2.0`
+- htmlElement is no longer part of UserConfig. Must be passed at start [#51](https://github.com/TypeFox/monaco-components/pull/51)
+  - The HTMLElement it is no longer part of the UserConfig. The component just uses its root.
 
 ## [2.1.0] - 2023-09-21
 

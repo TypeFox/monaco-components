@@ -11,6 +11,8 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
     - languages and model services are always added by `monaco-languagclient`
     - layout, environment, extension, files and quickAccess servies are always added by `monaco-vscode-api`
     - Additional services need to be added to the package dependencies and imported and configured as shown in the [examples](https://github.com/TypeFox/monaco-languageclient#examples)
+- htmlElement is no longer part of UserConfig. Must be passed at start [#51](https://github.com/TypeFox/monaco-components/pull/51)
+  - The HTMLElement must now be passed at `wrapper.start`. It is no longer part of the UserConfig.
 
 ## [3.1.0] - 2023-09-21
 

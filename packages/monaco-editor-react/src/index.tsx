@@ -119,8 +119,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
 
-            userConfig.htmlElement = this.containerElement;
-            this.isStarting = this.wrapper.start(userConfig);
+            this.isStarting = this.wrapper.start(userConfig, this.containerElement);
             await this.isStarting;
 
             // once awaiting isStarting is done onLoad is called if available

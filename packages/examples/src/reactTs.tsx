@@ -9,13 +9,12 @@ import { buildWorkerDefinition } from 'monaco-editor-workers';
 
 buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
+const rootElem = document.getElementById('root')!;
 const EditorDemo: React.FC = () => {
     const logMessage = 'console.log(\'hello\')';
     const [content, setContent] = useState(logMessage);
 
-    const rootElem = document.getElementById('root')!;
     const userConfig: UserConfig = {
-        htmlElement: rootElem,
         wrapperConfig: {
             serviceConfig: {
                 userServices: {
@@ -60,6 +59,5 @@ const EditorDemo: React.FC = () => {
 };
 
 const comp = <EditorDemo />;
-const rootElem = document.getElementById('root')!;
 const root = ReactDOM.createRoot(rootElem);
 root.render(comp);

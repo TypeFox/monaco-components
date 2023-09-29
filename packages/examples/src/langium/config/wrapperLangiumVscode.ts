@@ -22,7 +22,6 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
 
     const langiumWorker = loadLangiumWorker();
     return {
-        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
         wrapperConfig: {
             serviceConfig: {
                 userServices: {

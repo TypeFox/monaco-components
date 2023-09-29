@@ -10,7 +10,7 @@ import { UserConfig } from 'monaco-editor-wrapper';
 import { loadStatemachinWorker } from '../wrapperStatemachine.js';
 import { getTextContent } from '../../common.js';
 
-export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promise<UserConfig> => {
+export const createLangiumGlobalConfig = async (): Promise<UserConfig> => {
     const code = await getTextContent(new URL('./src/langium/content/example.statemachine', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
@@ -22,7 +22,6 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
     const stateMachineWorker = loadStatemachinWorker();
 
     return {
-        htmlElement: htmlElement,
         wrapperConfig: {
             serviceConfig: {
                 userServices: {

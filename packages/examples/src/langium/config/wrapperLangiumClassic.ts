@@ -5,7 +5,7 @@ import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-
 import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
-import { LangiumMonarchContent, LangiumTheme } from './langium.monarch.js';
+import { LangiumMonarchContent } from './langium.monarch.js';
 import { loadLangiumWorker } from '../wrapperLangium.js';
 
 export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
@@ -13,7 +13,6 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
 
     const langiumWorker = loadLangiumWorker();
     return {
-        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
         loggerConfig: {
             enabled: true,
             debugEnabled: true
@@ -38,8 +37,6 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
                 },
                 languageExtensionConfig: { id: 'langium' },
                 languageDef: LangiumMonarchContent,
-                themeData: LangiumTheme,
-                theme: 'langium-theme',
                 userConfiguration: {
                     // or configure the semantic highlighting like this:
                     // `{ json: "editor.semanticHighlighting.enabled": true }`
