@@ -20,7 +20,7 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
     test('Check default values', async () => {
         createMonacoEditorDiv();
         const wrapper = new MonacoEditorLanguageClientWrapper();
-        await wrapper.start(createBaseConfig('classic'));
+        await wrapper.start(createBaseConfig('classic'), document.getElementById('monaco-editor-root'));
 
         const app = wrapper.getMonacoEditorApp() as EditorAppClassic;
         expect(app).toBeDefined();
@@ -29,5 +29,13 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
         const appConfig = app.getConfig();
         expect(appConfig.automaticLayout).toBeTruthy();
         expect(appConfig.theme).toBe('vs-light');
+    });
+
+    test('No HTML in Userconfig', async () => {
+        createMonacoEditorDiv();
+        const wrapper = new MonacoEditorLanguageClientWrapper();
+        await expect(async () => {
+            await wrapper.start(createBaseConfig('classic'), null);
+        }).rejects.toThrowError('No HTMLElement provided for monaco-editor.');
     });
 });

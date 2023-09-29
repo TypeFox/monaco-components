@@ -30,7 +30,6 @@ const monacoEditorConfig = {
 };
 
 const userConfig: UserConfig = {
-    htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
             userServices: {
@@ -52,11 +51,12 @@ const userConfig: UserConfig = {
 };
 
 try {
+    const htmlElement = document.getElementById('monaco-editor-root');
     document.querySelector('#button-start')?.addEventListener('click', () => {
-        startEditor(userConfig, code, codeOriginal);
+        startEditor(userConfig, htmlElement, code, codeOriginal);
     });
     document.querySelector('#button-swap')?.addEventListener('click', () => {
-        swapEditors(userConfig, code, codeOriginal);
+        swapEditors(userConfig, htmlElement, code, codeOriginal);
     });
     document.querySelector('#button-swap-code')?.addEventListener('click', () => {
         if (wrapper.getMonacoEditorApp()?.getConfig().codeUri === codeUri) {
@@ -81,7 +81,7 @@ try {
         }
     });
 
-    startEditor(userConfig, code, codeOriginal);
+    startEditor(userConfig, htmlElement, code, codeOriginal);
 } catch (e) {
     console.error(e);
 }

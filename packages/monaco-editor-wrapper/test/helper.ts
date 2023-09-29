@@ -8,7 +8,6 @@ export const createMonacoEditorDiv = () => {
 
 export const createBaseConfig = (type: EditorAppType): UserConfig => {
     return {
-        htmlElement: document.getElementById('monaco-editor-root') as HTMLElement,
         wrapperConfig: createWrapperConfig(type)
     };
 };

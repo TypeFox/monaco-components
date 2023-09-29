@@ -22,7 +22,6 @@ const code = `def main():
 
 const rootElem = document.getElementById('root')!;
 const userConfig: UserConfig = {
-    htmlElement: rootElem,
     languageClientConfig: {
         options: {
             name: 'Python Language Server Example',

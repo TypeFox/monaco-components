@@ -77,12 +77,12 @@ export abstract class EditorAppBase {
     }
 
     protected async createEditor(container: HTMLElement, editorOptions?: editor.IStandaloneEditorConstructionOptions): Promise<void> {
-        this.editor = createConfiguredEditor(container!, editorOptions);
+        this.editor = createConfiguredEditor(container, editorOptions);
         await this.updateEditorModel();
     }
 
     protected async createDiffEditor(container: HTMLElement, diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions): Promise<void> {
-        this.diffEditor = createConfiguredDiffEditor(container!, diffEditorOptions);
+        this.diffEditor = createConfiguredDiffEditor(container, diffEditorOptions);
         await this.updateDiffEditorModel();
     }
 

@@ -12,6 +12,7 @@ buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/
 
 let wrapper: MonacoEditorLanguageClientWrapper | undefined;
 
+const htmlElement = document.getElementById('monaco-editor-root');
 export const run = async () => {
     try {
         document.querySelector('#button-start-classic')?.addEventListener('click', startLangiumClientClassic);
@@ -27,7 +28,7 @@ export const startLangiumClientVscodeApi = async () => {
         if (checkStarted()) return;
         const config = await setupLangiumClientVscodeApi();
         wrapper = new MonacoEditorLanguageClientWrapper();
-        wrapper.start(config);
+        wrapper.start(config, htmlElement);
     } catch (e) {
         console.log(e);
     }
@@ -38,7 +39,7 @@ export const startLangiumClientClassic = async () => {
         if (checkStarted()) return;
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
-        await wrapper.start(config);
+        await wrapper.start(config, htmlElement!);
     } catch (e) {
         console.log(e);
     }
@@ -46,7 +47,7 @@ export const startLangiumClientClassic = async () => {
 
 const checkStarted = () => {
     if (wrapper?.isStarted()) {
-        alert('Editor was already started!');
+        alert('Editor was already started!\nPlease reload the page to test the alternative editor.');
         return true;
     }
     return false;

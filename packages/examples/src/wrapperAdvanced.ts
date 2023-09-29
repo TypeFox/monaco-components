@@ -11,7 +11,6 @@ const wrapper44 = new MonacoEditorLanguageClientWrapper();
 
 const wrapper42Config: UserConfig = {
     id: '42',
-    htmlElement: document.getElementById('monaco-editor-root-42') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
             userServices: {
@@ -47,7 +46,6 @@ Same again.`
 
 const wrapper43Config: UserConfig = {
     id: '43',
-    htmlElement: document.getElementById('monaco-editor-root-43') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
             userServices: {
@@ -73,7 +71,6 @@ const wrapper43Config: UserConfig = {
 
 const wrapper44Config: UserConfig = {
     id: '44',
-    htmlElement: document.getElementById('monaco-editor-root-44') as HTMLElement,
     wrapperConfig: {
         serviceConfig: {
             userServices: {
@@ -99,16 +96,16 @@ const wrapper44Config: UserConfig = {
 };
 
 const startWrapper42 = async () => {
-    await wrapper42.start(wrapper42Config);
+    await wrapper42.start(wrapper42Config, document.getElementById('monaco-editor-root-42'));
     console.log('wrapper42 was started.');
 };
 
 const startWrapper43 = async () => {
-    await wrapper43.start(wrapper43Config);
+    await wrapper43.start(wrapper43Config, document.getElementById('monaco-editor-root-43'));
     console.log('wrapper43 was started.');
 };
 const startWrapper44 = async () => {
-    await wrapper44.start(wrapper44Config);
+    await wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
     console.log('wrapper44 was started.');
 
 };
@@ -124,7 +121,7 @@ const sleepOne = (milliseconds: number) => {
         appConfig42.code = `function logMe() {
     console.log('Hello swap editors!');
 };`;
-        const w42Start = wrapper42.start(wrapper42Config);
+        const w42Start = wrapper42.start(wrapper42Config, document.getElementById('monaco-editor-root-42'));
 
         const w43Start = wrapper43.updateDiffModel({
             languageId: 'javascript',
@@ -140,7 +137,7 @@ const sleepOne = (milliseconds: number) => {
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
         appConfig44.theme = 'vs-light';
-        const w44Start = wrapper44.start(wrapper44Config);
+        const w44Start = wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
 
         await w42Start;
         console.log('Restarted wrapper42.');
@@ -159,7 +156,7 @@ const sleepTwo = (milliseconds: number) => {
         appConfig44.useDiffEditor = false;
         appConfig44.theme = 'vs-dark';
 
-        await wrapper44.start(wrapper44Config);
+        await wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
         console.log('Restarted wrapper44.');
     }, milliseconds);
 };

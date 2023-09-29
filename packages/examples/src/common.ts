@@ -3,14 +3,14 @@ import { languages } from 'monaco-editor';
 
 export const wrapper = new MonacoEditorLanguageClientWrapper();
 
-export const startEditor = async (userConfig: UserConfig, code: string, codeOriginal?: string) => {
+export const startEditor = async (userConfig: UserConfig, htmlElement: HTMLElement | null, code: string, codeOriginal?: string) => {
     if (wrapper.isStarted()) {
         alert('Editor was already started!');
         return;
     }
     configureCodeEditors(userConfig, code, codeOriginal);
     toggleSwapDiffButton(true);
-    await restartEditor(userConfig);
+    await restartEditor(userConfig, htmlElement);
 };
 
 export const updateModel = async (modelUpdate: ModelUpdate) => {
@@ -21,11 +21,11 @@ export const updateModel = async (modelUpdate: ModelUpdate) => {
     }
 };
 
-export const swapEditors = async (userConfig: UserConfig, code: string, codeOriginal?: string) => {
+export const swapEditors = async (userConfig: UserConfig, htmlElement: HTMLElement | null, code: string, codeOriginal?: string) => {
     userConfig.wrapperConfig.editorAppConfig.useDiffEditor = !userConfig.wrapperConfig.editorAppConfig.useDiffEditor;
     saveMainCode(!userConfig.wrapperConfig.editorAppConfig.useDiffEditor);
     configureCodeEditors(userConfig, code, codeOriginal);
-    await restartEditor(userConfig);
+    await restartEditor(userConfig, htmlElement);
 };
 
 export const disposeEditor = async (useDiffEditor: boolean) => {
@@ -37,8 +37,8 @@ export const disposeEditor = async (useDiffEditor: boolean) => {
     return codeMain;
 };
 
-const restartEditor = async (userConfig: UserConfig) => {
-    await wrapper.start(userConfig);
+const restartEditor = async (userConfig: UserConfig, htmlElement: HTMLElement | null) => {
+    await wrapper.start(userConfig, htmlElement);
     logEditorInfo(userConfig);
 };
 
