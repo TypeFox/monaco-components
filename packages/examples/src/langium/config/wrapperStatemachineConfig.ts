@@ -3,7 +3,7 @@ import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-ov
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import { whenReady } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { Uri } from 'vscode';
 import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
@@ -39,6 +39,8 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                 languageId: 'statemachine',
                 code: code,
                 useDiffEditor: false,
+                // Ensure all required extensions are loaded before setting up the language extension
+                awaitExtensionReadiness: [whenReadyThemes],
                 extensions: [{
                     config: {
                         name: 'statemachine-example',
@@ -68,8 +70,7 @@ export const createLangiumGlobalConfig = async (htmlElement: HTMLElement): Promi
                         'workbench.colorTheme': 'Default Dark Modern',
                         'editor.guides.bracketPairsHorizontal': 'active',
                         'editor.lightbulb.enabled': true
-                    }),
-                    awaitReadiness: [whenReady]
+                    })
                 }
             }
         },

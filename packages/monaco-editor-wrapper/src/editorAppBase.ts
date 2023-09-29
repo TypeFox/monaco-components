@@ -18,6 +18,7 @@ export type EditorAppBaseConfig = ModelUpdate & {
     useDiffEditor: boolean;
     domReadOnly?: boolean;
     readOnly?: boolean;
+    awaitExtensionReadiness?: Array<() => Promise<void>>
     userConfiguration?: UserConfiguration;
 }
 
@@ -25,7 +26,6 @@ export type EditorAppType = 'vscodeApi' | 'classic';
 
 export type UserConfiguration = {
     json?: string;
-    awaitReadiness?: Array<() => Promise<void>>
 }
 
 /**
@@ -209,10 +209,10 @@ export abstract class EditorAppBase {
         }
     }
 
-    async awaitReadiness(config?: UserConfiguration) {
-        if (config?.awaitReadiness) {
+    async awaitReadiness(awaitExtensionReadiness?: Array<() => Promise<void>>) {
+        if (awaitExtensionReadiness) {
             const allPromises: Array<Promise<void>> = [];
-            for (const awaitReadiness of config.awaitReadiness) {
+            for (const awaitReadiness of awaitExtensionReadiness) {
                 allPromises.push(awaitReadiness());
             }
             return Promise.all(allPromises);

@@ -23,6 +23,7 @@ import {
 } from './editorAppClassic.js';
 
 import type {
+    ExtensionConfig,
     EditorAppConfigVscodeApi,
     RegisterExtensionResult,
     RegisterLocalProcessExtensionResult,
@@ -69,6 +70,7 @@ export type {
     EditorAppBaseConfig,
     EditorAppType,
     EditorAppConfigClassic,
+    ExtensionConfig,
     EditorAppConfigVscodeApi,
     RegisterExtensionResult,
     RegisterLocalProcessExtensionResult,

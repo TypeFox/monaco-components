@@ -4,7 +4,7 @@ import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-ov
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import { whenReady } from '@codingame/monaco-vscode-theme-defaults-default-extension';
+import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
@@ -39,6 +39,8 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
                 languageId: 'langium',
                 code: code,
                 useDiffEditor: false,
+                // Ensure all required extensions are loaded before setting up the language extension
+                awaitExtensionReadiness: [whenReadyThemes],
                 extensions: [{
                     config: {
                         name: 'langium-example',
@@ -68,8 +70,7 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
                         'workbench.colorTheme': 'Default Dark Modern',
                         'editor.guides.bracketPairsHorizontal': 'active',
                         'editor.lightbulb.enabled': true
-                    }),
-                    awaitReadiness: [whenReady]
+                    })
                 }
             }
         },

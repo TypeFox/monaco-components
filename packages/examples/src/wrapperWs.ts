@@ -49,14 +49,13 @@ const userConfig: UserConfig = {
             editorOptions: monacoEditorConfig,
             diffEditorOptions: monacoEditorConfig,
             theme: 'vs-dark',
+            // Ensure all required extensions are loaded before setting up the language extension
+            awaitExtensionReadiness: [whenReadyTheme, whenReadyJson],
             languageExtensionConfig: {
                 id: 'json',
                 extensions: ['.json', '.jsonc'],
                 aliases: ['JSON', 'json'],
                 mimetypes: ['application/json']
-            },
-            userConfiguration: {
-                awaitReadiness: [whenReadyTheme, whenReadyJson]
             }
         }
     },

@@ -71,7 +71,7 @@ export class EditorAppVscodeApi extends EditorAppBase {
 
     async init() {
         // await all extenson that should be ready beforehand
-        await this.awaitReadiness(this.config.userConfiguration);
+        await this.awaitReadiness(this.config.awaitExtensionReadiness);
 
         if (this.config.extensions) {
             const allPromises: Array<Promise<void>> = [];
