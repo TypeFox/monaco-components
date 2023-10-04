@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.2.2] - 2023-10-04
+
+- Fixed broken dependency definition
+
 ## [3.2.1] - 2023-09-29
 
 - Fixed `awaitExtensionReadiness` was not added to the base configuration during init.

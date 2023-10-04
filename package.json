@@ -17,22 +17,22 @@
     "start:example:server:python": "npm run start:server:python --workspace packages/examples"
   },
   "devDependencies": {
-    "@types/node": "~18.18.0",
+    "@types/node": "~18.18.3",
     "@types/shelljs": "~0.8.13",
     "@types/vscode": "~1.82.0",
-    "@typescript-eslint/eslint-plugin": "~6.7.3",
-    "@typescript-eslint/parser": "~6.7.3",
-    "@vitest/browser": "~0.34.5",
+    "@typescript-eslint/eslint-plugin": "~6.7.4",
+    "@typescript-eslint/parser": "~6.7.4",
+    "@vitest/browser": "~0.34.6",
     "editorconfig": "~2.0.0",
     "eslint": "~8.50.0",
     "shelljs": "~0.8.5",
     "shx": "~0.3.4",
     "tslib": "~2.6.2",
     "typescript": "~5.2.2",
-    "vite": "~4.4.9",
-    "vite-node": "~0.34.5",
-    "vitest": "~0.34.5",
-    "webdriverio": "~8.16.15"
+    "vite": "~4.4.10",
+    "vite-node": "~0.34.6",
+    "vitest": "~0.34.6",
+    "webdriverio": "~8.16.20"
   },
   "volta": {
     "node": "18.18.0",
