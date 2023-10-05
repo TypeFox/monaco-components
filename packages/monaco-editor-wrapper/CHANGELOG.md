@@ -2,6 +2,10 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.2.4] - 2023-10-05
+
+- Fixed/Implemented multiple `extensionRegisterResults` handling.
+
 ## [3.2.3] - 2023-10-04
 
 - Updated to `monaco-languageclient@6.5.1`.

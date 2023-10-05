@@ -37,7 +37,7 @@ export type RegisterLocalProcessExtensionResult = RegisterLocalExtensionResult &
 export class EditorAppVscodeApi extends EditorAppBase {
 
     private config: EditorAppConfigVscodeApi;
-    private extensionRegisterResult: RegisterLocalProcessExtensionResult | RegisterExtensionResult | undefined;
+    private extensionRegisterResults: Map<string, RegisterLocalProcessExtensionResult | RegisterExtensionResult | undefined> = new Map();
     private logger: Logger | undefined;
 
     constructor(id: string, userConfig: UserConfig, logger?: Logger) {
@@ -56,8 +56,8 @@ export class EditorAppVscodeApi extends EditorAppBase {
         return this.config;
     }
 
-    getExtensionRegisterResult() {
-        return this.extensionRegisterResult;
+    getExtensionRegisterResult(extensionName: string) {
+        return this.extensionRegisterResults.get(extensionName);
     }
 
     async createEditors(container: HTMLElement): Promise<void> {
@@ -75,13 +75,15 @@ export class EditorAppVscodeApi extends EditorAppBase {
         if (this.config.extensions) {
             const allPromises: Array<Promise<void>> = [];
             for (const extensionConfig of this.config.extensions) {
-                this.extensionRegisterResult = registerExtension(extensionConfig.config as IExtensionManifest, ExtensionHostKind.LocalProcess);
-                if (extensionConfig.filesOrContents && Object.hasOwn(this.extensionRegisterResult, 'registerFileUrl')) {
+                const manifest = extensionConfig.config as IExtensionManifest;
+                const extRegResult = registerExtension(manifest, ExtensionHostKind.LocalProcess);
+                this.extensionRegisterResults.set(manifest.name, extRegResult);
+                if (extensionConfig.filesOrContents && Object.hasOwn(extRegResult, 'registerFileUrl')) {
                     for (const entry of extensionConfig.filesOrContents) {
-                        (this.extensionRegisterResult as RegisterLocalExtensionResult).registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
+                        (extRegResult as RegisterLocalExtensionResult).registerFileUrl(entry[0], verifyUrlorCreateDataUrl(entry[1]));
                     }
                 }
-                allPromises.push(this.extensionRegisterResult.whenReady());
+                allPromises.push(extRegResult.whenReady());
             }
             await Promise.all(allPromises);
         }
@@ -94,6 +96,6 @@ export class EditorAppVscodeApi extends EditorAppBase {
     disposeApp(): void {
         this.disposeEditor();
         this.disposeDiffEditor();
-        this.extensionRegisterResult?.dispose();
+        this.extensionRegisterResults.forEach((k) => k?.dispose());
     }
 }
