@@ -58,11 +58,11 @@
     "npm": "9.8.1"
   },
   "dependencies": {
-    "@codingame/monaco-vscode-configuration-service-override": "~1.82.3",
-    "monaco-languageclient": "~6.5.1"
+    "@codingame/monaco-vscode-configuration-service-override": "~1.82.4",
+    "monaco-languageclient": "~6.5.2"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~6.5.1",
+    "monaco-languageclient": "~6.5.2",
     "vscode-ws-jsonrpc": "~3.0.0"
   },
   "repository": {

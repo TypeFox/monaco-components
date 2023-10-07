@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution.js';
 import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
@@ -81,7 +82,16 @@ try {
         }
     });
 
-    startEditor(userConfig, htmlElement, code, codeOriginal);
+    await startEditor(userConfig, htmlElement, code, codeOriginal);
+
+    vscode.commands.getCommands().then((x) => {
+        console.log(`Found ${x.length} commands`);
+        const finding = x.find((elem) => elem === 'actions.find');
+        console.log(`Found command: ${finding}`);
+    });
+
+    wrapper.getEditor()?.focus();
+    await vscode.commands.executeCommand('actions.find');
 } catch (e) {
     console.error(e);
 }
