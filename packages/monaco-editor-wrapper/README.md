@@ -24,7 +24,7 @@ The `UserConfig` now contains everything and is passed to the `start` function o
 [@codingame/monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) implements the VSCode api and redirects calls to `monaco-editor`. It allows to add serivccs that are usually only available in VSCode and not with pure `monaco-editor`.
  `UserConfig` allows two possible configuration modes:
 
-- **Classical**: Configure `monaco-editor` as you would when using it directly, [see](./src/editorAppClassic.ts)
+- **Classic**: Configure `monaco-editor` as you would when using it directly, [see](./src/editorAppClassic.ts)
 - **Extended**: Configure `monaco-editor` like a VSCode extension, [see](./src/editorAppExtended.ts)
 
 [This](https://github.com/CodinGame/monaco-vscode-api#monaco-standalone-services) is the list of services defined by [@codingame/monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api).
@@ -46,7 +46,7 @@ The following services are enabled by default in both editor modes:
 
 If you want any further services than the ones initialized by default, you should use the **extended** mode as some service (like *theme* and *textmate*) are incompatible with the **classic** mode.
 
-Monarch grammars and themes can only be used in **classical** mode and textmate grammars and themes can only be used in **extended** mode.
+Monarch grammars and themes can only be used in **classic** mode and textmate grammars and themes can only be used in **extended** mode.
 
 ## Usage
 
@@ -87,8 +87,8 @@ const run = async () => {
 
 These are the examples specifically for `monaco-editor-wrapper` you find in the repository:
 
-- TypeScript editor worker using classical mode, [see](../examples/wrapper_ts.html)
+- TypeScript editor worker using classic mode, [see](../examples/wrapper_ts.html)
 - Language client & web socket language server example using extended mode [see](../examples/wrapper_ws.html) It requires the json language server to run. Use `start:server:json` from [here](../examples/package.json)
-- Multiple editors using classical mode [see](../examples/wrapper_adv.html)
+- Multiple editors using classic mode [see](../examples/wrapper_adv.html)
 - Langium statemachine language client and web worker based language server using extended mode [see](../examples/wrapper_statemachine.html)
-- Langium grammar language client and web worker based language server allowing to choose classical or extended mode [see](../examples/wrapper_langium.html)
+- Langium grammar language client and web worker based language server allowing to choose classic or extended mode [see](../examples/wrapper_langium.html)

@@ -1,14 +1,12 @@
 import {
     EditorAppBase,
-    isExtendedEditorApp,
     isCodeUpdateRequired,
     isModelUpdateRequired,
-    isAppConfigDifferent,
     ModelUpdateType
 } from './editorAppBase.js';
 
 import type {
-    EditorAppBaseConfig,
+    EditorAppConfigBase,
     EditorAppType,
     ModelUpdate
 } from './editorAppBase.js';
@@ -18,7 +16,7 @@ import type {
 } from './editorAppClassic.js';
 
 import {
-    EditorAppClassic,
+    EditorAppClassic
 } from './editorAppClassic.js';
 
 import type {
@@ -67,7 +65,7 @@ import {
 
 export type {
     WrapperConfig,
-    EditorAppBaseConfig,
+    EditorAppConfigBase,
     EditorAppType,
     EditorAppConfigClassic,
     ExtensionConfig,
@@ -92,10 +90,8 @@ export {
     MonacoEditorLanguageClientWrapper,
     LanguageClientWrapper,
     EditorAppBase,
-    isExtendedEditorApp,
     isCodeUpdateRequired,
     isModelUpdateRequired,
-    isAppConfigDifferent,
     ModelUpdateType,
     EditorAppClassic,
     EditorAppExtended,

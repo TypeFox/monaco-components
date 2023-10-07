@@ -1,9 +1,9 @@
 import { editor, languages } from 'monaco-editor';
-import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
+import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isModelUpdateRequired } from './editorAppBase.js';
 import { UserConfig } from './wrapper.js';
 import { Logger } from './logger.js';
 
-export type EditorAppConfigClassic = EditorAppBaseConfig & {
+export type EditorAppConfigClassic = EditorAppConfigBase & {
     $type: 'classic';
     automaticLayout?: boolean;
     theme?: editor.BuiltinTheme | string;
@@ -41,10 +41,6 @@ export class EditorAppClassic extends EditorAppBase {
         this.config.languageExtensionConfig = userAppConfig.languageExtensionConfig ?? undefined;
         this.config.languageDef = userAppConfig.languageDef ?? undefined;
         this.config.themeData = userAppConfig.themeData ?? undefined;
-    }
-
-    getAppType(): EditorAppType {
-        return 'classic';
     }
 
     getConfig(): EditorAppConfigClassic {
@@ -102,12 +98,26 @@ export class EditorAppClassic extends EditorAppBase {
         this.logger?.info('Init of Classic App was completed.');
     }
 
-    updateMonacoEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
-        this.getEditor()?.updateOptions(options);
-    }
-
     disposeApp(): void {
         this.disposeEditor();
         this.disposeDiffEditor();
+    }
+
+    isAppConfigDifferent(orgConfig: EditorAppConfigClassic, config: EditorAppConfigClassic, includeModelData: boolean): boolean {
+        let different = false;
+        if (includeModelData) {
+            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
+        }
+        type ClassicKeys = keyof typeof orgConfig;
+        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
+        const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
+
+        const propCompareClassic = (name: string) => {
+            return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
+        };
+
+        different = different || propsClassic.some(propCompareClassic);
+        different = different || propsClassicEditorOptions.some(propCompareClassic);
+        return different;
     }
 }

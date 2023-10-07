@@ -1,17 +1,17 @@
 import { describe, expect, test } from 'vitest';
-import { isAppConfigDifferent, isExtendedEditorApp, isModelUpdateRequired, EditorAppClassic, ModelUpdateType, EditorAppConfigExtended, EditorAppExtended } from 'monaco-editor-wrapper';
+import { isModelUpdateRequired, EditorAppClassic, ModelUpdateType, EditorAppConfigExtended, EditorAppExtended, EditorAppConfigClassic } from 'monaco-editor-wrapper';
 import { createBaseConfig, createEditorAppConfig, createWrapperConfig } from './helper.js';
 
 describe('Test EditorAppBase', () => {
 
-    test('isExtendedEditorApp: empty EditorAppConfigClassic', () => {
+    test('classic type: empty EditorAppConfigClassic', () => {
         const wrapperConfig = createWrapperConfig('classic');
-        expect(isExtendedEditorApp(wrapperConfig)).toBeFalsy();
+        expect(wrapperConfig.editorAppConfig.$type).toBe('classic');
     });
 
-    test('isExtendedEditorApp: empty EditorAppConfigExtended', () => {
+    test('extended type: empty EditorAppConfigExtended', () => {
         const wrapperConfig = createWrapperConfig('extended');
-        expect(isExtendedEditorApp(wrapperConfig)).toBeTruthy();
+        expect(wrapperConfig.editorAppConfig.$type).toBe('extended');
     });
 
     test('config defaults', () => {
@@ -53,26 +53,28 @@ describe('Test EditorAppBase', () => {
     });
 
     test('isAppConfigDifferent: classic', () => {
-        const orgConfig = createEditorAppConfig('classic');
-        const config = createEditorAppConfig('classic');
-        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeFalsy();
+        const orgConfig = createEditorAppConfig('classic') as EditorAppConfigClassic;
+        const config = createEditorAppConfig('classic') as EditorAppConfigClassic;
+        const app = new EditorAppClassic('test', createBaseConfig('classic'));
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeFalsy();
 
         config.code = 'test';
-        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeFalsy();
-        expect(isAppConfigDifferent(orgConfig, config, true, false)).toBeTruthy();
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeFalsy();
+        expect(app.isAppConfigDifferent(orgConfig, config, true)).toBeTruthy();
 
         config.code = '';
         config.useDiffEditor = true;
-        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeTruthy();
     });
 
     test('isAppConfigDifferent: vscode', () => {
         const orgConfig = createEditorAppConfig('extended') as EditorAppConfigExtended;
         const config = createEditorAppConfig('extended') as EditorAppConfigExtended;
-        expect(isAppConfigDifferent(orgConfig, config, false, true)).toBeFalsy();
+        const app = new EditorAppExtended('test', createBaseConfig('extended'));
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeFalsy();
 
         config.code = 'test';
-        expect(isAppConfigDifferent(orgConfig, config, true, false)).toBeTruthy();
+        expect(app.isAppConfigDifferent(orgConfig, config, true)).toBeTruthy();
 
         config.code = '';
         config.extensions = [{
@@ -85,7 +87,7 @@ describe('Test EditorAppBase', () => {
                 }
             }
         }];
-        expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeTruthy();
     });
 
 });

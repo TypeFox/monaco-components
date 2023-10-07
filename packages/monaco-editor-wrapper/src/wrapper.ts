@@ -3,7 +3,7 @@ import getConfigurationServiceOverride from '@codingame/monaco-vscode-configurat
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
 import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { ModelUpdate, isExtendedEditorApp } from './editorAppBase.js';
+import { ModelUpdate } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 import { Logger, LoggerConfig } from './logger.js';
 
@@ -76,10 +76,10 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.init(userConfig);
 
-        if (isExtendedEditorApp(userConfig.wrapperConfig)) {
-            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
-        } else {
+        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
             this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
+        } else {
+            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
         }
         await this.initServices();
 

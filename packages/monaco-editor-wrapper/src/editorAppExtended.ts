@@ -3,7 +3,7 @@ import { IDisposable, editor } from 'monaco-editor';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
 import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
-import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
+import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isModelUpdateRequired } from './editorAppBase.js';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
@@ -18,7 +18,7 @@ export type UserConfiguration = {
     json?: string;
 }
 
-export type EditorAppConfigExtended = EditorAppBaseConfig & {
+export type EditorAppConfigExtended = EditorAppConfigBase & {
     $type: 'extended';
     extensions?: ExtensionConfig[];
     userConfiguration?: UserConfiguration;
@@ -55,10 +55,6 @@ export class EditorAppExtended extends EditorAppBase {
         this.config = this.buildConfig(userAppConfig) as EditorAppConfigExtended;
         this.config.extensions = userAppConfig.extensions ?? undefined;
         this.config.userConfiguration = userAppConfig.userConfiguration ?? undefined;
-    }
-
-    getAppType(): EditorAppType {
-        return 'extended';
     }
 
     getConfig(): EditorAppConfigExtended {
@@ -115,5 +111,19 @@ export class EditorAppExtended extends EditorAppBase {
         this.disposeEditor();
         this.disposeDiffEditor();
         this.extensionRegisterResults.forEach((k) => k?.dispose());
+    }
+
+    isAppConfigDifferent(orgConfig: EditorAppConfigExtended, config: EditorAppConfigExtended, includeModelData: boolean): boolean {
+        let different = false;
+        if (includeModelData) {
+            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
+        }
+        const propsExtended = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'extensions'];
+        type ExtendedKeys = keyof typeof orgConfig;
+        const propCompareExtended = (name: string) => {
+            return orgConfig[name as ExtendedKeys] !== config[name as ExtendedKeys];
+        };
+        different = different || propsExtended.some(propCompareExtended);
+        return different;
     }
 }

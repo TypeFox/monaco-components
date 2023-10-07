@@ -1,4 +1,4 @@
-import { EditorAppClassic, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions, isAppConfigDifferent } from 'monaco-editor-wrapper';
+import { EditorAppClassic, EditorAppExtended, MonacoEditorLanguageClientWrapper, UserConfig, WorkerConfigDirect, WorkerConfigOptions } from 'monaco-editor-wrapper';
 import { IDisposable } from 'monaco-editor';
 import * as vscode from 'vscode';
 import React, { CSSProperties } from 'react';
@@ -41,6 +41,8 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         }
 
         let mustReInit = false;
+        const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
+        const config = userConfig.wrapperConfig.editorAppConfig;
         const prevWorkerOptions = prevProps.userConfig.languageClientConfig?.options;
         const currentWorkerOptions = userConfig.languageClientConfig?.options;
         const prevIsWorker = (prevWorkerOptions?.$type === 'WorkerDirect');
@@ -59,26 +61,21 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
             mustReInit = true;
         }
 
+        if (prevConfig.$type === 'classic' && config.$type === 'classic') {
+            mustReInit = (wrapper?.getMonacoEditorApp() as EditorAppClassic).isAppConfigDifferent(prevConfig, config, false) === true;
+        } else if (prevConfig.$type === 'extended' && config.$type === 'extended') {
+            mustReInit = (wrapper?.getMonacoEditorApp() as EditorAppExtended).isAppConfigDifferent(prevConfig, config, false) === true;
+        }
+
         if (mustReInit) {
             await this.handleReinit();
         } else {
-            if (wrapper !== null) {
-                const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
-                const config = userConfig.wrapperConfig.editorAppConfig;
-                const appConfigDifferent = isAppConfigDifferent(prevConfig, config, false, false);
+            // the function now ensure a model update is only required if something else than the code changed
+            this.wrapper.updateModel(userConfig.wrapperConfig.editorAppConfig);
 
-                // we need to restart if the editor wrapper config changed
-                if (appConfigDifferent) {
-                    await this.handleReinit();
-                } else {
-                    // the function now ensure a model update is only required if something else than the code changed
-                    this.wrapper.updateModel(userConfig.wrapperConfig.editorAppConfig);
-
-                    if (prevConfig.$type === 'classic' && config.$type === 'classic') {
-                        if (prevConfig.editorOptions !== config.editorOptions) {
-                            (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(config.editorOptions ?? {});
-                        }
-                    }
+            if (prevConfig.$type === 'classic' && config.$type === 'classic') {
+                if (prevConfig.editorOptions !== config.editorOptions) {
+                    (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(config.editorOptions ?? {});
                 }
             }
         }
