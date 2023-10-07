@@ -14,9 +14,14 @@ export type ExtensionConfig = {
     filesOrContents?: Map<string, string | URL>;
 };
 
-export type EditorAppConfigVscodeApi = EditorAppBaseConfig & {
-    $type: 'vscodeApi';
+export type UserConfiguration = {
+    json?: string;
+}
+
+export type EditorAppConfigExtended = EditorAppBaseConfig & {
+    $type: 'extended';
     extensions?: ExtensionConfig[];
+    userConfiguration?: UserConfiguration;
 };
 
 export type RegisterExtensionResult = {
@@ -37,25 +42,26 @@ export type RegisterLocalProcessExtensionResult = RegisterLocalExtensionResult &
 /**
  * The vscode-apo monaco-editor app uses vscode user and extension configuration for monaco-editor.
  */
-export class EditorAppVscodeApi extends EditorAppBase {
+export class EditorAppExtended extends EditorAppBase {
 
-    private config: EditorAppConfigVscodeApi;
+    private config: EditorAppConfigExtended;
     private extensionRegisterResults: Map<string, RegisterLocalProcessExtensionResult | RegisterExtensionResult | undefined> = new Map();
     private logger: Logger | undefined;
 
     constructor(id: string, userConfig: UserConfig, logger?: Logger) {
         super(id);
         this.logger = logger;
-        this.config = this.buildConfig(userConfig) as EditorAppConfigVscodeApi;
-        const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigVscodeApi;
-        this.config.extensions = userInput.extensions ?? undefined;
+        const userAppConfig = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigExtended;
+        this.config = this.buildConfig(userAppConfig) as EditorAppConfigExtended;
+        this.config.extensions = userAppConfig.extensions ?? undefined;
+        this.config.userConfiguration = userAppConfig.userConfiguration ?? undefined;
     }
 
     getAppType(): EditorAppType {
-        return 'vscodeApi';
+        return 'extended';
     }
 
-    getConfig(): EditorAppConfigVscodeApi {
+    getConfig(): EditorAppConfigExtended {
         return this.config;
     }
 
@@ -101,8 +107,8 @@ export class EditorAppVscodeApi extends EditorAppBase {
         }
 
         // buildConfig ensures userConfiguration is available
-        await this.updateUserConfiguration(this.config.userConfiguration);
-        this.logger?.info('Init of VscodeApiConfig was completed.');
+        await this.updateUserConfiguration(this.config.userConfiguration?.json);
+        this.logger?.info('Init of Extended App was completed.');
     }
 
     disposeApp(): void {

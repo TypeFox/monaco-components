@@ -17,7 +17,7 @@ describe('Test EditorAppClassic', () => {
 
         const app = new EditorAppClassic('config defaults', config);
         expect(configclassic.$type).toEqual('classic');
-        expect(app.getConfig().userConfiguration?.json).toEqual('{"editor.semanticHighlighting.enabled":true}');
+        expect(app.getConfig().editorOptions?.['semanticHighlighting.enabled']).toEqual(true);
     });
 
     test('editorOptions: semanticHighlighting=false', () => {
@@ -26,7 +26,7 @@ describe('Test EditorAppClassic', () => {
         configclassic.editorOptions!['semanticHighlighting.enabled'] = false;
 
         const app = new EditorAppClassic('config defaults', config);
-        expect(app.getConfig().userConfiguration?.json).toEqual('{"editor.semanticHighlighting.enabled":false}');
+        expect(app.getConfig().editorOptions?.['semanticHighlighting.enabled']).toEqual(false);
     });
 
     test('editorOptions: semanticHighlighting="configuredByTheme"', () => {
@@ -35,6 +35,6 @@ describe('Test EditorAppClassic', () => {
         configclassic.editorOptions!['semanticHighlighting.enabled'] = 'configuredByTheme';
 
         const app = new EditorAppClassic('config defaults', config);
-        expect(app.getConfig().userConfiguration?.json).toEqual('{"editor.semanticHighlighting.enabled":"configuredByTheme"}');
+        expect(app.getConfig().editorOptions?.['semanticHighlighting.enabled']).toEqual('configuredByTheme');
     });
 });

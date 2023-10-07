@@ -26,7 +26,7 @@ export const createLangiumGlobalConfig = async (): Promise<UserConfig> => {
                 debugLogging: true
             },
             editorAppConfig: {
-                $type: 'vscodeApi',
+                $type: 'extended',
                 languageId: 'statemachine',
                 code: code,
                 useDiffEditor: false,

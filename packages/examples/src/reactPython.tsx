@@ -57,7 +57,7 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            $type: 'vscodeApi',
+            $type: 'extended',
             languageId: 'python',
             codeUri: '/workspace/python.py',
             awaitExtensionReadiness: [whenReadyPython],

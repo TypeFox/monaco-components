@@ -1,15 +1,15 @@
 import { editor, Uri } from 'monaco-editor';
 import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
-import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
+import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { ModelUpdate, UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
+import { ModelUpdate, isExtendedEditorApp } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 import { Logger, LoggerConfig } from './logger.js';
 
 export type WrapperConfig = {
     serviceConfig?: InitializeServiceConfig;
-    editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic;
+    editorAppConfig: EditorAppConfigExtended | EditorAppConfigClassic;
 };
 
 export type UserConfig = {
@@ -28,7 +28,7 @@ export class MonacoEditorLanguageClientWrapper {
 
     private id: string;
 
-    private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
+    private editorApp: EditorAppClassic | EditorAppExtended | undefined;
     private languageClientWrapper: LanguageClientWrapper;
     private serviceConfig: InitializeServiceConfig;
     private logger: Logger;
@@ -76,8 +76,8 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.init(userConfig);
 
-        if (isVscodeApiEditorApp(userConfig.wrapperConfig)) {
-            this.editorApp = new EditorAppVscodeApi(this.id, userConfig, this.logger);
+        if (isExtendedEditorApp(userConfig.wrapperConfig)) {
+            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
         } else {
             this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
         }
@@ -137,10 +137,6 @@ export class MonacoEditorLanguageClientWrapper {
 
     async updateDiffModel(modelUpdate: ModelUpdate): Promise<void> {
         await this.editorApp?.updateDiffModel(modelUpdate);
-    }
-
-    updateUserConfiguration(config: UserConfiguration) {
-        return this.editorApp?.updateUserConfiguration(config);
     }
 
     public reportStatus() {

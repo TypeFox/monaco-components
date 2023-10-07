@@ -2,9 +2,9 @@ import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
 import { IReference } from '@codingame/monaco-vscode-editor-service-override';
 import { updateUserConfiguration as vscodeUpdateUserConfiguration } from '@codingame/monaco-vscode-configuration-service-override';
-import { UserConfig, WrapperConfig } from './wrapper.js';
+import { WrapperConfig } from './wrapper.js';
 import { EditorAppConfigClassic } from './editorAppClassic.js';
-import { EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
+import { EditorAppConfigExtended } from './editorAppExtended.js';
 
 export type ModelUpdate = {
     languageId: string;
@@ -18,20 +18,15 @@ export type EditorAppBaseConfig = ModelUpdate & {
     useDiffEditor: boolean;
     domReadOnly?: boolean;
     readOnly?: boolean;
-    awaitExtensionReadiness?: Array<() => Promise<void>>
-    userConfiguration?: UserConfiguration;
+    awaitExtensionReadiness?: Array<() => Promise<void>>;
 }
 
-export type EditorAppType = 'vscodeApi' | 'classic';
-
-export type UserConfiguration = {
-    json?: string;
-}
+export type EditorAppType = 'extended' | 'classic';
 
 /**
  * This is the base class for both Monaco Ediotor Apps:
  * - EditorAppClassic
- * - EditorAppVscodeApi
+ * - EditorAppExtended
  *
  * It provides the generic functionality for both implementations.
  */
@@ -49,8 +44,7 @@ export abstract class EditorAppBase {
         this.id = id;
     }
 
-    protected buildConfig(userConfig: UserConfig): EditorAppBaseConfig {
-        const userAppConfig = userConfig.wrapperConfig.editorAppConfig;
+    protected buildConfig(userAppConfig: EditorAppConfigExtended | EditorAppConfigClassic): EditorAppBaseConfig {
         return {
             languageId: userAppConfig.languageId,
             code: userAppConfig.code ?? '',
@@ -60,7 +54,6 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
-            userConfiguration: userAppConfig.userConfiguration ?? undefined,
             awaitExtensionReadiness: userAppConfig.awaitExtensionReadiness ?? undefined
         };
     }
@@ -221,9 +214,9 @@ export abstract class EditorAppBase {
         return Promise.resolve();
     }
 
-    async updateUserConfiguration(config?: UserConfiguration) {
-        if (config?.json) {
-            return vscodeUpdateUserConfiguration(config.json);
+    protected async updateUserConfiguration(json?: string) {
+        if (json) {
+            return vscodeUpdateUserConfiguration(json);
         }
         return Promise.resolve();
     }
@@ -232,12 +225,12 @@ export abstract class EditorAppBase {
     abstract init(): Promise<void>;
     abstract specifyService(): editor.IEditorOverrideServices;
     abstract createEditors(container: HTMLElement): Promise<void>;
-    abstract getConfig(): EditorAppConfigClassic | EditorAppConfigVscodeApi;
+    abstract getConfig(): EditorAppConfigClassic | EditorAppConfigExtended;
     abstract disposeApp(): void;
 }
 
-export const isVscodeApiEditorApp = (wrapperConfig: WrapperConfig) => {
-    return wrapperConfig.editorAppConfig?.$type === 'vscodeApi';
+export const isExtendedEditorApp = (wrapperConfig: WrapperConfig) => {
+    return wrapperConfig.editorAppConfig?.$type === 'extended';
 };
 
 export const isCodeUpdateRequired = (config: EditorAppBaseConfig, modelUpdate: ModelUpdate) => {
@@ -263,14 +256,14 @@ export enum ModelUpdateType {
     model
 }
 
-export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorAppConfigVscodeApi,
-    config: EditorAppConfigClassic | EditorAppConfigVscodeApi, includeModelData: boolean, includeEditorOptions: boolean): boolean => {
+export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorAppConfigExtended,
+    config: EditorAppConfigClassic | EditorAppConfigExtended, includeModelData: boolean, includeEditorOptions: boolean): boolean => {
 
     let different = includeModelData ? isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none : false;
     if (orgConfig.$type === config.$type) {
 
         type ClassicKeys = keyof typeof orgConfig;
-        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
+        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
         const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
 
         const propCompareClassic = (name: string) => {
@@ -278,9 +271,9 @@ export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorA
         };
 
         const propsVscode = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'extensions'];
-        type VscodeApiKeys = keyof typeof orgConfig;
-        const propCompareVscodeApi = (name: string) => {
-            return orgConfig[name as VscodeApiKeys] !== config[name as VscodeApiKeys];
+        type ExtendedKeys = keyof typeof orgConfig;
+        const propCompareExtended = (name: string) => {
+            return orgConfig[name as ExtendedKeys] !== config[name as ExtendedKeys];
         };
 
         if (orgConfig.$type === 'classic' && config.$type === 'classic') {
@@ -288,8 +281,8 @@ export const isAppConfigDifferent = (orgConfig: EditorAppConfigClassic | EditorA
             if (includeEditorOptions) {
                 different = different || propsClassicEditorOptions.some(propCompareClassic);
             }
-        } else if (orgConfig.$type === 'vscodeApi' && config.$type === 'vscodeApi') {
-            different = different || propsVscode.some(propCompareVscodeApi);
+        } else if (orgConfig.$type === 'extended' && config.$type === 'extended') {
+            different = different || propsVscode.some(propCompareExtended);
         }
     } else {
         throw new Error('Provided configurations are not of the same type.');

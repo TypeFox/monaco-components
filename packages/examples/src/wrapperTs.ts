@@ -41,7 +41,7 @@ const userConfig: UserConfig = {
         editorAppConfig: {
             $type: 'classic',
             languageId: 'typescript',
-            code: code,
+            code,
             codeUri: codeUri,
             codeOriginal: codeOriginal,
             useDiffEditor: false,

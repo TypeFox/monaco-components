@@ -1,17 +1,17 @@
 import { describe, expect, test } from 'vitest';
-import { isAppConfigDifferent, isVscodeApiEditorApp, isModelUpdateRequired, EditorAppClassic, ModelUpdateType, EditorAppConfigVscodeApi } from 'monaco-editor-wrapper';
+import { isAppConfigDifferent, isExtendedEditorApp, isModelUpdateRequired, EditorAppClassic, ModelUpdateType, EditorAppConfigExtended, EditorAppExtended } from 'monaco-editor-wrapper';
 import { createBaseConfig, createEditorAppConfig, createWrapperConfig } from './helper.js';
 
 describe('Test EditorAppBase', () => {
 
-    test('isVscodeApiEditorApp: empty EditorAppConfigClassic', () => {
+    test('isExtendedEditorApp: empty EditorAppConfigClassic', () => {
         const wrapperConfig = createWrapperConfig('classic');
-        expect(isVscodeApiEditorApp(wrapperConfig)).toBeFalsy();
+        expect(isExtendedEditorApp(wrapperConfig)).toBeFalsy();
     });
 
-    test('isVscodeApiEditorApp: empty EditorAppConfigVscodeApi', () => {
-        const wrapperConfig = createWrapperConfig('vscodeApi');
-        expect(isVscodeApiEditorApp(wrapperConfig)).toBeTruthy();
+    test('isExtendedEditorApp: empty EditorAppConfigExtended', () => {
+        const wrapperConfig = createWrapperConfig('extended');
+        expect(isExtendedEditorApp(wrapperConfig)).toBeTruthy();
     });
 
     test('config defaults', () => {
@@ -25,15 +25,15 @@ describe('Test EditorAppBase', () => {
         expect(app.getConfig().codeOriginalUri).toBeUndefined();
         expect(app.getConfig().readOnly).toBeFalsy();
         expect(app.getConfig().domReadOnly).toBeFalsy();
-        expect(app.getConfig().userConfiguration?.json).toBeUndefined();
     });
 
     test('config userConfiguration', () => {
-        const config = createBaseConfig('classic');
-        config.wrapperConfig.editorAppConfig.userConfiguration = {
+        const config = createBaseConfig('extended');
+        const appConfig = config.wrapperConfig.editorAppConfig as EditorAppConfigExtended;
+        appConfig.userConfiguration = {
             json: '{ "editor.semanticHighlighting.enabled": true }'
         };
-        const app = new EditorAppClassic('config defaults', config);
+        const app = new EditorAppExtended('config defaults', config);
         expect(app.getConfig().userConfiguration?.json).toEqual('{ "editor.semanticHighlighting.enabled": true }');
     });
 
@@ -66,9 +66,9 @@ describe('Test EditorAppBase', () => {
         expect(isAppConfigDifferent(orgConfig, config, false, false)).toBeTruthy();
     });
 
-    test('isAppConfigDifferent: vscodeApi', () => {
-        const orgConfig = createEditorAppConfig('vscodeApi') as EditorAppConfigVscodeApi;
-        const config = createEditorAppConfig('vscodeApi') as EditorAppConfigVscodeApi;
+    test('isAppConfigDifferent: vscode', () => {
+        const orgConfig = createEditorAppConfig('extended') as EditorAppConfigExtended;
+        const config = createEditorAppConfig('extended') as EditorAppConfigExtended;
         expect(isAppConfigDifferent(orgConfig, config, false, true)).toBeFalsy();
 
         config.code = 'test';

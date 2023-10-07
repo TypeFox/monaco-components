@@ -5,7 +5,7 @@ import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
 import { loadLangiumWorker } from '../wrapperLangium.js';
 
-export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
+export const setupLangiumClientExtended = async (): Promise<UserConfig> => {
     const code = await getTextContent(new URL('./src/langium/content/example.langium', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
@@ -26,7 +26,7 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
                 debugLogging: true
             },
             editorAppConfig: {
-                $type: 'vscodeApi',
+                $type: 'extended',
                 languageId: 'langium',
                 code: code,
                 useDiffEditor: false,

@@ -1,6 +1,6 @@
 import {
     EditorAppBase,
-    isVscodeApiEditorApp,
+    isExtendedEditorApp,
     isCodeUpdateRequired,
     isModelUpdateRequired,
     isAppConfigDifferent,
@@ -10,8 +10,7 @@ import {
 import type {
     EditorAppBaseConfig,
     EditorAppType,
-    ModelUpdate,
-    UserConfiguration,
+    ModelUpdate
 } from './editorAppBase.js';
 
 import type {
@@ -24,14 +23,15 @@ import {
 
 import type {
     ExtensionConfig,
-    EditorAppConfigVscodeApi,
+    EditorAppConfigExtended,
     RegisterExtensionResult,
     RegisterLocalProcessExtensionResult,
-} from './editorAppVscodeApi.js';
+    UserConfiguration
+} from './editorAppExtended.js';
 
 import {
-    EditorAppVscodeApi
-} from './editorAppVscodeApi.js';
+    EditorAppExtended
+} from './editorAppExtended.js';
 
 import type {
     WebSocketCallOptions,
@@ -71,7 +71,7 @@ export type {
     EditorAppType,
     EditorAppConfigClassic,
     ExtensionConfig,
-    EditorAppConfigVscodeApi,
+    EditorAppConfigExtended,
     RegisterExtensionResult,
     RegisterLocalProcessExtensionResult,
     UserConfiguration,
@@ -92,13 +92,13 @@ export {
     MonacoEditorLanguageClientWrapper,
     LanguageClientWrapper,
     EditorAppBase,
-    isVscodeApiEditorApp,
+    isExtendedEditorApp,
     isCodeUpdateRequired,
     isModelUpdateRequired,
     isAppConfigDifferent,
     ModelUpdateType,
     EditorAppClassic,
-    EditorAppVscodeApi,
+    EditorAppExtended,
     Logger
 };
 

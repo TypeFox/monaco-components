@@ -25,7 +25,7 @@ const userConfig: UserConfig = {
             debugLogging: true
         },
         editorAppConfig: {
-            $type: 'vscodeApi',
+            $type: 'extended',
             languageId: languageId,
             code: codeMain,
             useDiffEditor: false,

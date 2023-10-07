@@ -2,19 +2,6 @@ import { editor, languages } from 'monaco-editor';
 import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { UserConfig } from './wrapper.js';
 import { Logger } from './logger.js';
-/**
- * This is derived from:
- * https://microsoft.github.io/monaco-editor/api/interfaces/monaco.languages.ILanguageExtensionPoint.html
- */
-export type MonacoLanguageExtensionConfig = {
-    id: string;
-    extensions?: string[];
-    filenames?: string[];
-    filenamePatterns?: string[];
-    firstLine?: string;
-    aliases?: string[];
-    mimetypes?: string[];
-}
 
 export type EditorAppConfigClassic = EditorAppBaseConfig & {
     $type: 'classic';
@@ -22,7 +9,7 @@ export type EditorAppConfigClassic = EditorAppBaseConfig & {
     theme?: editor.BuiltinTheme | string;
     editorOptions?: editor.IStandaloneEditorConstructionOptions;
     diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
-    languageExtensionConfig?: MonacoLanguageExtensionConfig;
+    languageExtensionConfig?: languages.ILanguageExtensionPoint;
     languageDef?: languages.IMonarchLanguage;
     themeData?: editor.IStandaloneThemeData;
 };
@@ -32,40 +19,28 @@ export type EditorAppConfigClassic = EditorAppBaseConfig & {
  */
 export class EditorAppClassic extends EditorAppBase {
 
-    private editorOptions: editor.IStandaloneEditorConstructionOptions;
-    private diffEditorOptions: editor.IStandaloneDiffEditorConstructionOptions;
     private config: EditorAppConfigClassic;
     private logger: Logger | undefined;
 
     constructor(id: string, userConfig: UserConfig, logger?: Logger) {
         super(id);
         this.logger = logger;
-        this.config = this.buildConfig(userConfig) as EditorAppConfigClassic;
-        const userInput = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
+        const userAppConfig = userConfig.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
+        this.config = this.buildConfig(userAppConfig) as EditorAppConfigClassic;
         // default to vs-light
-        this.config.theme = userInput.theme ?? 'vs-light';
+        this.config.theme = userAppConfig.theme ?? 'vs-light';
         // default to true
-        this.config.automaticLayout = userInput.automaticLayout ?? true;
+        this.config.automaticLayout = userAppConfig.automaticLayout ?? true;
 
-        this.editorOptions = userInput.editorOptions ?? {};
-        this.editorOptions.automaticLayout = userInput.automaticLayout ?? true;
+        this.config.editorOptions = userAppConfig.editorOptions ?? {};
+        this.config.editorOptions.automaticLayout = userAppConfig.automaticLayout ?? true;
 
-        this.diffEditorOptions = userInput.diffEditorOptions ?? {};
-        this.diffEditorOptions.automaticLayout = userInput.automaticLayout ?? true;
+        this.config.diffEditorOptions = userAppConfig.diffEditorOptions ?? {};
+        this.config.diffEditorOptions.automaticLayout = userAppConfig.automaticLayout ?? true;
 
-        this.config.languageExtensionConfig = userInput.languageExtensionConfig ?? undefined;
-        this.config.languageDef = userInput.languageDef ?? undefined;
-        this.config.themeData = userInput.themeData ?? undefined;
-
-        // buildConfig ensures userConfiguration is available
-        if (userInput.editorOptions?.['semanticHighlighting.enabled'] !== undefined) {
-            if (this.config.userConfiguration === undefined) {
-                this.config.userConfiguration = {};
-            }
-            const parsedUserConfig = JSON.parse(this.config.userConfiguration.json ?? '{}');
-            parsedUserConfig['editor.semanticHighlighting.enabled'] = userInput.editorOptions?.['semanticHighlighting.enabled'];
-            this.config.userConfiguration.json = JSON.stringify(parsedUserConfig);
-        }
+        this.config.languageExtensionConfig = userAppConfig.languageExtensionConfig ?? undefined;
+        this.config.languageDef = userAppConfig.languageDef ?? undefined;
+        this.config.themeData = userAppConfig.themeData ?? undefined;
     }
 
     getAppType(): EditorAppType {
@@ -82,9 +57,9 @@ export class EditorAppClassic extends EditorAppBase {
 
     async createEditors(container: HTMLElement): Promise<void> {
         if (this.config.useDiffEditor) {
-            await this.createDiffEditor(container, this.diffEditorOptions);
+            await this.createDiffEditor(container, this.config.diffEditorOptions);
         } else {
-            await this.createEditor(container, this.editorOptions);
+            await this.createEditor(container, this.config.editorOptions);
         }
     }
 
@@ -117,9 +92,14 @@ export class EditorAppClassic extends EditorAppBase {
         }
         editor.setTheme(this.config.theme!);
 
-        // buildConfig ensures userConfiguration is available
-        await this.updateUserConfiguration(this.config.userConfiguration);
-        this.logger?.info('Init of MonacoConfig was completed.');
+        if (this.config.editorOptions?.['semanticHighlighting.enabled'] !== undefined) {
+            // use updateConfiguration here as otherwise semantic highlighting will not work
+            const json = JSON.stringify({
+                'editor.semanticHighlighting.enabled': this.config.editorOptions['semanticHighlighting.enabled']
+            });
+            await this.updateUserConfiguration(json);
+        }
+        this.logger?.info('Init of Classic App was completed.');
     }
 
     updateMonacoEditorOptions(options: editor.IEditorOptions & editor.IGlobalEditorOptions) {
