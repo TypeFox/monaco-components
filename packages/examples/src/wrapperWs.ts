@@ -1,7 +1,4 @@
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
-import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
-import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { whenReady as whenReadyJson } from '@codingame/monaco-vscode-json-default-extension';
 import { disposeEditor, startEditor, swapEditors } from './common.js';
 import { UserConfig } from 'monaco-editor-wrapper';
@@ -19,42 +16,28 @@ const codeOrg = `{
     "line_endings": {"value": "unix"}
 }`;
 
-const monacoEditorConfig = {
-    glyphMargin: true,
-    guides: {
-        bracketPairs: true
-    },
-    lightbulb: {
-        enabled: true
-    },
-};
-
 const userConfig: UserConfig = {
     wrapperConfig: {
         serviceConfig: {
             userServices: {
-                ...getThemeServiceOverride(),
-                ...getTextmateServiceOverride(),
                 ...getKeybindingsServiceOverride(),
             },
             debugLogging: true
         },
         editorAppConfig: {
-            $type: 'classic',
+            $type: 'vscodeApi',
             languageId: languageId,
             code: codeMain,
             useDiffEditor: false,
             codeOriginal: codeOrg,
-            editorOptions: monacoEditorConfig,
-            diffEditorOptions: monacoEditorConfig,
-            theme: 'vs-dark',
             // Ensure all required extensions are loaded before setting up the language extension
-            awaitExtensionReadiness: [whenReadyTheme, whenReadyJson],
-            languageExtensionConfig: {
-                id: 'json',
-                extensions: ['.json', '.jsonc'],
-                aliases: ['JSON', 'json'],
-                mimetypes: ['application/json']
+            awaitExtensionReadiness: [whenReadyJson],
+            userConfiguration: {
+                json: JSON.stringify({
+                    'workbench.colorTheme': 'Default Dark Modern',
+                    'editor.guides.bracketPairsHorizontal': 'active',
+                    'editor.lightbulb.enabled': true
+                })
             }
         }
     },

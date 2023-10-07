@@ -1,5 +1,5 @@
-import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { editor, languages } from 'monaco-editor';
+import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { UserConfig } from './wrapper.js';
 import { Logger } from './logger.js';
 /**
@@ -74,6 +74,10 @@ export class EditorAppClassic extends EditorAppBase {
 
     getConfig(): EditorAppConfigClassic {
         return this.config;
+    }
+
+    override specifyService(): editor.IEditorOverrideServices {
+        return {};
     }
 
     async createEditors(container: HTMLElement): Promise<void> {

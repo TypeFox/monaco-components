@@ -230,6 +230,7 @@ export abstract class EditorAppBase {
 
     abstract getAppType(): string;
     abstract init(): Promise<void>;
+    abstract specifyService(): editor.IEditorOverrideServices;
     abstract createEditors(container: HTMLElement): Promise<void>;
     abstract getConfig(): EditorAppConfigClassic | EditorAppConfigVscodeApi;
     abstract disposeApp(): void;

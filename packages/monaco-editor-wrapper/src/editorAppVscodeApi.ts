@@ -1,9 +1,12 @@
 import type * as vscode from 'vscode';
+import { IDisposable, editor } from 'monaco-editor';
+import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
+import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
+import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { EditorAppBase, EditorAppBaseConfig, EditorAppType } from './editorAppBase.js';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
-import { IDisposable } from 'monaco-editor';
 import { Logger } from './logger.js';
 
 export type ExtensionConfig = {
@@ -60,6 +63,13 @@ export class EditorAppVscodeApi extends EditorAppBase {
         return this.extensionRegisterResults.get(extensionName);
     }
 
+    override specifyService(): editor.IEditorOverrideServices {
+        return {
+            ...getThemeServiceOverride(),
+            ...getTextmateServiceOverride()
+        };
+    }
+
     async createEditors(container: HTMLElement): Promise<void> {
         if (this.config.useDiffEditor) {
             await this.createDiffEditor(container);
@@ -68,9 +78,11 @@ export class EditorAppVscodeApi extends EditorAppBase {
         }
     }
 
-    async init() {
-        // await all extenson that should be ready beforehand
-        await this.awaitReadiness(this.config.awaitExtensionReadiness);
+    override async init() {
+        // await all extensions that should be ready beforehand
+        // always await theme extension
+        const awaitReadiness = (this.config.awaitExtensionReadiness ?? []).concat(whenReadyTheme);
+        await this.awaitReadiness(awaitReadiness);
 
         if (this.config.extensions) {
             const allPromises: Array<Promise<void>> = [];
