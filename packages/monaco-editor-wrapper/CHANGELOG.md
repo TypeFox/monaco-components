@@ -2,6 +2,11 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [2.3.0] - 2023-10-xy
+
+- Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)
+- Updated to `monaco-languageclient@6.5.2`
+
 ## [3.2.5] - 2023-10-13
 
 - New Problem in vite [#55](https://github.com/TypeFox/monaco-components/issues/55)

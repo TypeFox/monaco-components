@@ -2,6 +2,11 @@
 
 All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/@typefox/monaco-editor-react) are documented in this file.
 
+## [2.3.0] - 2023-10-xy
+
+- Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)
+- Updated to `monaco-editor-wrapper` `3.3.0`
+
 ## [2.2.5] - 2023-10-13
 
 - Updated to `monaco-editor-wrapper` `3.2.5`
