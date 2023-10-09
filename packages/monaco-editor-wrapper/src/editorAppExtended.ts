@@ -65,19 +65,11 @@ export class EditorAppExtended extends EditorAppBase {
         return this.extensionRegisterResults.get(extensionName);
     }
 
-    override specifyService(): editor.IEditorOverrideServices {
+    override specifyServices(): editor.IEditorOverrideServices {
         return {
             ...getThemeServiceOverride(),
             ...getTextmateServiceOverride()
         };
-    }
-
-    async createEditors(container: HTMLElement): Promise<void> {
-        if (this.config.useDiffEditor) {
-            await this.createDiffEditor(container);
-        } else {
-            await this.createEditor(container);
-        }
     }
 
     override async init() {
@@ -118,7 +110,7 @@ export class EditorAppExtended extends EditorAppBase {
         if (includeModelData) {
             different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
         }
-        const propsExtended = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'userConfiguration', 'extensions'];
+        const propsExtended = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'userConfiguration', 'extensions'];
         type ExtendedKeys = keyof typeof orgConfig;
         const propCompareExtended = (name: string) => {
             return orgConfig[name as ExtendedKeys] !== config[name as ExtendedKeys];

@@ -19,6 +19,9 @@ export type EditorAppConfigBase = ModelUpdate & {
     domReadOnly?: boolean;
     readOnly?: boolean;
     awaitExtensionReadiness?: Array<() => Promise<void>>;
+    overrideAutomaticLayout?: boolean;
+    editorOptions?: editor.IStandaloneEditorConstructionOptions;
+    diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
 }
 
 export enum ModelUpdateType {
@@ -49,7 +52,7 @@ export abstract class EditorAppBase {
     }
 
     protected buildConfig(userAppConfig: EditorAppConfigBase): EditorAppConfigBase {
-        return {
+        const config: EditorAppConfigBase = {
             $type: userAppConfig.$type,
             languageId: userAppConfig.languageId,
             code: userAppConfig.code ?? '',
@@ -59,8 +62,18 @@ export abstract class EditorAppBase {
             codeOriginalUri: userAppConfig.codeOriginalUri ?? undefined,
             readOnly: userAppConfig.readOnly ?? false,
             domReadOnly: userAppConfig.domReadOnly ?? false,
-            awaitExtensionReadiness: userAppConfig.awaitExtensionReadiness ?? undefined
+            overrideAutomaticLayout: userAppConfig.overrideAutomaticLayout ?? true,
+            awaitExtensionReadiness: userAppConfig.awaitExtensionReadiness ?? undefined,
         };
+        config.editorOptions = {
+            ...userAppConfig.editorOptions,
+            automaticLayout: userAppConfig.overrideAutomaticLayout ?? true
+        };
+        config.diffEditorOptions = {
+            ...userAppConfig.diffEditorOptions,
+            automaticLayout: userAppConfig.overrideAutomaticLayout ?? true
+        };
+        return config;
     }
 
     haveEditor() {
@@ -75,14 +88,14 @@ export abstract class EditorAppBase {
         return this.diffEditor;
     }
 
-    protected async createEditor(container: HTMLElement, editorOptions?: editor.IStandaloneEditorConstructionOptions): Promise<void> {
-        this.editor = createConfiguredEditor(container, editorOptions);
-        await this.updateEditorModel();
-    }
-
-    protected async createDiffEditor(container: HTMLElement, diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions): Promise<void> {
-        this.diffEditor = createConfiguredDiffEditor(container, diffEditorOptions);
-        await this.updateDiffEditorModel();
+    async createEditors(container: HTMLElement): Promise<void> {
+        if (this.getConfig().useDiffEditor) {
+            this.diffEditor = createConfiguredDiffEditor(container, this.getConfig().diffEditorOptions);
+            await this.updateDiffEditorModel();
+        } else {
+            this.editor = createConfiguredEditor(container, this.getConfig().editorOptions);
+            await this.updateEditorModel();
+        }
     }
 
     protected disposeEditor() {
@@ -231,8 +244,7 @@ export abstract class EditorAppBase {
     }
 
     abstract init(): Promise<void>;
-    abstract specifyService(): editor.IEditorOverrideServices;
-    abstract createEditors(container: HTMLElement): Promise<void>;
+    abstract specifyServices(): editor.IEditorOverrideServices;
     abstract getConfig(): EditorAppConfigBase;
     abstract disposeApp(): void;
     abstract isAppConfigDifferent(orgConfig: EditorAppConfigBase, config: EditorAppConfigBase, includeModelData: boolean): boolean;

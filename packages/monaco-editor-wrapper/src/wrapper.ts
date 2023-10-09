@@ -54,7 +54,7 @@ export class MonacoEditorLanguageClientWrapper {
             };
             mergeServices(mlcDefautServices, this.serviceConfig.userServices);
         }
-        mergeServices(this.editorApp?.specifyService() ?? {}, this.serviceConfig.userServices);
+        mergeServices(this.editorApp?.specifyServices() ?? {}, this.serviceConfig.userServices);
 
         // overrule debug log flag
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());

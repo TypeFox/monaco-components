@@ -26,7 +26,7 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
         expect(app).toBeDefined();
 
         const appConfig = app.getConfig();
-        expect(appConfig.automaticLayout).toBeTruthy();
+        expect(appConfig.overrideAutomaticLayout).toBeTruthy();
         expect(appConfig.theme).toBe('vs-light');
     });
 

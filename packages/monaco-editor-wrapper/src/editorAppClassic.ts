@@ -5,10 +5,7 @@ import { Logger } from './logger.js';
 
 export type EditorAppConfigClassic = EditorAppConfigBase & {
     $type: 'classic';
-    automaticLayout?: boolean;
     theme?: editor.BuiltinTheme | string;
-    editorOptions?: editor.IStandaloneEditorConstructionOptions;
-    diffEditorOptions?: editor.IStandaloneDiffEditorConstructionOptions;
     languageExtensionConfig?: languages.ILanguageExtensionPoint;
     languageDef?: languages.IMonarchLanguage;
     themeData?: editor.IStandaloneThemeData;
@@ -29,15 +26,6 @@ export class EditorAppClassic extends EditorAppBase {
         this.config = this.buildConfig(userAppConfig) as EditorAppConfigClassic;
         // default to vs-light
         this.config.theme = userAppConfig.theme ?? 'vs-light';
-        // default to true
-        this.config.automaticLayout = userAppConfig.automaticLayout ?? true;
-
-        this.config.editorOptions = userAppConfig.editorOptions ?? {};
-        this.config.editorOptions.automaticLayout = userAppConfig.automaticLayout ?? true;
-
-        this.config.diffEditorOptions = userAppConfig.diffEditorOptions ?? {};
-        this.config.diffEditorOptions.automaticLayout = userAppConfig.automaticLayout ?? true;
-
         this.config.languageExtensionConfig = userAppConfig.languageExtensionConfig ?? undefined;
         this.config.languageDef = userAppConfig.languageDef ?? undefined;
         this.config.themeData = userAppConfig.themeData ?? undefined;
@@ -47,16 +35,8 @@ export class EditorAppClassic extends EditorAppBase {
         return this.config;
     }
 
-    override specifyService(): editor.IEditorOverrideServices {
+    override specifyServices(): editor.IEditorOverrideServices {
         return {};
-    }
-
-    async createEditors(container: HTMLElement): Promise<void> {
-        if (this.config.useDiffEditor) {
-            await this.createDiffEditor(container, this.config.diffEditorOptions);
-        } else {
-            await this.createEditor(container, this.config.editorOptions);
-        }
     }
 
     async init() {
@@ -109,15 +89,11 @@ export class EditorAppClassic extends EditorAppBase {
             different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
         }
         type ClassicKeys = keyof typeof orgConfig;
-        const propsClassic = ['useDiffEditor', 'readOnly', 'domReadOnly', 'awaitExtensionReadiness', 'automaticLayout', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
-        const propsClassicEditorOptions = ['editorOptions', 'diffEditorOptions'];
-
+        const propsClassic = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
         const propCompareClassic = (name: string) => {
             return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
         };
-
         different = different || propsClassic.some(propCompareClassic);
-        different = different || propsClassicEditorOptions.some(propCompareClassic);
         return different;
     }
 }
