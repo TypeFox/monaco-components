@@ -44,7 +44,7 @@ const userConfig: UserConfig = {
     languageClientConfig: {
         options: {
             $type: 'WebSocketUrl',
-            url: 'ws://localhost:3000/sampleServer',
+            url: 'ws://localhost:30000/sampleServer',
             startOptions: {
                 onCall: () => {
                     console.log('Connected to socket.');

@@ -26,6 +26,7 @@ export const run = async () => {
 export const startLangiumClientExtended = async () => {
     try {
         if (checkStarted()) return;
+        disableButton('button-start-classic');
         const config = await setupLangiumClientExtended();
         wrapper = new MonacoEditorLanguageClientWrapper();
         wrapper.start(config, htmlElement);
@@ -37,6 +38,7 @@ export const startLangiumClientExtended = async () => {
 export const startLangiumClientClassic = async () => {
     try {
         if (checkStarted()) return;
+        disableButton('button-start-extended');
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
         await wrapper.start(config, htmlElement!);
@@ -51,6 +53,13 @@ const checkStarted = () => {
         return true;
     }
     return false;
+};
+
+const disableButton = (id: string) => {
+    const button = document.getElementById(id) as HTMLButtonElement;
+    if (button !== null) {
+        button.disabled = true;
+    }
 };
 
 export const disposeEditor = async () => {

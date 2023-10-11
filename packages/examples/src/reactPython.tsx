@@ -23,7 +23,7 @@ const userConfig: UserConfig = {
             name: 'Python Language Server Example',
             $type: 'WebSocket',
             host: 'localhost',
-            port: 30000,
+            port: 30001,
             path: 'pyright',
             extraParams: {
                 authorization: 'UserAuth'
