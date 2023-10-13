@@ -86,7 +86,7 @@ export class EditorAppClassic extends EditorAppBase {
     isAppConfigDifferent(orgConfig: EditorAppConfigClassic, config: EditorAppConfigClassic, includeModelData: boolean): boolean {
         let different = false;
         if (includeModelData) {
-            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
+            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.NONE;
         }
         type ClassicKeys = keyof typeof orgConfig;
         const propsClassic = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];

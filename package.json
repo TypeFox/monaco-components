@@ -13,8 +13,8 @@
     "test": "vitest -c vitest.config.ts",
     "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
     "reset:repo": "git clean -f -X -d",
-    "start:examples:server:json": "npm run start:server:json --workspace packages/examples",
-    "start:examples:server:python": "npm run start:server:python --workspace packages/examples"
+    "start:example:server:json": "npm run start:server:json --workspace packages/examples",
+    "start:example:server:python": "npm run start:server:python --workspace packages/examples"
   },
   "devDependencies": {
     "@types/node": "~18.18.3",

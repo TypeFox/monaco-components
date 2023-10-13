@@ -40,16 +40,16 @@ describe('Test EditorAppBase', () => {
     test('isModelUpdateRequired', () => {
         const config = createEditorAppConfig('classic');
         let modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript', code: '' });
-        expect(modelUpdateType).toBe(ModelUpdateType.none);
+        expect(modelUpdateType).toBe(ModelUpdateType.NONE);
 
         modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript' });
-        expect(modelUpdateType).toBe(ModelUpdateType.none);
+        expect(modelUpdateType).toBe(ModelUpdateType.NONE);
 
         modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript', code: 'test' });
-        expect(modelUpdateType).toBe(ModelUpdateType.code);
+        expect(modelUpdateType).toBe(ModelUpdateType.CODE);
 
         modelUpdateType = isModelUpdateRequired(config, { languageId: 'javascript', code: 'test' });
-        expect(modelUpdateType).toBe(ModelUpdateType.model);
+        expect(modelUpdateType).toBe(ModelUpdateType.MODEL);
     });
 
     test('isAppConfigDifferent: classic', () => {

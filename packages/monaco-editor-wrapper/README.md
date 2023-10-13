@@ -39,7 +39,7 @@ The following services are enabled by default in both editor modes:
 - model
 - configuration
 
-**Extended** mode adds the following:
+**Extended** mode adds the following and thereby disables monarch grammars:
 
 - theme
 - textmate

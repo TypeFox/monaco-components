@@ -108,7 +108,7 @@ export class EditorAppExtended extends EditorAppBase {
     isAppConfigDifferent(orgConfig: EditorAppConfigExtended, config: EditorAppConfigExtended, includeModelData: boolean): boolean {
         let different = false;
         if (includeModelData) {
-            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.none;
+            different = isModelUpdateRequired(orgConfig, config) !== ModelUpdateType.NONE;
         }
         const propsExtended = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'userConfiguration', 'extensions'];
         type ExtendedKeys = keyof typeof orgConfig;

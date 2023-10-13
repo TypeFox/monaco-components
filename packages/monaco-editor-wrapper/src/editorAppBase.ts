@@ -25,9 +25,9 @@ export type EditorAppConfigBase = ModelUpdate & {
 }
 
 export enum ModelUpdateType {
-    none,
-    code,
-    model
+    NONE,
+    CODE,
+    MODEL
 }
 
 /**
@@ -130,7 +130,7 @@ export abstract class EditorAppBase {
 
         const modelUpdateType = isModelUpdateRequired(this.getConfig(), modelUpdate);
 
-        if (modelUpdateType === ModelUpdateType.code) {
+        if (modelUpdateType === ModelUpdateType.CODE) {
             this.updateAppConfig(modelUpdate);
             if (this.getConfig().useDiffEditor) {
                 this.diffEditor?.getModifiedEditor().setValue(modelUpdate.code ?? '');
@@ -138,7 +138,7 @@ export abstract class EditorAppBase {
             } else {
                 this.editor.setValue(modelUpdate.code ?? '');
             }
-        } else if (modelUpdateType === ModelUpdateType.model) {
+        } else if (modelUpdateType === ModelUpdateType.MODEL) {
             this.updateAppConfig(modelUpdate);
             await this.updateEditorModel();
         }
@@ -252,7 +252,7 @@ export abstract class EditorAppBase {
 
 export const isCodeUpdateRequired = (config: EditorAppConfigBase, modelUpdate: ModelUpdate) => {
     const updateRequired = (modelUpdate.code !== undefined && modelUpdate.code !== config.code) || modelUpdate.codeOriginal !== config.codeOriginal;
-    return updateRequired ? ModelUpdateType.code : ModelUpdateType.none;
+    return updateRequired ? ModelUpdateType.CODE : ModelUpdateType.NONE;
 };
 
 export const isModelUpdateRequired = (config: EditorAppConfigBase, modelUpdate: ModelUpdate): ModelUpdateType => {
@@ -264,5 +264,5 @@ export const isModelUpdateRequired = (config: EditorAppConfigBase, modelUpdate: 
         return config[name as ModelUpdateKeys] !== modelUpdate[name as ModelUpdateKeys];
     };
     const updateRequired = propsModelUpdate.some(propCompare);
-    return updateRequired ? ModelUpdateType.model : codeUpdate;
+    return updateRequired ? ModelUpdateType.MODEL : codeUpdate;
 };

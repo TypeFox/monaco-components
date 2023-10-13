@@ -2,9 +2,11 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [2.3.0] - 2023-10-xy
+## [2.3.0] - 2023-10-1y
 
 - Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)
+  - Renamed `EditorAppVscodeApi` to `EditorAppExtended` and `EditorAppConfigVscodeApi` to `EditorAppConfigExtended`
+  - BREAKING: `$type` of `EditorAppConfigExtended` was changed from `vscodeApi` to `extended`
 - Updated to `monaco-languageclient@6.5.3`
 
 ## [3.2.5] - 2023-10-13
