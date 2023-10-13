@@ -2,6 +2,11 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.2.5] - 2023-10-13
+
+- New Problem in vite [#55](https://github.com/TypeFox/monaco-components/issues/55)
+  - Fixed wrong imports
+
 ## [3.2.4] - 2023-10-05
 
 - Fixed/Implemented multiple `extensionRegisterResults` handling.

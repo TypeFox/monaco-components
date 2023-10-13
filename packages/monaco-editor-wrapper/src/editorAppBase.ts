@@ -1,8 +1,8 @@
 import { editor, Uri } from 'monaco-editor';
 import { createConfiguredEditor, createConfiguredDiffEditor, createModelReference, ITextFileEditorModel } from 'vscode/monaco';
-import { IReference } from 'vscode/service-override/editor';
+import { IReference } from '@codingame/monaco-vscode-editor-service-override';
+import { updateUserConfiguration as vscodeUpdateUserConfiguration } from '@codingame/monaco-vscode-configuration-service-override';
 import { UserConfig, WrapperConfig } from './wrapper.js';
-import { updateUserConfiguration as vscodeUpdateUserConfiguration } from 'vscode/service-override/configuration';
 import { EditorAppConfigClassic } from './editorAppClassic.js';
 import { EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
 
