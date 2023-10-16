@@ -4,21 +4,23 @@
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
-    "@codingame/monaco-vscode-configuration-service-override": "~1.82.5",
-    "@codingame/monaco-vscode-editor-service-override": "~1.82.5",
-    "@codingame/monaco-vscode-json-default-extension": "~1.82.5",
-    "@codingame/monaco-vscode-keybindings-service-override": "~1.82.5",
-    "@codingame/monaco-vscode-python-default-extension": "~1.82.5",
-    "@typefox/monaco-editor-react": "~2.3.0-next.3",
+    "@codingame/monaco-vscode-configuration-service-override": "~1.83.2",
+    "@codingame/monaco-vscode-editor-service-override": "~1.83.2",
+    "@codingame/monaco-vscode-json-default-extension": "~1.83.2",
+    "@codingame/monaco-vscode-keybindings-service-override": "~1.83.2",
+    "@codingame/monaco-vscode-python-default-extension": "~1.83.2",
+    "@typefox/monaco-editor-react": "~2.3.0",
     "http-server": "~14.1.1",
     "langium": "~2.0.2",
     "langium-statemachine-dsl": "~2.0.0",
-    "monaco-languageclient-examples": "~6.5.3",
+    "monaco-editor": "~0.44.0",
     "monaco-editor-workers": "~0.43.0",
-    "monaco-editor-wrapper": "~3.3.0-next.3",
+    "monaco-editor-wrapper": "~3.3.0",
+    "monaco-languageclient-examples": "~6.6.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "request-light": "~0.7.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.2 <1.84.0",
     "vscode-uri": "~3.0.7",
     "vscode-languageclient": "~8.1.0",
     "vscode-languageserver": "~8.1.0",
@@ -30,8 +32,8 @@
     "ts-node": "~10.9.1"
   },
   "volta": {
-    "node": "18.18.0",
-    "npm": "9.8.1"
+    "node": "18.18.1",
+    "npm": "9.9.0"
   },
   "scripts": {
     "clean": "shx rm -rf ./dist ./libs *.tsbuildinfo",
