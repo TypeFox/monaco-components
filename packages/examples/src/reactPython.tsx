@@ -1,8 +1,4 @@
-import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
-import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
-import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { whenReady as whenReadyPython } from '@codingame/monaco-vscode-python-default-extension';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -27,7 +23,7 @@ const userConfig: UserConfig = {
             name: 'Python Language Server Example',
             $type: 'WebSocket',
             host: 'localhost',
-            port: 30000,
+            port: 30001,
             path: 'pyright',
             extraParams: {
                 authorization: 'UserAuth'
@@ -56,18 +52,15 @@ const userConfig: UserConfig = {
     wrapperConfig: {
         serviceConfig: {
             userServices: {
-                ...getThemeServiceOverride(),
-                ...getTextmateServiceOverride(),
-                ...getConfigurationServiceOverride(Uri.file('/workspace')),
                 ...getKeybindingsServiceOverride()
             },
             debugLogging: true
         },
         editorAppConfig: {
-            $type: 'vscodeApi',
+            $type: 'extended',
             languageId: 'python',
             codeUri: '/workspace/python.py',
-            awaitExtensionReadiness: [whenReadyThemes, whenReadyPython],
+            awaitExtensionReadiness: [whenReadyPython],
             extensions: [{
                 config: {
                     name: 'python-client',

@@ -72,11 +72,12 @@ export class LanguageClientWrapper {
     private languageClient: MonacoLanguageClient | undefined;
     private languageClientConfig?: LanguageClientConfig;
     private worker: Worker | undefined;
-    private languageId: string | undefined;
+    private languageId: string;
     private name;
     private logger: Logger | undefined;
 
-    constructor(languageClientConfig?: LanguageClientConfig, logger?: Logger) {
+    constructor(languageId: string, languageClientConfig?: LanguageClientConfig, logger?: Logger) {
+        this.languageId = languageId;
         if (languageClientConfig) {
             this.languageClientConfig = languageClientConfig;
             this.name = this.languageClientConfig.options.name ?? 'unnamed';
@@ -102,10 +103,6 @@ export class LanguageClientWrapper {
 
     isStarted(): boolean {
         return this.languageClient !== undefined && this.languageClient?.isRunning();
-    }
-
-    init(languageId: string) {
-        this.languageId = languageId;
     }
 
     async start() {

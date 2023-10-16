@@ -1,16 +1,11 @@
-import { Uri } from 'vscode';
-import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
 import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-override';
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
-import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
-import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
-import { whenReady as whenReadyThemes } from '@codingame/monaco-vscode-theme-defaults-default-extension';
 import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
 import { loadLangiumWorker } from '../wrapperLangium.js';
 
-export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
+export const setupLangiumClientExtended = async (): Promise<UserConfig> => {
     const code = await getTextContent(new URL('./src/langium/content/example.langium', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
@@ -25,21 +20,16 @@ export const setupLangiumClientVscodeApi = async (): Promise<UserConfig> => {
         wrapperConfig: {
             serviceConfig: {
                 userServices: {
-                    ...getThemeServiceOverride(),
-                    ...getTextmateServiceOverride(),
-                    ...getConfigurationServiceOverride(Uri.file('/workspace')),
                     ...getEditorServiceOverride(useOpenEditorStub),
                     ...getKeybindingsServiceOverride()
                 },
                 debugLogging: true
             },
             editorAppConfig: {
-                $type: 'vscodeApi',
+                $type: 'extended',
                 languageId: 'langium',
                 code: code,
                 useDiffEditor: false,
-                // Ensure all required extensions are loaded before setting up the language extension
-                awaitExtensionReadiness: [whenReadyThemes],
                 extensions: [{
                     config: {
                         name: 'langium-example',

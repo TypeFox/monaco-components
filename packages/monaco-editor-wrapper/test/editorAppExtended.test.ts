@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest';
 import { verifyUrlorCreateDataUrl } from 'monaco-editor-wrapper';
 
-describe('Test EditorAppVscodeApi', () => {
+describe('Test EditorAppExtended', () => {
 
     test('verifyUrlorCreateDataUrl: url', () => {
-        const url = new URL('./editorVscodeApi.test.ts', import.meta.url);
+        const url = new URL('./editorAppExtended.test.ts', import.meta.url);
         expect(verifyUrlorCreateDataUrl(url)).toBe(url.href);
     });
 

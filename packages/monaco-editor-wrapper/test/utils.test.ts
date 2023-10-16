@@ -7,22 +7,22 @@ describe('createUrl', () => {
         const url = createUrl({
             secured: false,
             host: 'localhost',
-            port: 3000,
+            port: 30000,
             path: 'sampleServer'
         } as WebSocketConfigOptions);
 
-        expect(url).toBe('ws://localhost:3000/sampleServer');
+        expect(url).toBe('ws://localhost:30000/sampleServer');
     });
 
     test('test createUrl: wss', () => {
         const url = createUrl({
             secured: true,
             host: 'localhost',
-            port: 3000,
+            port: 30000,
             path: 'sampleServer'
         } as WebSocketConfigOptions);
 
-        expect(url).toBe('wss://localhost:3000/sampleServer');
+        expect(url).toBe('wss://localhost:30000/sampleServer');
     });
 
     test('test createUrl: wss, no port, with path', () => {
@@ -39,10 +39,10 @@ describe('createUrl', () => {
         const url = createUrl({
             secured: true,
             host: 'localhost',
-            port: 3000
+            port: 30000
         } as WebSocketConfigOptions);
 
-        expect(url).toBe('wss://localhost:3000');
+        expect(url).toBe('wss://localhost:30000');
     });
 
     test('test createUrl: wss, no port, no path', () => {
@@ -77,26 +77,26 @@ describe('createUrl', () => {
 
     test('test createUrl: optionsUrl: ws', () => {
         const url = createUrl({
-            url: 'ws://localhost:3000/sampleServer'
+            url: 'ws://localhost:30000/sampleServer'
         } as WebSocketConfigOptionsUrl);
 
-        expect(url).toBe('ws://localhost:3000/sampleServer');
+        expect(url).toBe('ws://localhost:30000/sampleServer');
     });
 
     test('test createUrl: optionsUrl: wss', () => {
         const url = createUrl({
-            url: 'wss://localhost:3000/sampleServer'
+            url: 'wss://localhost:30000/sampleServer'
         } as WebSocketConfigOptionsUrl);
 
-        expect(url).toBe('wss://localhost:3000/sampleServer');
+        expect(url).toBe('wss://localhost:30000/sampleServer');
     });
 
     test('test createUrl: optionsUrl, with port, no path', () => {
         const url = createUrl({
-            url: 'wss://localhost:3000'
+            url: 'wss://localhost:30000'
         } as WebSocketConfigOptionsUrl);
 
-        expect(url).toBe('wss://localhost:3000');
+        expect(url).toBe('wss://localhost:30000');
     });
 
     test('test createUrl: optionsUrl, no port, with path', () => {
@@ -117,8 +117,8 @@ describe('createUrl', () => {
 
     test('test createUrl: ws, not proper url', () => {
         expect(() => createUrl({
-            url: 'http://www.testme.com:3000/sampleServer'
-        } as WebSocketConfigOptionsUrl)).toThrowError('This is not a proper websocket url: http://www.testme.com:3000/sampleServer');
+            url: 'http://www.testme.com:30000/sampleServer'
+        } as WebSocketConfigOptionsUrl)).toThrowError('This is not a proper websocket url: http://www.testme.com:30000/sampleServer');
     });
 
 });

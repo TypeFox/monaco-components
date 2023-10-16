@@ -32,16 +32,11 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
                 code: code,
                 useDiffEditor: false,
                 theme: 'vs-dark',
-                // configure it like this or in the userConfiguration
                 editorOptions: {
                     'semanticHighlighting.enabled': true
                 },
                 languageExtensionConfig: { id: 'langium' },
                 languageDef: LangiumMonarchContent,
-                userConfiguration: {
-                    // or configure the semantic highlighting like this:
-                    // `{ json: "editor.semanticHighlighting.enabled": true }`
-                }
             }
         },
         languageClientConfig: {

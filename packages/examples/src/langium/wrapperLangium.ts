@@ -4,7 +4,7 @@
  * ------------------------------------------------------------------------------------------ */
 
 import { MonacoEditorLanguageClientWrapper } from 'monaco-editor-wrapper';
-import { setupLangiumClientVscodeApi } from './config/wrapperLangiumVscode.js';
+import { setupLangiumClientExtended } from './config/wrapperLangiumExtended.js';
 import { setupLangiumClientClassic } from './config/wrapperLangiumClassic.js';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 
@@ -16,17 +16,18 @@ const htmlElement = document.getElementById('monaco-editor-root');
 export const run = async () => {
     try {
         document.querySelector('#button-start-classic')?.addEventListener('click', startLangiumClientClassic);
-        document.querySelector('#button-start-vscode-api')?.addEventListener('click', startLangiumClientVscodeApi);
+        document.querySelector('#button-start-extended')?.addEventListener('click', startLangiumClientExtended);
         document.querySelector('#button-dispose')?.addEventListener('click', disposeEditor);
     } catch (e) {
         console.error(e);
     }
 };
 
-export const startLangiumClientVscodeApi = async () => {
+export const startLangiumClientExtended = async () => {
     try {
         if (checkStarted()) return;
-        const config = await setupLangiumClientVscodeApi();
+        disableButton('button-start-classic');
+        const config = await setupLangiumClientExtended();
         wrapper = new MonacoEditorLanguageClientWrapper();
         wrapper.start(config, htmlElement);
     } catch (e) {
@@ -37,6 +38,7 @@ export const startLangiumClientVscodeApi = async () => {
 export const startLangiumClientClassic = async () => {
     try {
         if (checkStarted()) return;
+        disableButton('button-start-extended');
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
         await wrapper.start(config, htmlElement!);
@@ -51,6 +53,13 @@ const checkStarted = () => {
         return true;
     }
     return false;
+};
+
+const disableButton = (id: string) => {
+    const button = document.getElementById(id) as HTMLButtonElement;
+    if (button !== null) {
+        button.disabled = true;
+    }
 };
 
 export const disposeEditor = async () => {

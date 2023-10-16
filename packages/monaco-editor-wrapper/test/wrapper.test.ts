@@ -24,10 +24,9 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
 
         const app = wrapper.getMonacoEditorApp() as EditorAppClassic;
         expect(app).toBeDefined();
-        expect(app.getAppType()).toBe('classic');
 
         const appConfig = app.getConfig();
-        expect(appConfig.automaticLayout).toBeTruthy();
+        expect(appConfig.overrideAutomaticLayout).toBeTruthy();
         expect(appConfig.theme).toBe('vs-light');
     });
 

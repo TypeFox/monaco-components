@@ -2,6 +2,13 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [2.3.0] - 2023-10-1y
+
+- Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)
+  - Renamed `EditorAppVscodeApi` to `EditorAppExtended` and `EditorAppConfigVscodeApi` to `EditorAppConfigExtended`
+  - BREAKING: `$type` of `EditorAppConfigExtended` was changed from `vscodeApi` to `extended`
+- Updated to `monaco-languageclient@6.5.3`
+
 ## [3.2.5] - 2023-10-13
 
 - New Problem in vite [#55](https://github.com/TypeFox/monaco-components/issues/55)
@@ -76,7 +83,7 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
   - Use global configuration object that is passed to the wrapper on start
   - The `monaco-editor-wrapper` and the new `@typefox/monaco-editor-react` component use the same configuration
 - The underlying monaco-editor can be configured in two ways now (wrapperConfig):
-  - Classical: As before, but with one config object
+  - Classic: As before, but with one config object
   - Extension like: Using the extension based mechanism supplied by `monaco-vscode-api`
 - `monaco-languageclient` no longer exposes its own service. Now, we fully rely on services supplied by `monaco-vscode-api`
   - This means even if you decide to configure monaco-editor the classical way, you still require some basic services. This configuration is made inside `MonacoEditorLanguageClientWrapper`. Potential serviceConfig supplied when using vscode-api extension config is taken into account and combined then.

@@ -37,7 +37,7 @@ Same again.`
             $type: 'WebSocket',
             name: 'wrapper42 language client',
             host: 'localhost',
-            port: 3000,
+            port: 30000,
             path: 'sampleServer',
             secured: false
         }

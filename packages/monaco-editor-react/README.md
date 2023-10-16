@@ -64,7 +64,7 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react/bundle';
 
 These are the examples specifically for `@typefox/monaco-editor-react` that you can find in the repository:
 
-- TypeScript editor worker using classical configuration [see](../examples/react_ts.html)
+- TypeScript editor worker using classic configuration [see](../examples/react_ts.html)
 - Langium statemachine language client and web worker based language server using the exact same user configuration as [wrapper statemachine](../examples/wrapper_statemachine.html), [see](../examples/react_statemachine.html)
 - Langium grammar language client and web worker based language server using vscode-api configuration [see](../examples/react_langium.html)
 

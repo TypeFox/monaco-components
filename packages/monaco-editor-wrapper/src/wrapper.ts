@@ -1,16 +1,15 @@
-import { editor } from 'monaco-editor';
-import { Uri } from 'vscode';
+import { editor, Uri } from 'monaco-editor';
 import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
 import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
-import { EditorAppVscodeApi, EditorAppConfigVscodeApi } from './editorAppVscodeApi.js';
+import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
-import { ModelUpdate, UserConfiguration, isVscodeApiEditorApp } from './editorAppBase.js';
+import { ModelUpdate } from './editorAppBase.js';
 import { LanguageClientConfig, LanguageClientWrapper } from './languageClientWrapper.js';
 import { Logger, LoggerConfig } from './logger.js';
 
 export type WrapperConfig = {
     serviceConfig?: InitializeServiceConfig;
-    editorAppConfig: EditorAppConfigVscodeApi | EditorAppConfigClassic;
+    editorAppConfig: EditorAppConfigExtended | EditorAppConfigClassic;
 };
 
 export type UserConfig = {
@@ -29,12 +28,12 @@ export class MonacoEditorLanguageClientWrapper {
 
     private id: string;
 
-    private editorApp: EditorAppClassic | EditorAppVscodeApi | undefined;
+    private editorApp: EditorAppClassic | EditorAppExtended | undefined;
     private languageClientWrapper: LanguageClientWrapper;
     private serviceConfig: InitializeServiceConfig;
     private logger: Logger;
 
-    private async init(userConfig: UserConfig) {
+    private init(userConfig: UserConfig) {
         if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
             throw new Error('Use diff editor was used without a valid config.');
         }
@@ -42,7 +41,9 @@ export class MonacoEditorLanguageClientWrapper {
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.logger = new Logger(userConfig.loggerConfig);
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
+    }
 
+    private async initServices() {
         // always set required services if not configure
         this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
         const configureService = this.serviceConfig.userServices.configure;
@@ -53,6 +54,7 @@ export class MonacoEditorLanguageClientWrapper {
             };
             mergeServices(mlcDefautServices, this.serviceConfig.userServices);
         }
+        mergeServices(this.editorApp?.specifyServices() ?? {}, this.serviceConfig.userServices);
 
         // overrule debug log flag
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
@@ -63,26 +65,28 @@ export class MonacoEditorLanguageClientWrapper {
             this.logger.debug('Init Services', this.serviceConfig.debugLogging);
             await initServices(this.serviceConfig);
         }
-        this.languageClientWrapper = new LanguageClientWrapper(userConfig.languageClientConfig, this.logger);
     }
 
     async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {
         if (!htmlElement) {
             throw new Error('No HTMLElement provided for monaco-editor.');
         }
-        await this.init(userConfig);
-
         // Always dispose old instances before start
         this.editorApp?.disposeApp();
 
-        if (isVscodeApiEditorApp(userConfig.wrapperConfig)) {
-            this.editorApp = new EditorAppVscodeApi(this.id, userConfig, this.logger);
-        } else {
-            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
-        }
-        this.languageClientWrapper.init(this.editorApp.getConfig().languageId);
-        this.logger.info(`Starting monaco-editor (${this.id})`);
+        this.init(userConfig);
 
+        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
+            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
+        } else {
+            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
+        }
+        await this.initServices();
+
+        this.languageClientWrapper = new LanguageClientWrapper(this.editorApp.getConfig().languageId,
+            userConfig.languageClientConfig, this.logger);
+
+        this.logger.info(`Starting monaco-editor (${this.id})`);
         await this.editorApp?.init();
         await this.editorApp.createEditors(htmlElement);
 
@@ -133,10 +137,6 @@ export class MonacoEditorLanguageClientWrapper {
 
     async updateDiffModel(modelUpdate: ModelUpdate): Promise<void> {
         await this.editorApp?.updateDiffModel(modelUpdate);
-    }
-
-    updateUserConfiguration(config: UserConfiguration) {
-        return this.editorApp?.updateUserConfiguration(config);
     }
 
     public reportStatus() {
