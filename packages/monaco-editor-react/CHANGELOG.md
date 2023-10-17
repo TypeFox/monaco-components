@@ -2,12 +2,13 @@
 
 All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/@typefox/monaco-editor-react) are documented in this file.
 
-## [2.3.0] - 2023-10-1y
+## [2.3.0] - 2023-10-17
 
 - Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)
   - Renamed `EditorAppVscodeApi` to `EditorAppExtended` and `EditorAppConfigVscodeApi` to `EditorAppConfigExtended`
   - BREAKING: `$type` of `EditorAppConfigExtended` was changed from `vscodeApi` to `extended`
 - Updated to `monaco-editor-wrapper` `3.3.0`
+- Include all direct dependencies that the code uses in the `package.json`.
 
 ## [2.2.5] - 2023-10-13
 

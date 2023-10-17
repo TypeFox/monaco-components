@@ -24,7 +24,6 @@
         const wrapper = new MonacoEditorLanguageClientWrapper();
         const startWrapper = async () => {
             const wrapperConfig = {
-                htmlElement: document.getElementById('monaco-editor-root'),
                 wrapperConfig: {
                     useVscodeConfig: false,
                     serviceConfig: {
@@ -45,7 +44,7 @@
                     }
                 }
             };
-            await wrapper.start(wrapperConfig);
+            await wrapper.start(wrapperConfig, document.getElementById('monaco-editor-root'));
             console.log('wrapper was started.');
         };
 
