@@ -11,14 +11,14 @@ export type MonacoEditorProps = {
     onLoad?: () => void;
 }
 
-export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
+export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorProps> extends React.Component<T> {
 
     private wrapper: MonacoEditorLanguageClientWrapper = new MonacoEditorLanguageClientWrapper();
     private containerElement?: HTMLDivElement;
     private _subscription: IDisposable | null = null;
     private isStarting?: Promise<void>;
 
-    constructor(props: MonacoEditorProps) {
+    constructor(props: T) {
         super(props);
         this.containerElement = undefined;
     }
@@ -32,7 +32,7 @@ export class MonacoEditorReactComp extends React.Component<MonacoEditorProps> {
         await this.initMonaco();
     }
 
-    override async componentDidUpdate(prevProps: MonacoEditorProps) {
+    override async componentDidUpdate(prevProps: T) {
         const { className, userConfig } = this.props;
         const { wrapper } = this;
 
