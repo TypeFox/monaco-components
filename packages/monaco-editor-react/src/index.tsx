@@ -16,7 +16,8 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
     private wrapper: MonacoEditorLanguageClientWrapper = new MonacoEditorLanguageClientWrapper();
     private containerElement?: HTMLDivElement;
     private _subscription: IDisposable | null = null;
-    private isStarting?: Promise<void>;
+    private isRestaring?: Promise<void>;
+    private started: (value: void | PromiseLike<void>) => void;
 
     constructor(props: T) {
         super(props);
@@ -27,9 +28,10 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         await this.handleReinit();
     }
 
-    private async handleReinit() {
+    protected async handleReinit() {
         await this.destroyMonaco();
         await this.initMonaco();
+        await this.startMonaco();
     }
 
     override async componentDidUpdate(prevProps: T) {
@@ -85,19 +87,20 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         this.destroyMonaco();
     }
 
-    private assignRef = (component: HTMLDivElement) => {
+    protected assignRef = (component: HTMLDivElement) => {
         this.containerElement = component;
     };
 
-    private async destroyMonaco(): Promise<void> {
+    protected async destroyMonaco(): Promise<void> {
         if (this.wrapper) {
-            await this.isStarting;
+            if (this.isRestaring) {
+                await this.isRestaring;
+            }
             try {
                 await this.wrapper.dispose();
             } catch {
-                // This is fine
-                // Sometimes the language client throws an error during disposal
-                // This should not prevent us from continue working
+                // The language client may throw an error during disposal.
+                // This should not prevent us from continue working.
             }
         }
         if (this._subscription) {
@@ -105,38 +108,57 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         }
     }
 
-    private async initMonaco() {
+    protected async initMonaco() {
+        const {
+            userConfig
+        } = this.props;
+
+        // block "destroyMonaco" until start is complete
+        this.isRestaring = new Promise<void>((resolve) => {
+            this.started = resolve;
+        });
+        await this.wrapper.init(userConfig);
+    }
+
+    protected async startMonaco() {
         const {
             className,
-            userConfig,
-            onTextChanged,
             onLoad,
         } = this.props;
 
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
 
-            this.isStarting = this.wrapper.start(userConfig, this.containerElement);
-            await this.isStarting;
+            await this.wrapper.startNoInit(this.containerElement);
+            this.started();
+            this.isRestaring = undefined;
 
             // once awaiting isStarting is done onLoad is called if available
-            onLoad && onLoad();
+            onLoad?.();
 
-            if (onTextChanged) {
-                const model = this.wrapper.getModel();
-                if (model) {
-                    const verifyModelContent = () => {
-                        const modelText = model.getValue();
-                        onTextChanged(modelText, modelText !== userConfig.wrapperConfig.editorAppConfig.code);
-                    };
+            this.handleOnTextChanged();
+        }
+    }
 
-                    this._subscription = model.onDidChangeContent(() => {
-                        verifyModelContent();
-                    });
-                    // do it initially
-                    verifyModelContent();
-                }
-            }
+    private handleOnTextChanged() {
+        const {
+            userConfig,
+            onTextChanged
+        } = this.props;
+        if (!onTextChanged) return;
+
+        const model = this.wrapper.getModel();
+        if (model) {
+            const verifyModelContent = () => {
+                const modelText = model.getValue();
+                onTextChanged(modelText, modelText !== userConfig.wrapperConfig.editorAppConfig.code);
+            };
+
+            this._subscription = model.onDidChangeContent(() => {
+                verifyModelContent();
+            });
+            // do it initially
+            verifyModelContent();
         }
     }
 

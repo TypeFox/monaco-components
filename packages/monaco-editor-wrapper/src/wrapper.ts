@@ -29,18 +29,37 @@ export class MonacoEditorLanguageClientWrapper {
     private id: string;
 
     private editorApp: EditorAppClassic | EditorAppExtended | undefined;
-    private languageClientWrapper: LanguageClientWrapper;
+    private languageClientWrapper: LanguageClientWrapper = new LanguageClientWrapper();
     private serviceConfig: InitializeServiceConfig;
     private logger: Logger;
+    private initDone = false;
 
-    private init(userConfig: UserConfig) {
+    async init(userConfig: UserConfig) {
+        if (this.initDone) {
+            throw new Error('init was already performed. Please call dispose first if you want to re-start.');
+        }
         if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
             throw new Error('Use diff editor was used without a valid config.');
         }
+        // Always dispose old instances before start
+        this.editorApp?.disposeApp();
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.logger = new Logger(userConfig.loggerConfig);
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
+
+        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
+            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
+        } else {
+            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
+        }
+        // editorApps init their own service thats why they have to be created first
+        await this.initServices();
+
+        this.languageClientWrapper.init(this.editorApp.getConfig().languageId,
+            userConfig.languageClientConfig, this.logger);
+
+        this.initDone = true;
     }
 
     private async initServices() {
@@ -68,27 +87,21 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {
+        await this.init(userConfig);
+        await this.startNoInit(htmlElement);
+    }
+
+    async startNoInit(htmlElement: HTMLElement | null) {
+        if (!this.initDone) {
+            throw new Error('No init was performed. Please call init() before startNoInit()');
+        }
         if (!htmlElement) {
             throw new Error('No HTMLElement provided for monaco-editor.');
         }
-        // Always dispose old instances before start
-        this.editorApp?.disposeApp();
-
-        this.init(userConfig);
-
-        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
-            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
-        } else {
-            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
-        }
-        await this.initServices();
-
-        this.languageClientWrapper = new LanguageClientWrapper(this.editorApp.getConfig().languageId,
-            userConfig.languageClientConfig, this.logger);
 
         this.logger.info(`Starting monaco-editor (${this.id})`);
         await this.editorApp?.init();
-        await this.editorApp.createEditors(htmlElement);
+        await this.editorApp?.createEditors(htmlElement);
 
         if (this.languageClientWrapper.haveLanguageClientConfig()) {
             await this.languageClientWrapper.start();
@@ -158,6 +171,7 @@ export class MonacoEditorLanguageClientWrapper {
         else {
             await Promise.resolve('Monaco editor has been disposed.');
         }
+        this.initDone = false;
     }
 
     updateLayout() {

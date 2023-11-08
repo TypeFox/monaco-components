@@ -37,4 +37,22 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
             await wrapper.start(createBaseConfig('classic'), null);
         }).rejects.toThrowError('No HTMLElement provided for monaco-editor.');
     });
+
+    test('Expected throw: Start without init', async () => {
+        createMonacoEditorDiv();
+        const wrapper = new MonacoEditorLanguageClientWrapper();
+        await expect(async () => {
+            await wrapper.startNoInit(document.getElementById('monaco-editor-root'));
+        }).rejects.toThrowError('No init was performed. Please call init() before startNoInit()');
+    });
+
+    test('Expected throw: Call normal start with prior init', async () => {
+        createMonacoEditorDiv();
+        const wrapper = new MonacoEditorLanguageClientWrapper();
+        await expect(async () => {
+            const config = createBaseConfig('classic');
+            await wrapper.init(config);
+            await wrapper.start(config, document.getElementById('monaco-editor-root'));
+        }).rejects.toThrowError('init was already performed. Please call dispose first if you want to re-start.');
+    });
 });

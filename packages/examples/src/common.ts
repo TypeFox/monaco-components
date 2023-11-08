@@ -38,6 +38,7 @@ export const disposeEditor = async (useDiffEditor: boolean) => {
 };
 
 const restartEditor = async (userConfig: UserConfig, htmlElement: HTMLElement | null) => {
+    await wrapper.dispose();
     await wrapper.start(userConfig, htmlElement);
     logEditorInfo(userConfig);
 };

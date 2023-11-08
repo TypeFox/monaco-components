@@ -1,5 +1,6 @@
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 
@@ -114,6 +115,7 @@ const sleepOne = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating editors after ${milliseconds}ms`);
 
+        await wrapper42.dispose();
         wrapper42Config.languageClientConfig = undefined;
         const appConfig42 = wrapper42Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig42.languageId = 'javascript';
@@ -129,6 +131,7 @@ const sleepOne = (milliseconds: number) => {
             codeOriginal: 'text 1234'
         });
 
+        await wrapper44.dispose();
         const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig44.languageId = 'text/plain';
         appConfig44.useDiffEditor = true;
@@ -152,10 +155,10 @@ const sleepTwo = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
+        await wrapper44.dispose();
         const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig44.useDiffEditor = false;
         appConfig44.theme = 'vs-dark';
-
         await wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
         console.log('Restarted wrapper44.');
     }, milliseconds);

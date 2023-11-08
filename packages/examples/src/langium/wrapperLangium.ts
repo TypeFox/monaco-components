@@ -11,6 +11,7 @@ import { buildWorkerDefinition } from 'monaco-editor-workers';
 buildWorkerDefinition('../../../node_modules/monaco-editor-workers/dist/workers/', new URL('', window.location.href).href, false);
 
 let wrapper: MonacoEditorLanguageClientWrapper | undefined;
+let extended = false;
 
 const htmlElement = document.getElementById('monaco-editor-root');
 export const run = async () => {
@@ -26,7 +27,9 @@ export const run = async () => {
 export const startLangiumClientExtended = async () => {
     try {
         if (checkStarted()) return;
-        disableButton('button-start-classic');
+        extended = true;
+        disableButton('button-start-classic', true);
+        disableButton('button-start-extended', true);
         const config = await setupLangiumClientExtended();
         wrapper = new MonacoEditorLanguageClientWrapper();
         wrapper.start(config, htmlElement);
@@ -38,7 +41,8 @@ export const startLangiumClientExtended = async () => {
 export const startLangiumClientClassic = async () => {
     try {
         if (checkStarted()) return;
-        disableButton('button-start-extended');
+        disableButton('button-start-classic', true);
+        disableButton('button-start-extended', true);
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
         await wrapper.start(config, htmlElement!);
@@ -55,10 +59,10 @@ const checkStarted = () => {
     return false;
 };
 
-const disableButton = (id: string) => {
+const disableButton = (id: string, disabled: boolean) => {
     const button = document.getElementById(id) as HTMLButtonElement;
     if (button !== null) {
-        button.disabled = true;
+        button.disabled = disabled;
     }
 };
 
@@ -67,6 +71,11 @@ export const disposeEditor = async () => {
     wrapper.reportStatus();
     await wrapper.dispose();
     wrapper = undefined;
+    if (extended) {
+        disableButton('button-start-extended', false);
+    } else {
+        disableButton('button-start-classic', false);
+    }
 };
 
 export const loadLangiumWorker = () => {
