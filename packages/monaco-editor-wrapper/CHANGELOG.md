@@ -2,6 +2,13 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.4.0] - 2023-11-xy
+
+- Updated to `monaco-languageclient` `7.0.0`
+  - The postinstall step is removed. `monaco-languageclient` no longer patches an existing `monaco-editor` instead the package `@codingame/monaco-editor-treemended` is used. This requires that projects using this lib to enforce the correct `monaco-editor` with overrides (npm/pnpm) or resolutions (yarn) in the `package.json`.
+  - Please see the [following explanation](https://github.com/TypeFox/monaco-languageclient/blob/main/README.md#new-with-v7-treemended-monaco-editor)
+- make subclassing MonacoEditorReactComp more easy [#58](https://github.com/TypeFox/monaco-components/issues/58)
+
 ## [3.3.0] - 2023-10-17
 
 - Properly separate and define classic and extended editor [#54](https://github.com/TypeFox/monaco-components/pull/54)

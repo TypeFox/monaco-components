@@ -1,38 +1,47 @@
 {
   "name": "monaco-editor-wrapper-examples",
   "private": true,
-  "version": "3.3.0",
+  "version": "3.4.0-next.0",
   "type": "module",
   "dependencies": {
-    "@codingame/monaco-vscode-configuration-service-override": "~1.83.2",
-    "@codingame/monaco-vscode-editor-service-override": "~1.83.2",
-    "@codingame/monaco-vscode-json-default-extension": "~1.83.2",
-    "@codingame/monaco-vscode-keybindings-service-override": "~1.83.2",
-    "@codingame/monaco-vscode-python-default-extension": "~1.83.2",
-    "@typefox/monaco-editor-react": "~2.3.0",
+    "@codingame/monaco-vscode-configuration-service-override": "~1.83.5",
+    "@codingame/monaco-vscode-editor-service-override": "~1.83.5",
+    "@codingame/monaco-vscode-json-default-extension": "~1.83.5",
+    "@codingame/monaco-vscode-keybindings-service-override": "~1.83.5",
+    "@codingame/monaco-vscode-python-default-extension": "~1.83.5",
+    "@typefox/monaco-editor-react": "~2.4.0-next.0",
     "http-server": "~14.1.1",
-    "langium": "~2.0.2",
-    "langium-statemachine-dsl": "~2.0.0",
-    "monaco-editor": "~0.44.0",
+    "langium": "~2.1.1",
+    "langium-statemachine-dsl": "~2.1.0",
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.5 <1.84.0",
     "monaco-editor-workers": "~0.44.0",
-    "monaco-editor-wrapper": "~3.3.0",
-    "monaco-languageclient-examples": "~6.6.0",
+    "monaco-editor-wrapper": "~3.4.0-next.0",
+    "monaco-languageclient": "~7.0.0",
+    "monaco-languageclient-examples": "~7.0.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "request-light": "~0.7.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.2 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.5 <1.84.0",
     "vscode-uri": "~3.0.8",
-    "vscode-languageclient": "~8.1.0",
-    "vscode-languageserver": "~8.1.0",
+    "vscode-languageclient": "~9.0.1",
+    "vscode-languageserver": "~9.0.1",
     "vscode-json-languageservice": "~5.3.7"
   },
   "devDependencies": {
-    "@types/react": "~18.2.28",
-    "@types/react-dom": "~18.2.13",
+    "@types/react": "~18.2.37",
+    "@types/react-dom": "~18.2.15",
     "ts-node": "~10.9.1"
   },
+  "overrides": {
+    "monaco-editor": "$monaco-editor",
+    "vscode": "$vscode"
+  },
+  "resolutions": {
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.5 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.5 <1.84.0"
+  },
   "volta": {
-    "node": "18.18.1",
+    "node": "18.18.2",
     "npm": "9.9.0"
   },
   "scripts": {

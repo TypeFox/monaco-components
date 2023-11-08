@@ -1,7 +1,6 @@
 {
     "editor.guides.bracketPairs": true,
     "editor.formatOnSave": false,
-    "workbench.editor.revealIfOpen": true,
     "[javascript]": {
       "editor.formatOnSave": true
     },
@@ -25,6 +24,5 @@
     ],
     "[json]": {
       "editor.defaultFormatter": "vscode.json-language-features"
-    },
-    "typescript.tsdk": "node_modules\\typescript\\lib"
+    }
 }
