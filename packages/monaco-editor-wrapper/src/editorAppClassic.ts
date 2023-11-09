@@ -1,5 +1,5 @@
 import { editor, languages } from 'monaco-editor';
-import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isModelUpdateRequired } from './editorAppBase.js';
+import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isEqual, isModelUpdateRequired } from './editorAppBase.js';
 import { UserConfig } from './wrapper.js';
 import { Logger } from './logger.js';
 
@@ -91,7 +91,7 @@ export class EditorAppClassic extends EditorAppBase {
         type ClassicKeys = keyof typeof orgConfig;
         const propsClassic = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'languageDef', 'languageExtensionConfig', 'theme', 'themeData'];
         const propCompareClassic = (name: string) => {
-            return orgConfig[name as ClassicKeys] !== config[name as ClassicKeys];
+            return !isEqual(orgConfig[name as ClassicKeys], config[name as ClassicKeys]);
         };
         different = different || propsClassic.some(propCompareClassic);
         return different;
