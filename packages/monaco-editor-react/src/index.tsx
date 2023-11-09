@@ -35,6 +35,28 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
     }
 
     override async componentDidUpdate(prevProps: T) {
+        const { userConfig } = this.props;
+        const { wrapper } = this;
+
+        const mustReInit = this.isReInitRequired(prevProps);
+
+        if (mustReInit) {
+            await this.handleReinit();
+        } else {
+            // the function now ensure a model update is only required if something else than the code changed
+            this.wrapper.updateModel(userConfig.wrapperConfig.editorAppConfig);
+
+            const config = userConfig.wrapperConfig.editorAppConfig;
+            const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
+            if (prevConfig.$type === 'classic' && config.$type === 'classic') {
+                if (prevConfig.editorOptions !== config.editorOptions) {
+                    (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(config.editorOptions ?? {});
+                }
+            }
+        }
+    }
+
+    protected isReInitRequired(prevProps: T) {
         const { className, userConfig } = this.props;
         const { wrapper } = this;
 
@@ -43,8 +65,8 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         }
 
         let mustReInit = false;
-        const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
         const config = userConfig.wrapperConfig.editorAppConfig;
+        const prevConfig = prevProps.userConfig.wrapperConfig.editorAppConfig;
         const prevWorkerOptions = prevProps.userConfig.languageClientConfig?.options;
         const currentWorkerOptions = userConfig.languageClientConfig?.options;
         const prevIsWorker = (prevWorkerOptions?.$type === 'WorkerDirect');
@@ -69,18 +91,7 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
             mustReInit = (wrapper?.getMonacoEditorApp() as EditorAppExtended).isAppConfigDifferent(prevConfig, config, false) === true;
         }
 
-        if (mustReInit) {
-            await this.handleReinit();
-        } else {
-            // the function now ensure a model update is only required if something else than the code changed
-            this.wrapper.updateModel(userConfig.wrapperConfig.editorAppConfig);
-
-            if (prevConfig.$type === 'classic' && config.$type === 'classic') {
-                if (prevConfig.editorOptions !== config.editorOptions) {
-                    (wrapper.getMonacoEditorApp() as EditorAppClassic).updateMonacoEditorOptions(config.editorOptions ?? {});
-                }
-            }
-        }
+        return mustReInit;
     }
 
     override componentWillUnmount() {
