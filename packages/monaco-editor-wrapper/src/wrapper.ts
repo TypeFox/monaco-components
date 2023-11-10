@@ -1,6 +1,6 @@
 import { editor, Uri } from 'monaco-editor';
 import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
-import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
+import { initServices, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
 import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { ModelUpdate } from './editorAppBase.js';
@@ -53,8 +53,10 @@ export class MonacoEditorLanguageClientWrapper {
         } else {
             this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
         }
+
         // editorApps init their own service thats why they have to be created first
-        await this.initServices();
+        this.configureServices();
+        await initServices(this.serviceConfig);
 
         this.languageClientWrapper.init(this.editorApp.getConfig().languageId,
             userConfig.languageClientConfig, this.logger);
@@ -62,10 +64,10 @@ export class MonacoEditorLanguageClientWrapper {
         this.initDone = true;
     }
 
-    private async initServices() {
-        // always set required services if not configure
+    protected configureServices() {
+        // always set required services if not configured
         this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
-        const configureService = this.serviceConfig.userServices.configure;
+        const configureService = this.serviceConfig.userServices.configure ?? undefined;
 
         if (!configureService) {
             const mlcDefautServices = {
@@ -77,13 +79,6 @@ export class MonacoEditorLanguageClientWrapper {
 
         // overrule debug log flag
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
-
-        if (wasVscodeApiInitialized()) {
-            this.logger.debug('No service init on restart', this.serviceConfig.debugLogging);
-        } else {
-            this.logger.debug('Init Services', this.serviceConfig.debugLogging);
-            await initServices(this.serviceConfig);
-        }
     }
 
     async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {

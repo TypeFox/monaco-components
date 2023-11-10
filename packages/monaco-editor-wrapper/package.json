@@ -64,14 +64,14 @@
     "@codingame/monaco-vscode-theme-defaults-default-extension": "~1.83.5",
     "@codingame/monaco-vscode-theme-service-override": "~1.83.5",
     "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.5 <1.84.0",
-    "monaco-languageclient": "~7.0.0",
+    "monaco-languageclient": "~7.0.1",
     "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.5 <1.84.0",
     "vscode-languageclient": "~9.0.1",
     "vscode-languageserver-protocol":"~3.17.5",
     "vscode-ws-jsonrpc": "~3.1.0"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~7.0.0",
+    "monaco-languageclient": "~7.0.1",
     "vscode-ws-jsonrpc": "~3.1.0"
   },
   "overrides": {
