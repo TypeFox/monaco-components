@@ -10,7 +10,7 @@
     "watch": "tsc --build tsconfig.build.json --watch --verbose",
     "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
     "build": "npm run build --workspaces",
-    "test": "vitest -c vitest.config.ts",
+    "test": "node --experimental-import-meta-resolve ./node_modules/vitest/vitest.mjs -c vite.config.ts",
     "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
     "reset:repo": "git clean -f -X -d",
     "start:example:server:json": "npm run start:server:json --workspace packages/examples",
