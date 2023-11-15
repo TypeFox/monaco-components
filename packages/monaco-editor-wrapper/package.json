@@ -1,6 +1,6 @@
 {
   "name": "monaco-editor-wrapper",
-  "version": "3.4.0-next.5",
+  "version": "3.4.0-next.6",
   "license": "MIT",
   "description": "Monaco-Editor and Monaco Languageclient Wrapper",
   "keywords": [
@@ -58,20 +58,20 @@
     "npm": "9.9.0"
   },
   "dependencies": {
-    "@codingame/monaco-vscode-configuration-service-override": "~1.83.5",
-    "@codingame/monaco-vscode-editor-service-override": "~1.83.5",
-    "@codingame/monaco-vscode-textmate-service-override": "~1.83.5",
-    "@codingame/monaco-vscode-theme-defaults-default-extension": "~1.83.5",
-    "@codingame/monaco-vscode-theme-service-override": "~1.83.5",
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.5 <1.84.0",
-    "monaco-languageclient": "~7.0.1",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.5 <1.84.0",
+    "@codingame/monaco-vscode-configuration-service-override": "~1.83.7",
+    "@codingame/monaco-vscode-editor-service-override": "~1.83.7",
+    "@codingame/monaco-vscode-textmate-service-override": "~1.83.7",
+    "@codingame/monaco-vscode-theme-defaults-default-extension": "~1.83.7",
+    "@codingame/monaco-vscode-theme-service-override": "~1.83.7",
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
+    "monaco-languageclient": "~7.0.2",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0",
     "vscode-languageclient": "~9.0.1",
     "vscode-languageserver-protocol":"~3.17.5",
     "vscode-ws-jsonrpc": "~3.1.0"
   },
   "peerDependencies": {
-    "monaco-languageclient": "~7.0.1",
+    "monaco-languageclient": "~7.0.2",
     "vscode-ws-jsonrpc": "~3.1.0"
   },
   "overrides": {
@@ -79,8 +79,8 @@
     "vscode": "$vscode"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.5 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.5 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0"
   },
   "repository": {
     "type": "git",
