@@ -267,6 +267,11 @@ export const isModelUpdateRequired = (config: EditorAppConfigBase, modelUpdate: 
     return updateRequired ? ModelUpdateType.MODEL : codeUpdate;
 };
 
+/**
+ * The check for equality relies on JSON.stringify for instances of type Object.
+ * Everything else is directly compared.
+ * In this context, the check for equality is sufficient.
+ */
 export const isEqual = (obj1: unknown, obj2: unknown) => {
     if (obj1 instanceof Object && obj2 instanceof Object) {
         return JSON.stringify(obj1) === JSON.stringify(obj2);

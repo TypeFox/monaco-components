@@ -16,7 +16,7 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
     private wrapper: MonacoEditorLanguageClientWrapper = new MonacoEditorLanguageClientWrapper();
     private containerElement?: HTMLDivElement;
     private _subscription: IDisposable | null = null;
-    private isRestaring?: Promise<void>;
+    private isRestarting?: Promise<void>;
     private started: (value: void | PromiseLike<void>) => void;
 
     constructor(props: T) {
@@ -104,8 +104,8 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
 
     protected async destroyMonaco(): Promise<void> {
         if (this.wrapper) {
-            if (this.isRestaring) {
-                await this.isRestaring;
+            if (this.isRestarting) {
+                await this.isRestarting;
             }
             try {
                 await this.wrapper.dispose();
@@ -125,7 +125,7 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         } = this.props;
 
         // block "destroyMonaco" until start is complete
-        this.isRestaring = new Promise<void>((resolve) => {
+        this.isRestarting = new Promise<void>((resolve) => {
             this.started = resolve;
         });
         await this.wrapper.init(userConfig);
@@ -140,9 +140,9 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
 
-            await this.wrapper.startNoInit(this.containerElement);
+            await this.wrapper.noInitJustStart(this.containerElement);
             this.started();
-            this.isRestaring = undefined;
+            this.isRestarting = undefined;
 
             // once awaiting isStarting is done onLoad is called if available
             onLoad?.();

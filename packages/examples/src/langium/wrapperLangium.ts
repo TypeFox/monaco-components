@@ -32,7 +32,7 @@ export const startLangiumClientExtended = async () => {
         disableButton('button-start-extended', true);
         const config = await setupLangiumClientExtended();
         wrapper = new MonacoEditorLanguageClientWrapper();
-        wrapper.start(config, htmlElement);
+        wrapper.initAndStart(config, htmlElement);
     } catch (e) {
         console.log(e);
     }
@@ -45,7 +45,7 @@ export const startLangiumClientClassic = async () => {
         disableButton('button-start-extended', true);
         const config = await setupLangiumClientClassic();
         wrapper = new MonacoEditorLanguageClientWrapper();
-        await wrapper.start(config, htmlElement!);
+        await wrapper.initAndStart(config, htmlElement!);
     } catch (e) {
         console.log(e);
     }

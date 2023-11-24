@@ -34,6 +34,9 @@ export class MonacoEditorLanguageClientWrapper {
     private logger: Logger;
     private initDone = false;
 
+    /**
+     * Perform an isolated initialization of the user services and the languageclient wrapper (if used).
+     */
     async init(userConfig: UserConfig) {
         if (this.initDone) {
             throw new Error('init was already performed. Please call dispose first if you want to re-start.');
@@ -64,6 +67,9 @@ export class MonacoEditorLanguageClientWrapper {
         this.initDone = true;
     }
 
+    /**
+     * Child classes are allow to override the services configuration implementation.
+     */
     protected configureServices() {
         // always set required services if not configured
         this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
@@ -81,14 +87,20 @@ export class MonacoEditorLanguageClientWrapper {
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
     }
 
-    async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {
+    /**
+     * Performs a full user configuration and the languageclient wrapper (if used) init and then start the application.
+     */
+    async initAndStart(userConfig: UserConfig, htmlElement: HTMLElement | null) {
         await this.init(userConfig);
-        await this.startNoInit(htmlElement);
+        await this.noInitJustStart(htmlElement);
     }
 
-    async startNoInit(htmlElement: HTMLElement | null) {
+    /**
+     * Does not perform any user configuration or other application init and just starts the application.
+     */
+    async noInitJustStart(htmlElement: HTMLElement | null) {
         if (!this.initDone) {
-            throw new Error('No init was performed. Please call init() before startNoInit()');
+            throw new Error('No init was performed. Please call init() before noInitJustStart()');
         }
         if (!htmlElement) {
             throw new Error('No HTMLElement provided for monaco-editor.');
@@ -155,6 +167,9 @@ export class MonacoEditorLanguageClientWrapper {
         return status;
     }
 
+    /**
+     * Disposes all application and editor resources, plus the languageclient (if used).
+     */
     async dispose(): Promise<void> {
         this.editorApp?.disposeApp();
 
