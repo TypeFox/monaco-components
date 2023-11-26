@@ -42,8 +42,8 @@ describe('Test MonacoEditorLanguageClientWrapper', () => {
         createMonacoEditorDiv();
         const wrapper = new MonacoEditorLanguageClientWrapper();
         await expect(async () => {
-            await wrapper.noInitJustStart(document.getElementById('monaco-editor-root'));
-        }).rejects.toThrowError('No init was performed. Please call init() before noInitJustStart()');
+            await wrapper.start(document.getElementById('monaco-editor-root'));
+        }).rejects.toThrowError('No init was performed. Please call init() before start()');
     });
 
     test('Expected throw: Call normal start with prior init', async () => {

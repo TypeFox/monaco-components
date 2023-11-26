@@ -140,7 +140,7 @@ export class MonacoEditorReactComp<T extends MonacoEditorProps = MonacoEditorPro
         if (this.containerElement) {
             this.containerElement.className = className ?? '';
 
-            await this.wrapper.noInitJustStart(this.containerElement);
+            await this.wrapper.start(this.containerElement);
             this.started();
             this.isRestarting = undefined;
 

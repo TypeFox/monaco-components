@@ -92,15 +92,15 @@ export class MonacoEditorLanguageClientWrapper {
      */
     async initAndStart(userConfig: UserConfig, htmlElement: HTMLElement | null) {
         await this.init(userConfig);
-        await this.noInitJustStart(htmlElement);
+        await this.start(htmlElement);
     }
 
     /**
      * Does not perform any user configuration or other application init and just starts the application.
      */
-    async noInitJustStart(htmlElement: HTMLElement | null) {
+    async start(htmlElement: HTMLElement | null) {
         if (!this.initDone) {
-            throw new Error('No init was performed. Please call init() before noInitJustStart()');
+            throw new Error('No init was performed. Please call init() before start()');
         }
         if (!htmlElement) {
             throw new Error('No HTMLElement provided for monaco-editor.');
