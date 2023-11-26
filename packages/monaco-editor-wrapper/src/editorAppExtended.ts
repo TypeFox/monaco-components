@@ -3,7 +3,7 @@ import { IDisposable, editor } from 'monaco-editor';
 import getThemeServiceOverride from '@codingame/monaco-vscode-theme-service-override';
 import getTextmateServiceOverride from '@codingame/monaco-vscode-textmate-service-override';
 import { whenReady as whenReadyTheme } from '@codingame/monaco-vscode-theme-defaults-default-extension';
-import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isModelUpdateRequired } from './editorAppBase.js';
+import { EditorAppBase, EditorAppConfigBase, ModelUpdateType, isEqual, isModelUpdateRequired } from './editorAppBase.js';
 import { registerExtension, IExtensionManifest, ExtensionHostKind } from 'vscode/extensions';
 import { UserConfig } from './wrapper.js';
 import { verifyUrlorCreateDataUrl } from './utils.js';
@@ -113,7 +113,7 @@ export class EditorAppExtended extends EditorAppBase {
         const propsExtended = ['useDiffEditor', 'domReadOnly', 'readOnly', 'awaitExtensionReadiness', 'overrideAutomaticLayout', 'editorOptions', 'diffEditorOptions', 'userConfiguration', 'extensions'];
         type ExtendedKeys = keyof typeof orgConfig;
         const propCompareExtended = (name: string) => {
-            return orgConfig[name as ExtendedKeys] !== config[name as ExtendedKeys];
+            return !isEqual(orgConfig[name as ExtendedKeys], config[name as ExtendedKeys]);
         };
         different = different || propsExtended.some(propCompareExtended);
         return different;

@@ -1,6 +1,6 @@
 import { editor, Uri } from 'monaco-editor';
 import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
-import { initServices, wasVscodeApiInitialized, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
+import { initServices, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
 import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { ModelUpdate } from './editorAppBase.js';
@@ -29,24 +29,51 @@ export class MonacoEditorLanguageClientWrapper {
     private id: string;
 
     private editorApp: EditorAppClassic | EditorAppExtended | undefined;
-    private languageClientWrapper: LanguageClientWrapper;
+    private languageClientWrapper: LanguageClientWrapper = new LanguageClientWrapper();
     private serviceConfig: InitializeServiceConfig;
     private logger: Logger;
+    private initDone = false;
 
-    private init(userConfig: UserConfig) {
+    /**
+     * Perform an isolated initialization of the user services and the languageclient wrapper (if used).
+     */
+    async init(userConfig: UserConfig) {
+        if (this.initDone) {
+            throw new Error('init was already performed. Please call dispose first if you want to re-start.');
+        }
         if (userConfig.wrapperConfig.editorAppConfig.useDiffEditor && !userConfig.wrapperConfig.editorAppConfig.codeOriginal) {
             throw new Error('Use diff editor was used without a valid config.');
         }
+        // Always dispose old instances before start
+        this.editorApp?.disposeApp();
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.logger = new Logger(userConfig.loggerConfig);
         this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
+
+        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
+            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
+        } else {
+            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
+        }
+
+        // editorApps init their own service thats why they have to be created first
+        this.configureServices();
+        await initServices(this.serviceConfig);
+
+        this.languageClientWrapper.init(this.editorApp.getConfig().languageId,
+            userConfig.languageClientConfig, this.logger);
+
+        this.initDone = true;
     }
 
-    private async initServices() {
-        // always set required services if not configure
+    /**
+     * Child classes are allow to override the services configuration implementation.
+     */
+    protected configureServices() {
+        // always set required services if not configured
         this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
-        const configureService = this.serviceConfig.userServices.configure;
+        const configureService = this.serviceConfig.userServices.configure ?? undefined;
 
         if (!configureService) {
             const mlcDefautServices = {
@@ -58,37 +85,30 @@ export class MonacoEditorLanguageClientWrapper {
 
         // overrule debug log flag
         this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
-
-        if (wasVscodeApiInitialized()) {
-            this.logger.debug('No service init on restart', this.serviceConfig.debugLogging);
-        } else {
-            this.logger.debug('Init Services', this.serviceConfig.debugLogging);
-            await initServices(this.serviceConfig);
-        }
     }
 
-    async start(userConfig: UserConfig, htmlElement: HTMLElement | null) {
+    /**
+     * Performs a full user configuration and the languageclient wrapper (if used) init and then start the application.
+     */
+    async initAndStart(userConfig: UserConfig, htmlElement: HTMLElement | null) {
+        await this.init(userConfig);
+        await this.start(htmlElement);
+    }
+
+    /**
+     * Does not perform any user configuration or other application init and just starts the application.
+     */
+    async start(htmlElement: HTMLElement | null) {
+        if (!this.initDone) {
+            throw new Error('No init was performed. Please call init() before start()');
+        }
         if (!htmlElement) {
             throw new Error('No HTMLElement provided for monaco-editor.');
         }
-        // Always dispose old instances before start
-        this.editorApp?.disposeApp();
-
-        this.init(userConfig);
-
-        if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
-            this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
-        } else {
-            this.editorApp = new EditorAppExtended(this.id, userConfig, this.logger);
-        }
-        await this.initServices();
-
-        this.languageClientWrapper = new LanguageClientWrapper(this.editorApp.getConfig().languageId,
-            userConfig.languageClientConfig, this.logger);
 
         this.logger.info(`Starting monaco-editor (${this.id})`);
         await this.editorApp?.init();
-        await this.editorApp.createEditors(htmlElement);
+        await this.editorApp?.createEditors(htmlElement);
 
         if (this.languageClientWrapper.haveLanguageClientConfig()) {
             await this.languageClientWrapper.start();
@@ -147,6 +167,9 @@ export class MonacoEditorLanguageClientWrapper {
         return status;
     }
 
+    /**
+     * Disposes all application and editor resources, plus the languageclient (if used).
+     */
     async dispose(): Promise<void> {
         this.editorApp?.disposeApp();
 
@@ -158,6 +181,7 @@ export class MonacoEditorLanguageClientWrapper {
         else {
             await Promise.resolve('Monaco editor has been disposed.');
         }
+        this.initDone = false;
     }
 
     updateLayout() {

@@ -13,11 +13,11 @@ export default defineConfig({
         assetsDir: 'bundle/assets',
         emptyOutDir: true,
         cssCodeSplit: false,
+        sourcemap: true,
         rollupOptions: {
             output: {
                 name: 'monaco-editor-wrapper',
                 exports: 'named',
-                sourcemap: true,
                 assetFileNames: (assetInfo) => {
                     return `assets/${assetInfo.name}`;
                 }

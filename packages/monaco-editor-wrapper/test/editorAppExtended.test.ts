@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { verifyUrlorCreateDataUrl } from 'monaco-editor-wrapper';
+import { EditorAppConfigExtended, EditorAppExtended, verifyUrlorCreateDataUrl } from 'monaco-editor-wrapper';
+import { createBaseConfig, createEditorAppConfig } from './helper.js';
 
 describe('Test EditorAppExtended', () => {
 
@@ -14,4 +15,36 @@ describe('Test EditorAppExtended', () => {
         expect(verifyUrlorCreateDataUrl(text)).toBe(`data:text/plain;base64,${btoa(text)}`);
     });
 
+    test('config userConfiguration', () => {
+        const config = createBaseConfig('extended');
+        const appConfig = config.wrapperConfig.editorAppConfig as EditorAppConfigExtended;
+        appConfig.userConfiguration = {
+            json: '{ "editor.semanticHighlighting.enabled": true }'
+        };
+        const app = new EditorAppExtended('config defaults', config);
+        expect(app.getConfig().userConfiguration?.json).toEqual('{ "editor.semanticHighlighting.enabled": true }');
+    });
+
+    test('isAppConfigDifferent: basic', () => {
+        const orgConfig = createEditorAppConfig('extended') as EditorAppConfigExtended;
+        const config = createEditorAppConfig('extended') as EditorAppConfigExtended;
+        const app = new EditorAppExtended('test', createBaseConfig('extended'));
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeFalsy();
+
+        config.code = 'test';
+        expect(app.isAppConfigDifferent(orgConfig, config, true)).toBeTruthy();
+
+        config.code = '';
+        config.extensions = [{
+            config: {
+                name: 'Tester',
+                publisher: 'Tester',
+                version: '1.0.0',
+                engines: {
+                    vscode: '*'
+                }
+            }
+        }];
+        expect(app.isAppConfigDifferent(orgConfig, config, false)).toBeTruthy();
+    });
 });

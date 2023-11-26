@@ -63,6 +63,13 @@ export default defineConfig(() => {
         },
         define: {
             rootDirectory: JSON.stringify(__dirname)
+        },
+        test: {
+            browser: {
+                enabled: true,
+                headless: true,
+                name: 'chrome'
+            }
         }
     };
     return config;

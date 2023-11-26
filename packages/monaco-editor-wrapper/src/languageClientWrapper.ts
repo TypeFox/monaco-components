@@ -73,10 +73,10 @@ export class LanguageClientWrapper {
     private languageClientConfig?: LanguageClientConfig;
     private worker: Worker | undefined;
     private languageId: string;
-    private name;
+    private name?: string;
     private logger: Logger | undefined;
 
-    constructor(languageId: string, languageClientConfig?: LanguageClientConfig, logger?: Logger) {
+    init(languageId: string, languageClientConfig?: LanguageClientConfig, logger?: Logger) {
         this.languageId = languageId;
         if (languageClientConfig) {
             this.languageClientConfig = languageClientConfig;
@@ -292,11 +292,8 @@ export class LanguageClientWrapper {
             }
         }
         else {
-            const languageClientError: LanguageClientError = {
-                message: `languageClientWrapper (${this.name}): Unable to dispose monaco-languageclient: It is not yet started.`,
-                error: 'No error was provided.'
-            };
-            return Promise.reject(languageClientError);
+            // disposing the languageclient if it does not exist is considered ok
+            return Promise.resolve();
         }
     }
 

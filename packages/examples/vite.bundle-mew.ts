@@ -16,11 +16,11 @@ const config = defineConfig({
         commonjsOptions: {
             strictRequires: true
         },
+        sourcemap: true,
         rollupOptions: {
             output: {
                 name: 'mew',
                 exports: 'named',
-                sourcemap: true,
                 assetFileNames: (assetInfo) => {
                     return `assets/${assetInfo.name}`;
                 }

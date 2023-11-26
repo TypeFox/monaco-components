@@ -1,5 +1,6 @@
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution.js';
+import 'monaco-editor/esm/vs/language/typescript/monaco.contribution.js';
 import { EditorAppConfigClassic, LanguageClientError, MonacoEditorLanguageClientWrapper, UserConfig } from 'monaco-editor-wrapper';
 import { buildWorkerDefinition } from 'monaco-editor-workers';
 
@@ -96,16 +97,16 @@ const wrapper44Config: UserConfig = {
 };
 
 const startWrapper42 = async () => {
-    await wrapper42.start(wrapper42Config, document.getElementById('monaco-editor-root-42'));
+    await wrapper42.initAndStart(wrapper42Config, document.getElementById('monaco-editor-root-42'));
     console.log('wrapper42 was started.');
 };
 
 const startWrapper43 = async () => {
-    await wrapper43.start(wrapper43Config, document.getElementById('monaco-editor-root-43'));
+    await wrapper43.initAndStart(wrapper43Config, document.getElementById('monaco-editor-root-43'));
     console.log('wrapper43 was started.');
 };
 const startWrapper44 = async () => {
-    await wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
+    await wrapper44.initAndStart(wrapper44Config, document.getElementById('monaco-editor-root-44'));
     console.log('wrapper44 was started.');
 
 };
@@ -114,6 +115,7 @@ const sleepOne = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating editors after ${milliseconds}ms`);
 
+        await wrapper42.dispose();
         wrapper42Config.languageClientConfig = undefined;
         const appConfig42 = wrapper42Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig42.languageId = 'javascript';
@@ -121,7 +123,7 @@ const sleepOne = (milliseconds: number) => {
         appConfig42.code = `function logMe() {
     console.log('Hello swap editors!');
 };`;
-        const w42Start = wrapper42.start(wrapper42Config, document.getElementById('monaco-editor-root-42'));
+        const w42Start = wrapper42.initAndStart(wrapper42Config, document.getElementById('monaco-editor-root-42'));
 
         const w43Start = wrapper43.updateDiffModel({
             languageId: 'javascript',
@@ -129,6 +131,7 @@ const sleepOne = (milliseconds: number) => {
             codeOriginal: 'text 1234'
         });
 
+        await wrapper44.dispose();
         const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig44.languageId = 'text/plain';
         appConfig44.useDiffEditor = true;
@@ -137,7 +140,7 @@ const sleepOne = (milliseconds: number) => {
         // This affects all editors globally and is only effective
         // if it is not in contrast to one configured later
         appConfig44.theme = 'vs-light';
-        const w44Start = wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
+        const w44Start = wrapper44.initAndStart(wrapper44Config, document.getElementById('monaco-editor-root-44'));
 
         await w42Start;
         console.log('Restarted wrapper42.');
@@ -152,11 +155,11 @@ const sleepTwo = (milliseconds: number) => {
     setTimeout(async () => {
         alert(`Updating last editor after ${milliseconds}ms`);
 
+        await wrapper44.dispose();
         const appConfig44 = wrapper44Config.wrapperConfig.editorAppConfig as EditorAppConfigClassic;
         appConfig44.useDiffEditor = false;
         appConfig44.theme = 'vs-dark';
-
-        await wrapper44.start(wrapper44Config, document.getElementById('monaco-editor-root-44'));
+        await wrapper44.initAndStart(wrapper44Config, document.getElementById('monaco-editor-root-44'));
         console.log('Restarted wrapper44.');
     }, milliseconds);
 };

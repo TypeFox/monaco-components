@@ -2,6 +2,7 @@ import {
     EditorAppBase,
     isCodeUpdateRequired,
     isModelUpdateRequired,
+    isEqual,
     ModelUpdateType
 } from './editorAppBase.js';
 
@@ -92,6 +93,7 @@ export {
     EditorAppBase,
     isCodeUpdateRequired,
     isModelUpdateRequired,
+    isEqual,
     ModelUpdateType,
     EditorAppClassic,
     EditorAppExtended,
