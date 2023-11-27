@@ -50,10 +50,10 @@
     "npm": "9.9.0"
   },
   "dependencies": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
     "monaco-editor-wrapper": "~3.4.0-next.7",
     "react": "~18.2.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0"
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
   },
   "peerDependencies": {
     "monaco-editor-wrapper": "~3.4.0-next.7"
@@ -66,8 +66,8 @@
     "vscode": "$vscode"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
   },
   "repository": {
     "type": "git",

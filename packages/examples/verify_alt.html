@@ -51,7 +51,7 @@
                     }
                 }
             };
-            await wrapper.start(wrapperConfig, document.getElementById('monaco-editor-root'));
+            await wrapper.initAndStart(wrapperConfig, document.getElementById('monaco-editor-root'));
             console.log('wrapper was started.');
         };
 

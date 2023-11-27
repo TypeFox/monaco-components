@@ -20,11 +20,22 @@ export const setupLangiumClientClassic = async (): Promise<UserConfig> => {
         wrapperConfig: {
             serviceConfig: {
                 userServices: {
-                    ...getConfigurationServiceOverride(Uri.file('/workspace')),
+                    ...getConfigurationServiceOverride(),
                     ...getEditorServiceOverride(useOpenEditorStub),
                     ...getKeybindingsServiceOverride()
                 },
-                debugLogging: true
+                debugLogging: true,
+                workspaceConfig: {
+                    workspaceProvider: {
+                        trusted: true,
+                        workspace: {
+                            workspaceUri: Uri.file('/workspace')
+                        },
+                        async open() {
+                            return false;
+                        }
+                    }
+                }
             },
             editorAppConfig: {
                 $type: 'classic',

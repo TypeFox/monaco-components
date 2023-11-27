@@ -73,13 +73,32 @@ export class MonacoEditorLanguageClientWrapper {
     protected configureServices() {
         // always set required services if not configured
         this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
-        const configureService = this.serviceConfig.userServices.configure ?? undefined;
+        const configureService = this.serviceConfig.userServices.configurationService ?? undefined;
+        const workspaceConfig = this.serviceConfig.workspaceConfig ?? undefined;
 
         if (!configureService) {
             const mlcDefautServices = {
-                ...getConfigurationServiceOverride(Uri.file('/workspace'))
+                ...getConfigurationServiceOverride()
             };
             mergeServices(mlcDefautServices, this.serviceConfig.userServices);
+
+            if (workspaceConfig) {
+                throw new Error('You provided a workspaceConfig without using the configurationServiceOverride');
+            }
+        }
+        // adding the default workspace config if not provided
+        if (!workspaceConfig) {
+            this.serviceConfig.workspaceConfig = {
+                workspaceProvider: {
+                    trusted: true,
+                    workspace: {
+                        workspaceUri: Uri.file('/workspace')
+                    },
+                    async open() {
+                        return false;
+                    }
+                }
+            };
         }
         mergeServices(this.editorApp?.specifyServices() ?? {}, this.serviceConfig.userServices);
 

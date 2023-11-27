@@ -2,9 +2,11 @@
 
 All notable changes to npm module [@typefox/monaco-editor-react](https://www.npmjs.com/package/@typefox/monaco-editor-react) are documented in this file.
 
-## [2.4.0] - 2023-11-xy
+## [2.4.0] - 2023-11-27
 
 - Updated to `monaco-editor-wrapper` `3.4.0`
+- Make subclassing MonacoEditorReactComp more easy [#58](https://github.com/TypeFox/monaco-components/issues/58)
+- Allow to init and start separately [#59](https://github.com/TypeFox/monaco-components/issues/59)
 
 ## [2.3.0] - 2023-10-17
 

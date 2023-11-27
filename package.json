@@ -33,12 +33,12 @@
     "webdriverio": "~8.24.1"
   },
   "overrides": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.7 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.7 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
   },
   "volta": {
     "node": "18.18.2",

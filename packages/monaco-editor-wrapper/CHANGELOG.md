@@ -2,12 +2,15 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
-## [3.4.0] - 2023-11-xy
+## [3.4.0] - 2023-11-27
 
-- Updated to `monaco-languageclient` `7.0.0`
-  - The postinstall step is removed. `monaco-languageclient` no longer patches an existing `monaco-editor` instead the package `@codingame/monaco-editor-treemended` is used. This requires that projects using this lib to enforce the correct `monaco-editor` with overrides (npm/pnpm) or resolutions (yarn) in the `package.json`.
-  - Please see the [following explanation](https://github.com/TypeFox/monaco-languageclient/blob/main/README.md#new-with-v7-treemended-monaco-editor)
-- make subclassing MonacoEditorReactComp more easy [#58](https://github.com/TypeFox/monaco-components/issues/58)
+- Updated to `monaco-languageclient@7.1.0` and `monaco-vscode-api@1.83.12`.
+  - BREAKING: The postinstall step is removed. `monaco-languageclient` no longer patches an existing `monaco-editor` instead the package `@codingame/monaco-editor-treemended` is used. This requires that projects using this lib to enforce the correct `monaco-editor` with overrides (npm/pnpm) or resolutions (yarn) in the `package.json`.
+    - Please see the [following explanation](https://github.com/TypeFox/monaco-languageclient/blob/main/README.md#new-with-v7-treemended-monaco-editor)
+  - BREAKING: If you want to use `getConfigurationServiceOverride` you need to provide a `workspaceConfig` along the `userServices` in `initServices`.
+- Make subclassing MonacoEditorReactComp more easy [#58](https://github.com/TypeFox/monaco-components/issues/58)
+- Allow to init and start separately [#59](https://github.com/TypeFox/monaco-components/issues/59)
+  - BREAKING: `start` no longer calls `init`. You need to call both or you use `initAndStart`.
 
 ## [3.3.0] - 2023-10-17
 

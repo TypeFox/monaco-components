@@ -79,7 +79,7 @@ const run = async () => {
   };
 
   const htmlElement = document.getElementById('monaco-editor-root');
-  await wrapper.start(userConfig, htmlElement);
+  await wrapper.initAndStart(userConfig, htmlElement);
 }
 ```
 
