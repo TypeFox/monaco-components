@@ -1,6 +1,6 @@
 import { editor, Uri } from 'monaco-editor';
 import getConfigurationServiceOverride from '@codingame/monaco-vscode-configuration-service-override';
-import { initServices, InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
+import { InitializeServiceConfig, MonacoLanguageClient, mergeServices } from 'monaco-languageclient';
 import { EditorAppExtended, EditorAppConfigExtended } from './editorAppExtended.js';
 import { EditorAppClassic, EditorAppConfigClassic } from './editorAppClassic.js';
 import { ModelUpdate } from './editorAppBase.js';
@@ -30,7 +30,6 @@ export class MonacoEditorLanguageClientWrapper {
 
     private editorApp: EditorAppClassic | EditorAppExtended | undefined;
     private languageClientWrapper: LanguageClientWrapper = new LanguageClientWrapper();
-    private serviceConfig: InitializeServiceConfig;
     private logger: Logger;
     private initDone = false;
 
@@ -49,8 +48,7 @@ export class MonacoEditorLanguageClientWrapper {
 
         this.id = userConfig.id ?? Math.floor(Math.random() * 101).toString();
         this.logger = new Logger(userConfig.loggerConfig);
-        this.serviceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
-
+        const serviceConfig: InitializeServiceConfig = userConfig.wrapperConfig.serviceConfig ?? {};
         if (userConfig.wrapperConfig.editorAppConfig.$type === 'classic') {
             this.editorApp = new EditorAppClassic(this.id, userConfig, this.logger);
         } else {
@@ -58,11 +56,14 @@ export class MonacoEditorLanguageClientWrapper {
         }
 
         // editorApps init their own service thats why they have to be created first
-        this.configureServices();
-        await initServices(this.serviceConfig);
+        this.configureServices(serviceConfig);
 
-        this.languageClientWrapper.init(this.editorApp.getConfig().languageId,
-            userConfig.languageClientConfig, this.logger);
+        await this.languageClientWrapper.init({
+            languageId: this.editorApp.getConfig().languageId,
+            serviceConfig,
+            languageClientConfig: userConfig.languageClientConfig,
+            logger: this.logger
+        });
 
         this.initDone = true;
     }
@@ -70,17 +71,17 @@ export class MonacoEditorLanguageClientWrapper {
     /**
      * Child classes are allow to override the services configuration implementation.
      */
-    protected configureServices() {
+    protected configureServices(serviceConfig: InitializeServiceConfig) {
         // always set required services if not configured
-        this.serviceConfig.userServices = this.serviceConfig.userServices ?? {};
-        const configureService = this.serviceConfig.userServices.configurationService ?? undefined;
-        const workspaceConfig = this.serviceConfig.workspaceConfig ?? undefined;
+        serviceConfig.userServices = serviceConfig.userServices ?? {};
+        const configureService = serviceConfig.userServices.configurationService ?? undefined;
+        const workspaceConfig = serviceConfig.workspaceConfig ?? undefined;
 
         if (!configureService) {
             const mlcDefautServices = {
                 ...getConfigurationServiceOverride()
             };
-            mergeServices(mlcDefautServices, this.serviceConfig.userServices);
+            mergeServices(mlcDefautServices, serviceConfig.userServices);
 
             if (workspaceConfig) {
                 throw new Error('You provided a workspaceConfig without using the configurationServiceOverride');
@@ -88,7 +89,7 @@ export class MonacoEditorLanguageClientWrapper {
         }
         // adding the default workspace config if not provided
         if (!workspaceConfig) {
-            this.serviceConfig.workspaceConfig = {
+            serviceConfig.workspaceConfig = {
                 workspaceProvider: {
                     trusted: true,
                     workspace: {
@@ -100,10 +101,10 @@ export class MonacoEditorLanguageClientWrapper {
                 }
             };
         }
-        mergeServices(this.editorApp?.specifyServices() ?? {}, this.serviceConfig.userServices);
+        mergeServices(this.editorApp?.specifyServices() ?? {}, serviceConfig.userServices);
 
         // overrule debug log flag
-        this.serviceConfig.debugLogging = this.logger.isEnabled() && (this.serviceConfig.debugLogging || this.logger.isDebugEnabled());
+        serviceConfig.debugLogging = this.logger.isEnabled() && (serviceConfig.debugLogging || this.logger.isDebugEnabled());
     }
 
     /**
@@ -156,6 +157,10 @@ export class MonacoEditorLanguageClientWrapper {
 
     getDiffEditor(): editor.IStandaloneDiffEditor | undefined {
         return this.editorApp?.getDiffEditor();
+    }
+
+    getLanguageClientWrapper(): LanguageClientWrapper | undefined {
+        return this.languageClientWrapper;
     }
 
     getLanguageClient(): MonacoLanguageClient | undefined {

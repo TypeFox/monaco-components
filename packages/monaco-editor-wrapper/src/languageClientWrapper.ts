@@ -1,4 +1,4 @@
-import { MonacoLanguageClient } from 'monaco-languageclient';
+import { initServices, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
 import { CloseAction, ErrorAction, MessageTransports, State } from 'vscode-languageclient/lib/common/client.js';
@@ -48,11 +48,13 @@ export type WorkerConfigOptions = LanguageClientConfigBase & {
     $type: 'WorkerConfig'
     url: URL;
     type: 'classic' | 'module';
+    messagePort?: MessagePort;
 };
 
 export type WorkerConfigDirect = LanguageClientConfigBase & {
     $type: 'WorkerDirect';
     worker: Worker;
+    messagePort?: MessagePort;
 };
 
 export type LanguageClientConfig = {
@@ -69,20 +71,28 @@ export type LanguageClientError = {
 
 export class LanguageClientWrapper {
 
-    private languageClient: MonacoLanguageClient | undefined;
+    private languageClient?: MonacoLanguageClient;
     private languageClientConfig?: LanguageClientConfig;
-    private worker: Worker | undefined;
+    private worker?: Worker;
+    private port: MessagePort;
     private languageId: string;
     private name?: string;
     private logger: Logger | undefined;
 
-    init(languageId: string, languageClientConfig?: LanguageClientConfig, logger?: Logger) {
-        this.languageId = languageId;
-        if (languageClientConfig) {
-            this.languageClientConfig = languageClientConfig;
+    async init(config: {
+        languageId: string,
+        serviceConfig?: InitializeServiceConfig,
+        languageClientConfig?: LanguageClientConfig,
+        logger?: Logger
+    }) {
+        this.languageId = config.languageId;
+        if (config.languageClientConfig) {
+            this.languageClientConfig = config.languageClientConfig;
             this.name = this.languageClientConfig.options.name ?? 'unnamed';
         }
-        this.logger = logger;
+        this.logger = config.logger;
+
+        await initServices(config.serviceConfig);
     }
 
     haveLanguageClient(): boolean {
@@ -189,10 +199,14 @@ export class LanguageClientWrapper {
                         const workerDirectConfig = lcConfig as WorkerConfigDirect;
                         this.worker = workerDirectConfig.worker;
                     }
+                    if (lcConfig?.messagePort) {
+                        this.port = lcConfig?.messagePort;
+                    }
                 }
+
                 const messageTransports = {
-                    reader: new BrowserMessageReader(this.worker),
-                    writer: new BrowserMessageWriter(this.worker)
+                    reader: new BrowserMessageReader(this.port ? this.port : this.worker),
+                    writer: new BrowserMessageWriter(this.port ? this.port : this.worker)
                 };
                 this.handleLanguageClientStart(messageTransports, resolve, reject);
             }

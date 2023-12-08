@@ -65,10 +65,19 @@ export default defineConfig(() => {
             rootDirectory: JSON.stringify(__dirname)
         },
         test: {
+            pool: 'threads',
+            poolOptions: {
+                threads: {
+                    isolate: true
+                }
+            },
             browser: {
                 enabled: true,
                 headless: true,
-                name: 'chrome'
+                name: 'chrome',
+                api: {
+                    port: 20101
+                }
             }
         }
     };

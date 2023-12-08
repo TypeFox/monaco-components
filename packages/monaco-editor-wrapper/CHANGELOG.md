@@ -2,6 +2,13 @@
 
 All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/package/monaco-editor-wrapper) are documented in this file.
 
+## [3.5.0] - 2023-11-07
+
+- Updated to `monaco-languageclient@7.2.0` and `monaco-vscode-api@1.83.16`.
+- Introduce capability to use a `MessagePort` as end-point for a languageclient
+- Use vitest v1 for tests
+- Move `initServices` from `MonacoEditorLanguageClientWrapper` to `LanguageClientWrapper`
+
 ## [3.4.0] - 2023-11-27
 
 - Updated to `monaco-languageclient@7.1.0` and `monaco-vscode-api@1.83.12`.

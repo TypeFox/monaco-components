@@ -17,7 +17,7 @@ describe('Test EditorAppBase', () => {
     test('config defaults', () => {
         const config = createBaseConfig('classic');
         const app = new EditorAppClassic('config defaults', config);
-        expect(app.getConfig().languageId).toEqual('typescript');
+        expect(app.getConfig().languageId).toEqual('my-lang');
         expect(app.getConfig().code).toEqual('');
         expect(app.getConfig().codeOriginal).toEqual('');
         expect(app.getConfig().useDiffEditor).toBeFalsy();
@@ -29,13 +29,13 @@ describe('Test EditorAppBase', () => {
 
     test('isModelUpdateRequired', () => {
         const config = createEditorAppConfig('classic');
-        let modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript', code: '' });
+        let modelUpdateType = isModelUpdateRequired(config, { languageId: 'my-lang', code: '' });
         expect(modelUpdateType).toBe(ModelUpdateType.NONE);
 
-        modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript' });
+        modelUpdateType = isModelUpdateRequired(config, { languageId: 'my-lang' });
         expect(modelUpdateType).toBe(ModelUpdateType.NONE);
 
-        modelUpdateType = isModelUpdateRequired(config, { languageId: 'typescript', code: 'test' });
+        modelUpdateType = isModelUpdateRequired(config, { languageId: 'my-lang', code: 'test' });
         expect(modelUpdateType).toBe(ModelUpdateType.CODE);
 
         modelUpdateType = isModelUpdateRequired(config, { languageId: 'javascript', code: 'test' });

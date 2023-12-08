@@ -1,34 +1,34 @@
 {
   "name": "monaco-editor-wrapper-examples",
   "private": true,
-  "version": "3.4.0",
+  "version": "3.5.0",
   "type": "module",
   "dependencies": {
-    "@codingame/monaco-vscode-configuration-service-override": "~1.83.12",
-    "@codingame/monaco-vscode-editor-service-override": "~1.83.12",
-    "@codingame/monaco-vscode-json-default-extension": "~1.83.12",
-    "@codingame/monaco-vscode-keybindings-service-override": "~1.83.12",
-    "@codingame/monaco-vscode-python-default-extension": "~1.83.12",
-    "@typefox/monaco-editor-react": "~2.4.0",
+    "@codingame/monaco-vscode-configuration-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-editor-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-json-default-extension": "~1.83.16",
+    "@codingame/monaco-vscode-keybindings-service-override": "~1.83.16",
+    "@codingame/monaco-vscode-python-default-extension": "~1.83.16",
+    "@typefox/monaco-editor-react": "~2.5.0",
     "http-server": "~14.1.1",
     "langium": "~2.1.3",
     "langium-statemachine-dsl": "~2.1.0",
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
     "monaco-editor-workers": "~0.44.0",
-    "monaco-editor-wrapper": "~3.4.0",
-    "monaco-languageclient": "~7.1.0",
-    "monaco-languageclient-examples": "~7.1.0",
+    "monaco-editor-wrapper": "~3.5.0",
+    "monaco-languageclient": "~7.2.0",
+    "monaco-languageclient-examples": "~7.2.0",
     "react": "~18.2.0",
     "react-dom": "~18.2.0",
     "request-light": "~0.7.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0",
     "vscode-uri": "~3.0.8",
     "vscode-languageclient": "~9.0.1",
     "vscode-languageserver": "~9.0.1",
     "vscode-json-languageservice": "~5.3.7"
   },
   "devDependencies": {
-    "@types/react": "~18.2.38",
+    "@types/react": "~18.2.42",
     "@types/react-dom": "~18.2.17",
     "ts-node": "~10.9.1"
   },
@@ -37,12 +37,12 @@
     "vscode": "$vscode"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
   },
   "volta": {
-    "node": "18.18.2",
-    "npm": "9.9.0"
+    "node": "20.10.0",
+    "npm": "10.2.3"
   },
   "scripts": {
     "clean": "shx rm -rf ./dist ./libs *.tsbuildinfo",
@@ -50,9 +50,8 @@
     "copy:prepare": "shx mkdir -p ./libs",
     "copy:workers": "shx cp -fr ../../node_modules/monaco-editor-workers/dist ./libs/monaco-editor-workers",
     "copy:all": "npm run copy:prepare && npm run copy:workers",
-    "build:worker": "vite-node ./build/buildWorker.mts -- --script iife ../../node_modules/langium-statemachine-dsl/out/language-server/main-browser.js ./dist/worker/statemachineServerWorker.js",
     "build:bundle:wrapper": "vite --config  vite.bundle-mew.ts build",
-    "build": "npm run clean && npm run compile && npm run build:worker && npm run build:bundle:wrapper && npm run copy:all",
+    "build": "npm run clean && npm run compile && npm run build:bundle:wrapper && npm run copy:all",
     "start": "http-server --port 20002 ./",
     "start:server:json": "node --loader ts-node/esm ./src/servers/json-server.ts",
     "start:server:python": "node --loader ts-node/esm ./src/servers/python-server.ts"

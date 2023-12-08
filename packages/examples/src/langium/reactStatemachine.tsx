@@ -4,10 +4,11 @@ import { MonacoEditorReactComp } from '@typefox/monaco-editor-react';
 import { createLangiumGlobalConfig } from './config/wrapperStatemachineConfig.js';
 
 import { buildWorkerDefinition } from 'monaco-editor-workers';
+import { loadStatemachinWorkerRegular } from './wrapperStatemachine.js';
 buildWorkerDefinition('../../../../node_modules/monaco-editor-workers/dist/workers', import.meta.url, false);
 
 const startEditor = async () => {
-    const langiumGlobalConfig = await createLangiumGlobalConfig();
+    const langiumGlobalConfig = await createLangiumGlobalConfig(loadStatemachinWorkerRegular());
     const comp = <MonacoEditorReactComp
         userConfig={langiumGlobalConfig}
         style={{

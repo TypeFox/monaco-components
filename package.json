@@ -11,38 +11,38 @@
     "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
     "build": "npm run build --workspaces",
     "test": "node --experimental-import-meta-resolve ./node_modules/vitest/vitest.mjs -c vite.config.ts",
-    "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build",
+    "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build && npm run test",
     "reset:repo": "git clean -f -X -d",
     "start:example:server:json": "npm run start:server:json --workspace packages/examples",
     "start:example:server:python": "npm run start:server:python --workspace packages/examples"
   },
   "devDependencies": {
-    "@types/node": "~18.18.13",
+    "@types/node": "~20.10.4",
     "@types/shelljs": "~0.8.15",
     "@types/vscode": "~1.83.3",
-    "@typescript-eslint/eslint-plugin": "~6.12.0",
-    "@typescript-eslint/parser": "~6.12.0",
-    "@vitest/browser": "~0.34.6",
+    "@typescript-eslint/eslint-plugin": "~6.13.2",
+    "@typescript-eslint/parser": "~6.13.2",
+    "@vitest/browser": "~1.0.2",
     "editorconfig": "~2.0.0",
-    "eslint": "~8.54.0",
+    "eslint": "~8.55.0",
     "shelljs": "~0.8.5",
     "shx": "~0.3.4",
-    "typescript": "~5.3.2",
-    "vite": "~5.0.2",
-    "vitest": "~0.34.6",
-    "webdriverio": "~8.24.1"
+    "typescript": "~5.3.3",
+    "vite": "~5.0.6",
+    "vitest": "~1.0.2",
+    "webdriverio": "~8.24.12"
   },
   "overrides": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.12 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.12 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
   },
   "volta": {
-    "node": "18.18.2",
-    "npm": "9.9.0"
+    "node": "20.10.0",
+    "npm": "10.2.3"
   },
   "workspaces": [
     "packages/monaco-editor-wrapper",

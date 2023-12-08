@@ -1,21 +1,28 @@
 import { describe, expect, test } from 'vitest';
-import { LanguageClientConfig, LanguageClientWrapper } from 'monaco-editor-wrapper';
+import { createBaseConfig, createWrapper } from './helper.js';
 
 describe('Test LanguageClientWrapper', () => {
 
-    test('Not Running after construction', () => {
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang');
-        expect(languageClientWrapper.haveLanguageClient()).toBeFalsy();
-        expect(languageClientWrapper.haveLanguageClientConfig()).toBeFalsy();
-        expect(languageClientWrapper.isStarted()).toBeFalsy();
+    test('Not Running after construction', async () => {
+        const wrapper = await createWrapper(createBaseConfig('extended'));
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
+
+        expect(languageClientWrapper!.haveLanguageClient()).toBeFalsy();
+        expect(languageClientWrapper!.haveLanguageClientConfig()).toBeFalsy();
+        expect(languageClientWrapper!.isStarted()).toBeFalsy();
     });
 
     test('Constructor: no config', async () => {
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang');
+        const wrapper = await createWrapper(createBaseConfig('extended'));
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
+
+        console.log(window.MonacoEnvironment);
         expect(async () => {
-            await languageClientWrapper.start();
+            await languageClientWrapper!.start();
         }).rejects.toEqual({
             message: 'languageClientWrapper (undefined): Unable to start monaco-languageclient. No configuration was provided.',
             error: 'No error was provided.'
@@ -39,48 +46,60 @@ describe('Test LanguageClientWrapper', () => {
         });
 
         // setup the wrapper
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang', {
+        const config = createBaseConfig('extended');
+        config.languageClientConfig = {
             options: {
                 $type: 'WorkerDirect',
                 worker
             }
-        });
+        };
+        const wrapper = await createWrapper(config);
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
 
         // start up & verify (don't wait for start to finish, just roll past it, we only care about the worker)
-        languageClientWrapper.start();
-        expect(languageClientWrapper.getWorker()).toBeTruthy();
+        languageClientWrapper!.start();
+        expect(languageClientWrapper!.getWorker()).toBeTruthy();
 
         // dispose & verify
-        languageClientWrapper.disposeLanguageClient();
-        expect(languageClientWrapper.getWorker()).toBeUndefined();
+        languageClientWrapper!.disposeLanguageClient();
+        expect(languageClientWrapper!.getWorker()).toBeDefined();
         // no further way to verify post-terminate, but the worker should be disposed once no longer present
     });
 
     test('Constructor: config', async () => {
-        const languageClientConfig: LanguageClientConfig = {
+        const config = createBaseConfig('extended');
+        config.languageClientConfig = {
             options: {
                 $type: 'WebSocketUrl',
                 url: 'ws://localhost:12345/Tester'
             }
         };
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang', languageClientConfig);
-        expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
+        const wrapper = await createWrapper(config);
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
+
+        expect(languageClientWrapper!.haveLanguageClientConfig()).toBeTruthy();
     });
 
     test('Start: unreachable url', async () => {
-        const languageClientConfig: LanguageClientConfig = {
+        const config = createBaseConfig('extended');
+        config.languageClientConfig = {
             options: {
                 $type: 'WebSocketUrl',
                 url: 'ws://localhost:12345/Tester',
                 name: 'test-unreachable'
             }
         };
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang', languageClientConfig);
-        expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
-        await expect(languageClientWrapper.start()).rejects.toEqual({
+        const wrapper = await createWrapper(config);
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
+
+        expect(languageClientWrapper!.haveLanguageClientConfig()).toBeTruthy();
+        await expect(languageClientWrapper!.start()).rejects.toEqual({
             message: 'languageClientWrapper (test-unreachable): Websocket connection failed.',
             error: 'No error was provided.'
         });
@@ -98,17 +117,21 @@ describe('Test LanguageClientWrapper', () => {
     });
 
     test('Start: unreachable worker url', async () => {
-        const languageClientConfig: LanguageClientConfig = {
+        const config = createBaseConfig('extended');
+        config.languageClientConfig = {
             options: {
                 $type: 'WorkerConfig',
-                url: new URL('http://localhost:5173'),
+                url: new URL('http://localhost:20101'),
                 type: 'classic'
             }
         };
-        const languageClientWrapper = new LanguageClientWrapper();
-        languageClientWrapper.init('my-lang', languageClientConfig);
-        expect(languageClientWrapper.haveLanguageClientConfig()).toBeTruthy();
-        await expect(languageClientWrapper.start()).rejects.toEqual({
+        const wrapper = await createWrapper(config);
+
+        const languageClientWrapper = wrapper.getLanguageClientWrapper();
+        expect(languageClientWrapper).toBeDefined();
+
+        expect(languageClientWrapper!.haveLanguageClientConfig()).toBeTruthy();
+        await expect(languageClientWrapper!.start()).rejects.toEqual({
             message: 'languageClientWrapper (unnamed): Illegal worker configuration detected. Potentially the url is wrong.',
             error: 'No error was provided.'
         });

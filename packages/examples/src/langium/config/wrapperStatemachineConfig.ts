@@ -2,10 +2,9 @@ import getEditorServiceOverride from '@codingame/monaco-vscode-editor-service-ov
 import getKeybindingsServiceOverride from '@codingame/monaco-vscode-keybindings-service-override';
 import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
-import { loadStatemachinWorker } from '../wrapperStatemachine.js';
 import { getTextContent } from '../../common.js';
 
-export const createLangiumGlobalConfig = async (): Promise<UserConfig> => {
+export const createLangiumGlobalConfig = async (worker: Worker, port?: MessagePort): Promise<UserConfig> => {
     const code = await getTextContent(new URL('./src/langium/content/example.statemachine', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
@@ -13,8 +12,6 @@ export const createLangiumGlobalConfig = async (): Promise<UserConfig> => {
     const responseStatemachineTm = new URL('../../../node_modules/langium-statemachine-dsl/syntaxes/statemachine.tmLanguage.json', window.location.href);
     extensionFilesOrContents.set('/statemachine-configuration.json', statemachineLanguageConfig);
     extensionFilesOrContents.set('/statemachine-grammar.json', responseStatemachineTm);
-
-    const stateMachineWorker = loadStatemachinWorker();
 
     return {
         wrapperConfig: {
@@ -66,7 +63,8 @@ export const createLangiumGlobalConfig = async (): Promise<UserConfig> => {
         languageClientConfig: {
             options: {
                 $type: 'WorkerDirect',
-                worker: stateMachineWorker
+                worker,
+                messagePort: port
             }
         }
     };
