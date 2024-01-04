@@ -29,7 +29,7 @@ export class MonacoEditorLanguageClientWrapper {
     private id: string;
 
     private editorApp: EditorAppClassic | EditorAppExtended | undefined;
-    private languageClientWrapper: LanguageClientWrapper = new LanguageClientWrapper();
+    private languageClientWrapper?: LanguageClientWrapper;
     private logger: Logger;
     private initDone = false;
 
@@ -58,6 +58,7 @@ export class MonacoEditorLanguageClientWrapper {
         // editorApps init their own service thats why they have to be created first
         this.configureServices(serviceConfig);
 
+        this.languageClientWrapper = new LanguageClientWrapper();
         await this.languageClientWrapper.init({
             languageId: this.editorApp.getConfig().languageId,
             serviceConfig,
@@ -130,7 +131,7 @@ export class MonacoEditorLanguageClientWrapper {
         await this.editorApp?.init();
         await this.editorApp?.createEditors(htmlElement);
 
-        if (this.languageClientWrapper.haveLanguageClientConfig()) {
+        if (this.languageClientWrapper?.haveLanguageClientConfig()) {
             await this.languageClientWrapper.start();
         }
     }
@@ -141,7 +142,7 @@ export class MonacoEditorLanguageClientWrapper {
             return false;
         }
 
-        if (this.languageClientWrapper.haveLanguageClient()) {
+        if (this.languageClientWrapper?.haveLanguageClient()) {
             return this.languageClientWrapper.isStarted();
         }
         return true;
@@ -164,7 +165,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     getLanguageClient(): MonacoLanguageClient | undefined {
-        return this.languageClientWrapper.getLanguageClient();
+        return this.languageClientWrapper?.getLanguageClient();
     }
 
     getModel(original?: boolean): editor.ITextModel | undefined {
@@ -172,7 +173,7 @@ export class MonacoEditorLanguageClientWrapper {
     }
 
     getWorker(): Worker | undefined {
-        return this.languageClientWrapper.getWorker();
+        return this.languageClientWrapper?.getWorker();
     }
 
     async updateModel(modelUpdate: ModelUpdate): Promise<void> {
@@ -197,7 +198,7 @@ export class MonacoEditorLanguageClientWrapper {
     async dispose(): Promise<void> {
         this.editorApp?.disposeApp();
 
-        if (this.languageClientWrapper.haveLanguageClient()) {
+        if (this.languageClientWrapper?.haveLanguageClient()) {
             await this.languageClientWrapper.disposeLanguageClient(false);
             this.editorApp = undefined;
             await Promise.resolve('Monaco editor and languageclient completed disposed.');

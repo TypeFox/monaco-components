@@ -11,7 +11,8 @@
     "lint": "eslint {**/src/**/*.ts,**/src/**/*.tsx,**/test/**/*.ts,**/test/**/*.tsx}",
     "build": "npm run build --workspaces",
     "test": "node --experimental-import-meta-resolve ./node_modules/vitest/vitest.mjs -c vite.config.ts",
-    "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build && npm run test",
+    "test:run": "node --experimental-import-meta-resolve ./node_modules/vitest/vitest.mjs -c vite.config.ts --run",
+    "release:prepare": "npm run reset:repo && npm ci && npm run lint && npm run build && npm run test:run",
     "reset:repo": "git clean -f -X -d",
     "start:example:server:json": "npm run start:server:json --workspace packages/examples",
     "start:example:server:python": "npm run start:server:python --workspace packages/examples"
