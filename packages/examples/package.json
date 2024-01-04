@@ -52,7 +52,7 @@
     "copy:all": "npm run copy:prepare && npm run copy:workers",
     "build:bundle:wrapper": "vite --config  vite.bundle-mew.ts build",
     "build": "npm run clean && npm run compile && npm run build:bundle:wrapper && npm run copy:all",
-    "start": "http-server --port 20002 ./",
+    "start:http": "http-server --port 20002 ./",
     "start:server:json": "node --loader ts-node/esm ./src/servers/json-server.ts",
     "start:server:python": "node --loader ts-node/esm ./src/servers/python-server.ts"
   }

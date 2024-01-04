@@ -41,7 +41,9 @@ const userConfig: UserConfig = {
                 },
                 reportStatus: true,
             }
-        }, configurationOptions: {
+        },
+        clientOptions: {
+            documentSelector: ['python'],
             workspaceFolder: {
                 index: 0,
                 name: 'workspace',

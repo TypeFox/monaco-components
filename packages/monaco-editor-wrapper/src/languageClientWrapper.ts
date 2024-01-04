@@ -1,9 +1,8 @@
-import { initServices, InitializeServiceConfig, MonacoLanguageClient } from 'monaco-languageclient';
+import { initServices, InitializeServiceConfig, MonacoLanguageClient, IConnectionProvider } from 'monaco-languageclient';
 import { toSocket, WebSocketMessageReader, WebSocketMessageWriter } from 'vscode-ws-jsonrpc';
 import { BrowserMessageReader, BrowserMessageWriter } from 'vscode-languageserver-protocol/browser.js';
-import { CloseAction, ErrorAction, MessageTransports, State } from 'vscode-languageclient/lib/common/client.js';
+import { CloseAction, ErrorAction, LanguageClientOptions, MessageTransports, State } from 'vscode-languageclient/lib/common/client.js';
 import { createUrl } from './utils.js';
-import { $ConfigurationOptions } from 'vscode-languageclient/lib/common/configuration.js';
 import { Logger } from './logger.js';
 
 export type WebSocketCallOptions = {
@@ -59,9 +58,8 @@ export type WorkerConfigDirect = LanguageClientConfigBase & {
 
 export type LanguageClientConfig = {
     options: WebSocketConfigOptions | WebSocketConfigOptionsUrl | WorkerConfigOptions | WorkerConfigDirect;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    initializationOptions?: any;
-    configurationOptions?: $ConfigurationOptions
+    clientOptions?: LanguageClientOptions;
+    connectionProvider?: IConnectionProvider;
 }
 
 export type LanguageClientError = {
@@ -251,28 +249,30 @@ export class LanguageClientWrapper {
     }
 
     private createLanguageClient(transports: MessageTransports): MonacoLanguageClient {
-        return new MonacoLanguageClient({
+        const mlcConfig = {
             name: this.languageClientConfig?.options.name ?? 'Monaco Wrapper Language Client',
-            clientOptions: {
-                // use a language id as a document selector
+
+            // allow to fully override the clientOptions
+            clientOptions: this.languageClientConfig?.clientOptions ?? {
                 documentSelector: [this.languageId!],
                 // disable the default error handler
                 errorHandler: {
                     error: () => ({ action: ErrorAction.Continue }),
                     closed: () => ({ action: CloseAction.DoNotRestart })
-                },
-                // allow to initialize the language client with user specific options
-                initializationOptions: this.languageClientConfig?.initializationOptions,
-
-                ...(this.languageClientConfig?.configurationOptions ?? {})
+                }
             },
-            // create a language client connection from the JSON RPC connection on demand
-            connectionProvider: {
+            // allow to fully override the clonnecetionProvider
+            connectionProvider: this.languageClientConfig?.connectionProvider ?? {
                 get: () => {
                     return Promise.resolve(transports);
                 }
             }
-        });
+        };
+        if (!mlcConfig.clientOptions.documentSelector?.includes(this.languageId)) {
+            throw new Error(`languageClientWrapper (${this.name}): The language id '${this.languageId}' is not included in the document selector.`);
+        }
+
+        return new MonacoLanguageClient(mlcConfig);
     }
 
     private disposeWorker(keepWorker?: boolean) {

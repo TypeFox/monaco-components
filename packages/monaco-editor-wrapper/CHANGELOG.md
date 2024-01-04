@@ -5,6 +5,8 @@ All notable changes to npm module [monaco-editor-wrapper](https://www.npmjs.com/
 ## [3.6.0] - 2024-01-04
 
 - Updated to `monaco-languageclient@7.3.0` and `@codingame/monaco-vscode-api@1.85.0` / `@codingame/monaco-editor-treemended@1.85.0` (=`monaco-editor@0.45.0`).
+- How to modify client's capabilities? [#61](https://github.com/TypeFox/monaco-components/issues/61)
+  - It is now possible to provide and fully override boh monaco-languageclient's clientOptions and connectionProvider
 
 ## [3.5.0] - 2023-11-07
 
