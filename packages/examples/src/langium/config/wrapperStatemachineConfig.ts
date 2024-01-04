@@ -4,7 +4,7 @@ import { useOpenEditorStub } from 'monaco-languageclient';
 import { UserConfig } from 'monaco-editor-wrapper';
 import { getTextContent } from '../../common.js';
 
-export const createLangiumGlobalConfig = async (worker: Worker, port?: MessagePort): Promise<UserConfig> => {
+export const createLangiumGlobalConfig = async (worker: Worker, messagePort?: MessagePort): Promise<UserConfig> => {
     const code = await getTextContent(new URL('./src/langium/content/example.statemachine', window.location.href));
 
     const extensionFilesOrContents = new Map<string, string | URL>();
@@ -64,7 +64,7 @@ export const createLangiumGlobalConfig = async (worker: Worker, port?: MessagePo
             options: {
                 $type: 'WorkerDirect',
                 worker,
-                messagePort: port
+                messagePort
             }
         }
     };

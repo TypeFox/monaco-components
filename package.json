@@ -17,28 +17,28 @@
     "start:example:server:python": "npm run start:server:python --workspace packages/examples"
   },
   "devDependencies": {
-    "@types/node": "~20.10.4",
+    "@types/node": "~20.10.6",
     "@types/shelljs": "~0.8.15",
-    "@types/vscode": "~1.83.3",
-    "@typescript-eslint/eslint-plugin": "~6.13.2",
-    "@typescript-eslint/parser": "~6.13.2",
-    "@vitest/browser": "~1.0.2",
+    "@types/vscode": "~1.85.0",
+    "@typescript-eslint/eslint-plugin": "~6.17.0",
+    "@typescript-eslint/parser": "~6.17.0",
+    "@vitest/browser": "~1.1.1",
     "editorconfig": "~2.0.0",
-    "eslint": "~8.55.0",
+    "eslint": "~8.56.0",
     "shelljs": "~0.8.5",
     "shx": "~0.3.4",
     "typescript": "~5.3.3",
-    "vite": "~5.0.6",
-    "vitest": "~1.0.2",
-    "webdriverio": "~8.24.12"
+    "vite": "~5.0.10",
+    "vitest": "~1.1.1",
+    "webdriverio": "~8.27.0"
   },
   "overrides": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.85.0 <1.86.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.85.0 <1.86.0"
   },
   "resolutions": {
-    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.83.16 <1.84.0",
-    "vscode": "npm:@codingame/monaco-vscode-api@>=1.83.16 <1.84.0"
+    "monaco-editor": "npm:@codingame/monaco-editor-treemended@>=1.85.0 <1.86.0",
+    "vscode": "npm:@codingame/monaco-vscode-api@>=1.85.0 <1.86.0"
   },
   "volta": {
     "node": "20.10.0",
