@@ -1,5 +1,7 @@
 # Monaco Editor Wrapper and Monaco Editor React Component
 
+**These projects have been migrated to [monaco-languageclient repo](https://github.com/TypeFox/monaco-languageclient)**
+
 This repository started as a Lit component for Monaco Editor, but it has transformed into a wrapper for `monaco-editor`, `monaco-languageclient` and `@codingame/monaco-vscode-api` and now features a react component (`@typefox/monaco-editor-react`) that encapsulates the `monaco-editor-wrapper`.
 
 ## Packages
